@@ -1,0 +1,85 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of testeConnectionFactory
+ *
+ * @author Renan
+ */
+
+include('includes.php');
+
+class testeCliente extends PHPUnit_Framework_TestCase {
+
+    public function testSimple() {
+        
+        $doc = new Documento();
+        
+        $doc->categoria = Sistema::getCategoriaDocumentos()[0];
+        
+        $doc->numero = "erfqwerewq";
+        
+        $doc->link = "dfdwerferwfffffff";
+        
+        
+        $doc2 = new Documento();
+        
+        $doc2->categoria = Sistema::getCategoriaDocumentos()[1];
+        
+        $doc2->numero = "12344321";
+        
+        $doc2->link = "12344321";
+        
+        $cat = new CategoriaCliente();
+        
+        $cat->nome = "Teste";
+       
+        $cliente = new Cliente();
+        $cliente->razao_social = "T1";
+        $cliente->nome_fantasia = "T2";
+        $cliente->limite_credito = 100;
+        $cliente->pessoa_fisica = true;
+        $cliente->cpf = new CPF("11111111111");
+        $cliente->rg = new RG("111111111");
+        $cliente->categoria = $cat;
+        $cliente->empresa = new stdClass();
+        $cliente->empresa->id = 1;
+        $cliente->email = new Email("renan_goncalves@outlook.com.br");
+        
+        $cliente->telefone="1234";
+        $cliente->inscricao_estadual = "333333333";
+        $cliente->suframado = false;
+        $cliente->inscricao_suframa = "444444444";   
+        
+        $e = new Endereco();
+        
+        $e->rua = "Rua Teste";
+        $e->bairro = "Bairro Teste";
+        $e->numero = 0;
+        $e->cep = new CEP("07195201");
+        $e->cidade = Sistema::getCidades(new ConnectionFactory())[0];
+        
+        $cliente->endereco = $e;
+        
+        $cliente->merge(new ConnectionFactory());
+        
+        $cliente->merge(new ConnectionFactory());
+        
+        $cliente->setDocumentos(array($doc,$doc2),new ConnectionFactory());
+        
+        $nd = $cliente->getDocumentos(new ConnectionFactory());
+        
+        $this->assertTrue(count($nd)==2);
+        
+        $this->assertTrue($nd[0]->link==$doc->link && $nd[1]->link==$doc2->link);
+        
+        $cliente->delete(new ConnectionFactory());
+        
+    }
+
+}
