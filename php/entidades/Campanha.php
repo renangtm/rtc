@@ -56,7 +56,7 @@ class Campanha {
         $ps->close();
         
         foreach($this->produtos as $key=>$value){
-            
+                echo "dedede";
                $value->merge($con);
             
         }

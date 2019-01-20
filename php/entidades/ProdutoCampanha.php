@@ -25,6 +25,7 @@ class ProdutoCampanha {
         $this->produto = null;
         $this->campanha = null;
         $this->validade = round(microtime(true)*1000);
+        $this->valor = 0;
         
     }
     

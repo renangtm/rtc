@@ -26,7 +26,26 @@ class testeCampanha extends PHPUnit_Framework_TestCase {
         $cat->empresa = new stdClass();
         $cat->empresa->id=1;
         
+        $p = new ProdutoCampanha();
+        
+        $p->produto = new stdClass();
+        $p->produto->id = 1;
+        
+        $p->campanha = $cat;
+        
+        $p2 = new ProdutoCampanha();
+        
+        $p2->produto = new stdClass();
+        $p2->produto->id = 2;
+        
+        $p2->campanha = $cat;
+        
+        $cat->produtos[] = $p;
+        $cat->produtos[] = $p2;
+        
         $cat->merge(new ConnectionFactory());
+        
+        $cat->produtos = array($p);
         
         $cat->merge(new ConnectionFactory());
         
