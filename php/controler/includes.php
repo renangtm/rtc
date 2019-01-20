@@ -7,7 +7,7 @@ foreach(glob("../herancas/*.php") as $filename){
     
 }
 
-foreach(glob("../entidades/*.php") as $filename){
+foreach(glob("../entidadestestecommit/*.php") as $filename){
     
     include $filename;
     
