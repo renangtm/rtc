@@ -21,6 +21,7 @@ class Campanha {
     public $excluida;
     public $cliente_expression;
     public $empresa;
+    public $produtos;
     
     function __construct() {
         
@@ -29,6 +30,7 @@ class Campanha {
         $this->fim = round(microtime(true)*1000);
         $this->excluida = false;
         $this->empresa = null;
+        $this->produtos = array();
         
     }
     
@@ -36,16 +38,26 @@ class Campanha {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO cultura(nome,excluida) VALUES('" . addslashes($this->nome) . "',false)");
+            $ps = $con->getConexao()->prepare("INSERT INTO campanha(inicio,fim,prazo,parcelas,excluida,cliente_expression,id_empresa) VALUES(FROM_UNIXTIME($this->inicio/1000),FROM_UNIXTIME($this->fim/1000),$this->prazo,$this->parcelas,false,$this->cliente_expression,".$this->empresa->id.")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
             
         }else{
             
-            $ps = $con->getConexao()->prepare("UPDATE cultura SET nome = '" . addslashes($this->nome) . "', excluida=false WHERE id = ".$this->id);
+            $ps = $con->getConexao()->prepare("UPDATE campanha SET inicio = FROM_UNIXTIME($this->inicio/1000), fim = FROM_UNIXTIME($this->fim/1000), excluida=false, prazo=$this->prazo,parcelas=$this->parcelas,cliente_expression=$this->cliente_expression,id_empresa=".$this->empresa->id." WHERE id = ".$this->id);
             $ps->execute();
             $ps->close();
+            
+        }
+        
+        $ps = $con->getConexao()->prepare("UPDATE produto_campanha SET id_campanha=0 WHERE id_campanha=$this->id");
+        $ps->execute();
+        $ps->close();
+        
+        foreach($this->produtos as $key=>$value){
+            
+               $value->merge($con);
             
         }
         
@@ -53,7 +65,7 @@ class Campanha {
     
     public function delete($con){
         
-        $ps = $con->getConexao()->prepare("UPDATE cultura SET excluida = true WHERE id = ".$this->id);
+        $ps = $con->getConexao()->prepare("UPDATE campanha SET excluida = true WHERE id = ".$this->id);
         $ps->execute();
         $ps->close();
         
