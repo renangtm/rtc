@@ -14,7 +14,7 @@
 
 include('includes.php');
 
-class testeConnectionFactory extends PHPUnit_Framework_TestCase {
+class testeCEP extends PHPUnit_Framework_TestCase {
 
     public function testSimple() {
         
