@@ -80,6 +80,22 @@ class Usuario {
         }
     }
 
+    public function temPermissao($nome,$tipo){
+        
+        foreach($this->permissoes as $key=>$value){
+            
+            if($value->nome == $nome){
+                
+                return $value->$tipo === true;
+                
+            }
+            
+        }
+        
+        return false;
+        
+    }
+    
     public function delete($con) {
 
         $ps = $con->getConexao()->prepare("UPDATE usuario SET excluido = true WHERE id = " . $this->id);
