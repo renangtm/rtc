@@ -52,7 +52,7 @@ class Lote {
             
         }else{
             
-            $ps = $con->getConexao()->prepare("UPDATE lote SET validade = FROM_UNIXTIME(" .$this->validade. "/1000), data_entrada=FROM_UNIXTIME(".$this->cnpj->valor."/1000), id_produto=".$this->produto->id.",grade='".$this->grade->str."', excluido=false, quantidade_inicial=$this->quantidade_inicial, quantidade_real=$this->quantidade_real, codigo_fabricante='".addslashes($this->codigo_fabricante)."' WHERE id = ".$this->id);
+            $ps = $con->getConexao()->prepare("UPDATE lote SET validade = FROM_UNIXTIME(" .$this->validade. "/1000), data_entrada=FROM_UNIXTIME(".$this->data_entrada."/1000), id_produto=".$this->produto->id.",grade='".$this->grade->str."', excluido=false, quantidade_inicial=$this->quantidade_inicial, quantidade_real=$this->quantidade_real, codigo_fabricante='".addslashes($this->codigo_fabricante)."' WHERE id = ".$this->id);
             $ps->execute();
             $ps->close();
             
