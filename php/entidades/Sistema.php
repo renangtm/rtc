@@ -13,6 +13,21 @@
  */
 class Sistema {
     
+    
+    public static function getIcmsEstado($estado){
+        
+        $doze = array("MG","RS","SC","RJ","PB");
+        
+        if(in_array($estado->sigla, $doze)){
+            
+            return 12;
+            
+        } 
+        
+        return 7;
+        
+    }
+    
     public static function getCategoriaDocumentos(){
         
         $cats = array();
