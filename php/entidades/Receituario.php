@@ -32,6 +32,9 @@ class Receituario {
     
     public function merge($con) {
 
+        $this->cultura->merge($con);
+        $this->praga->merge($con);
+        
         if ($this->id == 0) {
 
             $ps = $con->getConexao()->prepare("INSERT INTO receituario(instrucoes,excluido,id_produto,id_praga,id_cultura) VALUES('" . addslashes($this->instrucoes) . "',false,".$this->produto->id.",".$this->praga->id.",".$this->cultura->id.")");
@@ -46,6 +49,7 @@ class Receituario {
             $ps->close();
             
         }
+        
         
     }
     

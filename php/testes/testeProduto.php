@@ -86,7 +86,31 @@ class testeProduto extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($lotes[0]->codigo_fabricante,$lote->codigo_fabricante);
         $this->assertEquals($lotes[1]->codigo_fabricante,$lote2->codigo_fabricante);
+        
+        $r = new Receituario();
+        $r->produto = $produto;
+        
+        $r->cultura = new Cultura();
+        $r->cultura->nome = "TesteCut";
+        
+        $r->praga = new Praga();
+        $r->praga->nome = "TestePrg";
+        
+        $r->merge(new ConnectionFactory());
 
+        $receituarios = $produto->getReceituario(new ConnectionFactory());
+        
+        $this->assertEquals(count($receituarios),1);
+        
+        $this->assertEquals($receituarios[0]->cultura->nome,$r->cultura->nome);
+        $this->assertEquals($receituarios[0]->cultura->id,$r->cultura->id);
+        
+        $this->assertEquals($receituarios[0]->praga->nome,$r->praga->nome);
+        $this->assertEquals($receituarios[0]->praga->id,$r->praga->id);
+        
+        $this->assertEquals($receituarios[0]->produto->nome,$r->produto->nome);
+        $this->assertEquals($receituarios[0]->produto->id,$r->produto->id);
+        
         $produto->delete(new ConnectionFactory());
         
     }
