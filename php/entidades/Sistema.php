@@ -58,6 +58,25 @@ class Sistema {
         
     }
     
+    public static function getStatusPedidoSaida(){
+        
+        $status = array();
+        
+        $status[] = new StatusPedidoSaida(1,"Confirmacao de pedido",false,true,true,true);
+        $status[] = new StatusPedidoSaida(2,"Limite de credito",false,true,false,false);
+        $status[] = new StatusPedidoSaida(3,"Autorizacao de pedido",false,true,false,false);
+        $status[] = new StatusPedidoSaida(4,"Confirmacao de pagamento",false,true,true,false);
+        $status[] = new StatusPedidoSaida(5,"Separacao",false,true,true,false);
+        $status[] = new StatusPedidoSaida(6,"Faturamento",true,true,true,false);
+        $status[] = new StatusPedidoSaida(7,"Coleta",true,true,true,true);
+        $status[] = new StatusPedidoSaida(8,"Rastreio",true,true,true,false);
+        $status[] = new StatusPedidoSaida(9,"Finalizado",true,true,true,false);
+        $status[] = new StatusPedidoSaida(10,"Cancelado",true,true,true,true);
+        
+        return $status;
+        
+    }
+    
     public static function getStatusCotacaoEntrada(){
         
         $sts = array();
@@ -68,7 +87,7 @@ class Sistema {
         $sts[] = new StatusCotacaoEntrada(4,"Cancelada");
         
         return $sts;
-        
+     
     }
     
     public static function getPermissoesIniciais(){
