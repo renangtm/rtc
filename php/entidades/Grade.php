@@ -60,6 +60,12 @@ class Grade {
             
         }
         
+        $clone_k = array();
+        
+        foreach($k as $key=>$value){
+            $clone_k[] = $value;
+        }
+        
         if((count($k)-1) == count($this->gr)){
             
             $it = new Item();
@@ -67,6 +73,7 @@ class Grade {
             $it->quantidade_filhos = 0;
             $it->removivel = true;
             $it->pai = $pai;
+            $it->numero = $clone_k;
             
             return $it;
             
@@ -75,6 +82,7 @@ class Grade {
         $it = new Item();
         $it->quantidade = 0;
         $it->pai = $pai;
+        $it->numero = $clone_k;
         
         $q = $this->gr[count($k)-1];
         

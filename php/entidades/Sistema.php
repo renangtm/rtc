@@ -86,7 +86,7 @@ class Sistema {
         $status[] = new StatusPedidoSaida(7,"Coleta",true,true,true,true);
         $status[] = new StatusPedidoSaida(8,"Rastreio",true,true,true,false);
         $status[] = new StatusPedidoSaida(9,"Finalizado",true,true,true,false);
-        $status[] = new StatusPedidoSaida(10,"Cancelado",true,true,true,true);
+        $status[] = new StatusPedidoSaida(10,"Cancelado",false,false,true,true);
         
         return $status;
         
