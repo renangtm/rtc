@@ -480,6 +480,11 @@ class testeProdutoPedidoSaida extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($lotes3[0]->quantidade_real,80);
         
+        $pedido->produtos[0]->delete(new ConnectionFactory());
+        $pedido->produtos[1]->delete(new ConnectionFactory());
+        $pedido->produtos[2]->delete(new ConnectionFactory());
+        $pedido->produtos[3]->delete(new ConnectionFactory());
+        
     }
 
 }
