@@ -12,6 +12,17 @@
  * @author Renan
  */
 class Sistema {
+    
+    public static function getFormasPagamento(){
+        
+        $formas = array();
+        
+        $formas[] = new DepositoEmConta();
+        $formas[] = new BoletoEspecialAgroFauna();
+        
+        return $formas;
+        
+    }
 
     public static function getIcmsEstado($estado) {
 
@@ -70,7 +81,8 @@ class Sistema {
 
     public static function getStatusExcluidoPedidoSaida() {
 
-        return new StatusPedidoSaida(30, "Excluido", false, true, true, true);
+        return new StatusPedidoSaida(30, "Excluido", false, false, false, true);
+        
     }
 
     public static function getStatusPedidoSaida() {

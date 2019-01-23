@@ -111,6 +111,8 @@ class testeProduto extends PHPUnit_Framework_TestCase {
         $this->assertEquals($receituarios[0]->produto->nome,$r->produto->nome);
         $this->assertEquals($receituarios[0]->produto->id,$r->produto->id);
         
+        $produto->atualizarEstoque(new ConnectionFactory());
+        
         $produto->delete(new ConnectionFactory());
         
     }

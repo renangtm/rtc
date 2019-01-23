@@ -20,7 +20,8 @@ class testeTransportadora extends PHPUnit_Framework_TestCase {
         
         $doc = new Documento();
         
-        $doc->categoria = Sistema::getCategoriaDocumentos()[0];
+        $doc->categoria = Sistema::getCategoriaDocumentos();
+        $doc->categoria = $doc->categoria[0];
         
         $doc->numero = "erfqwerewq";
         
@@ -29,7 +30,8 @@ class testeTransportadora extends PHPUnit_Framework_TestCase {
         
         $doc2 = new Documento();
         
-        $doc2->categoria = Sistema::getCategoriaDocumentos()[1];
+        $doc2->categoria = Sistema::getCategoriaDocumentos();
+        $doc->categoria = $doc->categoria[1];
         
         $doc2->numero = "12344321";
         
@@ -55,7 +57,8 @@ class testeTransportadora extends PHPUnit_Framework_TestCase {
         $e->bairro = "Bairro Teste";
         $e->numero = 0;
         $e->cep = new CEP("07195201");
-        $e->cidade = Sistema::getCidades(new ConnectionFactory())[0];
+        $e->cidade = Sistema::getCidades(new ConnectionFactory());
+        $e->cidade = $e->cidade[0];
         
         $cliente->endereco = $e;
         

@@ -24,6 +24,7 @@ class Produto {
     public $habilitado;
     public $empresa;
     public $valor_base;
+    public $lucro_consignado;
     public $custo;
     public $ncm;
     public $peso_liquido;
@@ -47,6 +48,7 @@ class Produto {
         $this->valor_base = 0;
         $this->custo = 0;
         $this->peso_bruto = 0;
+        $this->lucro_consignado = 0;
         $this->peso_liquido = 0;
         $this->estoque = 0;
         $this->disponivel = 0;
@@ -58,19 +60,34 @@ class Produto {
     public function merge($con) {
 
         if ($this->id == 0) {
-
-            echo "INSERT INTO produto(id_universal,id_categoria,liquido,quantidade_unidade,excluido,habilitado,id_empresa,valor_base,custo,peso_bruto,peso_liquido,estoque,disponivel,transito,grade,unidade,ncm) VALUES($this->id_universal," . $this->categoria->id . "," . ($this->liquido ? "true" : "false") . ",$this->quantidade_unidade,false," . ($this->habilitado ? "true" : "false") . "," . $this->empresa->id . ",$this->valor_base,$this->custo,$this->peso_bruto,$this->peso_liquido,$this->estoque,$this->disponivel,$this->transito,'" . $this->grade->str . "','" . addslashes($this->unidade) . "','" . addslashes($this->ncm) . "')";
-
-            $ps = $con->getConexao()->prepare("INSERT INTO produto(id_universal,id_categoria,liquido,quantidade_unidade,excluido,habilitado,id_empresa,valor_base,custo,peso_bruto,peso_liquido,estoque,disponivel,transito,grade,unidade,ncm) VALUES($this->id_universal," . $this->categoria->id . "," . ($this->liquido ? "true" : "false") . ",$this->quantidade_unidade,false," . ($this->habilitado ? "true" : "false") . "," . $this->empresa->id . ",$this->valor_base,$this->custo,$this->peso_bruto,$this->peso_liquido,$this->estoque,$this->disponivel,$this->transito,'" . $this->grade->str . "','" . addslashes($this->unidade) . "','" . addslashes($this->ncm) . "')");
+            $ps = $con->getConexao()->prepare("INSERT INTO produto(id_universal,id_categoria,liquido,quantidade_unidade,excluido,habilitado,id_empresa,valor_base,custo,peso_bruto,peso_liquido,estoque,disponivel,transito,grade,unidade,ncm,lucro_consignado) VALUES($this->id_universal," . $this->categoria->id . "," . ($this->liquido ? "true" : "false") . ",$this->quantidade_unidade,false," . ($this->habilitado ? "true" : "false") . "," . $this->empresa->id . ",$this->valor_base,$this->custo,$this->peso_bruto,$this->peso_liquido,$this->estoque,$this->disponivel,$this->transito,'" . $this->grade->str . "','" . addslashes($this->unidade) . "','" . addslashes($this->ncm) . "',$this->lucro_consignado)");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE produto SET nome = '" . addslashes($this->nome) . "', id_universal=$this->id_universal, id_categoria=" . $this->categoria->id . ",liquido=" . ($this->liquido ? "true" : "false") . ", id_empresa=" . $this->empresa->id . ", valor_base=" . $this->valor_base . ",custo=$this->custo,peso_bruto=$this->peso_bruto,peso_liquido=$this->peso_liquido,estoque=$this->estoque,disponivel=$this->disponivel,transito=$this->transito,excluido=false,habilitado=" . ($this->habilitado ? "true" : "false") . ",grade='" . $this->grade->str . "',unidade='" . addslashes($this->unidade) . "',ncm='" . addslashes($this->ncm) . "',quantidade_unidade=$this->quantidade_unidade WHERE id = " . $this->id);
+            $ps = $con->getConexao()->prepare("UPDATE produto SET nome = '" . addslashes($this->nome) . "', id_universal=$this->id_universal, id_categoria=" . $this->categoria->id . ",liquido=" . ($this->liquido ? "true" : "false") . ", id_empresa=" . $this->empresa->id . ", valor_base=" . $this->valor_base . ",custo=$this->custo,peso_bruto=$this->peso_bruto,peso_liquido=$this->peso_liquido,estoque=$this->estoque,disponivel=$this->disponivel,transito=$this->transito,excluido=false,habilitado=" . ($this->habilitado ? "true" : "false") . ",grade='" . $this->grade->str . "',unidade='" . addslashes($this->unidade) . "',ncm='" . addslashes($this->ncm) . "',quantidade_unidade=$this->quantidade_unidade,lucro_consignado=$this->lucro_consignado WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
         }
+    }
+    
+    public function atualizarEstoque($con){
+        
+        $ps = $con->getConexao()->prepare("SELECT estoque,disponivel,transito FROM produto WHERE id = $this->id");
+        $ps->execute();
+        $ps->bind_result($estoque,$disponivel,$transito);
+        
+        if($ps->fetch()){
+            
+            $this->estoque = $estoque;
+            $this->disponivel = $disponivel;
+            $this->transito = $transito;
+            
+        }
+           
+        $ps->close();
+        
     }
 
     public function delete($con) {

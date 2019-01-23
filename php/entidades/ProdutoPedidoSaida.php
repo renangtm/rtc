@@ -81,7 +81,7 @@ class ProdutoPedidoSaida {
         $this->influencia_reserva = $x_res;
 
         if ($this->id == 0) {
-            echo "INSERT INTO produto_pedido_saida(id_produto,quantidade,validade_minima,valor_base,juros,icms,base_calculo,frete,id_pedido,influencia_estoque,influencia_reserva,ipi) VALUES(" . $this->produto->id . "," . $this->quantidade . ",FROM_UNIXTIME($this->validade_minima/1000),$this->valor_base,$this->juros,$this->icms,$this->base_calculo,$this->frete," . $this->pedido->id . ",$this->influencia_estoque,$this->influencia_reserva,$this->ipi)";
+            
             $ps = $con->getConexao()->prepare("INSERT INTO produto_pedido_saida(id_produto,quantidade,validade_minima,valor_base,juros,icms,base_calculo,frete,id_pedido,influencia_estoque,influencia_reserva,ipi) VALUES(" . $this->produto->id . "," . $this->quantidade . ",FROM_UNIXTIME($this->validade_minima/1000),$this->valor_base,$this->juros,$this->icms,$this->base_calculo,$this->frete," . $this->pedido->id . ",$this->influencia_estoque,$this->influencia_reserva,$this->ipi)");
             $ps->execute();
             $this->id = $ps->insert_id;
