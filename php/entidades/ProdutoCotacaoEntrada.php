@@ -17,25 +17,27 @@ class ProdutoCotacaoEntrada {
     public $produto;
     public $quantidade;
     public $cotacao;
-
+    public $valor;
+    
     function __construct() {
 
         $this->id = 0;
         $this->produto = null;
         $this->cotacao = null;
+        $this->valor=0;
     }
 
     public function merge($con) {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO produto_cotacao_entrada(id_produto,quantidade,id_cotacao) VALUES(" . $this->produto->id . "," . $this->quantidade . "," . $this->cotacao->id . ")");
+            $ps = $con->getConexao()->prepare("INSERT INTO produto_cotacao_entrada(id_produto,quantidade,id_cotacao,valor) VALUES(" . $this->produto->id . "," . $this->quantidade . "," . $this->cotacao->id . ", $this->valor)");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE regra_tabela SET id_produto = " . $this->id_produto . ", quantidade = " . $this->quantidade . ", id_cotacao=" . $this->cotacao->id . " WHERE id = " . $this->id);
+            $ps = $con->getConexao()->prepare("UPDATE produto_cotacao_entrada SET id_produto = " . $this->produto->id . ", quantidade = " . $this->quantidade . ", id_cotacao=" . $this->cotacao->id . ",valor=$this->valor WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
         }

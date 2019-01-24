@@ -13,6 +13,12 @@
  */
 class Sistema {
     
+    public static function getHtmlCotacaoFornecedor($cotacao){
+
+        return "RTC BETA 4.0, FAZE DE TESTES, EMAIL DE COTACAO";
+
+    }
+    
     public static function getFormasPagamento(){
         
         $formas = array();
@@ -35,7 +41,7 @@ class Sistema {
 
         return 7;
     }
-
+    
     public static function getCategoriaDocumentos() {
 
         $cats = array();

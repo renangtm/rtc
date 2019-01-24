@@ -15,11 +15,13 @@ class StatusCotacaoEntrada {
     
     public $id;
     public $nome;
- 
-    function __construct($id,$nome) {
+    public $envia_email;
+    
+    function __construct($id,$nome,$envia_email = false) {
         
         $this->id = $id;
         $this->nome = $nome;
+        $this->envia_email = $envia_email;
         
     }
     

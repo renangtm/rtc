@@ -117,6 +117,7 @@ class Pedido {
                 . "produto.grade,"
                 . "produto.unidade,"
                 . "produto.ncm,"
+                . "produto.nome,"
                 . "produto.lucro_consignado,"
                 . "categoria_produto.id,"
                 . "categoria_produto.nome,"
@@ -130,7 +131,7 @@ class Pedido {
                 . " WHERE produto_pedido_saida.id_pedido=$this->id");
 
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $lucro, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
+        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm,$nome, $lucro, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
 
         $retorno = array();
 
@@ -140,6 +141,7 @@ class Pedido {
 
             $p = new Produto();
             $p->id = $id_pro;
+            $p->nome = $nome;
             $p->id_universal = $id_uni;
             $p->liquido = $liq;
             $p->quantidade_unidade = $qtd_un;

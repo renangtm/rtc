@@ -14,7 +14,7 @@
 
 include("includes.php");
 
-class testeInterpretadorBooleano extends PHPUnit_Framework_TestCase {
+class testeProdutoCotacaoEntrada extends PHPUnit_Framework_TestCase {
 
     public function testSimple() {
        
@@ -26,6 +26,8 @@ class testeInterpretadorBooleano extends PHPUnit_Framework_TestCase {
         
         $p->cotacao->id = 12;
         $p->produto->id = 13;
+        
+        $p->merge(new ConnectionFactory());
         
         $p->merge(new ConnectionFactory());
         
