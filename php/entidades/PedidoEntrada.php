@@ -22,7 +22,7 @@ class PedidoEntrada {
     public $transportadora;
     public $data;
     public $produtos;
-    public $frete_incluso;
+    public $incluir_frete;
     public $nota;
     public $observacoes;
     public $prazo;
@@ -33,6 +33,7 @@ class PedidoEntrada {
         $this->id = 0;
         $this->fornecedor = null;
         $this->frete = 0;
+        $this->incluir_frete = false;
         $this->status = null;
         $this->excluida = false;
         $this->usuario = null;
@@ -179,14 +180,14 @@ class PedidoEntrada {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO pedido_entrada(id_fornecedor,id_transportadora,frete,observacoes,frete_inclusao,id_empresa,data,excluido,id_usuario,id_nota,prazo,parcelas,id_status) VALUES(" . $this->fornecedor->id . "," . $this->transportadora->id . "," . $this->frete . "," . $this->observacoes . "," . ($this->frete_inclusao ? "true" : "false") . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data/1000),false," . $this->usuario->id . "," . ($this->nota != null ? $this->nota->id : 0) . ",$this->prazo,$this->parcelas," . $this->status->id . ")");
+            $ps = $con->getConexao()->prepare("INSERT INTO pedido_entrada(id_fornecedor,id_transportadora,frete,observacoes,frete_inclusao,id_empresa,data,excluido,id_usuario,id_nota,prazo,parcelas,id_status,frete_inclusao) VALUES(" . $this->fornecedor->id . "," . $this->transportadora->id . "," . $this->frete . "," . $this->observacoes . "," . ($this->incluir_frete ? "true" : "false") . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data/1000),false," . $this->usuario->id . "," . ($this->nota != null ? $this->nota->id : 0) . ",$this->prazo,$this->parcelas," . $this->status->id . ",".($this->incluir_frete?"true":"false").")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
 
         } else {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO pedido_entrada(id_fornecedor,id_transportadora,frete,observacoes,frete_inclusao,id_empresa,data,excluido,id_usuario,id_nota,prazo,parcelas,id_status) VALUES(" . $this->fornecedor->id . "," . $this->transportadora->id . "," . $this->frete . "," . $this->observacoes . "," . ($this->frete_inclusao ? "true" : "false") . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data/1000),false," . $this->usuario->id . "," . ($this->nota != null ? $this->nota->id : 0) . ",$this->prazo,$this->parcelas," . $this->status->id . ")");
+            $ps = $con->getConexao()->prepare("UPDATE pedido_entrada SET id_fornecedor=" . $this->fornecedor->id . ",id_transportadora=" . $this->transportadora->id . ",frete=" . $this->frete . ",observacoes='" . $this->observacoes . "',frete_inclusao=" . ($this->incluir_frete ? "true" : "false") . ",id_empresa" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data/1000),excluido=false,id_usuario=" . $this->usuario->id . ",id_nota=" . ($this->nota != null ? $this->nota->id : 0) . ",prazo=$this->prazo,parcelas=$this->parcelas,id_status=" . $this->status->id . " WHERE id = $this->id");
             $ps->execute();
             $ps->close();
         }
