@@ -93,7 +93,7 @@ class testeProdutoPedidoEntrada extends PHPUnit_Framework_TestCase {
         $produto->peso_bruto = 23;
         $produto->estoque = 85;
         $produto->disponivel = 85;
-        $produto->transito = 14;
+        $produto->transito = 0;
         $produto->grade = new Grade("15,2,1");
         
         $produto->merge(new ConnectionFactory());
@@ -157,7 +157,7 @@ class testeProdutoPedidoEntrada extends PHPUnit_Framework_TestCase {
         $produto2->peso_bruto = 23;
         $produto2->estoque = 80;
         $produto2->disponivel = 80;
-        $produto2->transito = 14;
+        $produto2->transito = 0;
         $produto2->grade = new Grade("15,2,1");
         
         $produto2->merge(new ConnectionFactory());
@@ -200,7 +200,7 @@ class testeProdutoPedidoEntrada extends PHPUnit_Framework_TestCase {
         $produto3->peso_bruto = 23;
         $produto3->estoque = 80;
         $produto3->disponivel = 80;
-        $produto3->transito = 14;
+        $produto3->transito = 0;
         $produto3->grade = new Grade("40,10,2");
         
         $produto3->merge(new ConnectionFactory());
@@ -300,8 +300,8 @@ class testeProdutoPedidoEntrada extends PHPUnit_Framework_TestCase {
         $this->assertEquals($produto->estoque,85);
    
         $pedido->produtos[3]->merge(new ConnectionFactory());   
-        $this->assertEquals($produto->transito,56);
-        $this->assertEquals($produto->estoque,80);
+        $this->assertEquals($produto3->transito,56);
+        $this->assertEquals($produto3->estoque,80);
         
         $pedido->status = $cancelado;
         
@@ -316,7 +316,7 @@ class testeProdutoPedidoEntrada extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($produto->estoque,85);
         $this->assertEquals($produto2->estoque,80);
-        $this->assertEquals($produto3->estoque,85);
+        $this->assertEquals($produto3->estoque,80);
         
        $pedido->status = $finalizado;
         
@@ -331,11 +331,11 @@ class testeProdutoPedidoEntrada extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($produto->disponivel,171);
         $this->assertEquals($produto2->disponivel,100);
-        $this->assertEquals($produto3->disponivel,141);
+        $this->assertEquals($produto3->disponivel,136);
         
         $this->assertEquals($produto->estoque,171);
         $this->assertEquals($produto2->estoque,100);
-        $this->assertEquals($produto3->estoque,141);
+        $this->assertEquals($produto3->estoque,136);
         
         $pedido->status = $cancelado;
         
@@ -350,7 +350,7 @@ class testeProdutoPedidoEntrada extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($produto->estoque,85);
         $this->assertEquals($produto2->estoque,80);
-        $this->assertEquals($produto3->estoque,85);
+        $this->assertEquals($produto3->estoque,80);
         
     }
 

@@ -19,6 +19,12 @@ class Sistema {
 
     }
     
+    public static function getStatusCanceladoPedidoEntrada(){
+        
+        return Sistema::getStatusPedidoEntrada()[4];
+        
+    }
+    
     public static function getStatusPedidoEntrada(){
         
         $status = array();

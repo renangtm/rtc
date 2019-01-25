@@ -213,8 +213,17 @@ class PedidoEntrada {
     }
 
     public function delete($con) {
+        
+        $this->status = Sistema::getStatusCanceladoPedidoEntrada();
 
-        $ps = $con->getConexao()->prepare("UPDATE cotacao_entrada SET excluida=true WHERE id = " . $this->id);
+        $prods = $this->getProdutos($con);
+
+        foreach ($prods as $key2 => $value2) {
+
+            $value2->merge($con);
+        }
+        
+        $ps = $con->getConexao()->prepare("UPDATE pedido_entrada SET excluida=true WHERE id = " . $this->id);
         $ps->execute();
         $ps->close();
     }
