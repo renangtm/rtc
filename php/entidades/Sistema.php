@@ -19,6 +19,19 @@ class Sistema {
 
     }
     
+    public static function getStatusPedidoEntrada(){
+        
+        $status = array();
+        
+        $status[] = new StatusPedidoEntrada(1, "Confirmacao de pedido",false,false);
+        $status[] = new StatusPedidoEntrada(2, "Em transito",false,true);
+        $status[] = new StatusPedidoEntrada(3, "Finalizado",true,false);
+        $status[] = new StatusPedidoEntrada(4,"Cancelado",false,false);
+        
+        return $status;
+        
+    }
+    
     public static function getFormasPagamento(){
         
         $formas = array();
