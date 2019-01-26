@@ -31,24 +31,24 @@ class testeTransportadora extends PHPUnit_Framework_TestCase {
         $doc2 = new Documento();
         
         $doc2->categoria = Sistema::getCategoriaDocumentos();
-        $doc->categoria = $doc->categoria[1];
+        $doc2->categoria = $doc2->categoria[1];
         
         $doc2->numero = "12344321";
         
         $doc2->link = "12344321";
         
        
-        $cliente = new Transportadora();
-        $cliente->razao_social = "T1";
-        $cliente->nome_fantasia = "T2";
-        $cliente->cnpj = new CNPJ("11111111111111");
-        $cliente->empresa = new stdClass();
-        $cliente->empresa->id = 1;
-        $cliente->email = new Email("renan_goncalves@outlook.com.br");
-        $cliente->despacho = 999;
-        $cliente->habilitada = true;
-        $cliente->telefone="1234";
-        $cliente->inscricao_estadual = "333333333";
+        $transportadora = new Transportadora();
+        $transportadora->razao_social = "T1";
+        $transportadora->nome_fantasia = "T2";
+        $transportadora->cnpj = new CNPJ("11111111111111");
+        $transportadora->empresa = new stdClass();
+        $transportadora->empresa->id = 1;
+        $transportadora->email = new Email("renan_goncalves@outlook.com.br");
+        $transportadora->despacho = 999;
+        $transportadora->habilitada = true;
+        $transportadora->telefones[] = new Telefone("1234432");
+        $transportadora->inscricao_estadual = "333333333";
 
         
         $e = new Endereco();
@@ -60,7 +60,7 @@ class testeTransportadora extends PHPUnit_Framework_TestCase {
         $e->cidade = Sistema::getCidades(new ConnectionFactory());
         $e->cidade = $e->cidade[0];
         
-        $cliente->endereco = $e;
+        $transportadora->endereco = $e;
         
         $regra = new RegraTabela();
 
@@ -86,21 +86,21 @@ class testeTransportadora extends PHPUnit_Framework_TestCase {
         $tabela->nome = "teste unitario";
         $tabela->regras = array($regra, $regra2);
         
-        $cliente->tabela = $tabela;
+        $transportadora->tabela = $tabela;
         
-        $cliente->merge(new ConnectionFactory());
+        $transportadora->merge(new ConnectionFactory());
         
-        $cliente->merge(new ConnectionFactory());
+        $transportadora->merge(new ConnectionFactory());
         
-        $cliente->setDocumentos(array($doc,$doc2),new ConnectionFactory());
+        $transportadora->setDocumentos(array($doc,$doc2),new ConnectionFactory());
         
-        $nd = $cliente->getDocumentos(new ConnectionFactory());
+        $nd = $transportadora->getDocumentos(new ConnectionFactory());
         
         $this->assertTrue(count($nd)==2);
         
         $this->assertTrue($nd[0]->link==$doc->link && $nd[1]->link==$doc2->link);
         
-        $cliente->delete(new ConnectionFactory());
+        $transportadora->delete(new ConnectionFactory());
         
     }
 

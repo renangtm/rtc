@@ -53,7 +53,8 @@ class testeCliente extends PHPUnit_Framework_TestCase {
         $cliente->empresa->id = 1;
         $cliente->email = new Email("renan_goncalves@outlook.com.br");
         
-        $cliente->telefone="1234";
+        $cliente->telefones[] = new Telefone("1234412");
+        $cliente->telefones[] = new Telefone("2232233");
         $cliente->inscricao_estadual = "333333333";
         $cliente->suframado = false;
         $cliente->inscricao_suframa = "444444444";   
@@ -70,6 +71,8 @@ class testeCliente extends PHPUnit_Framework_TestCase {
         $cliente->endereco = $e;
         
         $cliente->merge(new ConnectionFactory());
+        
+        unset($cliente->telefones[0]);
         
         $cliente->merge(new ConnectionFactory());
         

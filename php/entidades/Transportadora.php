@@ -16,7 +16,7 @@ class Transportadora {
     public $id;
     public $razao_social;
     public $nome_fantasia;
-    public $telefone;
+    public $telefones;
     public $despacho;
     public $empresa;
     public $endereco;
@@ -33,6 +33,7 @@ class Transportadora {
         $this->cnpj = new CNPJ("");
         $this->endereco = null;
         $this->tabela = null;
+        $this->telefones = array();
         $this->empresa = null;
         $this->excluida = false;
         $this->habilitado = false;
@@ -42,13 +43,13 @@ class Transportadora {
         
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO transportadora(razao_social,nome_fantasia,inscricao_estadual,telefone,despacho,id_empresa,cnpj,excluida,habilitada) VALUES('" . addslashes($this->razao_social) . "','" . addslashes($this->nome_fantasia) . "','" . addslashes($this->inscricao_estadual) . "','" . addslashes($this->telefone) . "',$this->despacho," . $this->empresa->id . ",'" . addslashes($this->cnpj->valor) . "',false," . ($this->habilitada ? "true" : "false") . ")");
+            $ps = $con->getConexao()->prepare("INSERT INTO transportadora(razao_social,nome_fantasia,inscricao_estadual,despacho,id_empresa,cnpj,excluida,habilitada) VALUES('" . addslashes($this->razao_social) . "','" . addslashes($this->nome_fantasia) . "','" . addslashes($this->inscricao_estadual) . "',$this->despacho," . $this->empresa->id . ",'" . addslashes($this->cnpj->valor) . "',false," . ($this->habilitada ? "true" : "false") . ")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE transportadora SET razao_social='" . addslashes($this->razao_social) . "', nome_fantasia='" . addslashes($this->nome_fantasia) . "', inscricao_estadual='" . addslashes($this->inscricao_estadual) . "', telefone='" . addslashes($this->telefone) . "', despacho=$this->despacho, id_empresa=" . $this->empresa->id . ", cnpj='" . addslashes($this->cnpj->valor) . "', excluida=false, habilitada=" . ($this->habilitada ? "true" : "false") . " WHERE id = " . $this->id);
+            $ps = $con->getConexao()->prepare("UPDATE transportadora SET razao_social='" . addslashes($this->razao_social) . "', nome_fantasia='" . addslashes($this->nome_fantasia) . "', inscricao_estadual='" . addslashes($this->inscricao_estadual) . "', despacho=$this->despacho, id_empresa=" . $this->empresa->id . ", cnpj='" . addslashes($this->cnpj->valor) . "', excluida=false, habilitada=" . ($this->habilitada ? "true" : "false") . " WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
         }
@@ -77,6 +78,40 @@ class Transportadora {
             $ps->execute();
             $ps->close();
         }
+        
+        $tels = array();
+        $ps = $con->getConexao()->prepare("SELECT id,numero FROM telefone WHERE tipo_entidade='TRA' AND id_entidade=$this->id AND excluido=false");
+        $ps->execute();
+        $ps->bind_result($idt, $numerot);
+        while ($ps->fetch()) {
+            $t = new Telefone($numerot);
+            $t->id = $idt;
+            $tels[] = $t;
+        }
+
+        foreach ($tels as $key => $value) {
+
+            foreach ($this->telefones as $key2 => $value2) {
+
+                if ($value->id == $value2->id) {
+
+                    continue 2;
+                }
+            }
+
+            $value->delete($con);
+        }
+
+        foreach ($this->telefones as $key => $value) {
+
+            $value->merge($con);
+            
+            $ps = $con->getConexao()->prepare("UPDATE telefone SET tipo_entidade='TRA', id_entidade=$this->id WHERE id=" . $value->id);
+            $ps->execute();
+            $ps->close();
+
+        }
+        
     }
 
     public function setDocumentos($docs, $con) {

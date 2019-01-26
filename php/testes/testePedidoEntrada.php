@@ -241,7 +241,7 @@ class testePedidoEntrada extends PHPUnit_Framework_TestCase {
         $tra->email = new Email("renan_goncalves@outlook.com.br");
         $tra->despacho = 999;
         $tra->habilitada = true;
-        $tra->telefone="1234";
+        $tra->telefones[]= new Telefone("1234");
         $tra->inscricao_estadual = "333333333";
         $tra->endereco = $e3;
         

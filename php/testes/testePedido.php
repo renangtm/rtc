@@ -228,7 +228,7 @@ class testePedido extends PHPUnit_Framework_TestCase {
         $tra->email = new Email("renan_goncalves@outlook.com.br");
         $tra->despacho = 999;
         $tra->habilitada = true;
-        $tra->telefone="1234";
+        $tra->telefones[]= new Telefone("1234");
         $tra->inscricao_estadual = "333333333";
         $tra->endereco = $e3;
         
@@ -252,7 +252,7 @@ class testePedido extends PHPUnit_Framework_TestCase {
         $cliente->empresa->id = 1;
         $cliente->email = new Email("renan_goncalves@outlook.com.br");
         
-        $cliente->telefone="1234";
+        $cliente->telefones[]= new Telefone("1234");
         $cliente->inscricao_estadual = "333333333";
         $cliente->suframado = false;
         $cliente->inscricao_suframa = "444444444";

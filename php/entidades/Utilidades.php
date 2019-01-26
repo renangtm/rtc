@@ -15,7 +15,7 @@ class Utilidades {
 
     public static function base64encode($val) {
 
-        $this->chrArr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        $chrArr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
         $res = "";
 
@@ -32,7 +32,7 @@ class Utilidades {
                 if ($j > $u) {
                     $res .= "=";
                 } else {
-                    $res .= $this->chrArr{((($k >> ((3 - $j) * 6)) & 63))};
+                    $res .= $chrArr{((($k >> ((3 - $j) * 6)) & 63))};
                 }
             }
         }
@@ -40,12 +40,12 @@ class Utilidades {
         return $res;
     }
 
-    public function base64decode($val) {
+    public static function base64decode($val) {
 
-        $this->chrArr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        $chrArr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-        for ($i = 0; $i < strlen($this->chrArr); $i++) {
-            $this->invMap[$this->chrArr{$i}] = $i;
+        for ($i = 0; $i < strlen($chrArr); $i++) {
+            $invMap[$chrArr{$i}] = $i;
         }
 
         $res = "";
@@ -57,10 +57,10 @@ class Utilidades {
             for ($u = 0; $u < 4 && ($i + $u) < strlen($val); $u++) {
 
                 if ($val{$i + $u} != '=') {
-                    if (!isset($this->invMap[$val{$i + $u}])) {
+                    if (!isset($invMap[$val{$i + $u}])) {
                         return "";
                     }
-                    $k = $k << 6 | $this->invMap[$val{$i + $u}];
+                    $k = $k << 6 | $invMap[$val{$i + $u}];
                     $x += 6;
                 } else {
                     $k = $k << 6;
@@ -73,6 +73,34 @@ class Utilidades {
         }
 
         return $res;
+    }
+    
+    public static function toHex($str){
+        
+        $hex = "";
+        
+        $n = array("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f");
+        
+        for($i=0;$i<strlen($str);$i++){
+            
+            $k = ord($str{$i});
+           
+            $hi = "";
+            
+            while($k>0){
+                
+                $hi = $n[$k%16].$hi;
+                
+                $k = ($k-$k%16)/16;
+                
+            }
+            
+            $hex .= $hi;
+            
+        }
+        
+        return $hex;
+        
     }
 
 }

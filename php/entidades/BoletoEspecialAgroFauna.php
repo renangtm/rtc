@@ -26,7 +26,7 @@ class BoletoEspecialAgroFauna extends FormaPagamento{
     }
     
     public function habilitada($pedido){
-        
+
         return strpos($pedido->empresa->nome, 'Agro') !== false && strpos($pedido->empresa->nome, 'Fauna') !== false;
         
     }
