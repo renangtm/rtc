@@ -40,6 +40,8 @@ class PedidoEntrada {
         $this->empresa = null;
         $this->data = round(microtime(true) * 1000);
         $this->produtos = null;
+        $this->prazo = 0;
+        $this->parcelas = 1;
     }
 
     public function getProdutos($con) {
@@ -83,9 +85,11 @@ class PedidoEntrada {
 
         $ps->close();
 
-        $ps = $con->getConexao()->prepare("SELECT produto_cotacao_entrada.id,"
-                . "produto_cotacao_entrada.quantidade,"
-                . "produto_cotacao_entrada.valor,"
+        $ps = $con->getConexao()->prepare("SELECT produto_pedido_entrada.id,"
+                . "produto_pedido_entrada.quantidade,"
+                . "produto_pedido_entrada.valor,"
+                . "produto_pedido_entrada.influencia_estoque,"
+                . "produto_pedido_entrada.influencia_transito,"
                 . "produto.id,"
                 . "produto.id_universal,"
                 . "produto.liquido,"
@@ -109,14 +113,14 @@ class PedidoEntrada {
                 . "categoria_produto.ipi,"
                 . "categoria_produto.icms_normal,"
                 . "categoria_produto.icms"
-                . " FROM produto_cotacao_entrada "
-                . "INNER JOIN produto ON produto_cotacao_entrada.id_produto=produto.id "
+                . " FROM produto_pedido_entrada "
+                . "INNER JOIN produto ON produto_pedido_entrada.id_produto=produto.id "
                 . "INNER JOIN categoria_produto ON categoria_produto.id=produto.id_categoria"
-                . " WHERE produto_cotacao_entrada.id_cotacao=$this->id");
+                . " WHERE produto_pedido_entrada.id_pedido=$this->id");
 
 
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $valor, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
+        $ps->bind_result($id, $quantidade, $valor,$ie,$it, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
 
         $retorno = array();
 
@@ -153,8 +157,10 @@ class PedidoEntrada {
             $p->categoria->icms_normal = $cat_icms_normal;
             $p->categoria->ipi = $cat_ipi;
 
-            $pp = new ProdutoCotacaoEntrada();
+            $pp = new ProdutoPedidoEntrada();
             $pp->id = $id;
+            $pp->influencia_estoque = $ie;
+            $pp->influencia_transito = $it;
             $pp->quantidade = $quantidade;
             $pp->valor = $valor;
             $pp->cotacao = $this;
@@ -179,15 +185,15 @@ class PedidoEntrada {
     public function merge($con) {
 
         if ($this->id == 0) {
-
-            $ps = $con->getConexao()->prepare("INSERT INTO pedido_entrada(id_fornecedor,id_transportadora,frete,observacoes,frete_inclusao,id_empresa,data,excluido,id_usuario,id_nota,prazo,parcelas,id_status,frete_inclusao) VALUES(" . $this->fornecedor->id . "," . $this->transportadora->id . "," . $this->frete . "," . $this->observacoes . "," . ($this->incluir_frete ? "true" : "false") . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data/1000),false," . $this->usuario->id . "," . ($this->nota != null ? $this->nota->id : 0) . ",$this->prazo,$this->parcelas," . $this->status->id . ",".($this->incluir_frete?"true":"false").")");
+            
+            $ps = $con->getConexao()->prepare("INSERT INTO pedido_entrada(id_fornecedor,id_transportadora,frete,observacoes,frete_inclusao,id_empresa,data,excluido,id_usuario,id_nota,prazo,parcelas,id_status) VALUES(" . $this->fornecedor->id . "," . $this->transportadora->id . "," . $this->frete . ",'" . $this->observacoes . "'," . ($this->incluir_frete ? "true" : "false") . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data/1000),false," . $this->usuario->id . "," . ($this->nota != null ? $this->nota->id : 0) . ",$this->prazo,$this->parcelas," . $this->status->id . ")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
 
         } else {
-
-            $ps = $con->getConexao()->prepare("UPDATE pedido_entrada SET id_fornecedor=" . $this->fornecedor->id . ",id_transportadora=" . $this->transportadora->id . ",frete=" . $this->frete . ",observacoes='" . $this->observacoes . "',frete_inclusao=" . ($this->incluir_frete ? "true" : "false") . ",id_empresa" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data/1000),excluido=false,id_usuario=" . $this->usuario->id . ",id_nota=" . ($this->nota != null ? $this->nota->id : 0) . ",prazo=$this->prazo,parcelas=$this->parcelas,id_status=" . $this->status->id . " WHERE id = $this->id");
+           
+            $ps = $con->getConexao()->prepare("UPDATE pedido_entrada SET id_fornecedor=" . $this->fornecedor->id . ",id_transportadora=" . $this->transportadora->id . ",frete=" . $this->frete . ",observacoes='" . $this->observacoes . "',frete_inclusao=" . ($this->incluir_frete ? "true" : "false") . ",id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data/1000),excluido=false,id_usuario=" . $this->usuario->id . ",id_nota=" . ($this->nota != null ? $this->nota->id : 0) . ",prazo=$this->prazo,parcelas=$this->parcelas,id_status=" . $this->status->id . " WHERE id = $this->id");
             $ps->execute();
             $ps->close();
         }

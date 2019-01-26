@@ -14,7 +14,7 @@
 
 include('includes.php');
 
-class testePedidoEntrada extends PHPUnit_Framework_TestCase {
+class testeProdutoNota extends PHPUnit_Framework_TestCase {
 
     public function testSimple() {
         
@@ -61,7 +61,6 @@ class testePedidoEntrada extends PHPUnit_Framework_TestCase {
         // criando empresa
         
         $empresa = new stdClass();
-        $empresa->id = 1;
         $empresa->juros_mensal = 1.5;
         $empresa->endereco = $e1;
         
@@ -94,7 +93,6 @@ class testePedidoEntrada extends PHPUnit_Framework_TestCase {
         $produto->peso_bruto = 23;
         $produto->estoque = 85;
         $produto->disponivel = 85;
-        $produto->transito = 0;
         $produto->grade = new Grade("15,2,1");
         
         $produto->merge(new ConnectionFactory());
@@ -158,7 +156,6 @@ class testePedidoEntrada extends PHPUnit_Framework_TestCase {
         $produto2->peso_bruto = 23;
         $produto2->estoque = 80;
         $produto2->disponivel = 80;
-        $produto2->transito = 0;
         $produto2->grade = new Grade("15,2,1");
         
         $produto2->merge(new ConnectionFactory());
@@ -201,7 +198,6 @@ class testePedidoEntrada extends PHPUnit_Framework_TestCase {
         $produto3->peso_bruto = 23;
         $produto3->estoque = 80;
         $produto3->disponivel = 80;
-        $produto3->transito = 0;
         $produto3->grade = new Grade("40,10,2");
         
         $produto3->merge(new ConnectionFactory());
@@ -230,111 +226,101 @@ class testePedidoEntrada extends PHPUnit_Framework_TestCase {
         $fornecedor->endereco = $e4;
         $fornecedor->merge(new ConnectionFactory());
         
-        //-----------------------
-        
-        $tra = new Transportadora();
-        $tra->razao_social = "T1";
-        $tra->nome_fantasia = "T2";
-        $tra->cnpj = new CNPJ("11111111111111");
-        $tra->empresa = new stdClass();
-        $tra->empresa->id = 1;
-        $tra->email = new Email("renan_goncalves@outlook.com.br");
-        $tra->despacho = 999;
-        $tra->habilitada = true;
-        $tra->telefone="1234";
-        $tra->inscricao_estadual = "333333333";
-        $tra->endereco = $e3;
-        
-        $tra->merge(new ConnectionFactory());
-        
         //------ criando cotacao;
         
-        $pedido = new PedidoEntrada();
-        $pedido->fornecedor = $fornecedor;
-        $pedido->incluir_frete = true;
-        $pedido->frete = 10;
-        $pedido->prazo = 20;
-        $pedido->usuario = new stdClass();
-        $pedido->usuario->id=1;
-        $pedido->empresa = $empresa;
-        $pedido->status = Sistema::getStatusPedidoEntrada();
-        $pedido->transportadora = $tra;
-        $cancelado = $pedido->status[3];
+        $nota = new stdClass();
+        $nota->id = 2;
+        $nota->fornecedor = $fornecedor;
+        $nota->incluir_frete = true;
+        $nota->saida = false;
+        $nota->interferir_estoque = true;
+        $nota->frete = 10;
+        $nota->prazo = 20;
+        $nota->empresa = $empresa;
         
-        $finalizado = $pedido->status[2];
+        $nota->produtos = array();
         
-        $pedido->status = $pedido->status[1];
-        
-        $pedido->produtos = array();
-        
-        $pp1 = new ProdutoPedidoEntrada();
+        $pp1 = new ProdutoNota();
         $pp1->produto = $produto;
         $pp1->quantidade = 65;
-        $pp1->valor = 10;
-        $pp1->pedido=$pedido;
+        $pp1->cfop = "123";
+        $pp1->valor_unitario = 10;
+        $pp1->nota=$nota;
         
-        $pedido->produtos[] = $pp1;
+        $nota->produtos[] = $pp1;
         
         
-        $pp2 = new ProdutoPedidoEntrada();
+        $pp2 = new ProdutoNota();
         $pp2->produto = $produto2;
         $pp2->quantidade = 20;
-        $pp2->valor = 100;
-        $pp2->pedido=$pedido;
+        $pp2->cfop = "123";
+        $pp2->valor_unitario = 100;
+        $pp2->nota=$nota;
         
-        $pedido->produtos[] = $pp2;
+        $nota->produtos[] = $pp2;
         
-        $pp3 = new ProdutoPedidoEntrada();
+        $pp3 = new ProdutoNota();
         $pp3->produto = $produto;
         $pp3->quantidade = 21;
-        $pp3->valor = 150;
-        $pp3->pedido=$pedido;
+        $pp3->cfop = "123";
+        $pp3->valor_unitario = 150;
+        $pp3->nota=$nota;
         
-        $pedido->produtos[] = $pp3;
+        $nota->produtos[] = $pp3;
         
-        $pp4 = new ProdutoPedidoEntrada();
+        $pp4 = new ProdutoNota();
         $pp4->produto = $produto3;
         $pp4->quantidade = 56;
-        $pp4->valor = 11;
-        $pp4->pedido=$pedido;
+        $pp4->cfop = "123";
+        $pp4->valor_unitario = 11;
+        $pp4->nota=$nota;
         
-        $pedido->produtos[] = $pp4;
+        $nota->produtos[] = $pp4;
 
         //produto1 85 --> 45 e 40 | 65 + 21(3), produto2 80 --> 50 e 30 | 20, produto3 80 --> 80 | 56
         
-        $pedido->merge(new ConnectionFactory());
+        $nota->produtos[0]->merge(new ConnectionFactory());
         
-        $this->assertEquals($produto->transito,86); 
-        $this->assertEquals($produto->estoque,85); 
-
-        $this->assertEquals($produto2->transito,20);
-        $this->assertEquals($produto2->estoque,80);
-    
-        $this->assertEquals($produto3->transito,56);
-        $this->assertEquals($produto3->estoque,80);
+        $this->assertEquals($produto->disponivel,150); 
+        $this->assertEquals($produto->estoque,150); 
         
-        $pedido->status = $cancelado;
+        $nota->produtos[1]->merge(new ConnectionFactory());
         
-        $pedido->merge(new ConnectionFactory());
+        $this->assertEquals($produto2->disponivel,100);
+        $this->assertEquals($produto2->estoque,100);
+        
         //produto1 85 --> 45 e 40 | 65 + 21(3), produto2 80 --> 50 e 30 | 20, produto3 80 --> 80 | 56
-        $this->assertEquals($produto->transito,0);
-        $this->assertEquals($produto2->transito,0);
-        $this->assertEquals($produto3->transito,0);
+
+        $nota->produtos[2]->merge(new ConnectionFactory());   
+        $this->assertEquals($produto->disponivel,171);
+        $this->assertEquals($produto->estoque,171);
+   
+        $nota->produtos[3]->merge(new ConnectionFactory());   
+        $this->assertEquals($produto3->disponivel,136);
+        $this->assertEquals($produto3->estoque,136);
+        
+        $nota->interferir_estoque = false;
+        
+        $nota->produtos[0]->merge(new ConnectionFactory());
+        $nota->produtos[1]->merge(new ConnectionFactory());
+        $nota->produtos[2]->merge(new ConnectionFactory());
+        $nota->produtos[3]->merge(new ConnectionFactory());
+        //produto1 85 --> 45 e 40 | 65 + 21(3), produto2 80 --> 50 e 30 | 20, produto3 80 --> 80 | 56
+        $this->assertEquals($produto->disponivel,85);
+        $this->assertEquals($produto2->disponivel,80);
+        $this->assertEquals($produto3->disponivel,80);
         
         $this->assertEquals($produto->estoque,85);
         $this->assertEquals($produto2->estoque,80);
         $this->assertEquals($produto3->estoque,80);
         
-       $pedido->status = $finalizado;
+       $nota->interferir_estoque = true;
         
-        $pedido->produtos[0]->merge(new ConnectionFactory());
-        $pedido->produtos[1]->merge(new ConnectionFactory());
-        $pedido->produtos[2]->merge(new ConnectionFactory());
-        $pedido->produtos[3]->merge(new ConnectionFactory());
-        //produto1 85 --> 45 e 40 | 65 + 21(3), produto2 80 --> 50 e 30 | 20, produto3 80 --> 80 | 56
-        $this->assertEquals($produto->transito,0);
-        $this->assertEquals($produto2->transito,0);
-        $this->assertEquals($produto3->transito,0);
+        $nota->produtos[0]->merge(new ConnectionFactory());
+        $nota->produtos[1]->merge(new ConnectionFactory());
+        $nota->produtos[2]->merge(new ConnectionFactory());
+        $nota->produtos[3]->merge(new ConnectionFactory());
+       
         
         $this->assertEquals($produto->disponivel,171);
         $this->assertEquals($produto2->disponivel,100);
@@ -344,28 +330,19 @@ class testePedidoEntrada extends PHPUnit_Framework_TestCase {
         $this->assertEquals($produto2->estoque,100);
         $this->assertEquals($produto3->estoque,136);
         
-        $pedido->status = $cancelado;
         
-        $pedido->merge(new ConnectionFactory());
-        
-        $pedido->merge(new ConnectionFactory());
-        
+        $nota->produtos[0]->delete(new ConnectionFactory());
+        $nota->produtos[1]->delete(new ConnectionFactory());
+        $nota->produtos[2]->delete(new ConnectionFactory());
+        $nota->produtos[3]->delete(new ConnectionFactory());
         //produto1 85 --> 45 e 40 | 65 + 21(3), produto2 80 --> 50 e 30 | 20, produto3 80 --> 80 | 56
-        $this->assertEquals($produto->transito,0);
-        $this->assertEquals($produto2->transito,0);
-        $this->assertEquals($produto3->transito,0);
+         $this->assertEquals($produto->disponivel,85);
+        $this->assertEquals($produto2->disponivel,80);
+        $this->assertEquals($produto3->disponivel,80);
         
         $this->assertEquals($produto->estoque,85);
         $this->assertEquals($produto2->estoque,80);
         $this->assertEquals($produto3->estoque,80);
-        
-        unset($pedido->produtos[3]);
-        
-        $this->assertEquals(count($pedido->produtos),3);
-        
-        $pedido->merge(new ConnectionFactory());
-        
-        $this->assertEquals(count($pedido->getProdutos(new ConnectionFactory())),3);
         
     }
 
