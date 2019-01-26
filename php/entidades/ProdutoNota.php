@@ -56,7 +56,7 @@ class ProdutoNota {
 
         if ($this->produto->disponivel + $dif_res < 0) {
 
-            throw new Exception('Sem estoque disponivel para executar essa operacao');
+            throw new Exception('Sem estoque disponivel para executar essa operacao '.$this->produto->disponivel."--".$dif_res);
         }
 
         if ($this->produto->estoque + $dif_res < 0) {

@@ -61,6 +61,7 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         // criando empresa
         
         $empresa = new stdClass();
+        $empresa->id = 2;
         $empresa->juros_mensal = 1.5;
         $empresa->endereco = $e1;
         
@@ -226,12 +227,27 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         $fornecedor->endereco = $e4;
         $fornecedor->merge(new ConnectionFactory());
         
+        $tra = new Transportadora();
+        $tra->razao_social = "T1";
+        $tra->nome_fantasia = "T2";
+        $tra->cnpj = new CNPJ("11111111111111");
+        $tra->empresa = new stdClass();
+        $tra->empresa->id = 1;
+        $tra->email = new Email("renan_goncalves@outlook.com.br");
+        $tra->despacho = 999;
+        $tra->habilitada = true;
+        $tra->telefone="1234";
+        $tra->inscricao_estadual = "333333333";
+        $tra->endereco = $e3;
+        
+        $tra->merge(new ConnectionFactory());
+        
         //------ criando cotacao;
         
-        $nota = new stdClass();
-        $nota->id = 2;
+        $nota = new Nota();
         $nota->fornecedor = $fornecedor;
         $nota->incluir_frete = true;
+        $nota->transportadora = $tra;
         $nota->saida = false;
         $nota->interferir_estoque = true;
         $nota->frete = 10;
@@ -279,32 +295,21 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
 
         //produto1 85 --> 45 e 40 | 65 + 21(3), produto2 80 --> 50 e 30 | 20, produto3 80 --> 80 | 56
         
-        $nota->produtos[0]->merge(new ConnectionFactory());
-        
-        $this->assertEquals($produto->disponivel,150); 
-        $this->assertEquals($produto->estoque,150); 
-        
-        $nota->produtos[1]->merge(new ConnectionFactory());
-        
+        $nota->merge(new ConnectionFactory());
+
         $this->assertEquals($produto2->disponivel,100);
         $this->assertEquals($produto2->estoque,100);
-        
-        //produto1 85 --> 45 e 40 | 65 + 21(3), produto2 80 --> 50 e 30 | 20, produto3 80 --> 80 | 56
 
-        $nota->produtos[2]->merge(new ConnectionFactory());   
         $this->assertEquals($produto->disponivel,171);
         $this->assertEquals($produto->estoque,171);
-   
-        $nota->produtos[3]->merge(new ConnectionFactory());   
+
         $this->assertEquals($produto3->disponivel,136);
         $this->assertEquals($produto3->estoque,136);
         
         $nota->interferir_estoque = false;
         
-        $nota->produtos[0]->merge(new ConnectionFactory());
-        $nota->produtos[1]->merge(new ConnectionFactory());
-        $nota->produtos[2]->merge(new ConnectionFactory());
-        $nota->produtos[3]->merge(new ConnectionFactory());
+        $nota->merge(new ConnectionFactory());
+        $nota->merge(new ConnectionFactory());
         //produto1 85 --> 45 e 40 | 65 + 21(3), produto2 80 --> 50 e 30 | 20, produto3 80 --> 80 | 56
         $this->assertEquals($produto->disponivel,85);
         $this->assertEquals($produto2->disponivel,80);
@@ -316,11 +321,8 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         
        $nota->interferir_estoque = true;
         
-        $nota->produtos[0]->merge(new ConnectionFactory());
-        $nota->produtos[1]->merge(new ConnectionFactory());
-        $nota->produtos[2]->merge(new ConnectionFactory());
-        $nota->produtos[3]->merge(new ConnectionFactory());
-       
+        $nota->merge(new ConnectionFactory());
+        $nota->merge(new ConnectionFactory());
         
         $this->assertEquals($produto->disponivel,171);
         $this->assertEquals($produto2->disponivel,100);
@@ -332,20 +334,18 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         
         $nota->saida = true;
         
-        $nota->produtos[0]->merge(new ConnectionFactory());
-        $nota->produtos[1]->merge(new ConnectionFactory());
          $erro = false;
         
         try{
         
-            $nota->produtos[2]->merge(new ConnectionFactory());
+            $nota->merge(new ConnectionFactory());
+            $nota->merge(new ConnectionFactory());
         
         }catch(Exception $ex){
             
             $erro = true;
             
         }
-        $nota->produtos[3]->merge(new ConnectionFactory());
         $this->assertTrue($erro);
         
         
@@ -353,15 +353,19 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         $this->assertEquals($produto2->estoque,60);
         $this->assertEquals($produto3->estoque,24);
         
-        $nota->produtos[0]->delete(new ConnectionFactory());
-        $nota->produtos[1]->delete(new ConnectionFactory());
-        $nota->produtos[2]->delete(new ConnectionFactory());
-        $nota->produtos[3]->delete(new ConnectionFactory());
+        $nota->delete(new ConnectionFactory());
+
         //produto1 85 --> 45 e 40 | 65 + 21(3), produto2 80 --> 50 e 30 | 20, produto3 80 --> 80 | 56
+        
+        $produto->atualizarEstoque(new ConnectionFactory());
+        $produto2->atualizarEstoque(new ConnectionFactory());
+        $produto3->atualizarEstoque(new ConnectionFactory());
+        
          $this->assertEquals($produto->disponivel,85);
         $this->assertEquals($produto2->disponivel,80);
         $this->assertEquals($produto3->disponivel,80);
         
+       
         $this->assertEquals($produto->estoque,85);
         $this->assertEquals($produto2->estoque,80);
         $this->assertEquals($produto3->estoque,80);

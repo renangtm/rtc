@@ -114,14 +114,13 @@ class Nota {
                 . "categoria_produto.ipi,"
                 . "categoria_produto.icms_normal,"
                 . "categoria_produto.icms"
-                . " FROM produto_cotacao_entrada "
+                . " FROM produto_nota "
                 . "INNER JOIN produto ON produto_nota.id_produto=produto.id "
                 . "INNER JOIN categoria_produto ON categoria_produto.id=produto.id_categoria"
                 . " WHERE produto_nota.id_nota=$this->id");
 
-
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $valor_total, $valor_unitario, $valor_total, $base_calculo, $cfop, $icms, $ipi, $influencia_estoque, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
+        $ps->bind_result($id, $quantidade, $valor_unitario, $valor_total, $base_calculo, $cfop, $icms, $ipi, $influencia_estoque, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
 
         $retorno = array();
 
@@ -189,14 +188,14 @@ class Nota {
     public function merge($con) {
 
         if ($this->id == 0) {
-
-            $ps = $con->getConexao()->prepare("INSERT INTO nota(saida,chave,id_cliente,id_fornecedor,observacao,id_empresa,data_emissao,excluida,influenciar_estoque) VALUES(" . ($this->saida ? "true" : "false") . ",'$this->chave'," . ($this->cliente != null ? $this->cliente->id : 0) . "," . ($this->fornecedor != null ? $this->fornecedor->id : 0) . ",'$this->observacao'," . $this->empresa->id . ",FROM_UNIXTIME($this->data_emissao),false,$this->influenciar_estoque)");
+            
+            $ps = $con->getConexao()->prepare("INSERT INTO nota(saida,chave,id_cliente,id_fornecedor,observacao,id_empresa,data_emissao,excluida,influenciar_estoque) VALUES(" . ($this->saida ? "true" : "false") . ",'$this->chave'," . ($this->cliente != null ? $this->cliente->id : 0) . "," . ($this->fornecedor != null ? $this->fornecedor->id : 0) . ",'$this->observacao'," . $this->empresa->id . ",FROM_UNIXTIME($this->data_emissao/1000),false,".($this->influenciar_estoque?"true":"false").")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
-
-            $ps = $con->getConexao()->prepare("UPDATE nota SET saida=" . ($this->saida ? "true" : "false") . ",chave='$this->chave',id_cliente=" . ($this->cliente != null ? $this->cliente->id : 0) . ",id_fornecedor=" . ($this->fornecedor != null ? $this->fornecedor->id : 0) . ",obs='$this->observacao',id_empresa=" . $this->empresa->id . ",data_emissao=FROM_UNIXTIME($this->data_emissao),excluida=false,influenciar_estoque=" . ($this->influenciar_estoque ? "true" : "false") . ")");
+            
+            $ps = $con->getConexao()->prepare("UPDATE nota SET saida=" . ($this->saida ? "true" : "false") . ",chave='$this->chave',id_cliente=" . ($this->cliente != null ? $this->cliente->id : 0) . ",id_fornecedor=" . ($this->fornecedor != null ? $this->fornecedor->id : 0) . ",observacao='$this->observacao',id_empresa=" . $this->empresa->id . ",data_emissao=FROM_UNIXTIME($this->data_emissao/1000),excluida=false,influenciar_estoque=" . ($this->influenciar_estoque ? "true" : "false") . " WHERE id=$this->id");
             $ps->execute();
             $ps->close();
         }
@@ -215,25 +214,49 @@ class Nota {
 
             $value->delete($con);
         }
-
+        $erro = "";
         foreach ($this->produtos as $key2 => $value2) {
 
-            $value2->merge($con);
+            try {
+
+                $value2->merge($con);
+            } catch (Exception $ex) {
+
+                $erro = $ex->getMessage() . ", produto cod: " . $value2->produto->id . ", estoque: " . $value2->produto->estoque . ", disponivel: " . $value2->produto->disponivel . ", quantidade: " . $value2->quantidade;
+            }
+        }
+        if($erro != ""){
+            throw new Exception($erro);
         }
     }
 
     public function delete($con) {
 
-        $this->influenciar_estoque = false;
+        $this->interferir_estoque = false;
 
+        $erro = "";
+        
+        $this->produtos = $this->getProdutos($con);
         foreach ($this->produtos as $key2 => $value2) {
 
-            $value2->merge($con);
-        }
+            try {
 
+                $value2->merge($con);
+            } catch (Exception $ex) {
+
+                $erro = $ex->getMessage() . ", produto cod: " . $value2->produto->id . ", estoque: " . $value2->produto->estoque . ", disponivel: " . $value2->produto->disponivel . ", quantidade: " . $value2->quantidade;
+            }
+        }
+        
+        
         $ps = $con->getConexao()->prepare("UPDATE nota SET excluida=true WHERE id = " . $this->id);
         $ps->execute();
         $ps->close();
+        
+        if($erro != ""){
+            throw new Exception($erro);
+        }
+        
     }
 
 }
