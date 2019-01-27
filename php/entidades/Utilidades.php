@@ -18,14 +18,34 @@ class Utilidades {
         if ($object === null) {
 
             return "null";
-            
         }
-        
-        if(!is_object($object)){
-            
+
+        if (is_array($object)) {
+
+            $str = "[";
+
+            foreach ($object as $i => $val) {
+
+                if ($i > 0)
+                    $str .= ",";
+
+                $str .= Utilidades::toJson($val, $pilha);
+            }
+
+            $str .= "]";
+
+            return $str;
+        }else if (is_numeric($object)) {
+
             return $object;
-            
+        } else if (is_bool($object)) {
+
+            return ($object ? "true" : "false");
+        } else if (is_string($object)) {
+
+            return '"' . $object . '"';
         }
+
 
         if ($pilha == null) {
 
@@ -52,30 +72,7 @@ class Utilidades {
 
         foreach ($object as $atributo => $valor) {
 
-            if (is_numeric($valor)) {
-
-                $str .= ",\"$atributo\":$valor";
-            } else if (is_string($valor)) {
-
-                $str .= ",\"$atributo\":\"$valor\"";
-                
-            } else if (is_array($valor)) {
-
-                $str .= ",\"$atributo\":[";
-
-                foreach ($valor as $i => $val) {
-
-                    if ($i > 0)
-                        $str .= ",";
-
-                    $str .= Utilidades::toJson($val, $pilha);
-                }
-
-                $str .= "]";
-            }else if (is_object($valor)) {
-
-                $str .= ",\"$atributo\":" . Utilidades::toJson($valor, $pilha);
-            }
+            $str .= ",\"$atributo\":" . Utilidades::toJson($valor, $pilha);
         }
 
 
@@ -92,11 +89,10 @@ class Utilidades {
 
             $pilha = array();
         }
-        
-        if(!is_object($obj)){
-            
+
+        if (!is_object($obj)) {
+
             return $obj;
-            
         }
 
         if (isset($obj->recursao)) {
@@ -112,7 +108,7 @@ class Utilidades {
 
         foreach ($obj as $atributo => $valor) {
 
-            if (is_numeric($valor) || is_string($valor)) {
+            if (is_numeric($valor) || is_string($valor) || is_bool($valor)) {
 
                 $real->$atributo = $valor;
             } else if (is_array($valor)) {
@@ -139,9 +135,8 @@ class Utilidades {
     public static function fromJson($str) {
 
         $js = json_decode($str);
-        
+
         return self::getObject($js);
-        
     }
 
     public static function getEmpresaTeste() {

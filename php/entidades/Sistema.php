@@ -25,6 +25,16 @@ class Sistema {
         
     }
     
+    public static function relacionarFilial($empresa1,$empresa2){
+     
+        $con = new ConnectionFactory();
+        
+        $ps = $con->getConexao()->prepare("INSERT INTO filial(id_empresa1,id_empresa2) VALUES($empresa1->id,$empresa2->id)");
+        $ps->execute();
+        $ps->close();
+        
+    }
+    
     public static function getStatusPedidoEntrada(){
         
         $status = array();

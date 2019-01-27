@@ -7,7 +7,7 @@ $ses = new SessionManager();
 $c = new ConnectionFactory();
 
 $usuario = $ses->get("usuario");
-$empresa = $usuario->empresa;
+$empresa = $ses->get("empresa");
 
 $objeto = null;
 
@@ -25,11 +25,11 @@ $codigo = "";
 
 if(isset($_POST['c'])){
     
-    $codigo = $_POST['codigo'];
+    $codigo = $_POST['c'];
     
 }else if(isset($_GET['c'])){
     
-    $codigo = $_GET['codigo'];
+    $codigo = $_GET['c'];
     
 }else{
     
@@ -39,10 +39,15 @@ if(isset($_POST['c'])){
 
 $r = new stdClass();
 $r->sucesso = true;
-$r->objeto = $objeto;
+
+if($objeto!= null){
+    
+    $r->objeto = $objeto;
+    
+}
 
 $codigo = str_replace(".", "->", $codigo);
 
-eval('try{ '.$codigo.'; }catch(Exception $ex){$r->sucesso = false;$r->mensagem=$ex->getMessage()}');
+eval('try{ '.$codigo.'; }catch(Exception $ex){$r->sucesso = false;$r->mensagem=$ex->getMessage();}');
 
 echo Utilidades::toJson($r);

@@ -177,7 +177,7 @@ class CotacaoEntrada {
             $empresa->id = $id_empresa;
             $empresa->cnpj = new CNPJ($cnpj);
             $empresa->inscricao_estadual = $inscricao_empresa;
-            $empresa->nome = $nome;
+            $empresa->nome = $nome_empresa;
             $empresa->aceitou_contrato = $aceitou_contrato;
             $empresa->juros_mensal = $juros_mensal;
             $empresa->consigna = $consigna;
