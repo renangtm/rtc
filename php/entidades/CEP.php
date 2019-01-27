@@ -15,7 +15,7 @@ class CEP {
 
     public $valor;
 
-    function __construct($str) {
+    function __construct($str = "") {
 
         $this->valor = str_replace(array("-"), array(""), $str);
 

@@ -23,8 +23,7 @@ class testeUsuario extends PHPUnit_Framework_TestCase {
         $usuario->nome = "Teste";
         $usuario->telefones[]= new Telefone("1234");
         $usuario->cpf = new CPF("11122233344455");
-        $usuario->empresa = new stdClass();
-        $usuario->empresa->id = 1;
+        $usuario->empresa = Utilidades::getEmpresaTeste();
         $usuario->login = "12344321";
         $usuario->senha = "1233";
         

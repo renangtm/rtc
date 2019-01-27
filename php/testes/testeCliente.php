@@ -49,8 +49,7 @@ class testeCliente extends PHPUnit_Framework_TestCase {
         $cliente->cpf = new CPF("11111111111");
         $cliente->rg = new RG("111111111");
         $cliente->categoria = $cat;
-        $cliente->empresa = new stdClass();
-        $cliente->empresa->id = 1;
+        $cliente->empresa = Utilidades::getEmpresaTeste();
         $cliente->email = new Email("renan_goncalves@outlook.com.br");
         
         $cliente->telefones[] = new Telefone("1234412");

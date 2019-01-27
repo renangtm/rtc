@@ -22,8 +22,7 @@ class testeMovimento extends PHPUnit_Framework_TestCase {
         
         $banco = new Banco();
         $banco->saldo = 10000;
-        $banco->empresa = new stdClass();
-        $banco->empresa->id = 1;
+        $banco->empresa = Utilidades::getEmpresaTeste();
         $banco->nome = "Itau";
         $banco->conta = "dedede";
         

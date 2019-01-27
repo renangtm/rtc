@@ -23,8 +23,7 @@ class testeCategoriaCliente extends PHPUnit_Framework_TestCase {
         $grupo = new GrupoCidades();
         $grupo->nome = "Teste";
         
-        $grupo->empresa = new stdClass();
-        $grupo->empresa->id = 1;
+        $grupo->empresa = Utilidades::getEmpresaTeste();
         
         $cidades = Sistema::getCidades($con);
         

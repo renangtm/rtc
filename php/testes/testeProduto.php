@@ -27,8 +27,7 @@ class testeProduto extends PHPUnit_Framework_TestCase {
         $produto->liquido = false;
         $produto->unidade = "Galao";
         $produto->quantidade_unidade = 0.25;
-        $produto->empresa = new stdClass();
-        $produto->empresa->id = 1;
+        $produto->empresa = Utilidades::getEmpresaTeste();
         $produto->valor_base = 0.3;
         $produto->custo = 123;
         $produto->ncm = "12341234";

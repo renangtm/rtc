@@ -13,6 +13,167 @@
  */
 class Utilidades {
 
+    public static function toJson($object, $pilha = null) {
+
+        if ($object === null) {
+
+            return "null";
+            
+        }
+        
+        if(!is_object($object)){
+            
+            return $object;
+            
+        }
+
+        if ($pilha == null) {
+
+            $pilha = array();
+        }
+
+        $str = '{';
+
+        $str .= "\"_classe\":\"" . get_class($object) . "\"";
+
+        foreach ($pilha as $key => $value) {
+
+            if ($value === $object) {
+
+                $v = count($pilha) - $key;
+
+                $str .= ",\"recursao\":$v";
+
+                return $str . "}";
+            }
+        }
+
+        $pilha[] = $object;
+
+        foreach ($object as $atributo => $valor) {
+
+            if (is_numeric($valor)) {
+
+                $str .= ",\"$atributo\":$valor";
+            } else if (is_string($valor)) {
+
+                $str .= ",\"$atributo\":\"$valor\"";
+                
+            } else if (is_array($valor)) {
+
+                $str .= ",\"$atributo\":[";
+
+                foreach ($valor as $i => $val) {
+
+                    if ($i > 0)
+                        $str .= ",";
+
+                    $str .= Utilidades::toJson($val, $pilha);
+                }
+
+                $str .= "]";
+            }else if (is_object($valor)) {
+
+                $str .= ",\"$atributo\":" . Utilidades::toJson($valor, $pilha);
+            }
+        }
+
+
+        $str .= '}';
+
+        unset($pilha[count($pilha) - 1]);
+
+        return $str;
+    }
+
+    private static function getObject($obj, $pilha = null) {
+
+        if ($pilha == null) {
+
+            $pilha = array();
+        }
+        
+        if(!is_object($obj)){
+            
+            return $obj;
+            
+        }
+
+        if (isset($obj->recursao)) {
+
+            return $pilha[count($pilha) - $obj->recursao];
+        }
+
+        $real = null;
+
+        eval('$real = new ' . $obj->_classe . "();");
+
+        $pilha[] = $real;
+
+        foreach ($obj as $atributo => $valor) {
+
+            if (is_numeric($valor) || is_string($valor)) {
+
+                $real->$atributo = $valor;
+            } else if (is_array($valor)) {
+
+                $vet = array();
+
+                foreach ($valor as $i => $val) {
+
+                    $vet[] = self::getObject($val, $pilha);
+                }
+
+                $real->$atributo = $vet;
+            } else if (is_object($valor)) {
+
+                $real->$atributo = self::getObject($valor, $pilha);
+            }
+        }
+
+        unset($pilha[count($pilha)]);
+
+        return $real;
+    }
+
+    public static function fromJson($str) {
+
+        $js = json_decode($str);
+        
+        return self::getObject($js);
+        
+    }
+
+    public static function getEmpresaTeste() {
+
+        $empresa = new Empresa();
+
+        $empresa->nome = "Teste";
+        $empresa->cnpj = new CNPJ("11122233344455");
+        $empresa->inscricao_estadual = "1234412";
+        $empresa->juros_mensal = 1.5;
+
+        $e1 = new Endereco();
+
+        $e1->rua = "Rua Teste";
+        $e1->bairro = "Bairro Teste";
+        $e1->numero = 0;
+        $e1->cep = new CEP("07195201");
+        $e1->cidade = Sistema::getCidades(new ConnectionFactory());
+        $e1->cidade = $e1->cidade[0];
+
+        $empresa->endereco = $e1;
+
+        $empresa->email = new Email("teserewfdwefd");
+
+        $empresa->telefone = new Telefone("t1241243");
+
+
+        $empresa->merge(new ConnectionFactory());
+
+        return $empresa;
+    }
+
     public static function base64encode($val) {
 
         $chrArr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -74,33 +235,30 @@ class Utilidades {
 
         return $res;
     }
-    
-    public static function toHex($str){
-        
+
+    public static function toHex($str) {
+
         $hex = "";
-        
-        $n = array("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f");
-        
-        for($i=0;$i<strlen($str);$i++){
-            
+
+        $n = array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f");
+
+        for ($i = 0; $i < strlen($str); $i++) {
+
             $k = ord($str{$i});
-           
+
             $hi = "";
-            
-            while($k>0){
-                
-                $hi = $n[$k%16].$hi;
-                
-                $k = ($k-$k%16)/16;
-                
+
+            while ($k > 0) {
+
+                $hi = $n[$k % 16] . $hi;
+
+                $k = ($k - $k % 16) / 16;
             }
-            
+
             $hex .= $hi;
-            
         }
-        
+
         return $hex;
-        
     }
 
 }

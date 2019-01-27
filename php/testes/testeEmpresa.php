@@ -14,16 +14,15 @@
 
 include('includes.php');
 
-class testeFornecedor extends PHPUnit_Framework_TestCase {
+class testeEmpresa extends PHPUnit_Framework_TestCase {
 
     public function testSimple() {
         
-        $fornecedor = new Fornecedor();
+        $empresa = new Empresa();
         
-        $fornecedor->nome = "Teste";
-        $fornecedor->telefones[] = new Telefone("111111");
-        $fornecedor->cnpj = new CNPJ("11122233344455");
-        $fornecedor->empresa = Utilidades::getEmpresaTeste();
+        $empresa->nome = "Teste";
+        $empresa->cnpj = new CNPJ("11122233344455");
+        $empresa->inscricao_estadual = "1234412";
         
         $e = new Endereco();
         
@@ -34,16 +33,18 @@ class testeFornecedor extends PHPUnit_Framework_TestCase {
         $e->cidade = new stdClass();
         $e->cidade->id = 3;
         
-        $fornecedor->endereco = $e;
+        $empresa->endereco = $e;
         
-        $fornecedor->email = new Email("teserewfdwefd");
+        $empresa->email = new Email("teserewfdwefd");
+        
+        $empresa->telefone = new Telefone("t1241243");
         
         
-        $fornecedor->merge(new ConnectionFactory());
+        $empresa->merge(new ConnectionFactory());
         
-        $fornecedor->merge(new ConnectionFactory());
+        $empresa->merge(new ConnectionFactory());
         
-        $fornecedor->delete(new ConnectionFactory());
+        $empresa->delete(new ConnectionFactory());
         
     }
 

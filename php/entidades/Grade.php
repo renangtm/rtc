@@ -16,7 +16,7 @@ class Grade {
     public $gr;
     public $str;
     
-    function __construct($str) {
+    function __construct($str="1") {
         
         $this->str = $str;
         $this->gr = array();

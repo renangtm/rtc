@@ -60,10 +60,7 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         
         // criando empresa
         
-        $empresa = new stdClass();
-        $empresa->id = 2;
-        $empresa->juros_mensal = 1.5;
-        $empresa->endereco = $e1;
+        $empresa = Utilidades::getEmpresaTeste();
         
         // criando categorias de produto
         
@@ -353,6 +350,10 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         $this->assertEquals($produto2->estoque,60);
         $this->assertEquals($produto3->estoque,24);
         
+        $nota_json = Utilidades::toJson($nota);
+        
+        $nota = Utilidades::fromJson($nota_json);
+        
         $nota->delete(new ConnectionFactory());
 
         //produto1 85 --> 45 e 40 | 65 + 21(3), produto2 80 --> 50 e 30 | 20, produto3 80 --> 80 | 56
@@ -361,14 +362,16 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         $produto2->atualizarEstoque(new ConnectionFactory());
         $produto3->atualizarEstoque(new ConnectionFactory());
         
-         $this->assertEquals($produto->disponivel,85);
+        $this->assertEquals($produto->disponivel,85);
         $this->assertEquals($produto2->disponivel,80);
         $this->assertEquals($produto3->disponivel,80);
-        
+       
        
         $this->assertEquals($produto->estoque,85);
         $this->assertEquals($produto2->estoque,80);
         $this->assertEquals($produto3->estoque,80);
+        
+        
         
     }
 

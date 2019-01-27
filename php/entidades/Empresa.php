@@ -16,7 +16,7 @@ class Empresa {
     public $id;
     public $nome;
     public $email;
-    public $telefones;
+    public $telefone;
     public $endereco;
     public $cnpj;
     public $excluida;
@@ -29,11 +29,14 @@ class Empresa {
 
         $this->id = 0;
         $this->email = null;
-        $this->telefones = array();
+        $this->telefone = null;
         $this->endereco = null;
         $this->email = null;
         $this->excluida = false;
         $this->cnpj = new CNPJ("");
+        $this->aceitou_contrato = false;
+        $this->consigna = false;
+        $this->juros_mensal = 0;
   
     }
 
@@ -41,7 +44,7 @@ class Empresa {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO empresa(nome,excluida,inscricao_estadual,consigna,aceitou_contrato,juros_mensal,cnpj) VALUES('" . addslashes($this->nome) . "',false,'" . $this->inscricao_estadual . "'," . ($this->consigna?"true":"false") . ",".($this->aceitou_contrato?"true":"false").",false,$this->juros_mensal,'".$this->cnpj->valor."')");
+            $ps = $con->getConexao()->prepare("INSERT INTO empresa(nome,excluida,inscricao_estadual,consigna,aceitou_contrato,juros_mensal,cnpj) VALUES('" . addslashes($this->nome) . "',false,'" . $this->inscricao_estadual . "'," . ($this->consigna?"true":"false") . ",".($this->aceitou_contrato?"true":"false").",$this->juros_mensal,'".$this->cnpj->valor."')");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
@@ -51,6 +54,24 @@ class Empresa {
             $ps->execute();
             $ps->close();
         }
+        
+        $this->email->merge($con);
+
+        $ps = $con->getConexao()->prepare("UPDATE email SET id_entidade=" . $this->id . ", tipo_entidade='EMP' WHERE id = " . $this->email->id);
+        $ps->execute();
+        $ps->close();
+
+        $this->endereco->merge($con);
+
+        $ps = $con->getConexao()->prepare("UPDATE endereco SET id_entidade=" . $this->id . ", tipo_entidade='EMP' WHERE id = " . $this->endereco->id);
+        $ps->execute();
+        $ps->close();
+        
+        $this->telefone->merge($con);
+
+        $ps = $con->getConexao()->prepare("UPDATE telefone SET id_entidade=" . $this->id . ", tipo_entidade='EMP' WHERE id = " . $this->telefone->id);
+        $ps->execute();
+        $ps->close();
 
         
     }
@@ -62,5 +83,6 @@ class Empresa {
         $ps->execute();
         $ps->close();
     }
+    
 
 }

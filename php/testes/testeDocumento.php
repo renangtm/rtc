@@ -20,7 +20,8 @@ class testeEmail extends PHPUnit_Framework_TestCase {
         
         $doc = new Documento();
         
-        $doc->categoria = Sistema::getCategoriaDocumentos()[0];
+        $doc->categoria = Sistema::getCategoriaDocumentos();
+        $doc->categoria = $doc->categoria[0];
         
         $doc->numero = "erfqwerewq";
         

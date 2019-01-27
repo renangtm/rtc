@@ -14,21 +14,22 @@
 
 include('includes.php');
 
-class testeLogo extends PHPUnit_Framework_TestCase {
+class testeLogoAndEval extends PHPUnit_Framework_TestCase {
 
     public function testSimple() {
-        
-        $logo = new Logo();
-        $logo->logo = Utilidades::base64encode("LOGO INVALIDO");
-        $logo->cor_predominante = "255,255,255";
-        $logo->empresa = new stdClass();
-        $logo->empresa->id = 1;
-        
-        $logo->merge(new ConnectionFactory());
-   
-        $logo->merge(new ConnectionFactory());
-        
-        $logo->delete(new ConnectionFactory());
+       
+       $str = "";
+       $str .= '$logo = new Logo();';
+       $str .= '$logo->logo = Utilidades::base64encode("LOGO INVALIDO");';
+       $str .= '$logo->cor_predominante = "255,255,255";';
+       $str .= '$logo->empresa = Utilidades::getEmpresaTeste();';
+       $str .= '$logo->merge(new ConnectionFactory());';
+       $str .= '$logo->merge(new ConnectionFactory());';
+       $str .= '$logo->delete(new ConnectionFactory());';
+       
+       eval($str);
+       
+       echo $str;
         
     }
 

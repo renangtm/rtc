@@ -18,7 +18,7 @@ class Email {
     public $excluido;
     public $senha;
     
-    function __construct($str) {
+    function __construct($str="") {
         
         $this->id = 0;
         $this->endereco = $str;

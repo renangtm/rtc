@@ -21,8 +21,7 @@ class testeParametrosEmissao extends PHPUnit_Framework_TestCase {
         $parametros = new ParametrosEmissao();
         $parametros->registro = "123";
         $parametros->saldo = 123;
-        $parametros->empresa = new stdClass();
-        $parametros->empresa->id = 1;
+        $parametros->empresa = Utilidades::getEmpresaTeste();
         $parametros->certificado = Utilidades::base64encode("TESTE CERTIFICADO INVALIDO");
         $parametros->senha_certificado = "123456";
         

@@ -23,8 +23,7 @@ class testeCampanha extends PHPUnit_Framework_TestCase {
         $cat->prazo = 12;
         $cat->parcelas = 1;
         $cat->cliente_expression = "123";
-        $cat->empresa = new stdClass();
-        $cat->empresa->id=1;
+        $cat->empresa = Utilidades::getEmpresaTeste();
         
         $p = new ProdutoCampanha();
         

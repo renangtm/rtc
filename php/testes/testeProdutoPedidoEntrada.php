@@ -60,9 +60,7 @@ class testeProdutoPedidoEntrada extends PHPUnit_Framework_TestCase {
         
         // criando empresa
         
-        $empresa = new stdClass();
-        $empresa->juros_mensal = 1.5;
-        $empresa->endereco = $e1;
+        $empresa = Utilidades::getEmpresaTeste();
         
         // criando categorias de produto
         
@@ -84,8 +82,7 @@ class testeProdutoPedidoEntrada extends PHPUnit_Framework_TestCase {
         $produto->liquido = false;
         $produto->unidade = "Galao";
         $produto->quantidade_unidade = 0.25;
-        $produto->empresa = new stdClass();
-        $produto->empresa->id = 1;
+        $produto->empresa = Utilidades::getEmpresaTeste();
         $produto->valor_base = 100;
         $produto->custo = 123;
         $produto->ncm = "12341234";
@@ -148,8 +145,7 @@ class testeProdutoPedidoEntrada extends PHPUnit_Framework_TestCase {
         $produto2->liquido = false;
         $produto2->unidade = "Galao";
         $produto2->quantidade_unidade = 0.25;
-        $produto2->empresa = new stdClass();
-        $produto2->empresa->id = 1;
+        $produto2->empresa = Utilidades::getEmpresaTeste();
         $produto2->valor_base = 15;
         $produto2->custo = 123;
         $produto2->ncm = "12341234";
@@ -191,8 +187,7 @@ class testeProdutoPedidoEntrada extends PHPUnit_Framework_TestCase {
         $produto3->liquido = false;
         $produto3->unidade = "Galao";
         $produto3->quantidade_unidade = 0.25;
-        $produto3->empresa = new stdClass();
-        $produto3->empresa->id = 1;
+        $produto3->empresa = Utilidades::getEmpresaTeste();
         $produto3->valor_base = 10;
         $produto3->custo = 123;
         $produto3->ncm = "12341234";

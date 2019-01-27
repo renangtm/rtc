@@ -42,8 +42,7 @@ class testeTransportadora extends PHPUnit_Framework_TestCase {
         $transportadora->razao_social = "T1";
         $transportadora->nome_fantasia = "T2";
         $transportadora->cnpj = new CNPJ("11111111111111");
-        $transportadora->empresa = new stdClass();
-        $transportadora->empresa->id = 1;
+        $transportadora->empresa = Utilidades::getEmpresaTeste();
         $transportadora->email = new Email("renan_goncalves@outlook.com.br");
         $transportadora->despacho = 999;
         $transportadora->habilitada = true;

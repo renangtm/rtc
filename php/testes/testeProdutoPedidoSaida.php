@@ -60,9 +60,7 @@ class testeProdutoPedidoSaida extends PHPUnit_Framework_TestCase {
         
         // criando empresa
         
-        $empresa = new stdClass();
-        $empresa->juros_mensal = 1.5;
-        $empresa->endereco = $e1;
+        $empresa = Utilidades::getEmpresaTeste();
         
         // criando categorias de produto
         

@@ -18,6 +18,18 @@ class testeUtilidades extends PHPUnit_Framework_TestCase {
 
     public function testSimple() {
         
+       $rec = new stdClass();
+       $rec->id = 1;
+       $rec->rec = array($rec,$rec,$rec,$rec);
+       
+       $js = Utilidades::toJson($rec)."     ";
+       
+       echo $js;
+       
+       $o = Utilidades::fromJson($js);
+       
+       echo $o->rec[0]->rec[1]->rec[0]->rec[1]->rec[0]->rec[2]->rec[3]->rec[0]->id."      ";
+        
        $str = "Renan 12341";
         
        $e = Utilidades::base64encode($str);

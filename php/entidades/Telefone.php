@@ -17,7 +17,7 @@ class Telefone {
     public $numero;
     public $excluido;
     
-    function __construct($str) {
+    function __construct($str="") {
         
         $this->id = 0;
         $this->numero = $str;
