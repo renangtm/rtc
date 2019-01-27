@@ -4,6 +4,8 @@ include("includes.php");
 
 $ses = new SessionManager();
 
+$c = new ConnectionFactory();
+
 $usuario = $ses->get("usuario");
 $empresa = $usuario->empresa;
 
@@ -35,12 +37,12 @@ if(isset($_POST['c'])){
     
 }
 
-$retorno = new stdClass();
-$retorno->erro = "";
-$retorno->objeto = $objeto;
+$r = new stdClass();
+$r->sucesso = true;
+$r->objeto = $objeto;
 
 $codigo = str_replace(".", "->", $codigo);
 
-eval('try{ '.$codigo.'; }catch(Exception $ex){$retorno->erro = $ex->getMessage();}');
+eval('try{ '.$codigo.'; }catch(Exception $ex){$r->sucesso = false;$r->mensagem=$ex->getMessage()}');
 
-echo Utilidades::toJson($retorno);
+echo Utilidades::toJson($r);
