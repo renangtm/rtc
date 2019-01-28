@@ -20,8 +20,9 @@ class Movimento {
     public $vencimento;
     public $data;
     public $banco;
-    public $debito;
     public $saldo_anterior;
+    public $historico;
+    public $operacao;
 
     function __construct() {
 
@@ -39,11 +40,11 @@ class Movimento {
 
         if ($this->id == 0) {
 
-            if($this->vencimento->nota->saida && $this->debito){
+            if($this->vencimento->nota->saida && $this->operacao->debito){
                 
                 throw new Exception('A nota é de saida porem esse movimento é um desconto');
                 
-            }else if(!$this->vencimento->nota->saida && !$this->debito){
+            }else if(!$this->vencimento->nota->saida && !$this->operacao->debito){
                 
                 throw new Exception('A nota é de entrada porem esse movimento é um crédito');
                 
@@ -69,7 +70,7 @@ class Movimento {
             $this->banco->atualizaSaldo($con);
 
             $this->saldo_anterior = $this->banco->saldo;
-            $ps = $con->getConexao()->prepare("SELECT saldo_anterior,valor,juros,descontos,debito FROM movimento WHERE data = (SELECT MAX(data) FROM movimento WHERE data<FROM_UNIXTIME($this->data/1000) AND id_banco=" . $this->banco->id . ") AND id_banco = ".$this->banco->id);
+            $ps = $con->getConexao()->prepare("SELECT saldo_anterior,valor,juros,descontos,operacao.debito FROM movimento INNER JOIN operacao ON movimento.id_operacao=operacao.id WHERE data = (SELECT MAX(data) FROM movimento WHERE data<FROM_UNIXTIME($this->data/1000) AND id_banco=" . $this->banco->id . ") AND id_banco = ".$this->banco->id);
             $ps->execute();
             $ps->bind_result($sa, $val, $jur, $des, $deb);
             if ($ps->fetch()) {
@@ -78,7 +79,7 @@ class Movimento {
             }else{
                 $ps->close();
                 
-                $ps = $con->getConexao()->prepare("SELECT SUM((valor+juros-descontos)*(CASE WHEN debito THEN -1 ELSE 1 END)) FROM movimento WHERE id_banco=".$this->banco->id);
+                $ps = $con->getConexao()->prepare("SELECT SUM((valor+juros-descontos)*(CASE WHEN operacao.debito THEN -1 ELSE 1 END)) FROM movimento INNER JOIN operacao ON movimento.id_operacao=operacao.id WHERE id_banco=".$this->banco->id);
                 $ps->execute();
                 $ps->bind_result($valt);
                 if($ps->fetch()){
@@ -91,13 +92,13 @@ class Movimento {
             }
             
 
-            $vl = ($this->debito ? (- ($this->valor + $this->juros - $this->descontos)) : (+ ($this->valor + $this->juros - $this->descontos)));
+            $vl = ($this->operacao->debito ? (- ($this->valor + $this->juros - $this->descontos)) : (+ ($this->valor + $this->juros - $this->descontos)));
 
             $this->banco->saldo += $vl;
 
             $this->banco->merge($con);
 
-            $ps = $con->getConexao()->prepare("INSERT INTO movimento(data,saldo_anterior,valor,id_vencimento,id_banco,juros,descontos,debito) VALUES(FROM_UNIXTIME($this->data/1000),$this->saldo_anterior,$this->valor," . $this->vencimento->id . "," . $this->banco->id . ",$this->juros,$this->descontos," . ($this->debito ? "true" : "false") . ")");
+            $ps = $con->getConexao()->prepare("INSERT INTO movimento(data,saldo_anterior,valor,id_vencimento,id_banco,juros,descontos,id_historico,id_operacao) VALUES(FROM_UNIXTIME($this->data/1000),$this->saldo_anterior,$this->valor," . $this->vencimento->id . "," . $this->banco->id . ",$this->juros,$this->descontos,".$this->historico->id.",".$this->operacao->id.")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
@@ -105,6 +106,11 @@ class Movimento {
             $ps = $con->getConexao()->prepare("UPDATE movimento SET saldo_anterior = saldo_anterior + ($vl), data=data WHERE data>FROM_UNIXTIME($this->data/1000) AND id_banco=" . $this->banco->id);
             $ps->execute();
             $ps->close();
+            
+            $ps = $con->getConexao()->prepare("UPDATE vencimento SET id_movimento=$this->id WHERE id=".$this->vencimento->id);
+            $ps->execute();
+            $ps->close();
+            
         }
     }
 
@@ -116,7 +122,7 @@ class Movimento {
             $ps->execute();
             $ps->close();
 
-            $vl = ($this->debito ? (- ($this->valor + $this->juros - $this->descontos)) : (+ ($this->valor + $this->juros - $this->descontos)));
+            $vl = ($this->operacao->debito ? (- ($this->valor + $this->juros - $this->descontos)) : (+ ($this->valor + $this->juros - $this->descontos)));
 
             $ps = $con->getConexao()->prepare("UPDATE movimento SET saldo_anterior = saldo_anterior - ($vl), data=data WHERE data>FROM_UNIXTIME($this->data/1000) AND id_banco=" . $this->banco->id);
             $ps->execute();

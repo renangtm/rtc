@@ -11,16 +11,18 @@
  *
  * @author Renan
  */
-class Estado {
+class Operacao {
 
     public $id;
-    public $sigla;
-    public $excluido;
+    public $nome;
+    public $excluida;
+    public $debito;
     
     function __construct() {
 
         $this->id = 0;
-        $this->excluido = false;
+        $this->debito = true;
+        $this->excluida = false;
         
     }
 
@@ -28,14 +30,14 @@ class Estado {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO estado(sigla,excluido) VALUES('" . addslashes($this->sigla) . "',false)");
+            $ps = $con->getConexao()->prepare("INSERT INTO operacao(nome,excluida,debito) VALUES('" . addslashes($this->nome) . "',false,".($this->debito?"true":"false").")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
             
         }else{
             
-            $ps = $con->getConexao()->prepare("UPDATE estado SET sigla = '" . addslashes($this->sigla) . "', excluido = false WHERE id = ".$this->id);
+            $ps = $con->getConexao()->prepare("UPDATE operacao SET nome = '" . addslashes($this->nome) . "', excluida = false,debito=".($this->debito?"true":"false")." WHERE id = ".$this->id);
             $ps->execute();
             $ps->close();
             
@@ -46,7 +48,7 @@ class Estado {
     
     public function delete($con){
         
-        $ps = $con->getConexao()->prepare("UPDATE estado SET excluido = true WHERE id = ".$this->id);
+        $ps = $con->getConexao()->prepare("UPDATE operacao SET excluida = true WHERE id = ".$this->id);
         $ps->execute();
         $ps->close();
         

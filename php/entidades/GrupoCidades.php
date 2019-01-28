@@ -24,6 +24,7 @@ class GrupoCidades {
         $this->id = 0;
         $this->empresa = null;
         $this->cidades = array();
+        $this->excluido = false;
     }
 
     public function merge($con) {

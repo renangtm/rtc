@@ -27,9 +27,9 @@ class InterpretadorBooleano {
     private static $MIN = '<';
     private static $EQ = '=';
     private static $NG = '~';
-    private $funcoes;
-    private $leitorNumerico;
-    private $obj;
+    public $funcoes;
+    public $leitorNumerico;
+    public $obj;
 
     function __construct() {
 

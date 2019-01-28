@@ -18,6 +18,8 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
 
     public function testSimple() {
         
+        $con = new ConnectionFactory();
+        /*
         $empresa = new Empresa();
         
         $empresa->nome = "Teste";
@@ -119,6 +121,114 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         $this->assertEquals($filiais[0]->id, $empresa->id);
         $this->assertEquals($filiais[1]->id, $empresa2->id);
         
+        $banco = new Banco();
+        $banco->codigo = "123";
+        $banco->conta = "123423";
+        $banco->empresa = $empresa;
+        $banco->nome = "Teste";
+        $banco->saldo = 1234;
+        
+        $banco->merge($con);
+        
+        $banco2 = new Banco();
+        $banco2->codigo = "321";
+        $banco2->conta = "321321";
+        $banco2->empresa = $empresa;
+        $banco2->nome = "Teste321";
+        $banco2->saldo = 4321;
+        
+        $banco2->merge($con);
+        
+        $bancos = $empresa->getBancos($con);
+        
+        $this->assertEquals(count($bancos),2);
+        
+        $this->assertEquals($bancos[0]->id,$banco->id);
+        $this->assertEquals($bancos[1]->id,$banco2->id);
+        */
+        /*
+        $empresa = Utilidades::getEmpresaTeste();
+        
+        $pedido1 = Utilidades::getPedidoTeste($empresa);
+        $pedido2 = Utilidades::getPedidoTeste($empresa);
+        $pedido3 = Utilidades::getPedidoTeste($empresa);
+      
+        
+        $pedidos = $empresa->getPedidos($con, 0, 2);
+        
+        $this->assertEquals($pedido1->id,$pedidos[0]->id);
+        $this->assertEquals($pedido2->id,$pedidos[1]->id);
+        
+        $pedidos = $empresa->getPedidos($con, 2, 3);
+        
+        $this->assertEquals($pedido3->id,$pedidos[0]->id);
+        
+        echo "    ".Utilidades::toJson($pedidos);
+        
+        $this->assertEquals($empresa->getCountPedidos($con),3);
+        
+         */
+        /*
+        $empresa = Utilidades::getEmpresaTeste();
+        
+        $campanha1 = Utilidades::getCampanhaTeste($empresa);
+        $campanha2 = Utilidades::getCampanhaTeste($empresa);
+        
+        $campanhas = $empresa->getCampanhas($con, 0, 2);
+        
+        echo Utilidades::toJson($campanhas);
+        
+        $this->assertEquals($campanhas[0]->id,$campanha1->id);
+        $this->assertEquals($campanhas[1]->id,$campanha2->id);
+        
+        $this->assertEquals($empresa->getCountCampanha($con),2);
+        */
+        /*
+        $empresa = Utilidades::getEmpresaTeste();
+        
+        $grupo1 = Utilidades::getGrupoCidadesTeste($empresa);
+        $grupo2 = Utilidades::getGrupoCidadesTeste($empresa);
+        $grupo3 = Utilidades::getGrupoCidadesTeste($empresa);
+        
+        $grupos = $empresa->getGruposCidades($con, 0, 2);
+        
+        $this->assertEquals($grupo1->id,$grupos[0]->id);
+        $this->assertEquals($grupo2->id,$grupos[1]->id);
+        
+        $grupos = $empresa->getGruposCidades($con, 2, 3);
+        
+        $this->assertEquals($grupo3->id,$grupos[0]->id);
+        
+        $this->assertEquals($empresa->getCountGruposCidades($con),3);
+     
+        */
+        
+        $empresa = Utilidades::getEmpresaTeste();
+        
+        $nota = Utilidades::getNotaTeste($empresa);
+        
+        $vencimento = Utilidades::getVencimentoTeste($nota);
+        
+        $movimento = Utilidades::getMovimentoTeste($vencimento);
+        
+        $vencimento = Utilidades::getVencimentoTeste($nota);
+        
+        $movimento = Utilidades::getMovimentoTeste($vencimento);
+        
+        $nota = Utilidades::getNotaTeste($empresa);
+        
+        $vencimento = Utilidades::getVencimentoTeste($nota);
+        
+        $movimento = Utilidades::getMovimentoTeste($vencimento);
+        
+        $movimentos = $empresa->getMovimentos($con, 0, 3);
+        
+        $this->assertEquals($movimentos[2]->id,$movimento->id);
+        
+        $this->assertEquals($empresa->getCountMovimentos($con),3);
+        
+        echo Utilidades::toJson($movimentos);
+
         
     }
 

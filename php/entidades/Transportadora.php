@@ -25,7 +25,8 @@ class Transportadora {
     public $excluida;
     public $inscricao_estadual;
     public $habilitada;
-
+    public $tabela;
+    
     function __construct() {
 
         $this->id = 0;

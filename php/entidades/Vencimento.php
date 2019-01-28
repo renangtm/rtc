@@ -48,7 +48,7 @@ class Vencimento {
         
         if($this->movimento != null){
             
-            $this->movimento->merge($con);
+            $this->movimento->insert($con);
             
         }
         

@@ -25,10 +25,10 @@ class InterpretadorNumerico {
     private static $SUB = '-';
     private static $MULT = '*';
     private static $DIV = '/';
-    private $replacer;
-    private $index;
+    public $replacer;
+    public $index;
     public $funcoesNumericas;
-    private $obj;
+    public $obj;
 
     private function executeReplace($obj, $str, $prefix = "") {
 

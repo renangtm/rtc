@@ -37,6 +37,16 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         $categorias_cliente = Sistema::getCategoriaCliente($con);
         
+        $historicos = Sistema::getHistorico($con);
+        
+        $operacoes = Sistema::getOperacoes($con);
+        
+        
+        echo Utilidades::toJson($historicos);
+        
+        echo Utilidades::toJson($operacoes);
+        
+        
     }
 
 }

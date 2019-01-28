@@ -25,6 +25,11 @@ class CategoriaProduto {
 
         $this->id = 0;
         $this->excluida = false;
+        $this->base_calculo = 40;
+        $this->ipi = 0;
+        $this->icms_normal = true;
+        $this->icms = 7;
+        
     }
 
     public function merge($con) {

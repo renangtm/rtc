@@ -23,6 +23,7 @@ class Email {
         $this->id = 0;
         $this->endereco = $str;
         $this->excluido = false;
+        $this->senha = "";
         
         if(!filter_var($str, FILTER_VALIDATE_EMAIL)){
             

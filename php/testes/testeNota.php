@@ -82,8 +82,7 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         $produto->liquido = false;
         $produto->unidade = "Galao";
         $produto->quantidade_unidade = 0.25;
-        $produto->empresa = new stdClass();
-        $produto->empresa->id = 1;
+        $produto->empresa = $empresa;
         $produto->valor_base = 100;
         $produto->custo = 123;
         $produto->ncm = "12341234";
@@ -145,8 +144,7 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         $produto2->liquido = false;
         $produto2->unidade = "Galao";
         $produto2->quantidade_unidade = 0.25;
-        $produto2->empresa = new stdClass();
-        $produto2->empresa->id = 1;
+        $produto2->empresa = $empresa;
         $produto2->valor_base = 15;
         $produto2->custo = 123;
         $produto2->ncm = "12341234";
@@ -187,8 +185,7 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         $produto3->liquido = false;
         $produto3->unidade = "Galao";
         $produto3->quantidade_unidade = 0.25;
-        $produto3->empresa = new stdClass();
-        $produto3->empresa->id = 1;
+        $produto3->empresa = $empresa;
         $produto3->valor_base = 10;
         $produto3->custo = 123;
         $produto3->ncm = "12341234";
@@ -224,20 +221,7 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         $fornecedor->endereco = $e4;
         $fornecedor->merge(new ConnectionFactory());
         
-        $tra = new Transportadora();
-        $tra->razao_social = "T1";
-        $tra->nome_fantasia = "T2";
-        $tra->cnpj = new CNPJ("11111111111111");
-        $tra->empresa = new stdClass();
-        $tra->empresa->id = 1;
-        $tra->email = new Email("renan_goncalves@outlook.com.br");
-        $tra->despacho = 999;
-        $tra->habilitada = true;
-        $tra->telefone="1234";
-        $tra->inscricao_estadual = "333333333";
-        $tra->endereco = $e3;
-        
-        $tra->merge(new ConnectionFactory());
+        $tra = Utilidades::getTransportadoraTeste($empresa);
         
         //------ criando cotacao;
         
@@ -246,6 +230,7 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         $nota->incluir_frete = true;
         $nota->transportadora = $tra;
         $nota->saida = false;
+        $nota->chave = "";
         $nota->interferir_estoque = true;
         $nota->frete = 10;
         $nota->prazo = 20;
@@ -371,7 +356,46 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         $this->assertEquals($produto2->estoque,80);
         $this->assertEquals($produto3->estoque,80);
         
+        $con = new ConnectionFactory();
         
+        $ven = new Vencimento();
+        $ven->valor = 100;
+        $ven->nota = $nota;
+        $ven->nota->saida = true;
+        
+        $ven->merge($con);
+        
+         $historico = new Historico();
+        $historico->nome = "Teste";
+        $historico->merge($con);
+        
+        $operacao =  new Operacao();
+        $operacao->nome = "Teste2";
+        $operacao->debito = false;
+        $operacao->merge($con);
+        
+        $banco = new Banco();
+        $banco->saldo = 10000;
+        $banco->empresa = $empresa;
+        $banco->nome = "Itau";
+        $banco->conta = "dedede";
+        
+        $banco->merge(new ConnectionFactory());
+ 
+        $m1 = new Movimento();
+        $m1->banco = $banco;
+        $m1->vencimento = $ven;
+        $m1->valor = 100;
+        $m1->juros = 1.5;
+        $m1->descontos =  2;
+        $m1->operacao = $operacao;
+        $m1->historico = $historico;
+        
+        $m1->insert($con);
+        
+        $vencimentos = $nota->getVencimentos($con);
+        
+        echo Utilidades::toJson($vencimentos);
         
     }
 

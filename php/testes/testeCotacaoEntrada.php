@@ -82,8 +82,7 @@ class testePedido extends PHPUnit_Framework_TestCase {
         $produto->liquido = false;
         $produto->unidade = "Galao";
         $produto->quantidade_unidade = 0.25;
-        $produto->empresa = new stdClass();
-        $produto->empresa->id = 1;
+        $produto->empresa = $empresa;
         $produto->valor_base = 100;
         $produto->custo = 123;
         $produto->ncm = "12341234";
@@ -146,8 +145,7 @@ class testePedido extends PHPUnit_Framework_TestCase {
         $produto2->liquido = false;
         $produto2->unidade = "Galao";
         $produto2->quantidade_unidade = 0.25;
-        $produto2->empresa = new stdClass();
-        $produto2->empresa->id = 1;
+        $produto2->empresa = $empresa;
         $produto2->valor_base = 15;
         $produto2->custo = 123;
         $produto2->ncm = "12341234";
@@ -189,8 +187,7 @@ class testePedido extends PHPUnit_Framework_TestCase {
         $produto3->liquido = false;
         $produto3->unidade = "Galao";
         $produto3->quantidade_unidade = 0.25;
-        $produto3->empresa = new stdClass();
-        $produto3->empresa->id = 1;
+        $produto3->empresa = $empresa;
         $produto3->valor_base = 10;
         $produto3->custo = 123;
         $produto3->ncm = "12341234";
@@ -216,20 +213,7 @@ class testePedido extends PHPUnit_Framework_TestCase {
         
         // criando transportadora
         
-        $tra = new Transportadora();
-        $tra->razao_social = "T1";
-        $tra->nome_fantasia = "T2";
-        $tra->cnpj = new CNPJ("11111111111111");
-        $tra->empresa = new stdClass();
-        $tra->empresa->id = 1;
-        $tra->email = new Email("renan_goncalves@outlook.com.br");
-        $tra->despacho = 999;
-        $tra->habilitada = true;
-        $tra->telefones[]= new Telefone("1234");
-        $tra->inscricao_estadual = "333333333";
-        $tra->endereco = $e3;
-        
-        $tra->merge(new ConnectionFactory());
+        $tra = Utilidades::getTransportadoraTeste($empresa);
         
         //criando cliente
        
@@ -254,8 +238,7 @@ class testePedido extends PHPUnit_Framework_TestCase {
         $cot->status = Sistema::getStatusCotacaoEntrada();
         $cot->status = $cot->status[0];
         $cot->tratar_em_litros = false;
-        $cot->usuario = new stdClass();
-        $cot->usuario->id = 2;
+        $cot->usuario = Utilidades::getUsuarioTeste($empresa);
 
         
         $cot->produtos = array();

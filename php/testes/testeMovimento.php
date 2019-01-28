@@ -20,6 +20,15 @@ class testeMovimento extends PHPUnit_Framework_TestCase {
         
         $con = new ConnectionFactory();
         
+        
+        $historico = new Historico();
+        $historico->nome = "Teste";
+        $historico->merge($con);
+        
+        $operacao =  new Operacao();
+        $operacao->nome = "Teste2";
+        $operacao->merge($con);
+        
         $banco = new Banco();
         $banco->saldo = 10000;
         $banco->empresa = Utilidades::getEmpresaTeste();
@@ -43,7 +52,8 @@ class testeMovimento extends PHPUnit_Framework_TestCase {
         $m1->valor = 100;
         $m1->juros = 1.5;
         $m1->descontos =  2;
-        $m1->debito = true;
+        $m1->operacao = $operacao;
+        $m1->historico = $historico;
         
         $m2 = new Movimento();
         $m2->banco = $banco;
@@ -51,8 +61,9 @@ class testeMovimento extends PHPUnit_Framework_TestCase {
         $m2->valor = 100;
         $m2->juros = 0;
         $m2->descontos =  0;
-        $m2->debito = false;
         $m2->data += 20000;
+        $m2->operacao = $operacao;
+        $m2->historico = $historico;
         
         $m3 = new Movimento();
         $m3->banco = $banco;
@@ -60,8 +71,9 @@ class testeMovimento extends PHPUnit_Framework_TestCase {
         $m3->valor = 100;
         $m3->juros = 0;
         $m3->descontos =  0;
-        $m3->debito = false;
         $m3->data -= 30000;
+        $m3->operacao = $operacao;
+        $m3->historico = $historico;
         
         $m4 = new Movimento();
         $m4->banco = $banco;
@@ -69,8 +81,9 @@ class testeMovimento extends PHPUnit_Framework_TestCase {
         $m4->valor = 100;
         $m4->juros = 0;
         $m4->descontos =  0;
-        $m4->debito = false;
         $m4->data += 10000;
+        $m4->operacao = $operacao;
+        $m4->historico = $historico;
         
         $m5 = new Movimento();
         $m5->banco = $banco;
@@ -78,8 +91,9 @@ class testeMovimento extends PHPUnit_Framework_TestCase {
         $m5->valor = 100;
         $m5->juros = 0;
         $m5->descontos =  0;
-        $m5->debito = false;
         $m5->data += 70000;
+        $m5->operacao = $operacao;
+        $m5->historico = $historico;
         
         $erro = false;
         try{
@@ -94,7 +108,8 @@ class testeMovimento extends PHPUnit_Framework_TestCase {
         
         $this->assertTrue($erro);
 
-        $m1->debito = false;
+        $operacao->debito = false;
+        $operacao->merge($con);
         
         $m1->insert($con);
         

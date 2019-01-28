@@ -49,9 +49,51 @@ class PedidoEntrada {
         $campanhas = array();
         $ofertas = array();
 
-        $ps = $con->getConexao()->prepare("SELECT campanha.id,campanha.inicio,campanha.fim,campanha.prazo,campanha.parcelas,campanha.cliente_expression,produto_campanha.id,produto_campanha.id_produto,UNIX_TIMESTAMP(produto_campanha.validade)*1000,produto_campanha.limite,produto_campanha.valor FROM campanha INNER JOIN produto_campanha ON campanha.id = produto_campanha.id_campanha WHERE campanha.inicio>=CURRENT_TIMESTAMP AND campanha.fim<=CURRENT_TIMESTAMP AND campanha.excluida=false");
+        $ps = $con->getConexao()->prepare("SELECT "
+                . "campanha.id,"
+                . "campanha.inicio,"
+                . "campanha.fim,"
+                . "campanha.prazo,"
+                . "campanha.parcelas,"
+                . "campanha.cliente_expression,"
+                . "produto_campanha.id,"
+                . "produto_campanha.id_produto,"
+                . "UNIX_TIMESTAMP(produto_campanha.validade)*1000,"
+                . "produto_campanha.limite,"
+                . "produto_campanha.valor, "
+                . "empresa.id,"
+                . "empresa.nome,"
+                . "empresa.inscricao_estadual,"
+                . "empresa.consigna,"
+                . "empresa.aceitou_contrato,"
+                . "empresa.juros_mensal,"
+                . "empresa.cnpj,"
+                . "endereco.numero,"
+                . "endereco.id,"
+                . "endereco.rua,"
+                . "endereco.bairro,"
+                . "endereco.cep,"
+                . "cidade.id,"
+                . "cidade.nome,"
+                . "estado.id,"
+                . "estado.sigla,"
+                . "email.id,"
+                . "email.endereco,"
+                . "email.senha,"
+                . "telefone.id,"
+                . "telefone.numero "
+                . "FROM campanha "
+                . "INNER JOIN produto_campanha ON campanha.id = produto_campanha.id_campanha "
+                . "INNER JOIN empresa ON campanha.id_empresa=empresa.id "
+                . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
+                . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
+                . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
+                . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
+                . "INNER JOIN estado ON cidade.id_estado = estado.id "
+                . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
+
         $ps->execute();
-        $ps->bind_result($id, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor);
+        $ps->bind_result($id, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
@@ -63,7 +105,51 @@ class PedidoEntrada {
                 $campanhas[$id]->fim = $fim;
                 $campanhas[$id]->prazo = $prazo;
                 $campanhas[$id]->parcelas = $parcelas;
-                $campanhas[$id]->cliente = $cliente;
+                $campanhas[$id]->cliente_expression = $cliente;
+
+                $empresa = new Empresa();
+                $empresa->id = $id_empresa;
+                $empresa->cnpj = new CNPJ($cnpj);
+                $empresa->inscricao_estadual = $inscricao_empresa;
+                $empresa->nome = $nome_empresa;
+                $empresa->aceitou_contrato = $aceitou_contrato;
+                $empresa->juros_mensal = $juros_mensal;
+                $empresa->consigna = $consigna;
+
+                $endereco = new Endereco();
+                $endereco->id = $id_endereco;
+                $endereco->rua = $rua;
+                $endereco->bairro = $bairro;
+                $endereco->cep = new CEP($cep);
+                $endereco->numero = $numero_endereco;
+
+                $cidade = new Cidade();
+                $cidade->id = $id_cidade;
+                $cidade->nome = $nome_cidade;
+
+                $estado = new Estado();
+                $estado->id = $id_estado;
+                $estado->sigla = $nome_estado;
+
+                $cidade->estado = $estado;
+
+                $endereco->cidade = $cidade;
+
+                $empresa->endereco = $endereco;
+
+                $email = new Email($endereco_email);
+                $email->id = $id_email;
+                $email->senha = $senha_email;
+
+                $empresa->email = $email;
+
+                $telefone = new Telefone($numero_telefone);
+                $telefone->id = $id_telefone;
+
+                $empresa->telefone = $telefone;
+
+                $campanhas[$id]->empresa = $empresa;
+                
             }
 
             $campanha = $campanhas[$id];
@@ -80,6 +166,8 @@ class PedidoEntrada {
                 $ofertas[$id_produto] = array();
             }
 
+            $campanhas[$id]->produtos[] = $p;
+            
             $ofertas[$id_produto][] = $p;
         }
 
@@ -174,6 +262,12 @@ class PedidoEntrada {
             $p->lucro_consignado = $lucro;
             $p->ofertas = (!isset($ofertas[$p->id]) ? array() : $ofertas[$p->id]);
 
+            foreach($p->ofertas as $key=>$oferta){
+                
+                $oferta->produto = $p;
+                
+            }
+            
             $p->categoria = new CategoriaProduto();
 
             $p->categoria->id = $cat_id;

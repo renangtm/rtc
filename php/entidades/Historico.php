@@ -11,10 +11,10 @@
  *
  * @author Renan
  */
-class Estado {
+class Historico {
 
     public $id;
-    public $sigla;
+    public $nome;
     public $excluido;
     
     function __construct() {
@@ -28,14 +28,14 @@ class Estado {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO estado(sigla,excluido) VALUES('" . addslashes($this->sigla) . "',false)");
+            $ps = $con->getConexao()->prepare("INSERT INTO historico(nome,excluido) VALUES('" . addslashes($this->nome) . "',false)");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
             
         }else{
             
-            $ps = $con->getConexao()->prepare("UPDATE estado SET sigla = '" . addslashes($this->sigla) . "', excluido = false WHERE id = ".$this->id);
+            $ps = $con->getConexao()->prepare("UPDATE historico SET nome = '" . addslashes($this->nome) . "', excluido = false WHERE id = ".$this->id);
             $ps->execute();
             $ps->close();
             
@@ -46,7 +46,7 @@ class Estado {
     
     public function delete($con){
         
-        $ps = $con->getConexao()->prepare("UPDATE estado SET excluido = true WHERE id = ".$this->id);
+        $ps = $con->getConexao()->prepare("UPDATE historico SET excluido = true WHERE id = ".$this->id);
         $ps->execute();
         $ps->close();
         

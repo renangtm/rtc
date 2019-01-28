@@ -19,6 +19,55 @@ class Sistema {
 
     }
     
+    public static function getHistorico($con){
+        
+        $historicos = array();
+        
+        $ps = $con->getConexao()->prepare("SELECT id,nome FROM historico WHERE excluido = false");
+        $ps->execute();
+        $ps->bind_result($id,$nome);
+        
+        while($ps->fetch()){
+            
+            $historico = new Historico();
+            $historico->id = $id;
+            $historico->nome = $nome;
+            
+            $historicos[] = $historico;
+            
+        }
+        
+        $ps->close();
+        
+        return $historicos;
+        
+    }
+    
+    public static function getOperacoes($con){
+        
+        $operacoes = array();
+        
+        $ps = $con->getConexao()->prepare("SELECT id,nome,debito FROM operacao WHERE excluida=false");
+        $ps->execute();
+        $ps->bind_result($id,$nome,$debito);
+        
+        while($ps->fetch()){
+            
+            $operacao = new Operacao();
+            $operacao->id = $id;
+            $operacao->nome = $nome;
+            $operacao->debito = $debito;
+            
+            $operacoes[] = $operacao;
+            
+        }
+        
+        $ps->close();
+        
+        return $operacoes;
+        
+    }
+    
     public static function getStatusCanceladoPedidoEntrada(){
         
         return Sistema::getStatusPedidoEntrada()[4];
@@ -83,7 +132,7 @@ class Sistema {
         return $cats;
     }
 
-    public function getPermissoes() {
+    public static function getPermissoes() {
 
         $perms = array();
 
@@ -134,6 +183,7 @@ class Sistema {
         $status[] = new StatusPedidoSaida(8, "Rastreio", true, true, true, false);
         $status[] = new StatusPedidoSaida(9, "Finalizado", true, true, true, false);
         $status[] = new StatusPedidoSaida(10, "Cancelado", false, false, true, true);
+        $status[] = new StatusPedidoSaida(30, "Excluido", false, false, false, true);
 
         return $status;
     }
