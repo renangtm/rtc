@@ -35,7 +35,7 @@ class PedidoEntrada {
         $this->frete = 0;
         $this->incluir_frete = false;
         $this->status = null;
-        $this->excluida = false;
+        $this->excluido = false;
         $this->usuario = null;
         $this->empresa = null;
         $this->data = round(microtime(true) * 1000);
@@ -394,7 +394,7 @@ class PedidoEntrada {
             $value2->merge($con);
         }
         
-        $ps = $con->getConexao()->prepare("UPDATE pedido_entrada SET excluida=true WHERE id = " . $this->id);
+        $ps = $con->getConexao()->prepare("UPDATE pedido_entrada SET excluido=true WHERE id = " . $this->id);
         $ps->execute();
         $ps->close();
     }

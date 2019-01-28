@@ -203,6 +203,8 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
      
         */
         
+        /*
+        
         $empresa = Utilidades::getEmpresaTeste();
         
         $nota = Utilidades::getNotaTeste($empresa);
@@ -227,8 +229,20 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($empresa->getCountMovimentos($con),3);
         
-        echo Utilidades::toJson($movimentos);
+        */
 
+        $empresa = Utilidades::getEmpresaTeste();
+        $pedido = Utilidades::getPedidoEntradaTeste($empresa);
+        $pedido = Utilidades::getPedidoEntradaTeste($empresa);
+        $pedido = Utilidades::getPedidoEntradaTeste($empresa);
+        
+        $pedidos = $empresa->getPedidosEntrada($con, 0, 2);
+        
+        $this->assertEquals(count($pedidos),2);
+        
+        $pedidos = $empresa->getPedidosEntrada($con, 2, 3);
+        
+        $this->assertEquals($pedido->id,$pedidos[0]->id);
         
     }
 
