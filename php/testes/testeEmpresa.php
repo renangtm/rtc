@@ -230,7 +230,7 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         $this->assertEquals($empresa->getCountMovimentos($con),3);
         
         */
-
+        /*
         $empresa = Utilidades::getEmpresaTeste();
         $pedido = Utilidades::getPedidoEntradaTeste($empresa);
         $pedido = Utilidades::getPedidoEntradaTeste($empresa);
@@ -243,6 +243,32 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         $pedidos = $empresa->getPedidosEntrada($con, 2, 3);
         
         $this->assertEquals($pedido->id,$pedidos[0]->id);
+        */
+        
+        $empresa = Utilidades::getEmpresaTeste();
+        
+        $fornecedor = Utilidades::getFornecedorTeste($empresa);
+        $fornecedor = Utilidades::getFornecedorTeste($empresa);
+        $fornecedor = Utilidades::getFornecedorTeste($empresa);
+        $fornecedor = Utilidades::getFornecedorTeste($empresa);
+        $fornecedor = Utilidades::getFornecedorTeste($empresa);
+        $fornecedor = Utilidades::getFornecedorTeste($empresa);
+        
+        $fornecedores = $empresa->getFornecedores($con, 0, 2);
+        
+        $this->assertEquals(count($fornecedores),2);
+        
+        $fornecedores = $empresa->getFornecedores($con, 2, 4);
+        
+        $this->assertEquals(count($fornecedores),2);
+        
+        $fornecedores = $empresa->getFornecedores($con, 4, 6);
+        
+        $this->assertEquals(count($fornecedores),2);
+        
+        $this->assertEquals($fornecedor->id,$fornecedores[1]->id);
+        
+        $this->assertEquals($empresa->getCountFornecedores($con),6);
         
     }
 

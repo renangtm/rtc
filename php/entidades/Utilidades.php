@@ -1275,6 +1275,37 @@ class Utilidades {
         return $empresa;
     }
 
+    public static function getFornecedorTeste($empresa){
+        
+        $con = new ConnectionFactory();
+        
+        $fornecedor = new Fornecedor();
+        
+        $fornecedor->nome = "Teste";
+        $fornecedor->telefones[] = new Telefone("111111");
+        $fornecedor->cnpj = new CNPJ("11122233344455");
+        $fornecedor->empresa = $empresa;
+        
+        $e = new Endereco();
+        
+        $e->rua = "Rua Teste";
+        $e->bairro = "Bairro Teste";
+        $e->numero = 0;
+        $e->cep = new CEP("07195201");
+        $e->cidade = Sistema::getCidades($con);
+        $e->cidade = $e->cidade[0];
+        
+        $fornecedor->endereco = $e;
+        
+        $fornecedor->email = new Email("teserewfdwefd");
+        
+        
+        $fornecedor->merge(new ConnectionFactory());
+        
+        return $fornecedor;
+        
+    }
+    
     public static function base64encode($val) {
 
         $chrArr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";

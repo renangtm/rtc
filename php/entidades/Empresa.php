@@ -1488,7 +1488,7 @@ class Empresa {
         }
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
-        
+
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
         $ps->bind_result($id_pedido, $frete_incluso, $data, $prazo, $parcelas, $id_status, $frete, $obs, $tra_id, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_tra_id, $email_tra_end, $email_tra_senha, $email_usu_id, $email_usu_end, $email_usu_senha, $id_for, $nom_for, $cnpj_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for);
@@ -1746,12 +1746,135 @@ class Empresa {
 
         return $pedidos;
     }
-    
-    public function getCountPedidosEntrada($con,$filtro=""){
-        
+
+    public function getCountPedidosEntrada($con, $filtro = "") {
+
         $sql = "SELECT COUNT(*) FROM pedido_entrada WHERE id_empresa=$this->id AND excluido=false ";
+
+        if ($filtro != "") {
+
+            $sql .= "AND $filtro";
+        }
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($qtd);
+
+        if ($ps->fetch()) {
+
+            $ps->close();
+            return $qtd;
+        }
+
+        $ps->close();
+
+        return 0;
+    }
+
+    public function getFornecedores($con, $x1, $x2, $filtro = "", $ordem = "") {
+
+        $sql = "SELECT "
+                . "fornecedor.id, "
+                . "fornecedor.nome,"
+                . "fornecedor.cnpj,"
+                . "endereco_fornecedor.id, "
+                . "endereco_fornecedor.rua, "
+                . "endereco_fornecedor.numero, "
+                . "endereco_fornecedor.bairro, "
+                . "endereco_fornecedor.cep, "
+                . "cidade_fornecedor.id, "
+                . "cidade_fornecedor.nome, "
+                . "estado_fornecedor.id, "
+                . "estado_fornecedor.sigla,"
+                . "email_fornecedor.id,"
+                . "email_fornecedor.endereco,"
+                . "email_fornecedor.senha, "
+                . "telefone.id,"
+                . "telefone.numero "
+                . "FROM fornecedor "
+                . "INNER JOIN endereco endereco_fornecedor ON endereco_fornecedor.id_entidade=fornecedor.id AND endereco_fornecedor.tipo_entidade='FOR' "
+                . "INNER JOIN cidade cidade_fornecedor ON endereco_fornecedor.id_cidade=cidade_fornecedor.id "
+                . "INNER JOIN estado estado_fornecedor ON estado_fornecedor.id=cidade_fornecedor.id_estado "
+                . "INNER JOIN email email_fornecedor ON email_fornecedor.id_entidade = fornecedor.id AND email_fornecedor.tipo_entidade='FOR' "
+                . "LEFT JOIN telefone ON telefone.tipo_entidade='FOR' AND telefone.id_entidade=fornecedor.id "
+                . "WHERE fornecedor.id_empresa=$this->id AND fornecedor.excluido = false ";
+
+        if ($filtro != "") {
+
+            $sql .= "AND $filtro ";
+        }
+
+        if ($ordem != "") {
+
+            $sql .= "ORDER BY $ordem ";
+        }
+
+        $sql .= "LIMIT $x1, " . ($x2 - $x1);
         
-        if($filtro != ""){
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id_for, $nom_for, $cnpj_for, $end_for_id, $end_for_rua, $end_for_numero,
+                $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome,
+                $id_email_for, $end_email_for, $sen_email_for, $id_tel, $num_tel);
+
+        $fornecedores = array();
+
+        while ($ps->fetch()) {
+
+            if (!isset($fornecedores[$id_for])) {
+
+                $fornecedor = new Fornecedor();
+                $fornecedor->id = $id_for;
+                $fornecedor->nome = $nom_for;
+                $fornecedor->cnpj = new CNPJ($cnpj_for);
+                $fornecedor->empresa = $this;
+                $fornecedor->email = new Email($end_email_for);
+                $fornecedor->email->id = $id_email_for;
+                $fornecedor->email->senha = $sen_email_for;
+
+                $end = new Endereco();
+                $end->id = $end_for_id;
+                $end->bairro = $end_for_bairro;
+                $end->cep = new CEP($end_for_cep);
+                $end->numero = $end_for_numero;
+                $end->rua = $end_for_numero;
+
+                $end->cidade = new Cidade();
+                $end->cidade->id = $cid_for_id;
+                $end->cidade->nome = $cid_for_nome;
+
+                $end->cidade->estado = new Estado();
+                $end->cidade->estado->id = $est_for_id;
+                $end->cidade->estado->sigla = $est_for_nome;
+
+                $fornecedor->endereco = $end;
+
+                $fornecedores[$id_for] = $fornecedor;
+            }
+
+            $t = new Telefone($num_tel);
+            $t->id = $id_tel;
+
+            $fornecedores[$id_for]->telefones[] = $t;
+        }
+
+        $ps->close();
+
+        $real = array();
+
+        foreach ($fornecedores as $key => $value) {
+
+            $real[] = $value;
+        }
+
+        return $real;
+    }
+    
+    public function getCountFornecedores($con,$filtro = ""){
+        
+        $sql = "SELECT COUNT(*) FROM fornecedor WHERE id_empresa=$this->id AND excluido=false ";
+        
+        if($filtro!=""){
             
             $sql .= "AND $filtro";
             
@@ -1761,8 +1884,8 @@ class Empresa {
         $ps->execute();
         $ps->bind_result($qtd);
         
-        if($ps->fetch()){
-            
+        if ($ps->fetch()) {
+
             $ps->close();
             return $qtd;
             
