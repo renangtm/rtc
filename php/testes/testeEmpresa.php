@@ -226,9 +226,13 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         $this->assertEquals($movimentos[2]->id,$movimento->id);
         
         $this->assertEquals($empresa->getCountMovimentos($con),3);
-        
-        echo Utilidades::toJson($movimentos);
 
+        $notas = $empresa->getNotas($con, 0, 2);
+        
+        $this->assertEquals($notas[1]->id,$nota->id);
+        
+        $this->assertEquals($empresa->getCountNotas($con),2);
+        
         
     }
 

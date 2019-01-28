@@ -197,6 +197,8 @@ class Nota {
                 . "produto.ncm,"
                 . "produto.nome,"
                 . "produto.lucro_consignado,"
+                . "produto.ativo,"
+                . "produto.concentracao,"
                 . "categoria_produto.id,"
                 . "categoria_produto.nome,"
                 . "categoria_produto.base_calculo,"
@@ -236,7 +238,7 @@ class Nota {
                 . " WHERE produto_nota.id_nota=$this->id");
 
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $valor_unitario, $valor_total, $base_calculo, $cfop, $icms, $ipi, $influencia_estoque, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $quantidade, $valor_unitario, $valor_total, $base_calculo, $cfop, $icms, $ipi, $influencia_estoque, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro,$ativo,$conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
@@ -251,6 +253,8 @@ class Nota {
             $p->quantidade_unidade = $qtd_un;
             $p->habilitado = $hab;
             $p->valor_base = $vb;
+            $p->ativo = $ativo;
+            $p->concentracao = $conc;
             $p->custo = $cus;
             $p->peso_bruto = $pb;
             $p->peso_liquido = $pl;
