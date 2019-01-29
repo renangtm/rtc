@@ -234,6 +234,7 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         $this->assertEquals($empresa->getCountNotas($con),2);
         */
         
+        /*
         $empresa = Utilidades::getEmpresaTeste();
         
         $fornecedor = Utilidades::getFornecedorTeste($empresa);
@@ -258,7 +259,85 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         $this->assertEquals($fornecedor->id,$fornecedores[1]->id);
         
         $this->assertEquals($empresa->getCountFornecedores($con),6);
+        */
         
+        /*
+        $empresa = Utilidades::getEmpresaTeste();
+        
+        $cotacao = Utilidades::getCotacaoEntradaTeste($empresa);
+        $cotacao = Utilidades::getCotacaoEntradaTeste($empresa);
+        $cotacao = Utilidades::getCotacaoEntradaTeste($empresa);
+        $cotacao = Utilidades::getCotacaoEntradaTeste($empresa);
+        $cotacao = Utilidades::getCotacaoEntradaTeste($empresa);
+        
+        $cotacoes = $empresa->getCotacoesEntrada($con, 0, 2);
+        
+        $this->assertEquals(count($cotacoes),2);
+        
+        $cotacoes = $empresa->getCotacoesEntrada($con, 2, 4);
+        
+        $this->assertEquals(count($cotacoes),2);
+        
+        $cotacoes = $empresa->getCotacoesEntrada($con, 4, 6);
+        
+        $this->assertEquals(count($cotacoes),1);
+        
+        $this->assertEquals($cotacoes[0]->id,$cotacao->id);
+        
+        $this->assertEquals($empresa->getCountCotacoesEntrada($con),5);
+        
+        */
+        
+        /*
+        
+        $empresa = Utilidades::getEmpresaTeste();
+        
+        $produto = Utilidades::getProdutoTeste($empresa);
+        
+        Utilidades::getCampanhaTeste($empresa, $produto);
+        
+        $produto = Utilidades::getProdutoTeste($empresa);
+        $produto = Utilidades::getProdutoTeste($empresa);
+        $produto = Utilidades::getProdutoTeste($empresa);
+        $produto = Utilidades::getProdutoTeste($empresa);
+        
+        $produtos = $empresa->getProdutos($con, 0, 2);
+        
+        $this->assertEquals(count($produtos),2);
+        
+        $produtos = $empresa->getProdutos($con, 2, 4);
+        
+        $this->assertEquals(count($produtos),2);
+        
+        $produtos = $empresa->getProdutos($con, 4, 6);
+        
+        $this->assertEquals(count($produtos),2);
+        
+        $this->assertEquals($produtos[1]->id,$produto->id);
+        
+        $this->assertEquals($empresa->getCountProdutos($con),6);
+        
+        */
+        
+        $empresa = Utilidades::getEmpresaTeste();
+        
+        $r = Utilidades::getReceituarioTeste($empresa);
+        $r = Utilidades::getReceituarioTeste($empresa);
+        $r = Utilidades::getReceituarioTeste($empresa);
+        $r = Utilidades::getReceituarioTeste($empresa);
+        
+        $recsg = $empresa->getReceituario($con, 0, 2,"","","produto.nome");
+        
+        $recs = $empresa->getReceituario($con, 2, 4);
+        
+        $this->assertEquals(count($recsg),1);
+        
+        $this->assertEquals(count($recs),2);
+        
+        $this->assertEquals($recs[1]->id, $r->id);
+        
+        $this->assertEquals($empresa->getCountReceituario($con),4);
+        $this->assertEquals($empresa->getCountReceituario($con,"","produto.nome"),1);
         
     }
 

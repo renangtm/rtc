@@ -92,7 +92,7 @@ class Sistema {
         $status[] = new StatusPedidoEntrada(2, "Em transito",false,true);
         $status[] = new StatusPedidoEntrada(3, "Finalizado",true,false);
         $status[] = new StatusPedidoEntrada(4,"Cancelado",false,false);
-        
+
         return $status;
         
     }
@@ -198,6 +198,7 @@ class Sistema {
         $sts[] = new StatusCotacaoEntrada(4, "Cancelada");
 
         return $sts;
+        
     }
 
     public static function getPermissoesIniciais() {
