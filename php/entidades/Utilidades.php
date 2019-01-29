@@ -1484,6 +1484,8 @@ class Utilidades {
         $cat = new CategoriaCliente();
 
         $cat->nome = "Teste";
+        
+        $cat->merge(new ConnectionFactory());
 
         $cliente = new Cliente();
         $cliente->razao_social = "T1";
@@ -1493,7 +1495,7 @@ class Utilidades {
         $cliente->cpf = new CPF("11111111111");
         $cliente->rg = new RG("111111111");
         $cliente->categoria = $cat;
-        $cliente->empresa = Utilidades::getEmpresaTeste();
+        $cliente->empresa = $empresa;
         $cliente->email = new Email("renan_goncalves@outlook.com.br");
 
         $cliente->telefones[] = new Telefone("1234412");

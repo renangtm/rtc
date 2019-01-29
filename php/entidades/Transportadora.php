@@ -37,7 +37,7 @@ class Transportadora {
         $this->telefones = array();
         $this->empresa = null;
         $this->excluida = false;
-        $this->habilitado = false;
+        $this->habilitada = true;
     }
 
     public function merge($con) {

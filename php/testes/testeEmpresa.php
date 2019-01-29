@@ -19,7 +19,7 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
     public function testSimple() {
         
         $con = new ConnectionFactory();
-        /*
+        
         $empresa = new Empresa();
         
         $empresa->nome = "Teste";
@@ -145,8 +145,8 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($bancos[0]->id,$banco->id);
         $this->assertEquals($bancos[1]->id,$banco2->id);
-        */
-        /*
+        
+        
         $empresa = Utilidades::getEmpresaTeste();
         
         $pedido1 = Utilidades::getPedidoTeste($empresa);
@@ -167,8 +167,8 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($empresa->getCountPedidos($con),3);
         
-         */
-        /*
+         
+        
         $empresa = Utilidades::getEmpresaTeste();
         
         $campanha1 = Utilidades::getCampanhaTeste($empresa);
@@ -182,8 +182,8 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         $this->assertEquals($campanhas[1]->id,$campanha2->id);
         
         $this->assertEquals($empresa->getCountCampanha($con),2);
-        */
-        /*
+        
+        
         $empresa = Utilidades::getEmpresaTeste();
         
         $grupo1 = Utilidades::getGrupoCidadesTeste($empresa);
@@ -201,8 +201,8 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($empresa->getCountGruposCidades($con),3);
      
-        */
-        /*
+        
+        
         $empresa = Utilidades::getEmpresaTeste();
         
         $nota = Utilidades::getNotaTeste($empresa);
@@ -232,9 +232,9 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         $this->assertEquals($notas[1]->id,$nota->id);
         
         $this->assertEquals($empresa->getCountNotas($con),2);
-        */
         
-        /*
+        
+        
         $empresa = Utilidades::getEmpresaTeste();
         
         $fornecedor = Utilidades::getFornecedorTeste($empresa);
@@ -259,9 +259,9 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         $this->assertEquals($fornecedor->id,$fornecedores[1]->id);
         
         $this->assertEquals($empresa->getCountFornecedores($con),6);
-        */
         
-        /*
+        
+        
         $empresa = Utilidades::getEmpresaTeste();
         
         $cotacao = Utilidades::getCotacaoEntradaTeste($empresa);
@@ -286,9 +286,9 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($empresa->getCountCotacoesEntrada($con),5);
         
-        */
         
-        /*
+        
+        
         
         $empresa = Utilidades::getEmpresaTeste();
         
@@ -317,7 +317,9 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($empresa->getCountProdutos($con),6);
         
-        */
+        
+        
+        
         
         $empresa = Utilidades::getEmpresaTeste();
         
@@ -338,6 +340,85 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($empresa->getCountReceituario($con),4);
         $this->assertEquals($empresa->getCountReceituario($con,"","produto.nome"),1);
+        
+        
+        
+        $empresa = Utilidades::getEmpresaTeste();
+        
+        $transportadora = Utilidades::getTransportadoraTeste($empresa);
+        $transportadora = Utilidades::getTransportadoraTeste($empresa);
+        $transportadora = Utilidades::getTransportadoraTeste($empresa);
+        $transportadora = Utilidades::getTransportadoraTeste($empresa);
+        $transportadora = Utilidades::getTransportadoraTeste($empresa);
+        
+        $transportadoras = $empresa->getTransportadoras($con, 0, 2);
+        
+        $this->assertEquals(count($transportadoras),2);
+        
+        $transportadoras = $empresa->getTransportadoras($con, 2, 4);
+        
+        $this->assertEquals(count($transportadoras),2);
+        
+        $transportadoras = $empresa->getTransportadoras($con,4, 6);
+        
+        $this->assertEquals(count($transportadoras),1);
+        
+        $this->assertEquals($transportadora->id,$transportadoras[0]->id);
+        
+        $this->assertEquals($empresa->getCountTransportadoras($con),5);
+        
+        
+        
+        
+        $empresa = Utilidades::getEmpresaTeste();
+        
+        $cliente = Utilidades::getClienteTeste($empresa);
+        $cliente = Utilidades::getClienteTeste($empresa);
+        $cliente = Utilidades::getClienteTeste($empresa);
+        $cliente = Utilidades::getClienteTeste($empresa);
+        $cliente = Utilidades::getClienteTeste($empresa);
+        
+        $clientes = $empresa->getClientes($con, 0, 2);
+        
+        $this->assertEquals(count($clientes),2);
+        
+        $clientes = $empresa->getClientes($con, 2, 4);
+        
+        $this->assertEquals(count($clientes),2);
+        
+        $clientes = $empresa->getClientes($con, 4, 6);
+        
+        $this->assertEquals(count($clientes),1);
+        
+        $this->assertEquals($clientes[0]->id,$cliente->id);
+        
+        $this->assertEquals($empresa->getCountClientes($con),5);
+     
+        
+        $empresa = Utilidades::getEmpresaTeste();
+        
+        $usuario = Utilidades::getUsuarioTeste($empresa);
+        $usuario = Utilidades::getUsuarioTeste($empresa);
+        $usuario = Utilidades::getUsuarioTeste($empresa);
+        $usuario = Utilidades::getUsuarioTeste($empresa);
+        $usuario = Utilidades::getUsuarioTeste($empresa);
+        
+        $usuarios = $empresa->getUsuarios($con, 0, 2);
+        
+        $this->assertEquals(count($usuarios),2);
+        
+        $usuarios = $empresa->getUsuarios($con, 2, 4);
+        
+        $this->assertEquals(count($usuarios),2);
+        
+        $usuarios = $empresa->getUsuarios($con, 4, 6);
+        
+        $this->assertEquals(count($usuarios),1);
+        
+        $this->assertEquals($usuarios[0]->id,$usuario->id);
+        
+        $this->assertEquals($empresa->getCountUsuarios($con),5);
+        
         
     }
 
