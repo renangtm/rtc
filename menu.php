@@ -50,6 +50,19 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="clientes.php" ><i class="fas fa-users"></i>Clientes</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2"><i class="far fa-clipboard"></i>Pedidos</a>
+                                <div id="submenu-2" class="collapse submenu" style="">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="visualizar-pedidos-compra.php"><i class="fas fa-tasks"></i>Pedidos de Compra</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="visualizar-pedidos-venda.php"><i class="fas fa-tasks"></i>Pedidos de Venda</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
                             <li class="nav-divider">
                                 Administrativo
                             </li>
