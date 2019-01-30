@@ -16,14 +16,7 @@
     <link rel="stylesheet" type="text/css" href="assets/vendor/datatables/css/fixedHeader.bootstrap4.css">
 	<!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">-->
     <title>RTC (Reltrab Cliente) - WEB</title>
-	<style>
-		.modal:nth-of-type(even) {
-			z-index: 1042 !important;
-		}
-		.modal-backdrop.in:nth-of-type(even) {
-			z-index: 1041 !important;
-		}
-	</style>
+
 </head>
 
 <body>
@@ -254,86 +247,7 @@
         <!-- ============================================================== -->
         <!-- left sidebar -->
         <!-- ============================================================== -->
-        <div class="nav-left-sidebar sidebar-dark">
-            <div class="menu-list">
-                <nav class="navbar navbar-expand-lg navbar-light">
-                    <a class="d-xl-none d-lg-none" href="#">RTC</a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav flex-column">
-                            <li class="nav-divider">
-                                Loja
-                            </li>
-                           <li class="nav-item ">
-                                <a class="nav-link" href="comprar.html" ><i class="fa fa-fw fa-shopping-basket"></i>Comprar</a>
-                            </li>
-							 <li class="nav-item ">
-                                <a class="nav-link" href="carrinho-de-compras.html" ><i class="fa fa-fw fa-shopping-cart"></i>Carrinho</a>
-                            </li>
-                            <li class="nav-item ">
-                                <a class="nav-link" href="encomendar.html" ><i class="fa fa-fw fa-truck"></i>Encomendar</a>
-                            </li>
-							 <li class="nav-item">
-                                <a class="nav-link" href="carrinho-de-encomenda.html" ><i class="fa fa-fw fa-shopping-cart"></i>Carrinho Encomenda</a>
-                            </li>
-							<li class="nav-item">
-                                <a class="nav-link" href="lista-de-preco.html" ><i class="fas fa-clipboard-list"></i>Lista de Preço</a>
-                            </li>
-							<li class="nav-item">
-                                <a class="nav-link" href="fornecedores.html" ><i class="fas fa-industry"></i>Fornecedores</a>
-                            </li>
-							<li class="nav-item">
-                                <a class="nav-link " href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fas fa-box-open"></i>Produtos</a>
-                                <div id="submenu-1" class="collapse submenu" style="">
-                                    <ul class="nav flex-column">
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="cadastro-de-produtos.html"><i class="fas fa-cube"></i>Cadastro de Produtos</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#"><i class="fas fa-exchange-alt"></i>Movimentação</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#"><i class="fas fa-cubes"></i>Lotes</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#"><i class="fas fa-check-square"></i>Habilitação de Produtos</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-							<li class="nav-item">
-                                <a class="nav-link" href="clientes.html" ><i class="fas fa-users"></i>Clientes</a>
-                            </li>
-							<li class="nav-item">
-                                <a class="nav-link  active" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2"><i class="far fa-clipboard"></i>Pedidos</a>
-                                <div id="submenu-2" class="collapse submenu" style="">
-                                    <ul class="nav flex-column">
-                                        <li class="nav-item">
-                                            <a class="nav-link  active" href="visualizar-pedidos.html"><i class="fas fa-tasks"></i>Visualizar Pedidos</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#"><i class="fas fa-notes-medical"></i>Cadastrar Pedidos</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="nav-divider">
-                                Administrativo
-                            </li>
-                            <li class="nav-item ">
-                                <a class="nav-link" href="http://www.tratordecompras.com.br/rtc_erp/downloads/apresentacao_rtc_v2.pdf" target="_blank"><i class="fa fa-fw fa-file-alt"></i>Projeto Novos Rumos</a>
-                            </li>
-							<li class="nav-item ">
-                                <a class="nav-link" href="contrato.html" ><i class="fa fa-fw fa-file-alt"></i>Contrato</a>
-                            </li>
-							
-                        </ul>
-                    </div>
-                </nav>
-            </div>
-        </div>
+      <?php include("menu.php") ?>
         <!-- ============================================================== -->
         <!-- end left sidebar -->
         <!-- ============================================================== -->
@@ -349,14 +263,14 @@
                     <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="page-header">
-                                <h2 class="pageheader-title">Visualizar Pedidos</h2>
+                                <h2 class="pageheader-title">Pedidos de Compra</h2>
                                 <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
                                 <div class="page-breadcrumb">
                                     <nav aria-label="breadcrumb">
                                         <ol class="breadcrumb">      
                                             <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">RTC</a></li>
 											<li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Pedidos</a></li>
-                                            <li class="breadcrumb-item active" aria-current="page">Visualizar Pedidos</li>
+                                            <li class="breadcrumb-item active" aria-current="page">Pedidos de Compra</li>
                                         </ol>
                                     </nav>
                                 </div>
@@ -376,14 +290,13 @@
                                 <div class="table-responsive">
 									<div class="product-btn m-b-20">
 										<a href="#" class="btn btn-primary" data-title="AddCompra" data-toggle="modal" data-target="#addCompra" ><i class="fas fa-plus-circle m-r-10"></i>Cadastrar Pedido de Compra</a>
-										<a href="#" class="btn btn-primary" data-title="AddVenda" data-toggle="modal" data-target="#addVenda" ><i class="fas fa-plus-circle m-r-10"></i>Cadastrar Pedido de Venda</a>
 									</div>
 									<hr><br>
                                     <table id="pedidos" class="table table-striped table-bordered first">
                                         <thead>
                                             <tr>
 													<th>Cod.</th>
-													<th>Cliente / Fornecedor</th>
+													<th>Fornecedor</th>
 													<th>Data</th>
 													<th>frete</th>
 													<th>Tipo</th>
@@ -899,7 +812,7 @@
 	<!-- /.modal-content --> 
 	
 	  <!-- /.modal-content VISUALIZAR PEDIDO --> 
-    <div class="modal fade" id="vizPedido" tabindex="-1" role="dialog" aria-labelledby="vizPedido" aria-hidden="true" data-backdrop="static">
+    <div class="modal fade" id="vizPedido" tabindex="-1" role="dialog" aria-labelledby="vizPedido" aria-hidden="true">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -907,7 +820,7 @@
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                 </div>
 				<div class="modal-body text-center">
-					<iframe id="myIframe" name="myIframe" frameborder="1" width="100%" height="300px" src="visualizar-pedido-print.html"></iframe>
+					<iframe id="myIframe" name="myIframe" frameborder="1" width="100%" height="300px" src="visualizar-pedido-print.php"></iframe>
 				</div>
                <div class="modal-footer">
 					  <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
@@ -917,45 +830,7 @@
 	</div>
 	<!-- /.modal-content --> 
 	
-	<!-- /.modal-content CALCFRETE --> 
-    <div class="modal fade" id="calcFrete" tabindex="-1" role="dialog" aria-labelledby="calcFrete" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fa fa-fw fa-truck fa-3x"></i>&nbsp;&nbsp;&nbsp;Escolha o Frete</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                </div>
-				<div class="modal-body">
-					<div class="form-group">
-						<div class="form-row">
-							 <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
-								  <input type="radio" id="customRadioInline3" name="customRadioInline1" class="custom-control-input">
-								  <label class="custom-control-label" for="customRadioInline3">R$ 55.00 - transmudanças S ds ltda</label>
-							</div>
-							<div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
-								  <input type="radio" id="customRadioInline4" name="customRadioInline1" class="custom-control-input">
-								  <label class="custom-control-label" for="customRadioInline4">R$ 95.06 - rodonasa cargas e encomendas ltda me</label>
-							</div>
-							<div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
-								  <input type="radio" id="customRadioInline5" name="customRadioInline1" class="custom-control-input">
-								  <label class="custom-control-label" for="customRadioInline5">R$ 97.90 - transville transportes e servicos ltda</label>
-							</div>
-							<div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
-								  <input type="radio" id="customRadioInline6" name="customRadioInline1" class="custom-control-input">
-								  <label class="custom-control-label" for="customRadioInline6">R$ 79.57 - alfa transportes eireli</label>
-							</div>
-							<div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
-								  <input type="radio" id="customRadioInline7" name="customRadioInline1" class="custom-control-input">
-								  <label class="custom-control-label" for="customRadioInline7">R$ 147.54 - hb transportes e logistica ltda</label>
-							</div>
-							
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- /.modal-content -->
+	
 	
 	
 	    <!-- /.modal-content ADDPRODUTO --> 
@@ -1038,7 +913,45 @@
 	</div>
 	<!-- /.modal-content --> 
 	
-	 
+	 <!-- /.modal-content CALCFRETE --> 
+    <div class="modal fade" id="calcFrete" tabindex="-1" role="dialog" aria-labelledby="calcFrete" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fa fa-fw fa-truck fa-3x"></i>&nbsp;&nbsp;&nbsp;Escolha o Frete</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+				<div class="modal-body">
+					<div class="form-group">
+						<div class="form-row">
+							 <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
+								  <input type="radio" id="customRadioInline3" name="customRadioInline1" class="custom-control-input">
+								  <label class="custom-control-label" for="customRadioInline3">R$ 55.00 - transmudanças S ds ltda</label>
+							</div>
+							<div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
+								  <input type="radio" id="customRadioInline4" name="customRadioInline1" class="custom-control-input">
+								  <label class="custom-control-label" for="customRadioInline4">R$ 95.06 - rodonasa cargas e encomendas ltda me</label>
+							</div>
+							<div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
+								  <input type="radio" id="customRadioInline5" name="customRadioInline1" class="custom-control-input">
+								  <label class="custom-control-label" for="customRadioInline5">R$ 97.90 - transville transportes e servicos ltda</label>
+							</div>
+							<div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
+								  <input type="radio" id="customRadioInline6" name="customRadioInline1" class="custom-control-input">
+								  <label class="custom-control-label" for="customRadioInline6">R$ 79.57 - alfa transportes eireli</label>
+							</div>
+							<div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
+								  <input type="radio" id="customRadioInline7" name="customRadioInline1" class="custom-control-input">
+								  <label class="custom-control-label" for="customRadioInline7">R$ 147.54 - hb transportes e logistica ltda</label>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /.modal-content -->
 
 
     <!-- jquery 3.3.1 -->
@@ -1076,20 +989,27 @@
 	
 	<!-- Optional JavaScript -->
 	<script>
-		/*
-		$('.modal').on('show.bs.modal', function(){ // detecta abertura da model
-		   alert("teste");
-		   var modS = $('.modal').not($(this)), // seleciona todas as modais menos a que foi aberta
-			   modZ = 0; // variável para comparar os z-index das modais e armazenar a que tiver o maior
-			   modS.each(function(){ // loop nas modais
-				  var zIdx = $(this).css('z-index'); // modal atual do loop
-				  if(zIdx >= modZ){ // vejo se o z-index da modal do loop é maior ou igual do que a variável
-					 modZ = parseInt(zIdx)+1; // se for maior ou igual, somo +1 ao valor 
-				  }
-			   });
-		   $(this).css('z-index', modZ); // aplico o valor ao z-index da modal aberta
+		$(document).ready(function() {
+		  $(document).on({
+			'show.bs.modal': function() {
+			  var zIndex = 1040 + (10 * $('.modal:visible').length);
+			  $(this).css('z-index', zIndex);
+			  setTimeout(function() {
+				$('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+			  }, 0);
+			},
+			'hidden.bs.modal': function() {
+			  if ($('.modal:visible').length > 0) {
+				// restore the modal-open class to the body element, so that scrolling works
+				// properly after de-stacking a modal.
+				setTimeout(function() {
+				  $(document.body).addClass('modal-open');
+				}, 0);
+			  }
+			}
+		  }, '.modal');
 		});
-		*/
+
 		$(document).ready(function(){
 			  $('.btnvis').tooltip({title: "Visualizar", placement: "top"}); 
 			  $('.btnedit').tooltip({title: "Editar", placement: "top"}); 
