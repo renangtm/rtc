@@ -19,7 +19,7 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
     public function testSimple() {
         
         $con = new ConnectionFactory();
-    
+        /*
         $empresa = new Empresa();
         
         $empresa->nome = "Teste";
@@ -208,6 +208,10 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         $nota = Utilidades::getNotaTeste($empresa);
         
         $vencimento = Utilidades::getVencimentoTeste($nota);
+        
+        echo Utilidades::toJson($vencimento);
+        
+        
         
         $movimento = Utilidades::getMovimentoTeste($vencimento);
         
@@ -428,7 +432,7 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         $empresa = Utilidades::getEmpresaTeste();
         
         $logo = Utilidades::getLogoTeste($empresa);
-        
+        */
   
         
     }
