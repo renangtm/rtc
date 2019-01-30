@@ -210,6 +210,65 @@ class Empresa {
         return $bancos;
     }
 
+    public function getParametrosEmissao($con) {
+
+        $ps = $con->getConexao()->prepare("SELECT id,nota,lote,serie,certificado,senha_certificado FROM parametros_emissao WHERE id_empresa=$this->id");
+        $ps->execute();
+        $ps->bind_result($id, $nota, $lote, $serie, $certificado, $senha_certificado);
+
+        if ($ps->fetch()) {
+
+            $ps->close();
+
+            $p = new ParametrosEmissao();
+            $p->id = $id;
+            $p->nota = $nota;
+            $p->lote = $lote;
+            $p->serie = $serie;
+            $p->certificado = Utilidades::base64encode($certificado);
+            $p->senha_certificado = $senha_certificado;
+            $p->empresa = $this;
+
+            return $p;
+        }
+
+        $ps->close();
+
+        return null;
+    }
+
+    public function getLogo($com) {
+
+        $ses = new SessionManager();
+
+        if (($n = $ses->get("logo_$this->id")) != null) {
+
+            return $n;
+        }
+
+        $ps = $com->getConexao()->prepare("SELECT id,logo,cor_predominante FROM logo WHERE id_empresa=$this->id");
+        $ps->execute();
+        $ps->bind_result($id, $logo, $cor_predominante);
+        if ($ps->fetch()) {
+
+            $ps->close();
+
+            $l = new Logo();
+            $l->id = $id;
+            $l->logo = $logo;
+            $l->cor_predominante = $cor_predominante;
+            $l->empresa = $this;
+
+            $ses->set("logo_$this->id", $l);
+
+            return $l;
+        }
+
+        $ps->close();
+
+        return null;
+    }
+
     public function getPedidos($con, $x1, $x2, $filtro = "", $ordem = "") {
 
         $sql = "SELECT "
@@ -3535,30 +3594,27 @@ class Empresa {
         return $real;
     }
 
-    public function getCountUsuarios($con,$filtro=""){
-        
+    public function getCountUsuarios($con, $filtro = "") {
+
         $sql = "SELECT COUNT(*) FROM usuario WHERE id_empresa=$this->id AND excluido=false ";
-        
-        if($filtro != ""){
-            
+
+        if ($filtro != "") {
+
             $sql .= "AND $filtro";
-            
         }
-        
+
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
         $ps->bind_result($qtd);
-        
-        if($ps->fetch()){
-            
+
+        if ($ps->fetch()) {
+
             $ps->close();
             return $qtd;
-            
         }
-        
+
         $ps->close();
         return 0;
-        
     }
-    
+
 }

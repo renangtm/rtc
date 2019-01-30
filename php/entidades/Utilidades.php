@@ -897,8 +897,8 @@ class Utilidades {
         $usuario->telefones[] = new Telefone("1234");
         $usuario->cpf = new CPF("11122233344455");
         $usuario->empresa = $empresa;
-        $usuario->login = "12344321";
-        $usuario->senha = "1233";
+        $usuario->login = "teste";
+        $usuario->senha = "123456";
 
         $e = new Endereco();
 
@@ -919,6 +919,39 @@ class Utilidades {
 
 
         return $usuario;
+    }
+    
+    public static function getLogoTeste($empresa){
+        
+        $con = new ConnectionFactory();
+        
+        $p = new Logo();
+        $p->empresa =$empresa;
+        $p->cor_predominante = "255,255,255";
+        $p->logo = Utilidades::base64encode("LOGO INVALIDO");
+        
+        $p->merge($con);
+        
+        return $p;
+        
+    }
+    
+    public static function getParametrosEmissaoTeste($empresa){
+        
+        $con = new ConnectionFactory();
+        
+        $p = new ParametrosEmissao();
+        $p->empresa =$empresa;
+        $p->lote = 0;
+        $p->senha_certificado = "1234";
+        $p->serie = 0;
+        $p->nota = 0;
+        $p->certificado = Utilidades::base64encode("1234124rewrfw421412");
+        
+        $p->merge($con);
+        
+        return $p;
+        
     }
 
     public static function getPedidoTeste($empresa) {

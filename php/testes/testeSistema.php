@@ -19,7 +19,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
     public function testSimple() {
         
         $con = new ConnectionFactory();
-        
+        /*
         $estados = Sistema::getEstados($con);
         
         $this->assertTrue(count($estados)>1);
@@ -46,6 +46,17 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         echo Utilidades::toJson($operacoes);
         
+        */
+        
+        $empresa = Utilidades::getEmpresaTeste();
+        
+        $usuario = Utilidades::getUsuarioTeste($empresa);
+        
+        $this->assertEquals(Sistema::logar("teste", "123456")->empresa->id,$empresa->id);
+        
+        $this->assertEquals(Sistema::logar("teste", "123456")->id,$usuario->id);
+        
+        $this->assertEquals(Sistema::logar("teste", "12345"),null);
         
     }
 

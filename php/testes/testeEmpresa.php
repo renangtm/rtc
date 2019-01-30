@@ -19,7 +19,7 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
     public function testSimple() {
         
         $con = new ConnectionFactory();
-        
+    
         $empresa = new Empresa();
         
         $empresa->nome = "Teste";
@@ -418,7 +418,18 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         $this->assertEquals($usuarios[0]->id,$usuario->id);
         
         $this->assertEquals($empresa->getCountUsuarios($con),5);
+
+        $empresa = Utilidades::getEmpresaTeste();
         
+        $parametros = Utilidades::getParametrosEmissaoTeste($empresa);
+        
+     
+        
+        $empresa = Utilidades::getEmpresaTeste();
+        
+        $logo = Utilidades::getLogoTeste($empresa);
+        
+  
         
     }
 
