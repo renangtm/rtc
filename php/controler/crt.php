@@ -42,7 +42,7 @@ $r->sucesso = true;
 
 if($o!= null){
     
-    $r->o = $objeto;
+    $r->o = $o;
     
 }
 

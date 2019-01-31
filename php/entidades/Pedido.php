@@ -192,6 +192,9 @@ class Pedido {
                 . "produto_pedido_saida.influencia_reserva,"
                 . "produto_pedido_saida.ipi,"
                 . "produto.id,"
+                . "produto.classe_risco,"
+                . "produto.fabricante,"
+                . "produto.imagem,"
                 . "produto.id_universal,"
                 . "produto.liquido,"
                 . "produto.quantidade_unidade,"
@@ -249,7 +252,7 @@ class Pedido {
                 . " WHERE produto_pedido_saida.id_pedido=$this->id");
 
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro,$ativo,$conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro,$classe_risco,$fabricante,$imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro,$ativo,$conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
@@ -260,6 +263,9 @@ class Pedido {
             $p = new Produto();
             $p->id = $id_pro;
             $p->nome = $nome;
+            $p->classe_risco = $classe_risco;
+            $p->fabricante = $fabricante;
+            $p->imagem = $imagem;
             $p->id_universal = $id_uni;
             $p->liquido = $liq;
             $p->quantidade_unidade = $qtd_un;

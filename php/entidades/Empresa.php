@@ -2712,6 +2712,9 @@ class Empresa {
 
         $sql = "SELECT "
                 . "produto.id,"
+                . "produto.classe_risco,"
+                . "produto.fabricante,"
+                . "produto.imagem,"
                 . "produto.id_universal,"
                 . "produto.liquido,"
                 . "produto.quantidade_unidade,"
@@ -2756,12 +2759,15 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
+        $ps->bind_result($id_pro,$classe_risco,$fabricante,$imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
 
         while ($ps->fetch()) {
 
             $p = new Produto();
             $p->id = $id_pro;
+            $p->classe_risco = $classe_risco;
+            $p->fabricante = $fabricante;
+            $p->imagem = $imagem;
             $p->nome = $nome;
             $p->id_universal = $id_uni;
             $p->liquido = $liq;

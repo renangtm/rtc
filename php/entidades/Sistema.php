@@ -219,20 +219,24 @@ class Sistema {
         return $perms;
     }
 
-    public static function getCategoriaCliente($con) {
+    public static function getCategoriaProduto($con) {
 
         $cats = array();
 
-        $ps = $con->getConexao()->prepare("SELECT id, nome FROM categoria_cliente");
+        $ps = $con->getConexao()->prepare("SELECT id, nome,base_calculo,ipi,icms_normal,icms FROM categoria_produto WHERE excluida=false");
         $ps->execute();
-        $ps->bind_result($id, $nome);
+        $ps->bind_result($id, $nome,$base_calculo,$ipi,$icms_normal,$icms);
 
         while ($ps->fetch()) {
 
-            $cat = new CategoriaCliente();
+            $cat = new CategoriaProduto();
             $cat->id = $id;
             $cat->nome = $nome;
-
+            $cat->base_calculo = $base_calculo;
+            $cat->ipi = $ipi;
+            $cat->icms_norma = $icms_normal;
+            $cat->icms = $icms;
+            
             $cats[] = $cat;
         }
 

@@ -135,6 +135,155 @@ function paraJson(objeto) {
 
 }
 
+function createAssinc(lista, cols, rows, maxPage) {
+
+    var listar = {
+        filtro: "",
+        ordem: "",
+        por_pagina: rows,
+        por_coluna: cols,
+        elementos: [],
+        pagina: 0,
+        next: function () {
+            this.pagina++;
+            this.attList();
+        },
+        prev: function () {
+            this.pagina--;
+            this.attList();
+        },
+        paginas: [],
+        attList: function () {
+
+            var este = this;
+
+            lista.getCount(este.filtro, function (r) {
+                //----------------------------
+
+                var np = Math.ceil(r.qtd / (este.por_pagina * este.por_coluna));
+                este.pagina = Math.max(Math.min(este.pagina, np - 1), 0);
+
+                lista.getElementos(este.pagina * (este.por_pagina * este.por_coluna),
+                        Math.min((este.pagina + 1) * (este.por_pagina * este.por_coluna), r.qtd),
+                        este.filtro, este.ordem, function (e) {
+
+                            este.elementos = [];
+
+                            var els = e.elementos;
+
+                            for (var i = 0; i < este.por_pagina && (i * este.por_coluna) < els.length; i++) {
+                                este.elementos[i] = [];
+                                for (var j = 0; j < este.por_coluna && (i * este.por_coluna + j) < els.length; j++) {
+                                    este.elementos[i][j] = els[i * este.por_coluna + j];
+                                }
+                            }
+
+                            este.paginas = [];
+
+                            var a = Math.max(este.pagina - maxPage + 1, 0);
+                            for (var i = a; i < a + maxPage && i < np; i++) {
+                                var p = {numero: i, ir: function () {
+                                        este.pagina = this.numero;
+                                        este.attList();
+                                    }, isAtual: este.pagina == i}
+                                este.paginas[este.paginas.length] = p;
+                            }
+
+                        });
+                //-----------------------------
+
+            });
+
+
+
+        }
+    }
+
+    listar.attList();
+
+    return listar;
+
+}
+
+function assincFuncs(lista, base, campos, filtro) {
+
+    var b = [];
+    var e = [];
+    
+    $((filtro==null)?"#filtro":"#"+filtro).keyup(function(){
+        
+        var f = "";
+        var v = $(this).val();
+        for(var i=0;i<campos.length;i++){
+            
+            if(i>0)
+                f+=" OR ";
+            
+            f+=base+"."+campos[i]+" like '%"+v+"%'";
+            
+        }
+       
+        lista.filtro = "("+f+")";
+        lista.attList();
+        
+    })
+
+    var fn = function (campos, i) {
+
+        $("body").find("[data-ordem='" + base + "." + campos[i] + "']").each(function () {
+
+            e[i][e[i].length] = $(this);
+
+            var img = $("<img></img>").attr('src', 'imagens/seta.png').css('opacity', '0.5');
+            var img2 = $("<img></img>").attr('src', 'imagens/seta.png').css('transform', 'rotate(180deg)').css('opacity', '0.5');
+
+            $(this).append(img.css('float', 'right')).append(img2.css('float', 'right'));
+            $(this).css('cursor', 'pointer');
+
+            $(this).click(function () {
+
+                b[i] = (b[i] + 1) % 3;
+
+                if (b[i] == 0) {
+                    img.css('opacity', '0.5');
+                    img2.css('opacity', '0.5');
+                } else if (b[i] == 1) {
+                    img.css('opacity', '0.5');
+                    img2.css('opacity', '1');
+                }
+                if (b[i] == 2) {
+                    img.css('opacity', '1');
+                    img2.css('opacity', '0.5');
+                }
+
+                var f = "";
+                for (var j = 0; j < b.length; j++) {
+                    if (b[j] > 0) {
+                        if (f != "")
+                            f += ",";
+
+                        f += base + "." + campos[j] + " " + ((b[j] === 1) ? "DESC" : "ASC");
+                    }
+                }
+
+                lista.ordem = f;
+                lista.attList();
+
+            });
+
+        })
+
+    }
+
+    for (var i = 0; i < campos.length; i++) {
+
+        b[i] = 0;
+        e[i] = [];
+        fn(campos, i);
+    }
+
+}
+
 function createList(lista, cols, rows, filterParam, comparator) {
 
     var listar = {
@@ -146,58 +295,44 @@ function createList(lista, cols, rows, filterParam, comparator) {
         paginas: [],
         attList: function () {
 
-
-
-
-            var sinc = Array.isArray(lista);
-
             var este = this;
 
-            if (sinc) {
-                for (var i = 1; i < lista.length; i++) {
-                    for (var j = i; j > 0 && comparator(lista[j], lista[j - 1]); j--) {
-                        var k = lista[j];
-                        lista[j] = lista[j - 1];
-                        lista[j - 1] = k;
-                    }
+
+            for (var i = 1; i < lista.length; i++) {
+                for (var j = i; j > 0 && comparator(lista[j], lista[j - 1]); j--) {
+                    var k = lista[j];
+                    lista[j] = lista[j - 1];
+                    lista[j - 1] = k;
                 }
             }
 
 
 
-            var count = 0;
             var lst = [];
-            if (sinc) {
-                for (var i = 0; i < lista.length; i++) {
 
-                    if (typeof filterParam === 'string') {
-                        if (lista[i][filterParam] == null)
-                            continue;
-                        if (lista[i][filterParam].toUpperCase().indexOf(this.filtro.toUpperCase()) >= 0) {
+            lbl:
+                    for (var i = 0; i < lista.length; i++) {
+
+                for (a in lista[i]) {
+
+                    if (typeof listta[i][a] === 'string') {
+                        if (lista[i][a].toUpperCase().indexOf(this.filtro.toUpperCase()) >= 0) {
+
                             lst[lst.length] = lista[i];
-                        }
-                    } else if (typeof filterParam === 'function') {
-                        if (filterParam(lista[i])) {
-                            lst[lst.length] = lista[i];
+                            continue lbl;
+
                         }
                     }
-
                 }
-
-            } else {
-
-                count = lista.getCount(este.filtro);
-
-                lst = lista.getElementos(este.por_pagina * este.por_coluna * este.pagina, Math.min(este.por_pagina * este.por_coluna * (este.pagina + 1)), count);
 
             }
 
-            var np = Math.ceil(((sinc) ? lst.length : count) / (this.por_pagina * this.por_coluna));
+            var np = Math.ceil(lst.length / (this.por_pagina * this.por_coluna));
             this.pagina = Math.max(Math.min(this.pagina, np - 1), 0);
             this.elementos = [];
-            for (var i = 0; i < this.por_pagina && (i * (this.por_coluna) + (this.pagina * this.por_coluna * this.por_pagina)) < ((sinc) ? lst.length : count); i++) {
+            for (var i = 0; i < this.por_pagina && (i * (this.por_coluna) + (this.pagina * this.por_coluna * this.por_pagina)) < lst.length; i++) {
                 this.elementos[this.elementos.length] = [];
-                for (var j = 0; j < this.por_coluna && (i * (this.por_coluna) + (this.pagina * this.por_coluna * this.por_pagina) + j) < ((sinc) ? lst.length : count); j++) {
+                for (var j = 0; j < this.por_coluna && (i * (this.por_coluna) + (this.pagina * this.por_coluna * this.por_pagina) + j) < lst.length; j++) {
 
                     this.elementos[i][this.elementos[i].length] = lst[(i * (this.por_coluna) + (this.pagina * this.por_coluna * this.por_pagina) + j)];
 
@@ -234,7 +369,7 @@ var msg = {
     alerta: function (msg) {
         alert(msg);
     },
-    erro: function(msg){
+    erro: function (msg) {
         alert(msg);
     }
     , confirma: function (msg, fn) {
@@ -247,9 +382,9 @@ var msg = {
 function baseService(http, q, obj) {
 
     loading.show();
-    
+
     for (var i = 0; i < requests.length; i++) {
-        requests[i].resolve();
+        //requests[i].resolve();
     }
     requests = [];
 
@@ -264,9 +399,7 @@ function baseService(http, q, obj) {
         }
 
     }
-
     http({
-
         url: 'php/controler/crt.php',
         method: "POST",
         data: "c=" + obj.query.split("&").join("e") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("e")) : ""),

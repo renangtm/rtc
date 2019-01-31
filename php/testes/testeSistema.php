@@ -46,7 +46,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         echo Utilidades::toJson($operacoes);
         
-        */
+        
         
         $empresa = Utilidades::getEmpresaTeste();
         
@@ -57,6 +57,11 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         $this->assertEquals(Sistema::getUsuario("usuario.login='teste' AND usuario.senha='123456'")->id,$usuario->id);
         
         $this->assertEquals(Sistema::getUsuario("usuario.login='teste' AND usuario.senha='12346'"),null);
+        */
+        
+        $cats = Sistema::getCategoriaProduto($con);
+        
+        echo Utilidades::toJson($cats);
         
     }
 

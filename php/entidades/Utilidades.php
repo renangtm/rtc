@@ -715,6 +715,9 @@ class Utilidades {
         $produto->categoria = new CategoriaProduto();
         $produto->categoria->nome = "TEste";
         $produto->categoria->merge($con);
+        $produto->classe_risco = 23;
+        $produto->fabricante = "FAB";
+        $produto->imagem = "234fdff";
 
         $produto->liquido = false;
         $produto->unidade = "Galao";

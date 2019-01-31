@@ -1,35 +1,118 @@
-var usuario = null;
-var empresa = null;
-var logo = null;
 
-rtc.controller("crtProdutos", function ($scope, $controller, acessoService) {
+rtc.controller("crtProdutos", function ($scope,culturaService,pragaService, produtoService, baseService, categoriaProdutoService,receituarioService) {
 
+    $scope.produtos = createAssinc(produtoService, 1, 3, 10);
+    $scope.produtos.attList();
+    assincFuncs(
+            $scope.produtos,
+            "produto",
+            ["id", "nome", "estoque","disponivel", "transito", "valor_base", "ativo","classe_risco"]);
 
+    $scope.produto = {};
+    $scope.produto_novo = {};
+    $scope.receituario = {};
 
-})
+    $scope.categorias = [];
+    
+    $scope.deletarProduto = function(){
+        
+        baseService.delete($scope.produto,function(r){
+            
+            if(r.sucesso){
+                
+                msg.alerta("Deletado com sucesso");
+                $scope.produtos.attList();
+                
+            }else{
+                
+                msg.erro("Problema ao deletar");
+                
+            }
+            
+            
+            
+        });
 
+    }
+    
+    $scope.mergeProduto = function(){
+        
+        baseService.merge($scope.produto,function(r){
+            
+            if(r.sucesso){
+                
+                msg.alerta("Operação efetuada com sucesso");
+                $scope.produto = r.o;
+                $scope.produtos.attList();
+                
+            }else{
+                
+                msg.erro("Problema ao efetuar operação");
+                
+            }
+            
+            
+            
+        });
+        
+    }
+    
+    $scope.deleteReceituario = function(rec,produto){
+        
+        baseService.delete(rec,function(r){
+            
+            if(r.sucesso){
+                
+                msg.alerta("Deletado com sucesso");
+                $scope.getReceituario(produto);
+                
+            }else{
+                
+                msg.erro("Problema ao deletar");
+                
+            }
+            
+            
+            
+        })
+        
+    }
 
-rtc.controller("crtAcessos", function ($scope, $rootScope, acessoService) {
+    $scope.getReceituario = function(p){
+       
+       produtoService.getReceituario(p,function(r){
+          
+          p.receituario = r.receituario; 
+          
+       });
+        
+    }
+    
+    $scope.novoProduto = function(){
+        
+        $scope.produto = angular.copy($scope.produto_novo);
+        
+    }
+    
+    $scope.setProduto = function(produto){
+     
+        $scope.produto = produto;
+    }
 
-    $rootScope.usuario = null;
-    $rootScope.empresa = null;
-    $rootScope.logo = null;
-
-    acessoService.getAcesso(function (r) {
-
-        if (!r.sucesso || r.usuario == null || r.empresa == null) {
-
-            window.location = "index.php";
-
-        } else {
-
-            $rootScope.usuario = r.usuario;
-            $rootScope.empresa = r.empresa;
-            $rootScope.logo = r.logo;
-
-        }
-
+    produtoService.getProduto(function (p) {
+        $scope.produto_novo = p.produto;
+        $scope.receituario.produto = $scope.produto;
     })
+    
+     receituarioService.getReceituario(function (p) {
+        $scope.receituario = p.receituario;
+        $scope.receituario.produto = $scope.produto;
+    })
+
+    categoriaProdutoService.getElementos(function (f) {
+        $scope.categorias = createList(f.elementos, 1, 10);
+    })
+
 
 })
 
