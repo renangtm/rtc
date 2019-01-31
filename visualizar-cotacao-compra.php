@@ -263,14 +263,14 @@
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="page-header">
-                                    <h2 class="pageheader-title">Pedidos de Compra</h2>
+                                    <h2 class="pageheader-title">Cotação de Compra</h2>
                                     <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
                                     <div class="page-breadcrumb">
                                         <nav aria-label="breadcrumb">
                                             <ol class="breadcrumb">      
                                                 <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">RTC</a></li>
-                                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Pedidos</a></li>
-                                                <li class="breadcrumb-item active" aria-current="page">Pedidos de Compra</li>
+                                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Cotação</a></li>
+                                                <li class="breadcrumb-item active" aria-current="page">Cotação de Compra</li>
                                             </ol>
                                         </nav>
                                     </div>
@@ -289,7 +289,7 @@
                                     <div class="card-body">
                                         <div class="table-responsive">
                                             <div class="product-btn m-b-20">
-                                                <a href="#" class="btn btn-primary" data-title="AddCompra" data-toggle="modal" data-target="#addCompra" ><i class="fas fa-plus-circle m-r-10"></i>Cadastrar Pedido de Compra</a>
+                                                <a href="#" class="btn btn-primary" data-title="AddCompra" data-toggle="modal" data-target="#addCompra" ><i class="fas fa-plus-circle m-r-10"></i>Cadastrar Cotação de Compra</a>
                                             </div>
                                             <hr><br>
                                             <table id="pedidos" class="table table-striped table-bordered first">
@@ -297,23 +297,43 @@
                                                     <tr>
                                                         <th>Cod.</th>
                                                         <th>Fornecedor</th>
+                                                        <th>Vendedor</th>
                                                         <th>Data</th>
-                                                        <th>frete</th>
+                                                        <th>Frete</th>
                                                         <th>Tipo</th>
                                                         <th>Status</th>
-                                                        <th>Vendedor</th>
-                                                        <th>Ação</th>
+                                                        <th>Resgate</th>
+                                                        <th width="140px">Ação</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td>5395</td>
-                                                        <td>AgroFauna Filial17</td>
-                                                        <td>15 / 01 / 2019</td>
+                                                        <td>405</td>
+                                                        <td>Agrovale Apiai Ltda</td>
+                                                        <td>38 - Rodrigo Porto Nunes</td>
+                                                        <td>13/09/2018</td>
                                                         <td>0.0</td>
-                                                        <td>Entrada</td>
+                                                        <td>S</td>
+                                                        <td>Pedido formado</td>
+                                                        <td>Cotacao de vendedor</td>
+                                                        <th>
+                                                            <div class="product-btn">
+                                                                <a href="#" class="btn btn-outline-light btnvis" data-title="vizPedido" data-toggle="modal" data-target="#vizPedido"><i class="fas fa-eye"></i></a>
+                                                                <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" data-toggle="modal" data-target="#editCompra"><i class="fas fa-pencil-alt"></i></a>
+                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Delete" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
+                                                            </div>
+                                                        </th>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>427</td>
+                                                        <td>D A Rissi</td>
+                                                        <td>38 - Rodrigo Porto Nunes</td>
+                                                        <td>08/10/2018</td>
+                                                        <td>0.0</td>
+                                                        <td>S</td>
                                                         <td>Iniciado</td>
-                                                        <td>2 - ELIAS</td>
+                                                        <td>Cotacao de vendedor</td>
                                                         <th>
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btnvis" data-title="vizPedido" data-toggle="modal" data-target="#vizPedido"><i class="fas fa-eye"></i></a>
@@ -324,30 +344,14 @@
                                                     </tr>
 
                                                     <tr>
-                                                        <td>1550</td>
-                                                        <td>Brasil Agro Comercio de Insumos Ltda</td>
-                                                        <td>04 / 09 / 2017</td>
+                                                        <td>432</td>
+                                                        <td>Inagril Comercio de Insumos Agricolas Ltda</td>
+                                                        <td>45 - Adriano Carvalho</td>
+                                                        <td>15/10/2018</td>
                                                         <td>0.0</td>
-                                                        <td>Saida</td>
-                                                        <td>Finalizado</td>
-                                                        <td>22-CRISTINIS</td>
-                                                        <th>
-                                                            <div class="product-btn">
-                                                                <a href="#" class="btn btn-outline-light btnvis" data-title="vizPedido" data-toggle="modal" data-target="#vizPedido"><i class="fas fa-eye"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" data-toggle="modal" data-target="#editCompra"><i class="fas fa-pencil-alt"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Delete" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
-                                                            </div>
-                                                        </th>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <td>4117</td>
-                                                        <td>AgroFauna Filial17</td>
-                                                        <td>10 / 10 / 2018</td>
-                                                        <td>0.0</td>
-                                                        <td>Entrada</td>
-                                                        <td>Encomenda</td>
-                                                        <td>CPD</td>
+                                                        <td>S</td>
+                                                        <td>Pedido formado</td>
+                                                        <td>Cotacao de vendedor</td>
                                                         <th>
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btnvis" data-title="vizPedido" data-toggle="modal" data-target="#vizPedido" ><i class="fas fa-eye"></i></a>
@@ -360,12 +364,13 @@
                                                 <tfoot>
                                                     <tr>
                                                         <th>Cod.</th>
-                                                        <th>Cliente / Fornecedor</th>
+                                                        <th>Fornecedor</th>
+                                                        <th>Vendedor</th>
                                                         <th>Data</th>
-                                                        <th>frete</th>
+                                                        <th>Frete</th>
                                                         <th>Tipo</th>
                                                         <th>Status</th>
-                                                        <th>Vendedor</th>
+                                                        <th>Resgate</th>
                                                         <th>Ação</th>
                                                     </tr>
                                                 </tfoot>
@@ -411,7 +416,7 @@
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Adicione os dados de seu Pedido de Compra</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Adicione os dados de sua Cotação de Compra</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">×</span>
                                 </button>
@@ -486,20 +491,12 @@
                                                 <th>Nome</th>
                                                 <th>Qtd.</th>
                                                 <th>Qtd. Cx</th>
-                                                <th>Vl.base</th>
-                                                <th>Juros</th>
-                                                <th>Frete</th>
-                                                <th>Icms</th>
                                                 <th>Valor</th>
-                                                <th>Ação</th>
+                                                <th width="80px">Ação</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
@@ -516,8 +513,9 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <th colspan="7" style="text-align:right;">VALOR TOTAL</th>
-                                                <th colspan="3">R$ 0.00</th>
+                                                <th colspan="4" style="text-align:right;">VALOR TOTAL</th>
+                                                <th>R$ 0.00</th>
+                                                <th></th>
                                             </tr>
                                         </tfoot>		
                                     </table>
@@ -559,19 +557,15 @@
                                     <hr>
                                     <div class="form-group">
                                         <div class="form-row">
-                                            <div class="form-inline col-12">
+                                            <div class="form-inline col-7">
                                                 <label for="" style="margin-right: 20px;">Status</label>
-                                                <select class="form-control col-7" id="status">    
+                                                <select class="form-control col-10" id="status">    
                                                     <option value="1">Iniciado</option>
-                                                    <option value="2">Confirmação de pagamento</option>
-                                                    <option value="3">Separação</option>
-                                                    <option value="4">Solicitação de coleta</option>
-                                                    <option value="5">Rastreio</option>
-                                                    <option value="6">Finalizado</option>
-                                                    <option value="7">Cancelado</option>
-                                                    <option value="8">Aguardando Pedido de Compra</option>
-                                                    <option value="9">Encomenda</option>
+                                                    <option value="2">Pedido formado</option>
                                                 </select>
+                                            </div>
+                                            <div class="form-inline col-3">
+                                                <a href="#" class="btn btn-primary disabled">Formar Pedido</a>
                                             </div>
                                         </div>
                                     </div>					
@@ -594,7 +588,7 @@
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Edite os dados de seu Pedido de Compra</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Edite os dados de sua Cotação de Compra</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">×</span>
                                 </button>
@@ -669,10 +663,6 @@
                                                 <th>Nome</th>
                                                 <th>Qtd.</th>
                                                 <th class="text-center">Qtd. Cx</th>
-                                                <th class="text-center">Vl.base</th>
-                                                <th class="text-center">Juros</th>
-                                                <th class="text-center">Frete</th>
-                                                <th class="text-center">Icms</th>
                                                 <th class="text-center">Valor</th>
                                                 <th>Ação</th>
                                             </tr>
@@ -684,10 +674,6 @@
                                                 <td class="text-center" width="100px"><input id="inputText4" type="number" class="form-control" placeholder="5" min="1" value="24"></td>
                                                 <td class="text-center">4.0</td>
                                                 <td class="text-center">158.72</td>
-                                                <td class="text-center">0.0</td>
-                                                <td class="text-center">0.0</td>
-                                                <td class="text-center">0.0</td>
-                                                <td class="text-center">158.72</td>
                                                 <td >
                                                     <div class="product-btn">
                                                         <a href="#" class="btn btn-outline-light btndel"><i class="fas fa-trash-alt"></i></a>
@@ -696,10 +682,6 @@
 
                                             </tr>
                                             <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
@@ -716,8 +698,9 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <th colspan="7" style="text-align:right;">VALOR TOTAL</th>
-                                                <th colspan="3">R$ 3809,38</th>
+                                                <th colspan="4" style="text-align:right;">VALOR TOTAL</th>
+                                                <th>R$ 3809,38</th>
+                                                <th></th>
                                             </tr>
                                         </tfoot>		
                                     </table>
@@ -759,19 +742,15 @@
                                     <hr>
                                     <div class="form-group">
                                         <div class="form-row">
-                                            <div class="form-inline col-12">
+                                            <div class="form-inline col-7">
                                                 <label for="" style="margin-right: 20px;">Status</label>
-                                                <select class="form-control col-7" id="status">    
-                                                    <option value="1" selected>Iniciado</option>
-                                                    <option value="2">Confirmação de pagamento</option>
-                                                    <option value="3">Separação</option>
-                                                    <option value="4">Solicitação de coleta</option>
-                                                    <option value="5">Rastreio</option>
-                                                    <option value="6">Finalizado</option>
-                                                    <option value="7">Cancelado</option>
-                                                    <option value="8">Aguardando Pedido de Compra</option>
-                                                    <option value="9">Encomenda</option>
+                                                <select class="form-control col-10" id="status">    
+                                                    <option value="1">Iniciado</option>
+                                                    <option value="2">Pedido formado</option>
                                                 </select>
+                                            </div>
+                                            <div class="form-inline col-3">
+                                                <a href="#" class="btn btn-primary">Formar Pedido</a>
                                             </div>
                                         </div>
                                     </div>					
@@ -796,11 +775,11 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de seu Pedido</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de sua Cotação</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
-                                <p class="text-center"> Tem certeza de que deseja excluir este Pedido?</p>
+                                <p class="text-center"> Tem certeza de que deseja excluir sua Cotação?</p>
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-primary" onclick="cadastrarProduto()">Sim</button>
@@ -811,16 +790,16 @@
                 </div>
                 <!-- /.modal-content --> 
 
-                <!-- /.modal-content VISUALIZAR PEDIDO --> 
+                <!-- /.modal-content VISUALIZAR PEDIDO -->  
                 <div class="modal fade" id="vizPedido" tabindex="-1" role="dialog" aria-labelledby="vizPedido" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-eye fa-3x"></i>&nbsp;&nbsp;&nbsp;Vizualizando Pedido</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-eye fa-3x"></i>&nbsp;&nbsp;&nbsp;Vizualizando sua Cotação</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body text-center">
-                                <iframe id="myIframe" name="myIframe" frameborder="1" width="100%" height="300px" src="visualizar-pedido-print.php"></iframe>
+                                <iframe id="myIframe" name="myIframe" frameborder="1" width="100%" height="300px" src="visualizar-cotacao-print.php"></iframe>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
@@ -838,7 +817,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fa fa-fw fa-shopping-basket fa-3x"></i>&nbsp;&nbsp;&nbsp;Adicione o produto em seu pedido.</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fa fa-fw fa-shopping-basket fa-3x"></i>&nbsp;&nbsp;&nbsp;Adicione o produto em sua cotação.</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
