@@ -37,7 +37,7 @@
 	<table style="width:100%;">
 		<tr>
 			<th style="text-align:center;"><img src="assets/images/logo_agrofauna_pedido.png" class="product-image" style="width:110%;margin-bottom: 20px;"></th>
-			<th style="padding:15px; width:65%;text-align:center;"><p class="text-center;" style="font-size:14px;">SÃO JOSE DO RIO PRETO - SP, Rua Professor cavaleiro Salem,<br>
+			<th style="padding:15px; width:65%;text-align:center;"><p class="text-center" style="font-size:14px;">SÃO JOSE DO RIO PRETO - SP, Rua Professor cavaleiro Salem,<br>
 				1136, CEP: 07195201, Telefone: 0000-0000</p>
 			</th>
 		</tr>

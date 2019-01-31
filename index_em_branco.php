@@ -1,10 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-app="appRtc">
 
     <head>
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+        <script src="js/angular.min.js"></script>
+        <script src="js/rtc.js"></script>
+        <script src="js/filters.js"></script>
+        <script src="js/services.js"></script>
+        <script src="js/controllers.js"></script>    
+        
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
         <link href="assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
@@ -16,6 +23,8 @@
         <link rel="stylesheet" href="assets/vendor/charts/c3charts/c3.css">
         <link rel="stylesheet" href="assets/vendor/fonts/flag-icon-css/flag-icon.min.css">
         <title>RTC (Reltrab Cliente) - WEB</title>
+        
+        
     </head>
 
     <body>

@@ -52,11 +52,11 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         $usuario = Utilidades::getUsuarioTeste($empresa);
         
-        $this->assertEquals(Sistema::logar("teste", "123456")->empresa->id,$empresa->id);
+        $this->assertEquals(Sistema::getUsuario("usuario.login='teste' AND usuario.senha='123456'")->empresa->id,$empresa->id);
         
-        $this->assertEquals(Sistema::logar("teste", "123456")->id,$usuario->id);
+        $this->assertEquals(Sistema::getUsuario("usuario.login='teste' AND usuario.senha='123456'")->id,$usuario->id);
         
-        $this->assertEquals(Sistema::logar("teste", "12345"),null);
+        $this->assertEquals(Sistema::getUsuario("usuario.login='teste' AND usuario.senha='12346'"),null);
         
     }
 

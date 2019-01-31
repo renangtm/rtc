@@ -9,15 +9,15 @@ $c = new ConnectionFactory();
 $usuario = $ses->get("usuario");
 $empresa = $ses->get("empresa");
 
-$objeto = null;
+$o = null;
 
 if(isset($_POST['o'])){
     
-    $objeto = Utilidades::fromJson($_POST['o']);
+    $o = Utilidades::fromJson($_POST['o']);
     
 }else if(isset($_GET['o'])){
     
-    $objeto = Utilidades::fromJson($_GET['o']);
+    $o = Utilidades::fromJson($_GET['o']);
     
 }
 
@@ -40,13 +40,11 @@ if(isset($_POST['c'])){
 $r = new stdClass();
 $r->sucesso = true;
 
-if($objeto!= null){
+if($o!= null){
     
-    $r->objeto = $objeto;
+    $r->o = $objeto;
     
 }
-
-$codigo = str_replace(".", "->", $codigo);
 
 eval('try{ '.$codigo.'; }catch(Exception $ex){$r->sucesso = false;$r->mensagem=$ex->getMessage();}');
 

@@ -353,7 +353,7 @@ class CotacaoEntrada {
             
             if($this->status->envia_email){
                 
-                $html = Sistema::getHtmlCotacaoFornecedor($this);
+                $html = Sistema::getHtml('cotacao_fornecedor',$this);
                 
                 $this->usuario->email->enviarEmail($this->fornecedor->email,"Cotacao de produtos",$html);
                 
