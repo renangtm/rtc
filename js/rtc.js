@@ -381,7 +381,7 @@ var msg = {
     }
 }
 
-function baseService(http, q, obj,get) {
+function baseService(http, q, obj, get) {
 
     loading.show();
 
@@ -401,16 +401,16 @@ function baseService(http, q, obj,get) {
         }
 
     }
-    
-    if(get==2){
-        
+
+    if (get == 2) {
+
         document.write("c=" + obj.query.split("&").join("e") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("e")) : ""));
-        
+
     }
-    
+
     http({
         url: 'php/controler/crt.php',
-        method: ((get==null)?"POST":"GET"),
+        method: ((get == null) ? "POST" : "GET"),
         data: "c=" + obj.query.split("&").join("e").split("+").join("<m>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("e").split("+").join("<m>")) : ""),
         timeout: p.promise,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (exx) {
@@ -443,6 +443,56 @@ function equalize(obj, param, vect) {
         }
     }
 }
+
+function xmlToJson(r, e) {
+    for (var t = ["<", ">", "</", "/>"], l = "", a = {}, n = "", h = -1, i = !1, s = !1; e < r.length; e++) {
+        for (var f = e, g = 0; g < t.length; g++) {
+            var c = f;
+            try {
+                for (; r.charAt(c) == t[g].charAt(c - f) && c - f < t[g].length && c < r.length; c++)
+                    ;
+            } catch (r) {
+            }
+            c - f == t[g].length && (h = g, e = c)
+        }
+        if (-1 == h)
+            n += r.charAt(e), i = !0;
+        else if (0 == h)
+            n += r.charAt(e);
+        else if (1 == h) {
+            if (s) {
+                if (n == l)
+                    return[a, e];
+                e--, s = !1
+            } else {
+                if ("" == l) {
+                    for (var o = n.split(" "), A = 1; A < o.length; A++) {
+                        var v = o[A].split("=", 2);
+                        a[v[0]] = v[1].substr(1, v[1].length - 2)
+                    }
+                    l = n = o[0], e--, h = -1
+                } else {
+                    var u = n.length;
+                    void 0 != a[n = n.split(" ")[0]] && (Array.isArray(a[n]) || (a[n] = [a[n]]));
+                    var y = pJson(r, e - u - 2);
+                    e = y[1] - 1, Array.isArray(a[n]) ? a[n][a[n].length] = y[0] : a[n] = y[0]
+                }
+                for (; e + 1 < r.length && " " == r.charAt(e + 1); )
+                    e++
+            }
+            n = ""
+        } else if (2 == h) {
+            if (i)
+                return[n, e - t[2].length];
+            s = !0, e--, h = 0
+        } else
+            3 == h && (e--, n = "")
+    }
+    return[a, e]
+}
+
+
+
 
 function getExt(nome) {
     return nome.split('.')[nome.split('.').length - 1];
@@ -510,7 +560,7 @@ rtc.service('uploadService', function ($http, $q) {
                 b = window.btoa(b);
                 baseService($http, $q, {
                     o: {nome: nome},
-                    query: "Sistema::mergeArquivo($o->nome,'"+b+"')",
+                    query: "Sistema::mergeArquivo($o->nome,'" + b + "')",
                     sucesso: function (r) {
 
                         f(bytes, buffer, k, nome);
@@ -527,12 +577,12 @@ rtc.service('uploadService', function ($http, $q) {
                         }
 
                     }
-                    
+
                 });
 
                 obj.atual++;
-                
-                loading.setProgress(obj.atual*100/obj.total);
+
+                loading.setProgress(obj.atual * 100 / obj.total);
 
             }
 
