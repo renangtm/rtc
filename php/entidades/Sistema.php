@@ -87,6 +87,55 @@ class Sistema {
         $ps->execute();
         $ps->close();
     }
+    
+    public static function getPragas($con){
+        
+        $pragas = array();
+        
+        $ps = $con->getConexao()->prepare("SELECT id,nome FROM praga WHERE excluida = false ORDER BY nome");
+        $ps->execute();
+        $ps->bind_result($id,$nome);
+        
+        while($ps->fetch()){
+            
+            $praga = new Praga();
+            $praga->id = $id;
+            $praga->nome = $nome;
+            
+            $pragas[] = $praga;
+            
+        }
+        
+        $ps->close();
+        
+        return $pragas;
+        
+    }
+    
+    public static function getCulturas($con){
+        
+        $culturas = array();
+        
+        $ps = $con->getConexao()->prepare("SELECT id,nome FROM cultura WHERE excluida = false ORDER BY nome");
+        $ps->execute();
+        $ps->bind_result($id,$nome);
+        
+        while($ps->fetch()){
+            
+            $cultura = new Cultura();
+            $cultura->id = $id;
+            $cultura->nome = $nome;
+            
+            $culturas[] = $cultura;
+            
+        }
+        
+        $ps->close();
+        
+        return $culturas;
+        
+    }
+    
 
     public static function getStatusPedidoEntrada() {
 

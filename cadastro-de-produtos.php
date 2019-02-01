@@ -114,7 +114,7 @@
                                                         <th>
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setProduto(produto[0]);getReceituario(produto[0])" data-target="#demo{{produto[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setProduto(produto[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
+                                                                <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setProduto(produto[0]);getReceituario(produto[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
                                                                 <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setProduto(produto[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
                                                             </div>
                                                         </th>
@@ -285,11 +285,11 @@
                                     <div class="tab-pane fade show active" id="nav-prod" role="tabpanel" aria-labelledby="nav-prod-tab">
 
                                         <!-- form produto -->
-                                        <form id="add-form" parsley-validate>
+                                        <form id="add-form" ng-submit="mergeProduto()" parsley-validate>
                                             <div class="form-group row">
                                                 <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Nome</label>
                                                 <div class="col-9 col-lg-10">
-                                                    <input id="txtname" ng-model="produto.nome" type="text" required data-parsley-type="email" placeholder="" class="form-control is-invalid">
+                                                    <input id="txtname" ng-model="produto.nome" type="text" required data-parsley-type="email" placeholder="" class="form-control">
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
@@ -429,19 +429,75 @@
                                         <hr>
                                         <div class="form-group row">
                                             <div class="col text-center">
-                                                <button class="btn btn-primary text-center" type="submit">
-                                                    <i class="fas fa-save"></i> &nbsp; Salvar
-                                                </button>
+                                                
                                             </div>	
                                         </div>
                                         <!-- end fom imagem produto -->
 
                                     </div>
                                         <div class="tab-pane fade" id="nav-uso" role="tabpanel" aria-labelledby="nav-uso-tab">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    Cultura:
+                                                    <hr>
+                                                    <select class="custom-select" ng-model="receituario.cultura" name="" size="10">
+                                                        <option ng-repeat="c in culturas" ng-value="c">{{c.nome}}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                     Praga
+                                                    <hr>
+                                                    <select class="custom-select" ng-model="receituario.praga" name="" size="10">
+                                                        <option ng-repeat="p in pragas" ng-value="p">{{p.nome}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-9">
+                                                    <br>
+                                                    Observacao:
+                                                    <hr>
+                                                    <textarea ng-model="receituario.instrucoes" class="form-control" style=""width:100%>
+
+                                                    </textarea>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <br>
+                                                    Adicionar
+                                                    <hr>
+                                                    <button class="btn btn-success" ng-click="mergeReceituario()"><i class="fa fa-plus"></i></button>
+                                                </div>
+                                            </div>
+                                            <hr>
                                             
-                                            
-                                            
-                                            
+                                            <table class="table table-striped table-bordered first">
+                                                <thead>
+                                                    <td>
+                                                        Cod
+                                                    </td>
+                                                    <td>
+                                                        Cult
+                                                    </td>
+                                                    <td>
+                                                        Praga
+                                                    </td>
+                                                    <td>
+                                                        Obs
+                                                    </td>
+                                                    <td>
+                                                        Exc
+                                                    </td>
+                                                </thead>
+                                                <tr ng-repeat="rec in produto.receituario">
+                                                    <td>{{rec.id}}</td>
+                                                    <td>{{rec.cultura.nome}}</td>
+                                                    <td>{{rec.praga.nome}}</td>
+                                                    <td>{{rec.instrucoes}}</td>
+                                                    <td>
+                                                        <button class="btn btn-danger" ng-click="deleteReceituario(rec,produto)"><i class="fa fa-times"></i></button>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                             
                                         </div>
 
@@ -736,7 +792,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                                <button class="btn btn-primary" onclick="cadastrarProduto()">
+                                <button class="btn btn-primary">
                                     <i class="fas fa-save"></i> &nbsp; Salvar
                                 </button>
                             </div>

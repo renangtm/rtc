@@ -448,6 +448,11 @@ function getExt(nome) {
     return nome.split('.')[nome.split('.').length - 1];
 }
 
+function isNormalInteger(str) {
+    var n = Math.floor(Number(str));
+    return n !== Infinity && String(n) === str && n >= 0;
+}
+
 function getRandom(v) {
 
     var ca = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
@@ -482,7 +487,7 @@ rtc.service('uploadService', function ($http, $q) {
 
                 if (k == offset) {
 
-                    obj.arquivos[obj.arquivos.length] = "http://10.0.0.107/novo_rtc_web/php/uploads/" + nome;
+                    obj.arquivos[obj.arquivos.length] = "http://192.168.18.121:888/novo_rtc_web/php/uploads/" + nome;
 
                     if (obj.arquivos.length == (obj.qtdArquivos - obj.qtdFalhas)) {
                         if (obj.qtdFalhas == 0) {
@@ -526,6 +531,8 @@ rtc.service('uploadService', function ($http, $q) {
                 });
 
                 obj.atual++;
+                
+                loading.setProgress(obj.atual*100/obj.total);
 
             }
 

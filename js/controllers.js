@@ -10,6 +10,8 @@ rtc.controller("crtProdutos", function ($scope,culturaService,uploadService,prag
 
     $scope.produto = {};
     $scope.produto_novo = {};
+    
+    $scope.receituario_novo = {};
     $scope.receituario = {};
 
     $scope.categorias = [];
@@ -59,18 +61,37 @@ rtc.controller("crtProdutos", function ($scope,culturaService,uploadService,prag
     }
     
     $scope.mergeProduto = function(){
-        
-        baseService.merge($scope.produto,function(r){
+ 
+        var validaGrade = $scope.produto.grade.str.split(",");
+        var ant = -1;
+        for(var i=0;i<validaGrade.length;i++){
+            if(!isNormalInteger(validaGrade[i]) || parseInt(validaGrade[i])==0){
+                msg.erro("Grade incorreta");
+                return;
+            }
             
+            if(parseInt(validaGrade[i])>ant && ant>=0){
+                msg.erro("Grade incorreta, sub unidade maior que unidade");
+                return;
+            }
+            
+            ant = parseInt(validaGrade[i]);
+        }
+ 
+        baseService.merge($scope.produto,function(r){
+           
             if(r.sucesso){
                 
-                msg.alerta("Opera��o efetuada com sucesso");
+                msg.alerta("Operacao efetuada com sucesso");
                 $scope.produto = r.o;
+                $scope.receituario.produto = $scope.produto;
+                $scope.getReceituario($scope.produto);
+                equalize($scope.produto,"categoria",$scope.categorias);
                 $scope.produtos.attList();
                 
             }else{
                 
-                msg.erro("Problema ao efetuar opera��o");
+                msg.erro("Problema ao efetuar operacao");
                 
             }
             
@@ -101,6 +122,38 @@ rtc.controller("crtProdutos", function ($scope,culturaService,uploadService,prag
         
     }
 
+    $scope.mergeReceituario = function(){
+        
+        if($scope.produto.id==0){
+            
+            msg.erro("Efetue o cadastro do produto primeiro");
+            
+            return;
+            
+        }
+        
+        baseService.merge($scope.receituario,function(r){
+            
+            
+            if(r.sucesso){
+                
+                $scope.receituario = angular.copy($scope.receituario_novo);
+                $scope.getReceituario($scope.produto);
+                msg.alerta("Operacoes efetuada com sucesso");
+                
+                
+            }else{
+                
+                msg.erro("Problema ao efetuar operacao");
+                
+            }
+            
+            
+            
+        });
+        
+    }
+
     $scope.getReceituario = function(p){
        
        produtoService.getReceituario(p,function(r){
@@ -119,6 +172,7 @@ rtc.controller("crtProdutos", function ($scope,culturaService,uploadService,prag
     
     $scope.setProduto = function(produto){
         $scope.produto = produto;
+        $scope.receituario.produto = $scope.produto;
         equalize($scope.produto,"categoria",$scope.categorias);
     }
 
@@ -128,7 +182,8 @@ rtc.controller("crtProdutos", function ($scope,culturaService,uploadService,prag
     })
     
     receituarioService.getReceituario(function (p) {
-        $scope.receituario = p.receituario;
+        $scope.receituario_novo = p.receituario;
+        $scope.receituario = angular.copy(p.receituario);
         $scope.receituario.produto = $scope.produto;
     })
 
@@ -137,11 +192,14 @@ rtc.controller("crtProdutos", function ($scope,culturaService,uploadService,prag
     })
 
     culturaService.getElementos(function(f){
+      
         $scope.culturas = f.culturas;
+        
     })
 
     pragaService.getElementos(function(f){
-        $scope.pragas = f.prgas;
+       
+        $scope.pragas = f.pragas;
     })
 
 })
