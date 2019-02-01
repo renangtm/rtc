@@ -438,7 +438,7 @@ function baseService(http, q, obj, get) {
 function equalize(obj, param, vect) {
     for (var i = 0; i < vect.length; i++) {
         if (vect[i].id == obj[param].id) {
-            vect[i] = obj[param];
+            obj[param] = vect[i];
             break;
         }
     }

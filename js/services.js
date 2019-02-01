@@ -1,3 +1,90 @@
+rtc.service('clienteService', function ($http, $q) {
+    this.getCliente = function(fn){   
+        baseService($http,$q,{
+            query:"$r->cliente=new Cliente();$r->cliente->empresa=$empresa",
+            sucesso:fn,
+            falha:fn
+        });   
+    }
+    this.setDocumentos = function(cliente,documentos,fn){   
+        baseService($http,$q,{
+            o:{cliente:cliente,documentos:documentos},
+            query:"$o->cliente->setDocumentos($o->documentos,$c)",
+            sucesso:fn,
+            falha:fn
+        });   
+    }
+    this.getDocumentos = function(cliente,fn){   
+        baseService($http,$q,{
+            o:cliente,
+            query:"$r->documentos=$o->getDocumentos($c)",
+            sucesso:fn,
+            falha:fn
+        });   
+    }
+    this.getCount = function(filtro,fn){  
+        baseService($http,$q,{
+            o:{filtro:filtro},
+            query:"$r->qtd=$empresa->getCountClientes($c,$o->filtro)",
+            sucesso:fn,
+            falha:fn
+        });   
+    }
+    this.getElementos = function(x0,x1,filtro,ordem,fn){   
+        baseService($http,$q,{
+            o:{x0:x0,x1:x1,filtro:filtro,ordem:ordem},
+            query:"$r->elementos=$empresa->getClientes($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso:fn,
+            falha:fn
+        });   
+    }
+})
+rtc.service('telefoneService', function ($http, $q) {
+    this.getTelefone = function(fn){   
+        baseService($http,$q,{
+            query:"$r->telefone=new Telefone()",
+            sucesso:fn,
+            falha:fn
+        });   
+    }
+})
+rtc.service('cidadeService', function ($http, $q) {
+    this.getElementos = function(fn){   
+        baseService($http,$q,{
+            query:"$r->elementos=Sistema::getCidades($c)",
+            sucesso:fn,
+            falha:fn
+        });   
+    }
+})
+rtc.service('documentoService', function ($http, $q) {
+    this.getDocumento = function(fn){   
+        baseService($http,$q,{
+            query:"$r->documento=new Documento()",
+            sucesso:fn,
+            falha:fn
+        });   
+    }
+    
+})
+rtc.service('categoriaDocumentoService', function ($http, $q) {
+    this.getElementos = function(fn){   
+        baseService($http,$q,{
+            query:"$r->elementos=Sistema::getCategoriaDocumentos($c)",
+            sucesso:fn,
+            falha:fn
+        });   
+    }
+})
+rtc.service('categoriaClienteService', function ($http, $q) {
+    this.getElementos = function(fn){   
+        baseService($http,$q,{
+            query:"$r->elementos=Sistema::getCategoriaCliente($c)",
+            sucesso:fn,
+            falha:fn
+        });   
+    }
+})
 rtc.service('categoriaProdutoService', function ($http, $q) {
     this.getElementos = function(fn){   
         baseService($http,$q,{

@@ -112,6 +112,30 @@ class Sistema {
         
     }
     
+    public static function getCategoriaCliente($con){
+        
+        $cats = array();
+        
+        $ps = $con->getConexao()->prepare("SELECT id,nome FROM categoria_cliente WHERE excluida = false ORDER BY nome");
+        $ps->execute();
+        $ps->bind_result($id,$nome);
+        
+        while($ps->fetch()){
+            
+            $cat = new CategoriaCliente();
+            $cat->id = $id;
+            $cat->nome = $nome;
+            
+            $cats[] = $cat;
+            
+        }
+        
+        $ps->close();
+        
+        return $cats;
+        
+    }
+    
     public static function getCulturas($con){
         
         $culturas = array();
