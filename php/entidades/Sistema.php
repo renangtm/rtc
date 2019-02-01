@@ -18,6 +18,15 @@ class Sistema {
         
         return "";
         
+    }    
+
+    public static function mergeArquivo($nome,$conteudo){
+        
+        $handle = fopen('../uploads/'.$nome, 'a');
+        fwrite($handle,Utilidades::base64decode($conteudo));
+        fflush($handle);
+        fclose($handle);
+        
     }
 
     public static function getHistorico($con) {

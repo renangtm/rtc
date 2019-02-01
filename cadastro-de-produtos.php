@@ -285,7 +285,7 @@
                                     <div class="tab-pane fade show active" id="nav-prod" role="tabpanel" aria-labelledby="nav-prod-tab">
 
                                         <!-- form produto -->
-                                        <div id="add-form" parsley-validate>
+                                        <form id="add-form" parsley-validate>
                                             <div class="form-group row">
                                                 <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Nome</label>
                                                 <div class="col-9 col-lg-10">
@@ -298,7 +298,7 @@
                                             <div class="form-group row">
                                                 <label for="txtfab" class="col-3 col-lg-2 col-form-label text-left">Fabricante</label>
                                                 <div class="col-9 col-lg-10">
-                                                    <input id="txtfab" type="text" required data-parsley-type="email" placeholder="" class="form-control">
+                                                    <input id="txtfab" type="text" ng-model="produto.fabricante" required data-parsley-type="email" placeholder="" class="form-control">
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
@@ -307,7 +307,7 @@
                                             <div class="form-group row">
                                                 <label for="txtcl" class="col-3 col-lg-2 col-form-label text-left">Cl:</label>
                                                 <div class="col-9 col-lg-10">
-                                                    <input id="txtcl" type="number" required data-parsley-type="email" placeholder="" class="form-control">
+                                                    <input id="txtcl" type="number" ng-model="produto.classe_risco" required data-parsley-type="email" placeholder="" class="form-control">
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
@@ -316,16 +316,16 @@
                                             <div class="form-group row">
                                                 <label for="txtqtd" class="col-3 col-lg-2 col-form-label text-left">QTd.</label>
                                                 <div class="col-9 col-lg-10">
-                                                    <input id="txtqtd" type="number" required placeholder="" class="form-control">
+                                                    <input ng-model="produto.estoque" id="txtqtd" type="number" required placeholder="" class="form-control">
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="txtqtdcaixa" class="col-3 col-lg-2 col-form-label text-left">Qtd. caixa</label>
+                                                <label for="txtqtdcaixa" class="col-3 col-lg-2 col-form-label text-left">Grade</label>
                                                 <div class="col-9 col-lg-10">
-                                                    <input id="txtqtdcaixa" type="number" required placeholder="" class="form-control">
+                                                    <input ng-model="produto.grade.str" id="txtqtdcaixa" type="text" required placeholder="" class="form-control">
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
@@ -335,7 +335,7 @@
                                             <div class="form-group row">
                                                 <label for="txtdisp" class="col-3 col-lg-2 col-form-label text-left">Disp.</label>
                                                 <div class="col-9 col-lg-10">
-                                                    <input id="txtdisp" type="number" required data-parsley-type="email" placeholder="" class="form-control">
+                                                    <input id="txtdisp" ng-model="produto.disponivel" type="number" required data-parsley-type="email" placeholder="" class="form-control">
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
@@ -345,7 +345,7 @@
                                             <div class="form-group row">
                                                 <label for="txtval" class="col-3 col-lg-2 col-form-label text-left">Valor (R$)</label>
                                                 <div class="col-9 col-lg-10">
-                                                    <input id="txtval" type="number" required placeholder="00.00" class="form-control">
+                                                    <input id="txtval" ng-model="produto.transito" type="number" required placeholder="00.00" class="form-control">
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
@@ -354,23 +354,41 @@
                                             <div class="form-group row">
                                                 <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Princípio ativo</label>
                                                 <div class="col-9 col-lg-9 text-left">
-                                                    <input id="txtpativo" type="text" required placeholder="" class="form-control">
+                                                    <input id="txtpativo" ng-model="produto.ativo" type="text" required placeholder="" class="form-control">
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
                                                 </div>
-                                            </div>	
+                                            </div>
                                             <div class="form-group row">
-                                                <label for="txtpeso" class="col-3 col-lg-2 col-form-label text-left">Peso</label>
+                                                <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Categoria</label>
+                                                <div class="col-9 col-lg-9 text-left">
+                                                    <select ng-model="produto.categoria" class="form-control" >
+                                                        <option ng-repeat="c in categorias" ng-value="c">{{c.nome}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Peso Liquido</label>
+                                                <div class="col-9 col-lg-9 text-left">
+                                                    <input id="txtpativo" ng-model="produto.peso_liquido" type="text" required placeholder="" class="form-control">
+                                                    <div class="invalid-feedback">
+                                                        Please provide a valid text.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="form-group row">
+                                                <label for="txtpeso" class="col-3 col-lg-2 col-form-label text-left">Peso Bruto</label>
                                                 <div class="col-6 col-lg-6">
-                                                    <input id="txtpeso" type="number" required placeholder="" class="form-control" style="padding:.377rem .75rem;">
+                                                    <input id="txtpeso" type="number" ng-model="produto.peso_bruto" required placeholder="" class="form-control" style="padding:.377rem .75rem;">
                                                 </div>
                                                 <div class="col-4 col-lg-4" style="padding-top: 5px;">
                                                     <label class="custom-control custom-radio custom-control-inline">
-                                                        <input type="radio" name="radio-inline" checked="" class="custom-control-input"><span class="custom-control-label">KG</span>
+                                                        <input type="radio" name="radio-inline" data-ng-value="false" data-ng-model="produto.liquido" class="custom-control-input"><span class="custom-control-label">KG</span>
                                                     </label>
                                                     <label class="custom-control custom-radio custom-control-inline">
-                                                        <input type="radio" name="radio-inline" checked="" class="custom-control-input"><span class="custom-control-label">LT</span>
+                                                        <input type="radio" name="radio-inline" data-ng-value="true" data-ng-model="produto.liquido" checked="" class="custom-control-input"><span class="custom-control-label">LT</span>
                                                     </label>
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
@@ -386,7 +404,7 @@
                                                     <i class="fas fa-save"></i> &nbsp; Salvar
                                                 </button>
                                             </div>	
-                                        </div>
+                                        </form>
                                         <!-- end form produto -->
 
                                     </div>
@@ -402,8 +420,8 @@
                                         <div class="row text-center m-t-20">
                                             <div class="col">
                                                 <label class=newbtn>
-                                                    <img id="blah" width="50%" src="assets/images/fotoestilizada.png" >
-                                                    <input id="pic" class='pis' onchange="readURL(this);" type="file" >
+                                                    <img id="blah" width="50%" src="{{produto.imagem}}" >
+                                                    <input id="uploaderImagemProduto" style="display: none" type="file" >
                                                 </label>
                                             </div>
                                         </div>
@@ -419,7 +437,13 @@
                                         <!-- end fom imagem produto -->
 
                                     </div>
-                                    <div class="tab-pane fade" id="nav-uso" role="tabpanel" aria-labelledby="nav-uso-tab">...</div>
+                                        <div class="tab-pane fade" id="nav-uso" role="tabpanel" aria-labelledby="nav-uso-tab">
+                                            
+                                            
+                                            
+                                            
+                                            
+                                        </div>
 
                                     <div class="tab-pane fade" id="nav-rest" role="tabpanel" aria-labelledby="nav-rest-tab">
 

@@ -1,5 +1,5 @@
 
-rtc.controller("crtProdutos", function ($scope,culturaService,pragaService, produtoService, baseService, categoriaProdutoService,receituarioService) {
+rtc.controller("crtProdutos", function ($scope,culturaService,uploadService,pragaService, produtoService, baseService, categoriaProdutoService,receituarioService) {
 
     $scope.produtos = createAssinc(produtoService, 1, 3, 10);
     $scope.produtos.attList();
@@ -13,6 +13,29 @@ rtc.controller("crtProdutos", function ($scope,culturaService,pragaService, prod
     $scope.receituario = {};
 
     $scope.categorias = [];
+    
+    $scope.culturas = [];
+    
+    $scope.pragas = [];
+    
+    $("#uploaderImagemProduto").change(function(){
+        
+        uploadService.upload($(this).prop("files"),function(arquivos,sucesso){
+            
+            if(!sucesso){
+                
+                msg.erro("Falha ao subir arquivo de imagem");
+                
+            }else{
+                
+                $scope.produto.imagem = arquivos[0];
+                
+                msg.alerta("Upload feito com sucesso");
+            }
+            
+        })
+        
+    })
     
     $scope.deletarProduto = function(){
         
@@ -41,13 +64,13 @@ rtc.controller("crtProdutos", function ($scope,culturaService,pragaService, prod
             
             if(r.sucesso){
                 
-                msg.alerta("Operação efetuada com sucesso");
+                msg.alerta("Operaï¿½ï¿½o efetuada com sucesso");
                 $scope.produto = r.o;
                 $scope.produtos.attList();
                 
             }else{
                 
-                msg.erro("Problema ao efetuar operação");
+                msg.erro("Problema ao efetuar operaï¿½ï¿½o");
                 
             }
             
@@ -91,12 +114,12 @@ rtc.controller("crtProdutos", function ($scope,culturaService,pragaService, prod
     $scope.novoProduto = function(){
         
         $scope.produto = angular.copy($scope.produto_novo);
-        
-    }
+            }
+
     
     $scope.setProduto = function(produto){
-     
         $scope.produto = produto;
+        equalize($scope.produto,"categoria",$scope.categorias);
     }
 
     produtoService.getProduto(function (p) {
@@ -104,15 +127,22 @@ rtc.controller("crtProdutos", function ($scope,culturaService,pragaService, prod
         $scope.receituario.produto = $scope.produto;
     })
     
-     receituarioService.getReceituario(function (p) {
+    receituarioService.getReceituario(function (p) {
         $scope.receituario = p.receituario;
         $scope.receituario.produto = $scope.produto;
     })
 
     categoriaProdutoService.getElementos(function (f) {
-        $scope.categorias = createList(f.elementos, 1, 10);
+        $scope.categorias = f.elementos
     })
 
+    culturaService.getElementos(function(f){
+        $scope.culturas = f.culturas;
+    })
+
+    pragaService.getElementos(function(f){
+        $scope.pragas = f.prgas;
+    })
 
 })
 

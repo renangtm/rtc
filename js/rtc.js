@@ -209,23 +209,23 @@ function assincFuncs(lista, base, campos, filtro) {
 
     var b = [];
     var e = [];
-    
-    $((filtro==null)?"#filtro":"#"+filtro).keyup(function(){
-        
+
+    $((filtro == null) ? "#filtro" : "#" + filtro).keyup(function () {
+
         var f = "";
         var v = $(this).val();
-        for(var i=0;i<campos.length;i++){
-            
-            if(i>0)
-                f+=" OR ";
-            
-            f+=base+"."+campos[i]+" like '%"+v+"%'";
-            
+        for (var i = 0; i < campos.length; i++) {
+
+            if (i > 0)
+                f += " OR ";
+
+            f += base + "." + campos[i] + " like '%" + v + "%'";
+
         }
-       
-        lista.filtro = "("+f+")";
+
+        lista.filtro = "(" + f + ")";
         lista.attList();
-        
+
     })
 
     var fn = function (campos, i) {
@@ -362,6 +362,8 @@ var loading = {
 
     }, close: function () {
 
+    }, setProgress: function (v) {
+
     }
 };
 
@@ -379,7 +381,7 @@ var msg = {
     }
 }
 
-function baseService(http, q, obj) {
+function baseService(http, q, obj,get) {
 
     loading.show();
 
@@ -399,10 +401,17 @@ function baseService(http, q, obj) {
         }
 
     }
+    
+    if(get==2){
+        
+        document.write("c=" + obj.query.split("&").join("e") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("e")) : ""));
+        
+    }
+    
     http({
         url: 'php/controler/crt.php',
-        method: "POST",
-        data: "c=" + obj.query.split("&").join("e") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("e")) : ""),
+        method: ((get==null)?"POST":"GET"),
+        data: "c=" + obj.query.split("&").join("e").split("+").join("<m>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("e").split("+").join("<m>")) : ""),
         timeout: p.promise,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (exx) {
 
@@ -426,4 +435,136 @@ function baseService(http, q, obj) {
 
 }
 
+function equalize(obj, param, vect) {
+    for (var i = 0; i < vect.length; i++) {
+        if (vect[i].id == obj[param].id) {
+            vect[i] = obj[param];
+            break;
+        }
+    }
+}
+
+function getExt(nome) {
+    return nome.split('.')[nome.split('.').length - 1];
+}
+
+function getRandom(v) {
+
+    var ca = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+
+    var k = "";
+
+    for (var i = 0; i < v; i++) {
+
+        k += ca[Math.floor(Math.random() * (ca.length - 0.01))];
+
+    }
+
+    return k;
+
+}
+
+
+
 var rtc = angular.module("appRtc", []);
+
+rtc.service('uploadService', function ($http, $q) {
+
+    var up = function (arquivo, obj, fn) {
+
+        var reader = new FileReader();
+        var este = this;
+        if (reader) {
+
+            var f = function (bytes, buffer, offset, nome) {
+
+                var k = Math.min(offset + buffer, bytes.length);
+
+                if (k == offset) {
+
+                    obj.arquivos[obj.arquivos.length] = "http://10.0.0.107/novo_rtc_web/php/uploads/" + nome;
+
+                    if (obj.arquivos.length == (obj.qtdArquivos - obj.qtdFalhas)) {
+                        if (obj.qtdFalhas == 0) {
+                            fn(obj.arquivos, true);
+                        } else {
+                            fn(obj.arquivos, false);
+                        }
+
+                    }
+
+                    return;
+
+                }
+
+                var b = "";
+                for (var i = offset; i < k; i++)
+                    b += String.fromCharCode(bytes[i]);
+
+
+                b = window.btoa(b);
+                baseService($http, $q, {
+                    o: {nome: nome},
+                    query: "Sistema::mergeArquivo($o->nome,'"+b+"')",
+                    sucesso: function (r) {
+
+                        f(bytes, buffer, k, nome);
+
+                    },
+                    falha: function (r) {
+
+                        obj.qtdFalhas++;
+
+                        if (obj.qtdFalhas == obj.qtdArquivos) {
+
+                            fn(obj.arquivos, false);
+
+                        }
+
+                    }
+                    
+                });
+
+                obj.atual++;
+
+            }
+
+            reader = new FileReader();
+            reader.readAsArrayBuffer(new Blob([arquivo]));
+            reader.onload = function () {
+
+                var array = reader.result;
+                var bytes = new Uint8Array(array);
+                var ext = getExt(arquivo.name);
+
+                var nome = "arquivo_" + getRandom(40) + "." + ext;
+                var buffer = 3 * 1000;
+
+                obj.total += (bytes.length / buffer);
+
+                f(bytes, buffer, 0, nome);
+
+            }
+
+        }
+
+
+    }
+
+
+    this.upload = function (arquivos, fn) {
+
+        var obj = {total: 0, atual: 0, qtdArquivos: arquivos.length, arquivos: [], qtdFalhas: 0};
+
+        for (var i = 0; i < arquivos.length; i++) {
+
+            up(arquivos[i], obj, fn);
+
+        }
+
+    }
+
+})
+
+
+    

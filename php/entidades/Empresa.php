@@ -2770,7 +2770,7 @@ class Empresa {
             $p->imagem = $imagem;
             $p->nome = $nome;
             $p->id_universal = $id_uni;
-            $p->liquido = $liq;
+            $p->liquido = $liq==1;
             $p->quantidade_unidade = $qtd_un;
             $p->habilitado = $hab;
             $p->valor_base = $vb;

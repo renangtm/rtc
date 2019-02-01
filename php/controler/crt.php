@@ -13,11 +13,11 @@ $o = null;
 
 if(isset($_POST['o'])){
     
-    $o = Utilidades::fromJson($_POST['o']);
+    $o = Utilidades::fromJson(str_replace("<m>", "+",$_POST['o']));
     
 }else if(isset($_GET['o'])){
     
-    $o = Utilidades::fromJson($_GET['o']);
+    $o = Utilidades::fromJson(str_replace("<m>", "+",$_GET['o']));
     
 }
 
@@ -25,11 +25,11 @@ $codigo = "";
 
 if(isset($_POST['c'])){
     
-    $codigo = $_POST['c'];
+    $codigo = str_replace("<m>", "+",$_POST['c']);
     
 }else if(isset($_GET['c'])){
     
-    $codigo = $_GET['c'];
+    $codigo = str_replace("<m>", "+",$_GET['o']);
     
 }else{
     
