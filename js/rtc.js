@@ -111,6 +111,9 @@ function recParaJson(objeto, pilha) {
 
         for (a in objeto) {
 
+            if (a == "$$hashKey")
+                continue;
+
             if (r.length > 1) {
                 r += ",";
             }
@@ -159,7 +162,7 @@ function createAssinc(lista, cols, rows, maxPage) {
 
             lista.getCount(este.filtro, function (r) {
                 //----------------------------
-
+       
                 var np = Math.ceil(r.qtd / (este.por_pagina * este.por_coluna));
                 este.pagina = Math.max(Math.min(este.pagina, np - 1), 0);
 
@@ -224,6 +227,7 @@ function assincFuncs(lista, base, campos, filtro) {
         }
 
         lista.filtro = "(" + f + ")";
+       
         lista.attList();
 
     })
@@ -435,9 +439,29 @@ function baseService(http, q, obj, get) {
 
 }
 
+function remove(vector, element) {
+    var a = false;
+    for (var i = 0; i < vector.length - 1; i++) {
+        if (vector[i] === element) {
+            a = true;
+        }
+        if (a) {
+            vector[i] = vector[i + 1];
+        }
+    }
+    for (var i = 0; i < vector.length; i++) {
+        if (vector[i] === element) {
+            a = true;
+        }
+    }
+
+    if (a)
+        vector.length--;
+}
+
 function equalize(obj, param, vect) {
     for (var i = 0; i < vect.length; i++) {
-        if (vect[i].id == obj[param].id) {
+        if (vect[i].id === obj[param].id) {
             obj[param] = vect[i];
             break;
         }

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-app="appRtc">
 
     <head>
         <!-- Required meta tags -->
@@ -27,7 +27,7 @@
         </style>
     </head>
 
-    <body>
+    <body ng-controller="crtClientes">
         <!-- ============================================================== -->
         <!-- main wrapper -->
         <!-- ============================================================== -->
@@ -35,220 +35,6 @@
             <!-- ============================================================== -->
             <!-- navbar -->
             <!-- ============================================================== -->
-            <div class="dashboard-header">
-                <nav class="navbar navbar-expand-lg bg-white fixed-top">
-                    <a class="navbar-brand" href="index.html"><img style="" src="assets/images/logo.png" alt="" title=""></a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse " id="navbarSupportedContent">
-                        <ul class="navbar-nav ml-auto navbar-right-top">
-                            <li class="nav-item">
-                                <div id="custom-search" class="top-search-bar">
-                                    <div class="form-group">
-                                        <div class="icon-addon addon-sm">
-                                            <input class="form-control" type="search" placeholder="Digite o que procura" aria-label="Search" size="80%">
-                                            <label for="email" class="fa fa-search" rel="tooltip" title="email"></label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown notification">
-                                <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-fw fa-shopping-cart fa-bell"></i></a>
-                                <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
-                                    <li>
-                                        <div class="notification-title">Carrinho de Compras<span class="badge badge-primary badge-pill m-l-20">3</span></div>
-                                        <div class="notification-list">
-                                            <div class="list-group">
-
-                                                <a href="#" class="list-group-item list-group-item-action active">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="http://www.faunasystem.com.br:8080/rtc/SUPPORT-GL-5L.png" alt="" class="user-avatar-xl"></div>
-                                                        <div class="notification-list-user-img m-l-20"><span class="notification-list-user-name">Support (Gl 5L)</span>.
-                                                            <div class="notification-date">Qtd p/ caixa: 4</div>
-                                                            <div class="notification-date">Valor: R$ 79.93</div>
-                                                            <div class="notification-date">Qtd:&nbsp;<input id="inputText4" type="number" class="form-control form-control-xs" placeholder="5" min="1" max="5"></div>
-                                                            <div class="notification-date">SubTotal: R$ 319.72</div>
-                                                        </div>	
-                                                        <div class="notification-list-user-img m-l-25 product"><button class="btn btn-outline-light btn-sm"><i class="fa fa-times"></i></button></div>	
-
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action active">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="http://www.faunasystem.com.br:8080/rtc/SUPPORT-GL-5L.png" alt="" class="user-avatar-xl"></div>
-                                                        <div class="notification-list-user-img m-l-20"><span class="notification-list-user-name">Support (Gl 5L)</span>.
-                                                            <div class="notification-date">Qtd p/ caixa: 4</div>
-                                                            <div class="notification-date">Valor: R$ 79.93</div>
-                                                            <div class="notification-date">Qtd:&nbsp;<input id="inputText4" type="number" class="form-control form-control-xs" placeholder="5" min="1" max="5"></div>
-                                                            <div class="notification-date">SubTotal: R$ 319.72</div>
-                                                        </div>	
-                                                        <div class="notification-list-user-img m-l-25 product"><button class="btn btn-outline-light btn-sm"><i class="fa fa-times"></i></button></div>	
-
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action active">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="http://www.faunasystem.com.br:8080/rtc/SUPPORT-GL-5L.png" alt="" class="user-avatar-xl"></div>
-                                                        <div class="notification-list-user-img m-l-20"><span class="notification-list-user-name">Support (Gl 5L)</span>.
-                                                            <div class="notification-date">Qtd p/ caixa: 4</div>
-                                                            <div class="notification-date">Valor: R$ 79.93</div>
-                                                            <div class="notification-date">Qtd:&nbsp;<input id="inputText4" type="number" class="form-control form-control-xs" placeholder="5" min="1" max="5"></div>
-                                                            <div class="notification-date">SubTotal: R$ 319.72</div>
-                                                        </div>	
-                                                        <div class="notification-list-user-img m-l-25 product"><button class="btn btn-outline-light btn-sm"><i class="fa fa-times"></i></button></div>	
-
-                                                    </div>
-                                                </a>
-
-
-                                            </div>
-
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="list-footer"> <a href="carrinho-de-compras.html">Finalizar Compra</a></div>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown notification">
-                                <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="far fa-fw fa-comments"></i></span></a>
-                                <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
-                                    <li>
-                                        <div class="notification-title bg-primary"> Chat <i class="far fa-comments m-l-10"></i></div>
-                                        <div class="notification-list">
-                                            <div class="list-group">
-                                                <a href="#" class="list-group-item list-group-item-action bg-chat-pardal">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal:</span>Quer fazer uma simulação preços com produtos que tenham algum ativo, ou cultura?
-                                                            <div class="notification-date">2 min ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Você:</span>teste
-                                                            <div class="notification-date">2 days ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action bg-chat-pardal">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal:</span> Como posso ajudá-lo? Serei seu vendedor virtual!
-                                                            <div class="notification-date text-right">2 min ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Você:</span>teste
-                                                            <div class="notification-date">2 days ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action bg-chat-pardal">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal: </span>Sou o Pardal!! Não sou professor, mas inventei o RTC para atendê-lo!
-                                                            <div class="notification-date">2 min ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                            </div>
-
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="list-footer bg-light"> 
-                                            <form class="form-inline justify-content-center">
-                                                <div class="form-group mx-sm-3 mb-2">
-                                                    <input type="text" class="form-control" style="width: 100%" placeholder="Digite sua mensagem" id="txtFala">
-                                                </div>	
-                                                <button class="btn btn-sm btn-primary mb-2">Enviar</button>
-                                            </form>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown notification">
-                                <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-fw fa-bell"></i> <span class="indicator"></span></a>
-                                <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
-                                    <li>
-                                        <div class="notification-title"> Notification</div>
-                                        <div class="notification-list">
-                                            <div class="list-group">
-                                                <a href="#" class="list-group-item list-group-item-action active">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Jeremy Rakestraw</span>accepted your invitation to join the team.
-                                                            <div class="notification-date">2 min ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-3.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">John Abraham </span>is now following you
-                                                            <div class="notification-date">2 days ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-4.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Monaan Pechi</span> is watching your main repository
-                                                            <div class="notification-date">2 min ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-5.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Jessica Caruso</span>accepted your invitation to join the team.
-                                                            <div class="notification-date">2 min ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="list-footer"> <a href="#">View all notifications</a></div>
-                                    </li>
-                                </ul>
-                            </li>
-
-                            <li class="nav-item dropdown nav-user">
-                                <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle">
-                                    <span class="hidden-xs">Andre Sbrana</span>
-                                    <span class=" fa fa-angle-down"></span>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
-                                    <div class="nav-user-info clearfix align-middle">
-                                        <div class="float-left m-r-10 m-t-5">
-                                            <img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle ">
-                                        </div>
-                                        <div class="float-left">									
-                                            <h5 class="mb-0 text-white nav-user-name">Andre Sbrana </h5>
-                                            <span class="status"></span><span class="ml-2">webdesigner</span>
-                                        </div>	
-                                    </div>
-                                    <a class="dropdown-item" href="colaboradores.html"><i class="fas fa-user mr-2"></i>Colaboradores</a>
-                                    <a class="dropdown-item" href="alteracao-do-logo.html"><i class="fas fa-font mr-2"></i>Alterar Logo</a>
-                                    <a class="dropdown-item" href="cadastro-empresas-filiais.html"><i class="fas fa-file-alt mr-2"></i>Empresas / Filiais</a>
-                                    <a class="dropdown-item" href="configuracao-da-empresa.html"><i class="fas fa-cog mr-2"></i>Configuração da empresa</a>
-                                    <a class="dropdown-item" href="#"><i class="fas fa-power-off mr-2"></i>Sair</a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-            </div>
             <!-- ============================================================== -->
             <!-- end navbar -->
             <!-- ============================================================== -->
@@ -296,54 +82,55 @@
                                     <div class="card-body">
                                         <div class="table-responsive">
                                             <div class="product-btn m-b-20">
-                                                <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ><i class="fas fa-plus-circle m-r-10"></i>Adicionar Clientes</a>
+                                                <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ng-click="novoCliente()"><i class="fas fa-plus-circle m-r-10"></i>Adicionar Cliente</a>
                                             </div>
                                             <table id="clientes" class="table table-striped table-bordered first">
                                                 <thead>
                                                     <tr>
-                                                        <th>Cod.</th>
-                                                        <th>Nome</th>
-                                                        <th>Email</th>
-                                                        <th>Telefone</th>
-                                                        <th>Vendedor</th>
-                                                        <th>Ação</th>
+                                                        <th data-ordem="cliente.id">Cod.</th>
+                                                        <th data-ordem="cliente.razao_social">Raz Soc.</th>
+                                                        <th data-ordem="cliente.nome_fantasia">Nom Fant</th>
+                                                        <th data-ordem="cliente.inscricao_estadual">IE</th>
+                                                        <th data-ordem="cliente.limite_credito">Lim Cre</th>
+                                                        <th data-ordem="cliente.inicio_limite">Ini Lim</th>
+                                                        <th data-ordem="cliente.termino_limite">Fim Lim</th>
+                                                        <th width="150px">Ação</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td>112896</td>
-                                                        <td>Agro Fauna Comercio De Insumos Ltda</td>
-                                                        <td>elias@agrofauna.com.br</td>
-                                                        <td>(11)2324-2452</td>
-                                                        <td>1 - Elias</td>
+                                                    <tr ng-repeat-start="cliente in clientes.elementos">
+                                                        <td>{{cliente[0].id}}</td>
+                                                        <td>{{cliente[0].razao_social}}</td>
+                                                        <td>{{cliente[0].nome_fantasia}}</td>
+                                                        <td>{{cliente[0].inscricao_estadual}}</td>
+                                                        <td>{{cliente[0].limite_credito}}</td>
+                                                        <td style="{{(cliente[0].inicio_limite>data_atual || cliente[0].termino_limite<data_atual)?'background-color:#FA8072;color:#FFFFFF':'' }}">{{cliente[0].inicio_limite| data }}</td>
+                                                        <td style="{{(cliente[0].inicio_limite>data_atual || cliente[0].termino_limite<data_atual)?'background-color:#FA8072;color:#FFFFFF':'' }}">{{cliente[0].termino_limite| data}}<button class="btn btn-default" style="float:right" ng-if="cliente[0].inicio_limite>data_atual || cliente[0].termino_limite<data_atual"><i class="fa fa-address-card"></i></button></td>
                                                         <th>
                                                             <div class="product-btn">
-                                                                <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" data-target="#demo1" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" data-toggle="modal" data-target="#edit"><i class="fas fa-pencil-alt"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Delete" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
+                                                                <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setCliente(cliente[0])" data-target="#demo{{cliente[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
+                                                                <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setCliente(cliente[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
+                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setCliente(cliente[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
                                                             </div>
                                                         </th>
                                                     </tr>
-                                                    <tr >
+                                                    <tr ng-repeat-end>
                                                         <td colspan="6" class="hiddenRow">
-                                                            <div class="accordian-body collapse" id="demo1">
+                                                            <div class="accordian-body collapse" id="demo{{cliente[0].id}}">
                                                                 <div class="row mx-auto m-b-30">
                                                                     <div class="col">
                                                                         <table class="table table-bordered w-100">
                                                                             <tr>
                                                                                 <td>IE:</td>
-                                                                                <td>647.097.432.115</td>
+                                                                                <td>{{cliente[0].inscricao_estadual}}</td>
                                                                             </tr>
                                                                             <tr>
                                                                                 <td>CPF / CNPJ:</td>
-                                                                                <td>47.626.510/0001-32s</td>
+                                                                                <td>{{cliente[0].pessoa_fisica?cliente[0].cpf.valor:cliente[0].cnpj.valor}}</td>
                                                                             </tr>
                                                                             <tr>
                                                                                 <td>suframa:</td>
-                                                                                <td>000000000</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td colspan="2">(S) ou (N) isento de ICMS devido a suframa</td>
+                                                                                <td>{{cliente[0].inscricao_suframa}}</td>
                                                                             </tr>
                                                                         </table>
                                                                     </div>	
@@ -351,27 +138,27 @@
                                                                         <table class="table-bordered w-100">
                                                                             <tr>
                                                                                 <td>Endereço:</td>
-                                                                                <td>Rua: Coutinho Cavalcante</td>
+                                                                                <td>{{cliente[0].endereco.rua}}</td>
                                                                             </tr>
                                                                             <tr>
                                                                                 <td>Número:</td>
-                                                                                <td>00</td>
+                                                                                <td>{{cliente[0].endereco.numero}}</td>
                                                                             </tr>
                                                                             <tr>
                                                                                 <td>Bairro</td>
-                                                                                <td>Jardim Alto Alegnure</td>
+                                                                                <td>{{cliente[0].endereco.bairro}}</td>
                                                                             </tr>
                                                                             <tr>
                                                                                 <td>Cidade</td>
-                                                                                <td>São Jose do Rio Preto</td>
+                                                                                <td>{{cliente[0].endereco.cidade.nome}}</td>
                                                                             </tr>
                                                                             <tr>
                                                                                 <td>Estado</td>
-                                                                                <td>SP</td>
+                                                                                <td>{{cliente[0].endereco.cidade.estado.sigla}}</td>
                                                                             </tr>
                                                                             <tr>
                                                                                 <td>CEP</td>
-                                                                                <td>15055-300</td>
+                                                                                <td>{{cliente[0].endereco.cep.valor}}</td>
                                                                             </tr>
                                                                         </table>
                                                                     </div>																
@@ -379,83 +166,17 @@
                                                             </div> 
                                                         </td>
                                                     </tr>
-                                                    <tr>
-                                                        <td>112897</td>
-                                                        <td>Artur Cesar Passoni</td>
-                                                        <td></td>
-                                                        <td>172813039</td>
-                                                        <td>1 - Elias</td>
-                                                        <th>
-                                                            <div class="product-btn">
-                                                                <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" data-target="#demo2" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" data-toggle="modal" data-target="#edit"><i class="fas fa-pencil-alt"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Delete" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
-                                                            </div>
-                                                        </th>
-                                                    </tr>
-                                                    <tr >
-                                                        <td colspan="6" class="hiddenRow">
-                                                            <div class="accordian-body collapse" id="demo2">
-                                                                <div class="row mx-auto m-b-30">
-                                                                    <div class="col">
-                                                                        <table class="table table-bordered w-100">
-                                                                            <tr>
-                                                                                <td>IE:</td>
-                                                                                <td>487.011.059.113</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>CPF / CNPJ:</td>
-                                                                                <td>53.186.334/0001-68</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>suframa:</td>
-                                                                                <td>000000000</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td colspan="2">(S) ou (N) isento de ICMS devido a suframa</td>
-                                                                            </tr>
-                                                                        </table>
-                                                                    </div>	
-                                                                    <div class="col">
-                                                                        <table class="table-bordered w-100">
-                                                                            <tr>
-                                                                                <td>Endereço:</td>
-                                                                                <td>AV. MARIO VIEIRA MARCONDES</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Número:</td>
-                                                                                <td>00</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Bairro</td>
-                                                                                <td>CENTRO</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Cidade</td>
-                                                                                <td>Olimpia</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Estado</td>
-                                                                                <td>SP</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>CEP</td>
-                                                                                <td>15400-000</td>
-                                                                            </tr>
-                                                                        </table>
-                                                                    </div>																
-                                                                </div>	
-                                                            </div> 
-                                                        </td>
-                                                    </tr>
+                                                </tbody>
                                                 <tfoot>
                                                     <tr>
                                                         <th>Cod.</th>
-                                                        <th>Nome</th>
-                                                        <th>Email</th>
-                                                        <th>Telefone</th>
-                                                        <th>Vendedor</th>
-                                                        <th>Ação</th>
+                                                        <th>Raz Soc.</th>
+                                                        <th>Nom Fant</th>
+                                                        <th>IE</th>
+                                                        <th>Lim Cre</th>
+                                                        <th>Ini Lim</th>
+                                                        <th>Fim Lim</th>
+                                                        <th width="150px">Ação</th>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -464,11 +185,9 @@
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
-                                                        <li class="page-item"><a class="page-link" href="#">Anterior</a></li>
-                                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                                        <li class="page-item active"><a class="page-link " href="#">2</a></li>
-                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                        <li class="page-item"><a class="page-link" href="#">Próximo</a></li>
+                                                        <li class="page-item" ng-click="clientes.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                        <li class="page-item" ng-repeat="pg in clientes.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                        <li class="page-item" ng-click="clientes.next()"><a class="page-link" href="">Próximo</a></li>
                                                     </ul>
                                                 </nav>
                                             </div>
@@ -477,6 +196,8 @@
                                     </div>
                                 </div>
                             </div>
+
+
                         </div>	
                         <!-- ============================================================== -->
                         <!-- footer -->
@@ -513,11 +234,20 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form id="add-form" parsley-validate>
+                                <form id="add-form" ng-submit="mergeCliente()" parsley-validate>
                                     <div class="form-group row">
-                                        <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Nome</label>
+                                        <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Razao Social</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtname" type="text" required data-parsley-type="email" placeholder="" class="form-control is-invalid">
+                                            <input id="txtname" type="text" ng-model="cliente.razao_social" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="txtnamef" class="col-3 col-lg-2 col-form-label text-left">Nome Fantasia</label>
+                                        <div class="col-9 col-lg-10">
+                                            <input id="txtnamef" type="text" ng-model="cliente.nome_fantasia" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -526,34 +256,70 @@
                                     <div class="form-group row">
                                         <label for="txtemail" class="col-3 col-lg-2 col-form-label text-left">Email</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtemail" type="email" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <input id="txtemail" ng-model="cliente.email.endereco" type="email" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">CPF/CNPJ</label>
+                                    <div class="col-4 col-lg-4" style="padding-top: 5px;">
+                                        <div class="row">
+                                            <div class="col-md-6" style="text-align:center">
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="radio-inline" data-ng-value="false" data-ng-model="cliente.pessoa_fisica" class="custom-control-input"><span class="custom-control-label">Pessoa Juridica</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-6" style="text-align:center">
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="radio-inline" data-ng-value="true" data-ng-model="cliente.pessoa_fisica" checked="" class="custom-control-input"><span class="custom-control-label">Pessoa Física</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="invalid-feedback">
+                                            Please provide a valid text.
+                                        </div>
+                                    </div>
+                                    <div class="form-group row" ng-if="!cliente.pessoa_fisica">
+                                        <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">CNPJ</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" required placeholder="000.000.000-00" class="form-control cpf">
+                                            <input id="txtcnpj" type="text" ng-model="cliente.cnpj.valor" required placeholder="00.000.000/0000-00" class="form-control cpf">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="txttel" class="col-3 col-lg-2 col-form-label text-left">Telefone</label>
+                                    <div class="form-group row" ng-if="!cliente.pessoa_fisica">
+                                        <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">Insc. Est</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txttel" type="text" required placeholder="(00) 00000-0000" class="form-control sp_celphones" maxlength="15">
+                                            <input id="txtcnpj" type="text" ng-model="cliente.inscricao_estadual" required placeholder="00.000.000/0000-00" class="form-control cpf">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="form-group row" ng-if="cliente.pessoa_fisica">
+                                        <label for="txtcpf" class="col-3 col-lg-2 col-form-label text-left">CPF</label>
+                                        <div class="col-9 col-lg-10">
+                                            <input id="txtcpf" type="text" ng-model="cliente.cpf.valor" required placeholder="000.000.000-00" class="form-control cpf">
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row" ng-if="cliente.pessoa_fisica">
+                                        <label for="txtrg" class="col-3 col-lg-2 col-form-label text-left">RG</label>
+                                        <div class="col-9 col-lg-10">
+                                            <input id="txtrg" type="text" ng-model="cliente.rg.valor" required placeholder="000.000.000-00" class="form-control cpf">
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="form-group row">
                                         <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endereço</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtend" type="text" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <input id="txtend" type="text" ng-model="cliente.endereco.rua" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -562,7 +328,7 @@
                                     <div class="form-group row">
                                         <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Número</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtendnum" type="text" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <input id="txtendnum" type="text" ng-model="cliente.endereco.numero" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -571,44 +337,17 @@
                                     <div class="form-group row">
                                         <label for="txtbairro" class="col-3 col-lg-2 col-form-label text-left">Bairro</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtbairro" type="text" required placeholder="" class="form-control">
+                                            <input id="txtbairro" ng-model="cliente.endereco.bairro" type="text" required placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="cidades" class="col-3 col-lg-2 col-form-label text-left">Cidade</label>
+                                        <label  class="col-3 col-lg-2 col-form-label text-left">Categoria Cliente</label>
                                         <div class="col-9 col-lg-10">
-                                            <select name="cidades" class="form-control"> 
-                                                <option value="estado">Selecione a Cidade</option> 
-                                                <option value="ac">Acre</option> 
-                                                <option value="al">Alagoas</option> 
-                                                <option value="am">Amazonas</option> 
-                                                <option value="ap">Amapá</option> 
-                                                <option value="ba">Bahia</option> 
-                                                <option value="ce">Ceará</option> 
-                                                <option value="df">Distrito Federal</option> 
-                                                <option value="es">Espírito Santo</option> 
-                                                <option value="go">Goiás</option> 
-                                                <option value="ma">Maranhão</option> 
-                                                <option value="mt">Mato Grosso</option> 
-                                                <option value="ms">Mato Grosso do Sul</option> 
-                                                <option value="mg">Minas Gerais</option> 
-                                                <option value="pa">Pará</option> 
-                                                <option value="pb">Paraíba</option> 
-                                                <option value="pr">Paraná</option> 
-                                                <option value="pe">Pernambuco</option> 
-                                                <option value="pi">Piauí</option> 
-                                                <option value="rj">Rio de Janeiro</option> 
-                                                <option value="rn">Rio Grande do Norte</option> 
-                                                <option value="ro">Rondônia</option> 
-                                                <option value="rs">Rio Grande do Sul</option> 
-                                                <option value="rr">Roraima</option> 
-                                                <option value="sc">Santa Catarina</option> 
-                                                <option value="se">Sergipe</option> 
-                                                <option value="sp">Guarulhos</option> 
-                                                <option value="to">Tocantins</option> 
+                                            <select ng-model="cliente.categoria" class="form-control">
+                                                <option ng-repeat="categoria in categorias_cliente" ng-value="categoria">{{categoria.nome}}</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
@@ -616,37 +355,21 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="estados" class="col-3 col-lg-2 col-form-label text-left">Estado</label>
+                                        <label  class="col-3 col-lg-2 col-form-label text-left">Estado</label>
                                         <div class="col-9 col-lg-10">
-                                            <select name="estados" class="form-control"> 
-                                                <option value="estado">Selecione o Estado</option> 
-                                                <option value="ac">Acre</option> 
-                                                <option value="al">Alagoas</option> 
-                                                <option value="am">Amazonas</option> 
-                                                <option value="ap">Amapá</option> 
-                                                <option value="ba">Bahia</option> 
-                                                <option value="ce">Ceará</option> 
-                                                <option value="df">Distrito Federal</option> 
-                                                <option value="es">Espírito Santo</option> 
-                                                <option value="go">Goiás</option> 
-                                                <option value="ma">Maranhão</option> 
-                                                <option value="mt">Mato Grosso</option> 
-                                                <option value="ms">Mato Grosso do Sul</option> 
-                                                <option value="mg">Minas Gerais</option> 
-                                                <option value="pa">Pará</option> 
-                                                <option value="pb">Paraíba</option> 
-                                                <option value="pr">Paraná</option> 
-                                                <option value="pe">Pernambuco</option> 
-                                                <option value="pi">Piauí</option> 
-                                                <option value="rj">Rio de Janeiro</option> 
-                                                <option value="rn">Rio Grande do Norte</option> 
-                                                <option value="ro">Rondônia</option> 
-                                                <option value="rs">Rio Grande do Sul</option> 
-                                                <option value="rr">Roraima</option> 
-                                                <option value="sc">Santa Catarina</option> 
-                                                <option value="se">Sergipe</option> 
-                                                <option value="sp">São Paulo</option> 
-                                                <option value="to">Tocantins</option> 
+                                            <select ng-model="estado" class="form-control">
+                                                <option ng-repeat="e in estados" ng-value="e">{{e.sigla}}</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label  class="col-3 col-lg-2 col-form-label text-left">Cidade</label>
+                                        <div class="col-9 col-lg-10">
+                                            <select ng-model="cliente.endereco.cidade" class="form-control">
+                                                <option ng-repeat="cidade in estado.cidades" ng-value="cidade">{{cidade.nome}}</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
@@ -656,20 +379,111 @@
                                     <div class="form-group row">
                                         <label for="txtcep" class="col-3 col-lg-2 col-form-label text-left">CEP</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcep" type="text" required placeholder="" class="form-control cep" maxlength="9">
+                                            <input id="txtcep" type="text" ng-model="cliente.endereco.cep.valor" required placeholder="" class="form-control cep" maxlength="9">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="form-group row">
+                                        <label for="txtsuf" class="col-3 col-lg-2 col-form-label text-left">Tem Suframa ?</label>
+                                        <div class="row">
+                                            <div class="col-md-6" style="text-align:center">
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="radio-inline2" data-ng-value="true" data-ng-model="cliente.suframado" class="custom-control-input"><span class="custom-control-label">Sim</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-6" style="text-align:center">
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="radio-inline2" data-ng-value="false" data-ng-model="cliente.suframado" checked="" class="custom-control-input"><span class="custom-control-label">Nao</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="invalid-feedback">
+                                            Please provide a valid text.
+                                        </div>
+                                    </div>
+                                    <div class="form-group row" ng-if="cliente.suframado">
+                                        <label for="txtsuf" class="col-3 col-lg-2 col-form-label text-left">Suframa</label>
+                                        <div class="col-9 col-lg-10">
+                                            <input id="txtsuf" type="text" ng-model="cliente.inscricao_suframa" placeholder="" class="form-control cep" maxlength="9">
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+
+                                        <div class="col-md-10">
+                                            Telefone
+                                            <hr>
+                                            <input id="txttel" type="text" ng-model="telefone.numero" placeholder="" class="form-control cep" maxlength="9">
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            Adc
+                                            <hr>
+                                            <button class="btn btn-success" ng-click="addTelefone()" type="button"><i class="fa fa-plus"></i></button>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row">
+                                        <table class="table table-striped table-bordered first">
+                                            <thead>
+                                                <tr>
+                                                    <th>Numero</th>
+                                                    <th><i class="fa fa-times"></i></th>
+                                                </tr>
+                                            </thead>
+                                            <tr ng-repeat="t in cliente.telefones">
+                                                <td>{{t.numero}}</td>
+                                                <td><button type="button" class="btn btn-danger" ng-click="removeTelefone(t)"><i class="fa fa-times"></i></button></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="form-group row">
+
+                                        <div class="col-md-10">
+                                            Documento
+                                            <hr>
+                                            <select ng-model="documento.categoria" class="form-control">
+                                                <option ng-repeat="categoria in categorias_documento" ng-value="categoria">{{categoria.nome}}</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            Adc
+                                            <hr>
+                                            <button class="btn btn-success" onclick="$('#uploaderDocumentoCliente').click()" type="button"><i class="fa fa-plus"></i></button>
+                                            <input id="uploaderDocumentoCliente" style="display: none" type="file" multiple>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row">
+                                        <table class="table table-striped table-bordered first">
+                                            <thead>
+                                                <tr>
+                                                    <th>Documento</th>
+                                                    <th>Abrir</th>
+                                                    <th><i class="fa fa-times"></i></th>
+                                                </tr>
+                                            </thead>
+                                            <tr ng-repeat="doc in cliente.documentos">
+                                                <td>{{doc.categoria.nome}}</td>
+                                                <td><a class="btn btn-primary" target="_blank" ng-href="{{doc.link}}"><i class="fa fa-random"></i></a></td>
+                                                <td><button type="button" class="btn btn-danger" ng-click="removeDocumento(doc)"><i class="fa fa-times"></i></button></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                        <button class="btn btn-primary">
+                                            <i class="fas fa-save"></i> &nbsp; Salvar
+                                        </button>
+                                    </div>
                                 </form>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                                <button class="btn btn-primary" type="submit">
-                                    <i class="fas fa-save"></i> &nbsp; Salvar
-                                </button>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -862,7 +676,7 @@
                                 <p class="text-center"> Tem certeza de que deseja excluir este Cliente?</p>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary" onclick="cadastrarProduto()">Sim</button>
+                                <button class="btn btn-primary" ng-click="deleteCliente(cliente)">Sim</button>
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Não</button>
                             </div>
                         </div>
@@ -879,11 +693,6 @@
                 <!-- bootstap bundle js -->
                 <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
                 <!-- datatables js -->
-                <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-                <script src="assets/vendor/datatables/js/dataTables.bootstrap4.min.js"></script>
-                <script src="../../../../../cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
-                <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-                <script src="assets/vendor/datatables/js/data-table.js"></script>
 
                 <!-- slimscroll js -->
                 <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
@@ -906,48 +715,48 @@
 
                 <!-- Optional JavaScript -->
                 <script>
-                                                  $(document).ready(function () {
-                                                      $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
-                                                      $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                                                      $('.btndel').tooltip({title: "Deletar", placement: "top"});
-                                                  });
-                                                  $(document).ready(function () {
-                                                      $('#clientes').DataTable({
-                                                          "language": {//Altera o idioma do DataTable para o português do Brasil
-                                                              "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
-                                                          },
-                                                      });
+                                            $(document).ready(function () {
+                                                $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                                                $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                                                $('.btndel').tooltip({title: "Deletar", placement: "top"});
+                                            });
+                                            $(document).ready(function () {
+                                                $('#clientes').DataTable({
+                                                    "language": {//Altera o idioma do DataTable para o português do Brasil
+                                                        "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
+                                                    },
+                                                });
 
-                                                      $.getJSON('estados_cidades.json', function (data) {
-                                                          var items = [];
-                                                          var options = '<option value="">escolha um estado</option>';
-                                                          $.each(data, function (key, val) {
-                                                              options += '<option value="' + val.nome + '">' + val.nome + '</option>';
-                                                          });
-                                                          $("#estados").html(options);
+                                                $.getJSON('estados_cidades.json', function (data) {
+                                                    var items = [];
+                                                    var options = '<option value="">escolha um estado</option>';
+                                                    $.each(data, function (key, val) {
+                                                        options += '<option value="' + val.nome + '">' + val.nome + '</option>';
+                                                    });
+                                                    $("#estados").html(options);
 
-                                                          $("#estados").change(function () {
+                                                    $("#estados").change(function () {
 
-                                                              var options_cidades = '';
-                                                              var str = "";
+                                                        var options_cidades = '';
+                                                        var str = "";
 
-                                                              $("#estados option:selected").each(function () {
-                                                                  str += $(this).text();
-                                                              });
+                                                        $("#estados option:selected").each(function () {
+                                                            str += $(this).text();
+                                                        });
 
-                                                              $.each(data, function (key, val) {
-                                                                  if (val.nome == str) {
-                                                                      $.each(val.cidades, function (key_city, val_city) {
-                                                                          options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
-                                                                      });
-                                                                  }
-                                                              });
-                                                              $("#cidades").html(options_cidades);
+                                                        $.each(data, function (key, val) {
+                                                            if (val.nome == str) {
+                                                                $.each(val.cidades, function (key_city, val_city) {
+                                                                    options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
+                                                                });
+                                                            }
+                                                        });
+                                                        $("#cidades").html(options_cidades);
 
-                                                          }).change();
+                                                    }).change();
 
-                                                      });
-                                                  });
+                                                });
+                                            });
 
                 </script>
 

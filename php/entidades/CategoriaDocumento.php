@@ -16,7 +16,7 @@ class CategoriaDocumento {
     public $id;
     public $nome;
     
-    function __construct($id,$nome) {
+    function __construct($id=0,$nome="") {
         $this->id = $id;
         $this->nome = $nome;
     }

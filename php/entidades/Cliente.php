@@ -39,14 +39,15 @@ class Cliente {
         $this->cpf = new CPF("");
         $this->cnpj = new CNPJ("");
         $this->rg = new RG("");
-        $this->endereco = null;
+        $this->endereco = new Endereco();
         $this->empresa = null;
         $this->categoria_cliente = null;
-
+        $this->pessoa_fisica=false;
         $this->telefones = array();
         $this->excluido = false;
         $this->suframado = false;
-
+        $this->limite_credito = 0;
+            
         $this->inicio_limite = round(microtime(true) * 1000);
         $this->termino_limite = round(microtime(true) * 1000);
     }

@@ -30,7 +30,7 @@ rtc.service('clienteService', function ($http, $q) {
             falha:fn
         });   
     }
-    this.getElementos = function(x0,x1,filtro,ordem,fn){   
+    this.getElementos = function(x0,x1,filtro,ordem,fn){ 
         baseService($http,$q,{
             o:{x0:x0,x1:x1,filtro:filtro,ordem:ordem},
             query:"$r->elementos=$empresa->getClientes($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
