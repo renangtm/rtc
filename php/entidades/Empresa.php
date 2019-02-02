@@ -72,7 +72,7 @@ class Empresa {
         $ps->execute();
         $ps->close();
     }
-
+    
     public function delete($con) {
 
         $ps = $con->getConexao()->prepare("UPDATE empresa SET excluida = true WHERE id = " . $this->id);
@@ -442,7 +442,7 @@ class Empresa {
             $transportadora->email = new Email($email_tra_end);
             $transportadora->email->id = $email_tra_id;
             $transportadora->email->senha = $email_tra_senha;
-            $transportadora->habilitada = $tra_habilitada;
+            $transportadora->habilitada = $tra_habilitada==1;
             $transportadora->inscricao_estadual = $tra_ie;
             $transportadora->nome_fantasia = $tra_nome_fantasia;
             $transportadora->razao_social = $tra_nome;
@@ -1312,7 +1312,7 @@ class Empresa {
             $transportadora->email = new Email($end_email_tra);
             $transportadora->email->id = $id_email_tra;
             $transportadora->email->senha = $sen_email_tra;
-            $transportadora->habilitada = $tra_habilitada;
+            $transportadora->habilitada = $tra_habilitada==1;
             $transportadora->inscricao_estadual = $tra_ie;
             $transportadora->nome_fantasia = $tra_nome_fantasia;
             $transportadora->razao_social = $tra_nome;
@@ -1669,7 +1669,7 @@ class Empresa {
             $transportadora->email = new Email($end_email_tra);
             $transportadora->email->id = $id_email_tra;
             $transportadora->email->senha = $sen_email_tra;
-            $transportadora->habilitada = $tra_habilitada;
+            $transportadora->habilitada = $tra_habilitada==1;
             $transportadora->inscricao_estadual = $tra_ie;
             $transportadora->nome_fantasia = $tra_nome_fantasia;
             $transportadora->razao_social = $tra_nome;
@@ -1961,7 +1961,7 @@ class Empresa {
             $transportadora->email = new Email($email_tra_end);
             $transportadora->email->id = $email_tra_id;
             $transportadora->email->senha = $email_tra_senha;
-            $transportadora->habilitada = $tra_habilitada;
+            $transportadora->habilitada = $tra_habilitada==1;
             $transportadora->inscricao_estadual = $tra_ie;
             $transportadora->nome_fantasia = $tra_nome_fantasia;
             $transportadora->razao_social = $tra_nome;
@@ -3152,6 +3152,7 @@ class Empresa {
                 . "INNER JOIN cidade cidade_transportadora ON endereco_transportadora.id_cidade=cidade_transportadora.id "
                 . "INNER JOIN estado estado_transportadora ON estado_transportadora.id=cidade_transportadora.id_estado "
                 . "INNER JOIN email email_transportadora ON email_transportadora.id_entidade = transportadora.id AND email_transportadora.tipo_entidade='TRA' "
+                . "LEFT JOIN tabela ON tabela.id_transportadora = transportadora.id "
                 . "WHERE id_empresa=$this->id AND transportadora.excluida=false ";
 
 
@@ -3183,7 +3184,7 @@ class Empresa {
             $transportadora->email = new Email($end_email_tra);
             $transportadora->email->id = $id_email_tra;
             $transportadora->email->senha = $sen_email_tra;
-            $transportadora->habilitada = $tra_habilitada;
+            $transportadora->habilitada = $tra_habilitada==1;
             $transportadora->inscricao_estadual = $tra_ie;
             $transportadora->nome_fantasia = $tra_nome_fantasia;
             $transportadora->razao_social = $tra_nome;
@@ -3272,7 +3273,7 @@ class Empresa {
     public function getCountTransportadoras($con, $filtro = "") {
 
 
-        $sql = "SELECT COUNT(*) FROM transportadora WHERE id_empresa = $this->id AND excluida=false ";
+        $sql = "SELECT COUNT(*) FROM transportadora LEFT JOIN tabela ON tabela.id_transportadora=transportadora.id WHERE transportadora.id_empresa = $this->id AND transportadora.excluida=false ";
 
         if ($filtro != "") {
 

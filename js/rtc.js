@@ -408,19 +408,19 @@ function baseService(http, q, obj, get) {
 
     if (get == 2) {
 
-        document.write("c=" + obj.query.split("&").join("e") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("e")) : ""));
+        document.write("c=" + obj.query.split("&").join("<e>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("<e>")) : ""));
 
     }
 
     http({
         url: 'php/controler/crt.php',
         method: ((get == null) ? "POST" : "GET"),
-        data: "c=" + obj.query.split("&").join("e").split("+").join("<m>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("e").split("+").join("<m>")) : ""),
+        data: "c=" + obj.query.split("&").join("<e>").split("+").join("<m>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("<e>").split("+").join("<m>")) : ""),
         timeout: p.promise,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (exx) {
 
         if (typeof obj["sucesso"] !== 'undefined') {
-            obj.sucesso(paraObjeto(JSON.stringify(exx.data)));
+            obj.sucesso(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&")));
         }
 
         loading.close();
@@ -430,7 +430,7 @@ function baseService(http, q, obj, get) {
         loading.close();
 
         if (typeof obj["falha"] !== 'undefined') {
-            obj.falha(paraObjeto(JSON.stringify(exx.data)));
+            obj.falha(paraObjeto(JSON.stringify(exx.data).split("<m>").join("&")));
         }
 
     })

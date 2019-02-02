@@ -13,11 +13,11 @@ $o = null;
 
 if(isset($_POST['o'])){
     
-    $o = Utilidades::fromJson(str_replace("<m>", "+",$_POST['o']));
+    $o = Utilidades::fromJson(str_replace(array("<m>","<e>"), array("+","&"),$_POST['o']));
     
 }else if(isset($_GET['o'])){
     
-    $o = Utilidades::fromJson(str_replace("<m>", "+",$_GET['o']));
+    $o = Utilidades::fromJson(str_replace(array("<m>","<e>"), array("+","&"),$_GET['o']));
     
 }
 
@@ -25,11 +25,11 @@ $codigo = "";
 
 if(isset($_POST['c'])){
     
-    $codigo = str_replace("<m>", "+",$_POST['c']);
+    $codigo = str_replace(array("<m>","<e>"), array("+","&"),$_POST['c']);
     
 }else if(isset($_GET['c'])){
     
-    $codigo = str_replace("<m>", "+",$_GET['o']);
+    $codigo = str_replace(array("<m>","<e>"), array("+","&"),$_GET['o']);
     
 }else{
     
@@ -48,4 +48,4 @@ if($o!= null){
 
 eval('try{ '.$codigo.'; }catch(Exception $ex){$r->sucesso = false;$r->mensagem=$ex->getMessage();}');
 
-echo Utilidades::toJson($r);
+echo str_replace("&","<e>",Utilidades::toJson($r));

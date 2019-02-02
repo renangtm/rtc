@@ -1,3 +1,305 @@
+rtc.controller("crtTransportadoras", function ($scope, transportadoraService, regraTabelaService, tabelaService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
+
+    $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 10);
+    $scope.transportadoras.attList();
+    assincFuncs(
+            $scope.transportadoras,
+            "transportadora",
+            ["id", "razao_social", "nome_fantasia", "despacho", "cnpj", "inscricao_estadual", "habilitada"]);
+
+    $scope.transportadora_novo = {};
+    $scope.transportadora = {};
+    $scope.estado = {};
+
+    $scope.email = {};
+
+    $scope.tabela_nova = {};
+    $scope.tabela = {};
+
+    $scope.documento_novo = {};
+    $scope.documento = {};
+
+    $scope.tabela_selecionada = {};
+    $scope.transportadora_tabela = {};
+
+    $scope.resultado_individual = {};
+
+    $scope.telefone_novo = {};
+    $scope.telefone = {};
+
+    $scope.regra_nova = {};
+    $scope.regra = {};
+
+    $scope.estado_teste = null;
+    $scope.cidade_teste = null;
+    $scope.valor_teste = 0;
+    $scope.peso_teste = 0;
+
+    $scope.categorias_documento = [];
+    $scope.estados = [];
+    $scope.cidades = [];
+
+    $scope.fretes = [];
+
+    $("#uploaderDocumentoTransportadora").change(function () {
+
+        uploadService.upload($(this).prop("files"), function (arquivos, sucesso) {
+
+            if (!sucesso) {
+
+                msg.erro("Falha ao subir arquivo");
+
+            } else {
+
+                var doc = angular.copy($scope.documento);
+
+                for (var i = 0; i < arquivos.length; i++) {
+
+                    var d = angular.copy(doc);
+                    $scope.documento = d;
+                    d.link = arquivos[i];
+
+                    $scope.addDocumento();
+
+                }
+
+                msg.alerta("Upload feito com sucesso");
+            }
+
+        })
+
+    })
+
+    transportadoraService.getTransportadora(function (p) {
+        $scope.transportadora_novo = p.transportadora;
+        $scope.transportadora_novo["documentos"] = [];
+    })
+    categoriaDocumentoService.getElementos(function (p) {
+        $scope.categorias_documento = p.elementos;
+        $scope.documento.categoria = $scope.categorias_documento[0];
+    })
+    documentoService.getDocumento(function (p) {
+        $scope.documento_novo = p.documento;
+        $scope.documento = angular.copy($scope.documento_novo);
+        $scope.documento.categoria = $scope.categorias_documento[0];
+    })
+    telefoneService.getTelefone(function (p) {
+        $scope.telefone_novo = p.telefone;
+        $scope.telefone = angular.copy($scope.telefone_novo);
+    })
+    tabelaService.getTabela(function (p) {
+        $scope.tabela_nova = p.tabela;
+        $scope.tabela = angular.copy($scope.tabela_nova);
+    })
+    regraTabelaService.getRegraTabela(function (p) {
+        $scope.regra_nova = p.regra_tabela;
+        $scope.regra = angular.copy($scope.regra_nova);
+    })
+
+    $scope.addRegra = function () {
+
+        $scope.tabela_selecionada.regras[$scope.tabela_selecionada.regras.length] = angular.copy($scope.regra_nova);
+
+    }
+
+    $scope.attResultadoIndividual = function () {
+
+        tabelaService.getValorTabela($scope.tabela_selecionada, {cidade: $scope.cidade_teste, valor: $scope.valor_teste, peso: $scope.peso_teste}, function (f) {
+
+            $scope.resultado_individual = f.valor;
+
+        })
+
+    }
+
+    $scope.attResultado = function () {
+        
+        tabelaService.getFretes(null, {cidade: $scope.cidade_teste, valor: $scope.valor_teste, peso: $scope.peso_teste}, function (f) {
+
+            $scope.fretes = f.fretes;
+
+        })
+
+    }
+
+    $scope.copiarRegra = function (regra) {
+
+        var c = angular.copy(regra);
+        c.id = 0;
+        c.copia = regra.id;
+        if (regra.copia > 0) {
+            c.copia = regra.copia;
+        }
+        $scope.tabela_selecionada.regras[$scope.tabela_selecionada.regras.length] = c;
+
+    }
+
+    $scope.removerRegra = function (regra) {
+
+        remove($scope.tabela_selecionada.regras, regra);
+
+    }
+
+    $scope.selecionarTabela = function (transp) {
+
+        $scope.tabela_selecionada = transp.tabela;
+        $scope.transportadora_tabela = transp;
+
+    }
+
+    cidadeService.getElementos(function (p) {
+        var estados = [];
+        var cidades = p.elementos;
+        $scope.cidades = cidades;
+
+        lbl:
+                for (var i = 0; i < cidades.length; i++) {
+            var c = cidades[i];
+            for (var j = 0; j < estados.length; j++) {
+                if (estados[j].id === c.estado.id) {
+                    estados[j].cidades[estados[j].cidades.length] = c;
+                    c.estado = estados[j];
+                    continue lbl;
+                }
+            }
+            c.estado["cidades"] = [c];
+            estados[estados.length] = c.estado;
+        }
+        $scope.estado_teste = estados[0];
+        $scope.cidade_teste = $scope.estado_teste.cidades[0];
+        $scope.estados = estados;
+    })
+
+    $scope.selecionarRegra = function (regra) {
+
+        $scope.regra = regra;
+
+    }
+
+    $scope.novoTransportadora = function () {
+
+        $scope.transportadora = angular.copy($scope.transportadora_novo);
+
+    }
+
+    $scope.criarTabela = function (transp) {
+
+        transp.tabela = $scope.tabela;
+        $scope.tabela = angular.copy($scope.tabela_nova);
+
+    }
+
+    $scope.setTransportadora = function (transportadora) {
+
+        $scope.transportadora = transportadora;
+
+        transportadoraService.getDocumentos($scope.transportadora, function (d) {
+            $scope.transportadora["documentos"] = d.documentos;
+            for (var i = 0; i < d.documentos.length; i++) {
+                equalize(d.documentos[i], "categoria", $scope.categorias_documento);
+            }
+        })
+
+        equalize(transportadora.endereco, "cidade", $scope.cidades);
+        if (typeof transportadora.endereco.cidade !== 'undefined') {
+            $scope.estado = transportadora.endereco.cidade.estado;
+        } else {
+            transportadora.endereco.cidade = $scope.cidades[0];
+            $scope.estado = transportadora.endereco.cidade.estado;
+        }
+
+    }
+
+    $scope.mergeTransportadoraTabela = function () {
+
+        if ($scope.transportadora_tabela.endereco.cidade == null) {
+            msg.erro("Transportadora sem cidade.");
+            return;
+        }
+
+        baseService.merge($scope.transportadora_tabela, function (r) {
+            if (r.sucesso) {
+                $scope.transportadora_tabela = r.o;
+                $scope.tabela_selecionada = r.o.tabela;
+                if (r.sucesso) {
+                    msg.alerta("Operacao efetuada com sucesso");
+                } else {
+                    msg.erro("Transportadora alterada, porém ocorreu um problema ao subir os documentos");
+
+                }
+            } else {
+                msg.erro("Problema ao efetuar operacao. ");
+            }
+        });
+
+    }
+
+    $scope.mergeTransportadora = function () {
+
+        if ($scope.transportadora.endereco.cidade == null) {
+            msg.erro("Transportadora sem cidade.");
+            return;
+        }
+
+        baseService.merge($scope.transportadora, function (r) {
+            if (r.sucesso) {
+                $scope.transportadora = r.o;
+                transportadoraService.setDocumentos($scope.transportadora, $scope.transportadora.documentos, function (rr) {
+
+                    if (rr.sucesso) {
+
+                        msg.alerta("Operacao efetuada com sucesso");
+                        $scope.setTransportadora($scope.transportadora);
+                        $scope.transportadoras.attList();
+
+                    } else {
+                        msg.erro("Transportadora alterada, porém ocorreu um problema ao subir os documentos");
+
+                    }
+
+                })
+
+
+            } else {
+                msg.erro("Problema ao efetuar operacao. ");
+            }
+        });
+
+    }
+    $scope.deleteTransportadora = function () {
+        baseService.delete($scope.transportadora, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.transportadoras.attList();
+            } else {
+                msg.erro("Problema ao efetuar operacao");
+            }
+        });
+    }
+
+    $scope.removeDocumento = function (documento) {
+        remove($scope.transportadora.documentos, documento);
+    }
+
+    $scope.addDocumento = function () {
+
+        $scope.transportadora.documentos[$scope.transportadora.documentos.length] = $scope.documento;
+        $scope.documento = angular.copy($scope.documento_novo);
+        $scope.documento.categoria = $scope.categorias_documento[0];
+
+    }
+    $scope.removeTelefone = function (tel) {
+
+        remove($scope.transportadora.telefones, tel);
+
+    }
+    $scope.addTelefone = function () {
+        $scope.transportadora.telefones[$scope.transportadora.telefones.length] = $scope.telefone;
+        $scope.telefone = angular.copy($scope.telefone_novo);
+    }
+
+})
+
 rtc.controller("crtClientes", function ($scope, clienteService, categoriaClienteService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
 
     $scope.clientes = createAssinc(clienteService, 1, 3, 10);
@@ -12,7 +314,7 @@ rtc.controller("crtClientes", function ($scope, clienteService, categoriaCliente
     $scope.estado = {};
 
     $scope.email = {};
-    
+
     $scope.data_atual = new Date().getTime();
 
 
@@ -130,12 +432,12 @@ rtc.controller("crtClientes", function ($scope, clienteService, categoriaCliente
 
     $scope.mergeCliente = function () {
 
-        if($scope.cliente.categoria == null){
+        if ($scope.cliente.categoria == null) {
             msg.erro("Cliente sem categoria.");
             return;
         }
-        
-        if($scope.cliente.endereco.cidade==null){
+
+        if ($scope.cliente.endereco.cidade == null) {
             msg.erro("Cliente sem cidade.");
             return;
         }
@@ -198,7 +500,6 @@ rtc.controller("crtClientes", function ($scope, clienteService, categoriaCliente
     }
 
 })
-
 
 rtc.controller("crtProdutos", function ($scope, culturaService, uploadService, pragaService, produtoService, baseService, categoriaProdutoService, receituarioService) {
 

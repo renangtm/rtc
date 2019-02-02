@@ -32,7 +32,7 @@ class Transportadora {
         $this->id = 0;
         $this->email = new Email("");
         $this->cnpj = new CNPJ("");
-        $this->endereco = null;
+        $this->endereco = new Endereco();
         $this->tabela = null;
         $this->telefones = array();
         $this->empresa = null;
