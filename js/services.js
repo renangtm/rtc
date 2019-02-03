@@ -1,3 +1,60 @@
+rtc.service('loteService', function ($http, $q) {
+    this.getLote = function (fn) {
+        baseService($http, $q, {
+            query: "$r->lote=new Lote()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getItem = function(lote,fn){
+         baseService($http, $q, {
+            o: {lote:lote},
+            query: "$r->item=$o->lote->getItem()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getEtiquetas = function(itens,fn){
+         baseService($http, $q, {
+            o: {etiquetas: itens},
+            query: "$r->arquivo=Sistema::getEtiquetas($o->etiquetas)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getPendenciasCadastro = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->pendencias=$empresa->getCadastroLotesPendentes($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        if(filtro!=""){
+            filtro += " AND ";
+        }
+        filtro += "quantidade_real>0";
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountLotes($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        if(filtro!=""){
+            filtro += " AND ";
+        }
+        filtro += "quantidade_real>0";
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getLotes($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('transportadoraService', function ($http, $q) {
     this.getTransportadora = function (fn) {
         baseService($http, $q, {
@@ -86,6 +143,47 @@ rtc.service('cidadeService', function ($http, $q) {
     this.getElementos = function (fn) {
         baseService($http, $q, {
             query: "$r->elementos=Sistema::getCidades($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('fornecedorService', function ($http, $q) {
+    this.getFornecedor = function (fn) {
+        baseService($http, $q, {
+            query: "$r->fornecedor=new Fornecedor();$r->fornecedor->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.setDocumentos = function (fornecedor, documentos, fn) {
+        baseService($http, $q, {
+            o: {fornecedor: fornecedor, documentos: documentos},
+            query: "$o->fornecedor->setDocumentos($o->documentos,$c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getDocumentos = function (fornecedor, fn) {
+        baseService($http, $q, {
+            o: fornecedor,
+            query: "$r->documentos=$o->getDocumentos($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountFornecedores($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getFornecedores($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
             sucesso: fn,
             falha: fn
         });
@@ -281,7 +379,7 @@ rtc.service('loginService', function ($http, $q) {
             query: "$r->usuario=Sistema::logar($o->u,$o->s)",
             sucesso: fn,
             falha: fn
-        });
+        },null,true);
     }
     this.recuperar = function (email, fn) {
         baseService($http, $q, {

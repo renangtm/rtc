@@ -1,9 +1,16 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-app="appRtc">
 
     <head>
         <!-- Required meta tags -->
         <meta charset="utf-8">
+
+        <script src="js/angular.min.js"></script>
+        <script src="js/rtc.js"></script>
+        <script src="js/filters.js"></script>
+        <script src="js/services.js"></script>
+        <script src="js/controllers.js"></script>    
+
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
@@ -20,7 +27,7 @@
         </style>
     </head>
 
-    <body>
+    <body ng-controller="crtFornecedores">
         <!-- ============================================================== -->
         <!-- main wrapper -->
         <!-- ============================================================== -->
@@ -28,220 +35,6 @@
             <!-- ============================================================== -->
             <!-- navbar -->
             <!-- ============================================================== -->
-            <div class="dashboard-header">
-                <nav class="navbar navbar-expand-lg bg-white fixed-top">
-                    <a class="navbar-brand" href="index.html"><img style="" src="assets/images/logo.png" alt="" title=""></a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse " id="navbarSupportedContent">
-                        <ul class="navbar-nav ml-auto navbar-right-top">
-                            <li class="nav-item">
-                                <div id="custom-search" class="top-search-bar">
-                                    <div class="form-group">
-                                        <div class="icon-addon addon-sm">
-                                            <input class="form-control" type="search" placeholder="Digite o que procura" aria-label="Search" size="80%">
-                                            <label for="email" class="fa fa-search" rel="tooltip" title="email"></label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown notification">
-                                <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-fw fa-shopping-cart fa-bell"></i></a>
-                                <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
-                                    <li>
-                                        <div class="notification-title">Carrinho de Compras<span class="badge badge-primary badge-pill m-l-20">3</span></div>
-                                        <div class="notification-list">
-                                            <div class="list-group">
-
-                                                <a href="#" class="list-group-item list-group-item-action active">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="http://www.faunasystem.com.br:8080/rtc/SUPPORT-GL-5L.png" alt="" class="user-avatar-xl"></div>
-                                                        <div class="notification-list-user-img m-l-20"><span class="notification-list-user-name">Support (Gl 5L)</span>.
-                                                            <div class="notification-date">Qtd p/ caixa: 4</div>
-                                                            <div class="notification-date">Valor: R$ 79.93</div>
-                                                            <div class="notification-date">Qtd:&nbsp;<input id="inputText4" type="number" class="form-control form-control-xs" placeholder="5" min="1" max="5"></div>
-                                                            <div class="notification-date">SubTotal: R$ 319.72</div>
-                                                        </div>	
-                                                        <div class="notification-list-user-img m-l-25 product"><button class="btn btn-outline-light btn-sm"><i class="fa fa-times"></i></button></div>	
-
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action active">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="http://www.faunasystem.com.br:8080/rtc/SUPPORT-GL-5L.png" alt="" class="user-avatar-xl"></div>
-                                                        <div class="notification-list-user-img m-l-20"><span class="notification-list-user-name">Support (Gl 5L)</span>.
-                                                            <div class="notification-date">Qtd p/ caixa: 4</div>
-                                                            <div class="notification-date">Valor: R$ 79.93</div>
-                                                            <div class="notification-date">Qtd:&nbsp;<input id="inputText4" type="number" class="form-control form-control-xs" placeholder="5" min="1" max="5"></div>
-                                                            <div class="notification-date">SubTotal: R$ 319.72</div>
-                                                        </div>	
-                                                        <div class="notification-list-user-img m-l-25 product"><button class="btn btn-outline-light btn-sm"><i class="fa fa-times"></i></button></div>	
-
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action active">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="http://www.faunasystem.com.br:8080/rtc/SUPPORT-GL-5L.png" alt="" class="user-avatar-xl"></div>
-                                                        <div class="notification-list-user-img m-l-20"><span class="notification-list-user-name">Support (Gl 5L)</span>.
-                                                            <div class="notification-date">Qtd p/ caixa: 4</div>
-                                                            <div class="notification-date">Valor: R$ 79.93</div>
-                                                            <div class="notification-date">Qtd:&nbsp;<input id="inputText4" type="number" class="form-control form-control-xs" placeholder="5" min="1" max="5"></div>
-                                                            <div class="notification-date">SubTotal: R$ 319.72</div>
-                                                        </div>	
-                                                        <div class="notification-list-user-img m-l-25 product"><button class="btn btn-outline-light btn-sm"><i class="fa fa-times"></i></button></div>	
-
-                                                    </div>
-                                                </a>
-
-
-                                            </div>
-
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="list-footer"> <a href="carrinho-de-compras.html">Finalizar Compra</a></div>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown notification">
-                                <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="far fa-fw fa-comments"></i></span></a>
-                                <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
-                                    <li>
-                                        <div class="notification-title bg-primary"> Chat <i class="far fa-comments m-l-10"></i></div>
-                                        <div class="notification-list">
-                                            <div class="list-group">
-                                                <a href="#" class="list-group-item list-group-item-action bg-chat-pardal">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal:</span>Quer fazer uma simulação preços com produtos que tenham algum ativo, ou cultura?
-                                                            <div class="notification-date">2 min ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Você:</span>teste
-                                                            <div class="notification-date">2 days ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action bg-chat-pardal">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal:</span> Como posso ajudá-lo? Serei seu vendedor virtual!
-                                                            <div class="notification-date text-right">2 min ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Você:</span>teste
-                                                            <div class="notification-date">2 days ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action bg-chat-pardal">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal: </span>Sou o Pardal!! Não sou professor, mas inventei o RTC para atendê-lo!
-                                                            <div class="notification-date">2 min ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                            </div>
-
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="list-footer bg-light"> 
-                                            <form class="form-inline justify-content-center">
-                                                <div class="form-group mx-sm-3 mb-2">
-                                                    <input type="text" class="form-control" style="width: 100%" placeholder="Digite sua mensagem" id="txtFala">
-                                                </div>	
-                                                <button class="btn btn-sm btn-primary mb-2">Enviar</button>
-                                            </form>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown notification">
-                                <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-fw fa-bell"></i> <span class="indicator"></span></a>
-                                <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
-                                    <li>
-                                        <div class="notification-title"> Notification</div>
-                                        <div class="notification-list">
-                                            <div class="list-group">
-                                                <a href="#" class="list-group-item list-group-item-action active">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Jeremy Rakestraw</span>accepted your invitation to join the team.
-                                                            <div class="notification-date">2 min ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-3.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">John Abraham </span>is now following you
-                                                            <div class="notification-date">2 days ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-4.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Monaan Pechi</span> is watching your main repository
-                                                            <div class="notification-date">2 min ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                                <a href="#" class="list-group-item list-group-item-action">
-                                                    <div class="notification-info">
-                                                        <div class="notification-list-user-img"><img src="assets/images/avatar-5.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                        <div class="notification-list-user-block"><span class="notification-list-user-name">Jessica Caruso</span>accepted your invitation to join the team.
-                                                            <div class="notification-date">2 min ago</div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="list-footer"> <a href="#">View all notifications</a></div>
-                                    </li>
-                                </ul>
-                            </li>
-
-                            <li class="nav-item dropdown nav-user">
-                                <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle">
-                                    <span class="hidden-xs">Andre Sbrana</span>
-                                    <span class=" fa fa-angle-down"></span>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
-                                    <div class="nav-user-info clearfix align-middle">
-                                        <div class="float-left m-r-10 m-t-5">
-                                            <img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle ">
-                                        </div>
-                                        <div class="float-left">									
-                                            <h5 class="mb-0 text-white nav-user-name">Andre Sbrana </h5>
-                                            <span class="status"></span><span class="ml-2">webdesigner</span>
-                                        </div>	
-                                    </div>
-                                    <a class="dropdown-item" href="colaboradores.html"><i class="fas fa-user mr-2"></i>Colaboradores</a>
-                                    <a class="dropdown-item" href="alteracao-do-logo.html"><i class="fas fa-font mr-2"></i>Alterar Logo</a>
-                                    <a class="dropdown-item" href="cadastro-empresas-filiais.html"><i class="fas fa-file-alt mr-2"></i>Empresas / Filiais</a>
-                                    <a class="dropdown-item" href="configuracao-da-empresa.html"><i class="fas fa-cog mr-2"></i>Configuração da empresa</a>
-                                    <a class="dropdown-item" href="#"><i class="fas fa-power-off mr-2"></i>Sair</a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-            </div>
             <!-- ============================================================== -->
             <!-- end navbar -->
             <!-- ============================================================== -->
@@ -289,83 +82,83 @@
                                     <div class="card-body">
                                         <div class="table-responsive">
                                             <div class="product-btn m-b-20">
-                                                <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ><i class="fas fa-plus-circle m-r-10"></i>Adicionar Fornecedor</a>
+                                                <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ng-click="novoFornecedor()"><i class="fas fa-plus-circle m-r-10"></i>Adicionar Fornecedor</a>
                                             </div>
-                                            <table id="fornecedor" class="table table-striped table-bordered first">
+                                            <table id="clientes" class="table table-striped table-bordered first">
                                                 <thead>
                                                     <tr>
-                                                        <th>Cod.</th>
-                                                        <th>Nome</th>
-                                                        <th>Email</th>
-                                                        <th>Ação</th>
+                                                        <th data-ordem="fornecedor.id">Cod.</th>
+                                                        <th data-ordem="fornecedor.nome">Nome</th>
+                                                        <th data-ordem="fornecedor.email_fornecedor.endereco">Email</th>
+                                                        <th data-ordem="fornecedor.cnpj">CNPJ</th>
+                                                        <th data-ordem="fornecedor.inscricao_estadual">IE</th>
+                                                        <th data-ordem="fornecedor.habilitado">Habilitado</th>
+                                                        <th width="150px">Ação</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td>6</td>
-                                                        <td>Agro Fauna</td>
-                                                        <td>comercialaf@agrofauna.com.br</td>
-                                                        <th>
+                                                    <tr ng-repeat-start="fornecedor in fornecedores.elementos">
+                                                        <td>{{fornecedor[0].id}}</td>
+                                                        <td>{{fornecedor[0].nome}}</td>
+                                                        <td>{{fornecedor[0].email.endereco}}</td>
+                                                        <td>{{fornecedor[0].cnpj.valor}}</td>
+                                                        <td>{{fornecedor[0].inscricao_estadual}}</td>
+                                                        <td>{{fornecedor[0].habilitado?'Sim':'Nao'}}</td>
+                                                       <th>
                                                             <div class="product-btn">
-                                                                <a href="#" class="btn btn-outline-light" data-title="Edit" data-toggle="modal" data-target="#edit" ><i class="fas fa-pencil-alt m-r-10"></i>Editar</a>
-                                                                <a href="#" class="btn btn-outline-light" data-title="Delete" data-toggle="modal" data-target="#delete" ><i class="fas fa-trash-alt m-r-10"></i>Deletar</a>
+                                                                <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setFornecedor(fornecedor[0])" data-target="#demo{{fornecedor[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
+                                                                <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setFornecedor(fornecedor[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
+                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setFornecedor(fornecedor[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
                                                             </div>
                                                         </th>
                                                     </tr>
-                                                    <tr>
-                                                        <td>9</td>
-                                                        <td>AgroFauna Filial17</td>
-                                                        <td>comercialaf@agrfoauna.com.br</td>
-                                                        <th>
-                                                            <div class="product-btn">
-                                                                <a href="#" class="btn btn-outline-light" data-title="Edit" data-toggle="modal" data-target="#edit" ><i class="fas fa-pencil-alt m-r-10"></i>Editar</a>
-                                                                <a href="#" class="btn btn-outline-light" data-title="Delete" data-toggle="modal" data-target="#delete" ><i class="fas fa-trash-alt m-r-10"></i>Deletar</a>
-                                                            </div>
-                                                        </th>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>3014</td>
-                                                        <td>Tpl Logistica Norte Ltda EPP</td>
-                                                        <td></td>
-                                                        <th>
-                                                            <div class="product-btn">
-                                                                <a href="#" class="btn btn-outline-light" data-title="Edit" data-toggle="modal" data-target="#edit" ><i class="fas fa-pencil-alt m-r-10"></i>Editar</a>
-                                                                <a href="#" class="btn btn-outline-light" data-title="Delete" data-toggle="modal" data-target="#delete" ><i class="fas fa-trash-alt m-r-10"></i>Deletar</a>
-                                                            </div>
-                                                        </th>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>3011</td>
-                                                        <td>Marcos Antonio Pirovan</td>
-                                                        <td>mpirovani@terra.com.br</td>
-                                                        <th>
-                                                            <div class="product-btn">
-                                                                <a href="#" class="btn btn-outline-light" data-title="Edit" data-toggle="modal" data-target="#edit" ><i class="fas fa-pencil-alt m-r-10"></i>Editar</a>
-                                                                <a href="#" class="btn btn-outline-light" data-title="Delete" data-toggle="modal" data-target="#delete" ><i class="fas fa-trash-alt m-r-10"></i>Deletar</a>
-                                                            </div>
-                                                        </th>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>3012</td>
-                                                        <td>IM DA SILVA OLIVEIRA RENT A CAR - ME</td>
-                                                        <td></td>
-                                                        <th>
-                                                            <div class="product-btn">
-                                                                <a href="#" class="btn btn-outline-light" data-title="Edit" data-toggle="modal" data-target="#edit" ><i class="fas fa-pencil-alt m-r-10"></i>Editar</a>
-                                                                <a href="#" class="btn btn-outline-light" data-title="Delete" data-toggle="modal" data-target="#delete" ><i class="fas fa-trash-alt m-r-10"></i>Deletar</a>
-                                                            </div>
-                                                        </th>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>3013</td>
-                                                        <td>M.P.T. Comércio de Eletro Eletronicos Ltda</td>
-                                                        <td></td>
-                                                        <th>
-                                                            <div class="product-btn">
-                                                                <a href="#" class="btn btn-outline-light" data-title="Edit" data-toggle="modal" data-target="#edit" ><i class="fas fa-pencil-alt m-r-10"></i>Editar</a>
-                                                                <a href="#" class="btn btn-outline-light" data-title="Delete" data-toggle="modal" data-target="#delete" ><i class="fas fa-trash-alt m-r-10"></i>Deletar</a>
-                                                            </div>
-                                                        </th>
+                                                    <tr ng-repeat-end>
+                                                        <td colspan="6" class="hiddenRow">
+                                                            <div class="accordian-body collapse" id="demo{{fornecedor[0].id}}">
+                                                                <div class="row mx-auto m-b-30">
+                                                                    <div class="col">
+                                                                        <table class="table table-bordered w-100">
+                                                                            <tr>
+                                                                                <td>IE:</td>
+                                                                                <td>{{fornecedor[0].inscricao_estadual}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>CNPJ:</td>
+                                                                                <td>{{fornecedor[0].cnpj.valor}}</td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </div>	
+                                                                    <div class="col">
+                                                                        <table class="table-bordered w-100">
+                                                                            <tr>
+                                                                                <td>Endereço:</td>
+                                                                                <td>{{fornecedor[0].endereco.rua}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Número:</td>
+                                                                                <td>{{fornecedor[0].endereco.numero}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Bairro</td>
+                                                                                <td>{{fornecedor[0].endereco.bairro}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Cidade</td>
+                                                                                <td>{{fornecedor[0].endereco.cidade.nome}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Estado</td>
+                                                                                <td>{{fornecedor[0].endereco.cidade.estado.sigla}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>CEP</td>
+                                                                                <td>{{fornecedor[0].endereco.cep.valor}}</td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </div>																
+                                                                </div>	
+                                                            </div> 
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                                 <tfoot>
@@ -373,16 +166,31 @@
                                                         <th>Cod.</th>
                                                         <th>Nome</th>
                                                         <th>Email</th>
-                                                        <th>Ação</th>
+                                                        <th>CNPJ</th>
+                                                        <th>IE</th>
+                                                        <th>Habilitado</th>
+                                                        <th width="150px">Ação</th>
                                                     </tr>
                                                 </tfoot>
                                             </table>
 
+                                            <!-- paginação  -->
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                                <nav aria-label="Page navigation example">
+                                                    <ul class="pagination justify-content-end">
+                                                        <li class="page-item" ng-click="fornecedores.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                        <li class="page-item" ng-repeat="pg in fornecedores.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                        <li class="page-item" ng-click="fornecedores.next()"><a class="page-link" href="">Próximo</a></li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
 
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+
                         </div>	
                         <!-- ============================================================== -->
                         <!-- footer -->
@@ -413,17 +221,17 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Adicione os dados de seu Fornecedor</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere os dados de seu Fornecedor</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">×</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form id="add-form" parsley-validate>
+                                <form id="add-form" ng-submit="mergeFornecedor()" parsley-validate>
                                     <div class="form-group row">
                                         <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Nome</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtname" type="text" required data-parsley-type="email" placeholder="" class="form-control is-invalid">
+                                            <input id="txtname" type="text" ng-model="fornecedor.nome" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -432,7 +240,7 @@
                                     <div class="form-group row">
                                         <label for="txtemail" class="col-3 col-lg-2 col-form-label text-left">Email</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtemail" type="email" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <input id="txtemail" ng-model="fornecedor.email.endereco" type="email" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -441,16 +249,16 @@
                                     <div class="form-group row">
                                         <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">CNPJ</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" required placeholder="00.000.000/0000-00" class="form-control cnpj">
+                                            <input id="txtcnpj" type="text" ng-model="fornecedor.cnpj.valor" required placeholder="00.000.000/0000-00" class="form-control cpf">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txttel" class="col-3 col-lg-2 col-form-label text-left">Telefone</label>
+                                        <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">Insc. Est</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txttel" type="text" required placeholder="(00) 00000-0000" class="form-control sp_celphones" maxlength="15">
+                                            <input id="txtcnpj" type="text" ng-model="fornecedor.inscricao_estadual" required placeholder="00.000.000/0000-00" class="form-control cpf">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -459,7 +267,7 @@
                                     <div class="form-group row">
                                         <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endereço</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtend" type="text" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <input id="txtend" type="text" ng-model="fornecedor.endereco.rua" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -468,17 +276,26 @@
                                     <div class="form-group row">
                                         <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Número</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtendnum" type="text" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <input id="txtendnum" type="text" ng-model="fornecedor.endereco.numero" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="estados" class="col-3 col-lg-2 col-form-label text-left">Estado</label>
+                                        <label for="txtbairro" class="col-3 col-lg-2 col-form-label text-left">Bairro</label>
                                         <div class="col-9 col-lg-10">
-                                            <select class="form-control" id="estados">
-                                                <option value=""></option>
+                                            <input id="txtbairro" ng-model="fornecedor.endereco.bairro" type="text" required placeholder="" class="form-control">
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label  class="col-3 col-lg-2 col-form-label text-left">Estado</label>
+                                        <div class="col-9 col-lg-10">
+                                            <select ng-model="estado" class="form-control">
+                                                <option ng-repeat="e in estados" ng-value="e">{{e.sigla}}</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
@@ -486,23 +303,106 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="cidades" class="col-3 col-lg-2 col-form-label text-left">Cidade</label>
+                                        <label  class="col-3 col-lg-2 col-form-label text-left">Cidade</label>
                                         <div class="col-9 col-lg-10">
-                                            <select class="form-control" id="cidades">
+                                            <select ng-model="fornecedor.endereco.cidade" class="form-control">
+                                                <option ng-repeat="cidade in estado.cidades" ng-value="cidade">{{cidade.nome}}</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="txtcep" class="col-3 col-lg-2 col-form-label text-left">CEP</label>
+                                        <div class="col-9 col-lg-10">
+                                            <input id="txtcep" type="text" ng-model="fornecedor.endereco.cep.valor" required placeholder="" class="form-control cep" maxlength="9">
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row" ng-if="fornecedor.suframado">
+                                        <label for="txtsuf" class="col-3 col-lg-2 col-form-label text-left">Suframa</label>
+                                        <div class="col-9 col-lg-10">
+                                            <input id="txtsuf" type="text" ng-model="cliente.inscricao_suframa" placeholder="" class="form-control cep" maxlength="9">
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+
+                                        <div class="col-md-10">
+                                            Telefone
+                                            <hr>
+                                            <input id="txttel" type="text" ng-model="telefone.numero" placeholder="" class="form-control cep" maxlength="9">
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            Adc
+                                            <hr>
+                                            <button class="btn btn-success" ng-click="addTelefone()" type="button"><i class="fa fa-plus"></i></button>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row">
+                                        <table class="table table-striped table-bordered first">
+                                            <thead>
+                                                <tr>
+                                                    <th>Numero</th>
+                                                    <th><i class="fa fa-times"></i></th>
+                                                </tr>
+                                            </thead>
+                                            <tr ng-repeat="t in fornecedor.telefones">
+                                                <td>{{t.numero}}</td>
+                                                <td><button type="button" class="btn btn-danger" ng-click="removeTelefone(t)"><i class="fa fa-times"></i></button></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="form-group row">
+
+                                        <div class="col-md-10">
+                                            Documento
+                                            <hr>
+                                            <select ng-model="documento.categoria" class="form-control">
+                                                <option ng-repeat="categoria in categorias_documento" ng-value="categoria">{{categoria.nome}}</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            Adc
+                                            <hr>
+                                            <button class="btn btn-success" onclick="$('#uploaderDocumentoFornecedor').click()" type="button"><i class="fa fa-plus"></i></button>
+                                            <input id="uploaderDocumentoFornecedor" style="display: none" type="file" multiple>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row">
+                                        <table class="table table-striped table-bordered first">
+                                            <thead>
+                                                <tr>
+                                                    <th>Documento</th>
+                                                    <th>Abrir</th>
+                                                    <th><i class="fa fa-times"></i></th>
+                                                </tr>
+                                            </thead>
+                                            <tr ng-repeat="doc in fornecedor.documentos">
+                                                <td>{{doc.categoria.nome}}</td>
+                                                <td><a class="btn btn-primary" target="_blank" ng-href="{{doc.link}}"><i class="fa fa-random"></i></a></td>
+                                                <td><button type="button" class="btn btn-danger" ng-click="removeDocumento(doc)"><i class="fa fa-times"></i></button></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                        <button class="btn btn-primary">
+                                            <i class="fas fa-save"></i> &nbsp; Salvar
+                                        </button>
                                     </div>
                                 </form>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                                <button class="btn btn-primary" type="submit">
-                                    <i class="fas fa-save"></i> &nbsp; Salvar
-                                </button>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -523,7 +423,7 @@
                                     <div class="form-group row">
                                         <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Nome</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtname" type="text" required placeholder="Marcos Antonio Pirovan" class="form-control is-invalid">
+                                            <input id="txtname" type="text" required placeholder="Agro Fauna Comercio De Insumos Ltda" class="form-control is-invalid">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -532,16 +432,16 @@
                                     <div class="form-group row">
                                         <label for="txtemail" class="col-3 col-lg-2 col-form-label text-left">Email</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtemail" type="email" required data-parsley-type="email" placeholder="mpirovani@terra.com.br" class="form-control">
+                                            <input id="txtemail" type="email" required data-parsley-type="email" placeholder="elias@agrofauna.com.br" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">CNPJ</label>
+                                        <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">CPF/CNPJ</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" required data-parsley-type="email" placeholder="11.111.111/1111-11" class="form-control cnpj" >
+                                            <input id="txtcnpj" type="text" required data-parsley-type="email" placeholder="47.626.510/0001-32" class="form-control cnpj" >
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -550,7 +450,7 @@
                                     <div class="form-group row">
                                         <label for="txttel" class="col-3 col-lg-2 col-form-label text-left">Telefone</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txttel" type="text" required placeholder="(11) 2406-8864" class="form-control sp_celphones">
+                                            <input id="txttel" type="text" required placeholder="(11)2324-2452" class="form-control sp_celphones">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -559,7 +459,7 @@
                                     <div class="form-group row">
                                         <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endereço</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtend" type="text" required data-parsley-type="email" placeholder="Av Miguel Damha, Qd G, Lote 5" class="form-control">
+                                            <input id="txtend" type="text" required data-parsley-type="email" placeholder="Rua: Coutinho Cavalcante" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -568,18 +468,16 @@
                                     <div class="form-group row">
                                         <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Número</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtendnum" type="text" required data-parsley-type="email" placeholder="3001" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
+                                            <input id="txtendnum" type="text" required data-parsley-type="email" placeholder="00" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="estados" class="col-3 col-lg-2 col-form-label text-left">Estado</label>
+                                        <label for="txtbairro" class="col-3 col-lg-2 col-form-label text-left">Bairro</label>
                                         <div class="col-9 col-lg-10">
-                                            <select class="form-control" id="estados">
-                                                <option value=""></option>
-                                            </select>
+                                            <input id="txtbairro" type="text" required placeholder="Jardim Alto Alegnure" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -588,8 +486,83 @@
                                     <div class="form-group row">
                                         <label for="cidades" class="col-3 col-lg-2 col-form-label text-left">Cidade</label>
                                         <div class="col-9 col-lg-10">
-                                            <select class="form-control" id="cidades">
+                                            <select name="cidades" class="form-control"> 
+                                                <option value="estado">Selecione a Cidade</option> 
+                                                <option value="ac">Acre</option> 
+                                                <option value="al">Alagoas</option> 
+                                                <option value="am">Amazonas</option> 
+                                                <option value="ap">Amapá</option> 
+                                                <option value="ba">Bahia</option> 
+                                                <option value="ce">Ceará</option> 
+                                                <option value="df">Distrito Federal</option> 
+                                                <option value="es">Espírito Santo</option> 
+                                                <option value="go">Goiás</option> 
+                                                <option value="ma">Maranhão</option> 
+                                                <option value="mt">Mato Grosso</option> 
+                                                <option value="ms">Mato Grosso do Sul</option> 
+                                                <option value="mg">Minas Gerais</option> 
+                                                <option value="pa">Pará</option> 
+                                                <option value="pb">Paraíba</option> 
+                                                <option value="pr">Paraná</option> 
+                                                <option value="pe">Pernambuco</option> 
+                                                <option value="pi">Piauí</option> 
+                                                <option value="rj">Rio de Janeiro</option> 
+                                                <option value="rn">Rio Grande do Norte</option> 
+                                                <option value="ro">Rondônia</option> 
+                                                <option value="rs">Rio Grande do Sul</option> 
+                                                <option value="rr">Roraima</option> 
+                                                <option value="sc">Santa Catarina</option> 
+                                                <option value="se">Sergipe</option> 
+                                                <option value="sp" selected>São Jose do Rio Preto</option> 
+                                                <option value="to">Tocantins</option> 
                                             </select>
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="estados" class="col-3 col-lg-2 col-form-label text-left">Estado</label>
+                                        <div class="col-9 col-lg-10">
+                                            <select name="estados" class="form-control"> 
+                                                <option value="estado">Selecione o Estado</option> 
+                                                <option value="ac">Acre</option> 
+                                                <option value="al">Alagoas</option> 
+                                                <option value="am">Amazonas</option> 
+                                                <option value="ap">Amapá</option> 
+                                                <option value="ba">Bahia</option> 
+                                                <option value="ce">Ceará</option> 
+                                                <option value="df">Distrito Federal</option> 
+                                                <option value="es">Espírito Santo</option> 
+                                                <option value="go">Goiás</option> 
+                                                <option value="ma">Maranhão</option> 
+                                                <option value="mt">Mato Grosso</option> 
+                                                <option value="ms">Mato Grosso do Sul</option> 
+                                                <option value="mg">Minas Gerais</option> 
+                                                <option value="pa">Pará</option> 
+                                                <option value="pb">Paraíba</option> 
+                                                <option value="pr">Paraná</option> 
+                                                <option value="pe">Pernambuco</option> 
+                                                <option value="pi">Piauí</option> 
+                                                <option value="rj">Rio de Janeiro</option> 
+                                                <option value="rn">Rio Grande do Norte</option> 
+                                                <option value="ro">Rondônia</option> 
+                                                <option value="rs">Rio Grande do Sul</option> 
+                                                <option value="rr">Roraima</option> 
+                                                <option value="sc">Santa Catarina</option> 
+                                                <option value="se">Sergipe</option> 
+                                                <option value="sp" selected>São Paulo</option> 
+                                                <option value="to">Tocantins</option> 
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="txtcep" class="col-3 col-lg-2 col-form-label text-left">CEP</label>
+                                        <div class="col-9 col-lg-10">
+                                            <input id="txtcep" type="text" required placeholder="15055-300" class="form-control cep" maxlength="9">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -622,7 +595,7 @@
                                 <p class="text-center"> Tem certeza de que deseja excluir este Fornecedor?</p>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary" onclick="cadastrarProduto()">Sim</button>
+                                <button class="btn btn-primary" ng-click="deleteFornecedor(fornecedor)">Sim</button>
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Não</button>
                             </div>
                         </div>
@@ -639,11 +612,6 @@
                 <!-- bootstap bundle js -->
                 <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
                 <!-- datatables js -->
-                <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-                <script src="assets/vendor/datatables/js/dataTables.bootstrap4.min.js"></script>
-                <script src="../../../../../cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
-                <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-                <script src="assets/vendor/datatables/js/data-table.js"></script>
 
                 <!-- slimscroll js -->
                 <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
@@ -666,43 +634,48 @@
 
                 <!-- Optional JavaScript -->
                 <script>
-                                                  $(document).ready(function () {
-                                                      $('#fornecedor').DataTable({
-                                                          "language": {//Altera o idioma do DataTable para o português do Brasil
-                                                              "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
-                                                          },
-                                                      });
+                                            $(document).ready(function () {
+                                                $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                                                $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                                                $('.btndel').tooltip({title: "Deletar", placement: "top"});
+                                            });
+                                            $(document).ready(function () {
+                                                $('#clientes').DataTable({
+                                                    "language": {//Altera o idioma do DataTable para o português do Brasil
+                                                        "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
+                                                    },
+                                                });
 
-                                                      $.getJSON('estados_cidades.json', function (data) {
-                                                          var items = [];
-                                                          var options = '<option value="">escolha um estado</option>';
-                                                          $.each(data, function (key, val) {
-                                                              options += '<option value="' + val.nome + '">' + val.nome + '</option>';
-                                                          });
-                                                          $("#estados").html(options);
+                                                $.getJSON('estados_cidades.json', function (data) {
+                                                    var items = [];
+                                                    var options = '<option value="">escolha um estado</option>';
+                                                    $.each(data, function (key, val) {
+                                                        options += '<option value="' + val.nome + '">' + val.nome + '</option>';
+                                                    });
+                                                    $("#estados").html(options);
 
-                                                          $("#estados").change(function () {
+                                                    $("#estados").change(function () {
 
-                                                              var options_cidades = '';
-                                                              var str = "";
+                                                        var options_cidades = '';
+                                                        var str = "";
 
-                                                              $("#estados option:selected").each(function () {
-                                                                  str += $(this).text();
-                                                              });
+                                                        $("#estados option:selected").each(function () {
+                                                            str += $(this).text();
+                                                        });
 
-                                                              $.each(data, function (key, val) {
-                                                                  if (val.nome == str) {
-                                                                      $.each(val.cidades, function (key_city, val_city) {
-                                                                          options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
-                                                                      });
-                                                                  }
-                                                              });
-                                                              $("#cidades").html(options_cidades);
+                                                        $.each(data, function (key, val) {
+                                                            if (val.nome == str) {
+                                                                $.each(val.cidades, function (key_city, val_city) {
+                                                                    options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
+                                                                });
+                                                            }
+                                                        });
+                                                        $("#cidades").html(options_cidades);
 
-                                                          }).change();
+                                                    }).change();
 
-                                                      });
-                                                  });
+                                                });
+                                            });
 
                 </script>
 

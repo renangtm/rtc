@@ -68,6 +68,12 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         echo Utilidades::toJson(Utilidades::fromJson($str));
         */
+        /*
+        $obj = Utilidades::fromJson('{"etiquetas":[{"id":3261,"id_produto":293,"nome_produto":"teste","validade":"03/02/2018","codigo":"00032610001","_classe":"stdClass"},{"id":3261,"id_produto":293,"nome_produto":"teste","validade":"03/02/2018","codigo":"00032610002","_classe":"stdClass"}],"_classe":"stdClass"}');
+        
+        echo Sistema::getEtiquetas($obj->etiquetas);
+        */
+        
     }
 
 }

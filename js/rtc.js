@@ -1,3 +1,5 @@
+var projeto = "http://10.0.0.107/novo_rtc_web";
+
 
 function resolverRecursao(obj, pilha) {
 
@@ -7,8 +9,6 @@ function resolverRecursao(obj, pilha) {
 
     }
 
-    pilha[pilha.length] = obj;
-
     if (Array.isArray(obj)) {
 
         for (var i = 0; i < obj.length; i++) {
@@ -17,13 +17,17 @@ function resolverRecursao(obj, pilha) {
 
         }
 
+        return obj;
+
     } else if (typeof obj == 'object') {
+
+        pilha[pilha.length] = obj;
 
         if (typeof obj['recursao'] !== 'undefined') {
 
             pilha.length--;
 
-            return pilha[pilha.length - obj['recursao'] + 1];
+            return pilha[pilha.length - obj['recursao']];
 
         }
 
@@ -72,13 +76,13 @@ function recParaJson(objeto, pilha) {
 
     }
 
-
-
     pilha[pilha.length] = objeto;
 
     if (Array.isArray(objeto)) {
 
         r = "[";
+
+        pilha.length--;
 
         for (var i = 0; i < objeto.length; i++) {
 
@@ -90,6 +94,8 @@ function recParaJson(objeto, pilha) {
         }
 
         r += "]";
+
+        return r;
 
     } else if (typeof objeto == 'string') {
 
@@ -106,6 +112,10 @@ function recParaJson(objeto, pilha) {
         r = objeto ? "true" : "false";
 
     } else if (typeof objeto == 'object') {
+
+        if (typeof objeto["_classe"] === 'undefined') {
+            objeto["_classe"] = "stdClass";
+        }
 
         r = "{";
 
@@ -162,7 +172,7 @@ function createAssinc(lista, cols, rows, maxPage) {
 
             lista.getCount(este.filtro, function (r) {
                 //----------------------------
-       
+
                 var np = Math.ceil(r.qtd / (este.por_pagina * este.por_coluna));
                 este.pagina = Math.max(Math.min(este.pagina, np - 1), 0);
 
@@ -222,12 +232,20 @@ function assincFuncs(lista, base, campos, filtro) {
             if (i > 0)
                 f += " OR ";
 
-            f += base + "." + campos[i] + " like '%" + v + "%'";
+            if (campos[i].indexOf('.') == -1) {
+
+                f += base + "." + campos[i] + " like '%" + v + "%'";
+
+            } else {
+
+                f += campos[i] + " like '%" + v + "%'";
+
+            }
 
         }
 
         lista.filtro = "(" + f + ")";
-       
+
         lista.attList();
 
     })
@@ -266,7 +284,16 @@ function assincFuncs(lista, base, campos, filtro) {
                         if (f != "")
                             f += ",";
 
-                        f += base + "." + campos[j] + " " + ((b[j] === 1) ? "DESC" : "ASC");
+                        if (campos[j].indexOf('.') == -1) {
+
+                            f += base + "." + campos[j] + " " + ((b[j] === 1) ? "DESC" : "ASC");
+
+                        } else {
+
+                            f += campos[j] + " " + ((b[j] === 1) ? "DESC" : "ASC");
+
+                        }
+
                     }
                 }
 
@@ -301,15 +328,15 @@ function createList(lista, cols, rows, filterParam, comparator) {
 
             var este = this;
 
-
-            for (var i = 1; i < lista.length; i++) {
-                for (var j = i; j > 0 && comparator(lista[j], lista[j - 1]); j--) {
-                    var k = lista[j];
-                    lista[j] = lista[j - 1];
-                    lista[j - 1] = k;
+            if (comparator != null) {
+                for (var i = 1; i < lista.length; i++) {
+                    for (var j = i; j > 0 && comparator(lista[j], lista[j - 1]); j--) {
+                        var k = lista[j];
+                        lista[j] = lista[j - 1];
+                        lista[j - 1] = k;
+                    }
                 }
             }
-
 
 
             var lst = [];
@@ -319,7 +346,7 @@ function createList(lista, cols, rows, filterParam, comparator) {
 
                 for (a in lista[i]) {
 
-                    if (typeof listta[i][a] === 'string') {
+                    if (typeof lista[i][a] === 'string') {
                         if (lista[i][a].toUpperCase().indexOf(this.filtro.toUpperCase()) >= 0) {
 
                             lst[lst.length] = lista[i];
@@ -385,26 +412,60 @@ var msg = {
     }
 }
 
-function baseService(http, q, obj, get) {
+function toDate(lo) {
+
+    var d = new Date(lo);
+
+    var dia = d.getDate();
+    var mes = (d.getMonth() + 1);
+    var ano = (d.getYear() + 1900);
+
+    return  ((dia < 10) ? "0" : "") + dia + "/" + ((mes < 10) ? "0" : "") + mes + "/" + ano;
+
+}
+
+function fromDate(str) {
+
+    var k = str.split("/");
+
+    if (k.length != 3)
+        return -1;
+
+    var dia = parseInt(k[0]);
+    var mes = parseInt(k[1]);
+    var ano = parseInt(k[2]);
+
+    var d = new Date();
+    d.setDate(dia);
+    d.setMonth(mes - 1);
+    d.setYear(ano);
+
+    return d.getTime();
+
+}
+
+function fix(str, n) {
+
+    var s = str;
+    while (s.length < n) {
+        s = "0" + s;
+    }
+    return s;
+
+}
+
+function baseService(http, q, obj, get, cancel) {
 
     loading.show();
 
     for (var i = 0; i < requests.length; i++) {
-        //requests[i].resolve();
+        if (cancel) {
+            requests[i].resolve();
+        }
     }
     requests = [];
 
     var p = q.defer();
-
-    if (typeof obj["o"] !== 'undefined') {
-
-        if (typeof obj.o["_classe"] === 'undefined') {
-
-            obj.o["_classe"] = "stdClass";
-
-        }
-
-    }
 
     if (get == 2) {
 
@@ -561,7 +622,7 @@ rtc.service('uploadService', function ($http, $q) {
 
                 if (k == offset) {
 
-                    obj.arquivos[obj.arquivos.length] = "http://192.168.18.121:888/novo_rtc_web/php/uploads/" + nome;
+                    obj.arquivos[obj.arquivos.length] = projeto+"/php/uploads/" + nome;
 
                     if (obj.arquivos.length == (obj.qtdArquivos - obj.qtdFalhas)) {
                         if (obj.qtdFalhas == 0) {

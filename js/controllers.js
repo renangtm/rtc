@@ -1,3 +1,473 @@
+rtc.controller("crtLotes", function ($scope, loteService, baseService) {
+
+    $scope.lotes = createAssinc(loteService, 1, 3, 10);
+    $scope.lotes.attList();
+    assincFuncs(
+            $scope.lotes,
+            "lote",
+            ["id", "produto.nome", "quantidade_real", "validade", "numero", "rua", "altura", "data_entrada", "codigo_fabricante"]);
+
+    $scope.lote_novo = {};
+
+    $scope.lote = {};
+
+    $scope.lotes_cadastro = [];
+
+    $scope.pendencias = [];
+    $scope.todas_pendencias = [];
+
+    loteService.getLote(function (l) {
+
+        $scope.lote_novo = l.lote;
+
+    })
+
+    $scope.deletarLote = function () {
+        baseService.delete($scope.lote, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Deletado com sucesso");
+                $scope.lotes.attList();
+            } else {
+                msg.erro("Problema ao deletar");
+            }
+        });
+    }
+
+    $scope.setLote = function (lote, elemento) {
+
+        $scope.lote = lote;
+
+        $scope.lote.validade_texto = toDate($scope.lote.validade);
+
+        loteService.getItem(lote, function (i) {
+
+            $scope.lote.item = i.item;
+
+            if (elemento != null) {
+
+                $scope.formarArvore(lote, elemento);
+
+            }
+
+        })
+
+    }
+
+    $scope.atualizaPendencias = function () {
+
+        loteService.getPendenciasCadastro('', function (p) {
+
+            for (var i = 0; i < p.pendencias.length; i++) {
+                p.pendencias[i].divisao = parseInt(p.pendencias[i].grade.str.split(',')[0]) * 48;
+            }
+
+            $scope.todas_pendencias = angular.copy(p.pendencias);
+            $scope.pendencias = createList(p.pendencias, 1, 10, "nome_produto");
+            $scope.pendencias.attList();
+
+        })
+
+    }
+
+    $scope.atualizaPendencias();
+
+    var ml = function (obj, lote) {
+        baseService.merge(lote, function (r) {
+            if (r.sucesso) {
+                obj.atual++;
+                loading.setProgress(obj.atual * 100 / obj.total);
+                if ((obj.atual + obj.erros) == obj.total) {
+                    if (obj.erros == 0) {
+                        msg.alerta("Lotes cadastrados com sucesso");
+                    } else {
+                        msg.alerta("Ocorreu problema no cadastro de alguns lotes");
+                    }
+                    $scope.lotes.attList();
+                    $scope.atualizaPendencias();
+                    $scope.lotes_cadastro = [];
+                }
+            } else {
+                obj.erros++;
+            }
+        });
+    }
+    var kk = 0;
+    var fa = function (els, lote) {
+        var id = kk;
+        kk++;
+        if (els == null) {
+            return $('<ul></ul>').html('ESGOTADO').css('border-color', 'DarkRed').css('color', 'DarkRed');
+        }
+        var n = "";
+        for (var i = 0; i < els.numero.length; i++) {
+            if (n != "")
+                n += "-";
+            n += els.numero[i];
+        }
+        n = "[" + n + "]";
+
+        var e = $('<ul></ul>');
+
+        e.data("item", els);
+        e.data("lote", lote);
+
+        e.attr('id', 'a' + id);
+
+
+        if (els.filhos.length > 0) {
+
+            e.append($('<i></i>').addClass('fas fa-plus-circle').attr('id', 'b' + id).click(function () {
+
+                $(this).hide(100);
+                $('#l' + id).show(100);
+                $('#a' + id).children('li').show(100);
+
+            })).append($('<i></i>').addClass('fas fa-minus-circle').attr('id', 'l' + id).click(function () {
+
+                $(this).hide();
+                $('#b' + id).show(100);
+                $('#a' + id).children('li').hide(100);
+
+            }).hide()).append($('<i></i>').addClass('fas fa-sitemap').click(function () {
+
+                $scope.imprimirItens($(this).parent().data("item").filhos.filter(function (el) {
+                    return el != null
+                }), $(this).parent().data("lote"));
+
+            }));
+
+        }
+
+        e.append($('<i></i>').addClass("fas fa-print").click(function () {
+
+            $scope.imprimirItens([$(this).parent().data("item")], $(this).parent().data("lote"));
+
+        }))
+
+        e.append(n + " &nbsp Quantidade: <strong>" + els.quantidade + "</strong>")
+
+        for (var i = 0; i < els.filhos.length; i++) {
+
+            e.append($('<li></li>').hide().append(fa(els.filhos[i], lote)));
+
+        }
+
+
+
+        return e;
+    }
+
+    $scope.imprimirItens = function (itens, lote) {
+        var etiquetas = [];
+        for (var i = 0; i < itens.length; i++) {
+            var cod = fix(lote.id + "", 7);
+            for (var j = 1; j < itens[i].numero.length; j++) {
+                cod += fix(itens[i].numero[j] + "", 4);
+            }
+            var etiqueta = {
+                id: lote.id,
+                id_produto: lote.produto.id,
+                nome_produto: lote.produto.nome,
+                validade: toDate(lote.validade),
+                codigo: "*"+cod+"*",
+                empresa:lote.produto.empresa.nome
+            };
+            etiquetas[etiquetas.length] = etiqueta;
+        }
+
+        loteService.getEtiquetas(etiquetas,function(a){ 
+            if(a.sucesso){
+                window.open(projeto+"/php/uploads/"+a.arquivo);
+            }else{
+                msg.erro("Ocorreu um problema de servidor, tente mais tarde");
+            }
+        });
+        
+    }
+
+
+    $scope.formarArvore = function (lote, elemento) {
+
+        var i = lote.item;
+
+        $("#" + elemento).html('');
+
+        $('#' + elemento).append('<strong>Legenda:</strong><br>').append($('<i></i>').addClass('fas fa-sitemap')).append(' Imprimir todos sub-itens, ').append($('<i></i>').addClass('fas fa-print')).append(' Imprimir item <hr>');
+
+        $("#" + elemento).append(fa(i, lote));
+
+    }
+    $scope.mergeLotes = function () {
+        var progresso = {atual: 0, total: $scope.lotes_cadastro.length, erros: 0};
+        for (var i = 0; i < $scope.lotes_cadastro.length; i++) {
+
+            var l = $scope.lotes_cadastro[i];
+
+            l.validade = fromDate(l.validade_texto);
+
+            if (l.validade < 0) {
+                progresso.erros++;
+                continue;
+            }
+
+            ml(progresso, l);
+
+        }
+    }
+
+    $scope.mergeLote = function () {
+
+        $scope.lote.validade = fromDate($scope.lote.validade_texto);
+
+        if ($scope.lote.validade < 0) {
+
+            msg.erro("Validade incorreta");
+            return;
+
+        }
+
+        baseService.merge($scope.lote, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.lote = r.o;
+                $scope.lotes.attList();
+            } else {
+                msg.erro("Problema ao efetuar operacao");
+            }
+        });
+    }
+
+    $scope.setPendencia = function (pendencia, palet) {
+
+        if (palet <= 0) {
+
+            msg.erro("A quantidade de palet deve ser maior do que 0");
+            return;
+
+        }
+
+        var qtd = pendencia.quantidade;
+
+        var produtoSimulado = {id: pendencia.id_produto, nome: pendencia.nome_produto};
+
+        $scope.lotes_cadastro = [];
+
+        while (qtd > 0) {
+
+            var z = palet;
+
+            qtd -= z;
+
+            if (qtd < 0)
+                z += qtd;
+
+            var lote = angular.copy($scope.lote_novo);
+
+            lote.grade = pendencia.grade;
+            lote.quantidade_inicial = z;
+            lote.quantidade_real = z;
+            lote.produto = produtoSimulado;
+            lote.validade_texto = toDate(lote.validade);
+
+            $scope.lotes_cadastro[$scope.lotes_cadastro.length] = lote;
+
+        }
+
+    }
+
+
+})
+
+rtc.controller("crtFornecedores", function ($scope, fornecedorService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
+
+    $scope.fornecedores = createAssinc(fornecedorService, 1, 3, 10);
+    $scope.fornecedores.attList();
+    assincFuncs(
+            $scope.fornecedores,
+            "fornecedor",
+            ["id", "nome", "email_fornecedor.endereco", "cnpj", "inscricao_estadual", "habilitado"]);
+
+    $scope.fornecedor_novo = {};
+    $scope.fornecedor = {};
+    $scope.estado = {};
+
+    $scope.email = {};
+
+    $scope.data_atual = new Date().getTime();
+
+
+    $scope.documento_novo = {};
+    $scope.documento = {};
+
+    $scope.telefone_novo = {};
+    $scope.telefone = {};
+
+    $scope.categorias_documento = [];
+    $scope.estados = [];
+    $scope.cidades = [];
+
+    $("#uploaderDocumentoFornecedor").change(function () {
+
+        uploadService.upload($(this).prop("files"), function (arquivos, sucesso) {
+
+            if (!sucesso) {
+
+                msg.erro("Falha ao subir arquivo");
+
+            } else {
+
+                var doc = angular.copy($scope.documento);
+
+                for (var i = 0; i < arquivos.length; i++) {
+
+                    var d = angular.copy(doc);
+                    $scope.documento = d;
+                    d.link = arquivos[i];
+
+                    $scope.addDocumento();
+
+                }
+
+                msg.alerta("Upload feito com sucesso");
+            }
+
+        })
+
+    })
+
+    fornecedorService.getFornecedor(function (p) {
+        $scope.fornecedor_novo = p.fornecedor;
+        $scope.fornecedor_novo["documentos"] = [];
+    })
+    categoriaDocumentoService.getElementos(function (p) {
+        $scope.categorias_documento = p.elementos;
+        $scope.documento.categoria = $scope.categorias_documento[0];
+    })
+    documentoService.getDocumento(function (p) {
+        $scope.documento_novo = p.documento;
+        $scope.documento = angular.copy($scope.documento_novo);
+        $scope.documento.categoria = $scope.categorias_documento[0];
+    })
+    telefoneService.getTelefone(function (p) {
+        $scope.telefone_novo = p.telefone;
+        $scope.telefone = angular.copy($scope.telefone_novo);
+    })
+
+    cidadeService.getElementos(function (p) {
+        var estados = [];
+        var cidades = p.elementos;
+        $scope.cidades = cidades;
+
+        lbl:
+                for (var i = 0; i < cidades.length; i++) {
+            var c = cidades[i];
+            for (var j = 0; j < estados.length; j++) {
+                if (estados[j].id === c.estado.id) {
+                    estados[j].cidades[estados[j].cidades.length] = c;
+                    c.estado = estados[j];
+                    continue lbl;
+                }
+            }
+            c.estado["cidades"] = [c];
+            estados[estados.length] = c.estado;
+        }
+
+        $scope.estados = estados;
+    })
+
+    $scope.novoFornecedor = function () {
+
+        $scope.fornecedor = angular.copy($scope.fornecedor_novo);
+
+    }
+
+    $scope.setFornecedor = function (fornecedor) {
+
+        $scope.fornecedor = fornecedor;
+
+        fornecedorService.getDocumentos($scope.fornecedor, function (d) {
+            $scope.fornecedor["documentos"] = d.documentos;
+            for (var i = 0; i < d.documentos.length; i++) {
+                equalize(d.documentos[i], "categoria", $scope.categorias_documento);
+            }
+        })
+
+        equalize(fornecedor.endereco, "cidade", $scope.cidades);
+        if (typeof fornecedor.endereco.cidade !== 'undefined') {
+            $scope.estado = fornecedor.endereco.cidade.estado;
+        } else {
+            fornecedor.endereco.cidade = $scope.cidades[0];
+            $scope.estado = fornecedor.endereco.cidade.estado;
+        }
+
+    }
+
+    $scope.mergeFornecedor = function () {
+
+        if ($scope.fornecedor.endereco.cidade == null) {
+            msg.erro("Fornecedor sem cidade.");
+            return;
+        }
+
+        baseService.merge($scope.fornecedor, function (r) {
+            if (r.sucesso) {
+                $scope.fornecedor = r.o;
+                fornecedorService.setDocumentos($scope.fornecedor, $scope.fornecedor.documentos, function (rr) {
+
+                    if (rr.sucesso) {
+
+                        msg.alerta("Operacao efetuada com sucesso");
+                        $scope.setFornecedor($scope.fornecedor);
+                        $scope.fornecedores.attList();
+
+                    } else {
+                        msg.erro("Fornecedor alterado, porém ocorreu um problema ao subir os documentos");
+
+                    }
+
+                })
+
+
+            } else {
+                msg.erro("Problema ao efetuar operacao. ");
+            }
+        });
+
+    }
+    $scope.deleteFornecedor = function () {
+        baseService.delete($scope.fornecedor, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.fornecedores.attList();
+            } else {
+                msg.erro("Problema ao efetuar operacao");
+            }
+        });
+    }
+
+    $scope.removeDocumento = function (documento) {
+        remove($scope.fornecedor.documentos, documento);
+    }
+
+    $scope.addDocumento = function () {
+
+        $scope.fornecedor.documentos[$scope.fornecedor.documentos.length] = $scope.documento;
+        $scope.documento = angular.copy($scope.documento_novo);
+        $scope.documento.categoria = $scope.categorias_documento[0];
+
+    }
+    $scope.removeTelefone = function (tel) {
+
+        remove($scope.fornecedor.telefones, tel);
+
+    }
+    $scope.addTelefone = function () {
+        $scope.fornecedor.telefones[$scope.fornecedor.telefones.length] = $scope.telefone;
+        $scope.telefone = angular.copy($scope.telefone_novo);
+    }
+
+})
+
 rtc.controller("crtTransportadoras", function ($scope, transportadoraService, regraTabelaService, tabelaService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
 
     $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 10);
@@ -113,7 +583,7 @@ rtc.controller("crtTransportadoras", function ($scope, transportadoraService, re
     }
 
     $scope.attResultado = function () {
-        
+
         tabelaService.getFretes(null, {cidade: $scope.cidade_teste, valor: $scope.valor_teste, peso: $scope.peso_teste}, function (f) {
 
             $scope.fretes = f.fretes;

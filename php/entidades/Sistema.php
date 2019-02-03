@@ -13,19 +13,58 @@
  */
 class Sistema {
 
-    
-    public static function getHtml($nom,$param){
-        
-        return "";
-        
-    }    
+    public static function getHtml($nom, $param) {
 
-    public static function mergeArquivo($nome,$conteudo){
-        
-        $handle = fopen('../uploads/'.$nome, 'a');
-        fwrite($handle,Utilidades::base64decode($conteudo));
+        return "";
+    }
+
+    public static function mergeArquivo($nome, $conteudo) {
+
+        $handle = fopen('../uploads/' . $nome, 'a');
+        fwrite($handle, Utilidades::base64decode($conteudo));
         fflush($handle);
         fclose($handle);
+    }
+
+    private static function getMicroServicoJava($nome, $parametros=null) {
+        
+        $servico = realpath('../micro_servicos_java');
+        $servico .= "/$nome.jar";
+        $comando = "java -jar \"$servico\"";
+        if($parametros != null){     
+            $comando .= " \"$parametros\" 2>&1";     
+        }else{   
+            $comando .= " 200 2>&1";   
+        }
+        exec($comando, $output); 
+        return $output[0];
+        
+    }
+
+    public static function getEtiquetas($etiquetas) {
+
+        $caminho = realpath("../uploads");
+        $arquivo = "etiqueta_" . round(microtime(true) * 1000) . ".pdf";
+        $caminho_completo = $caminho . "/$arquivo";
+
+        $request = new stdClass();
+        $request->arquivo = $caminho_completo;
+        $request->etiquetas = $etiquetas;
+
+        $final_request = Utilidades::toJson($request);
+        $final_request = addslashes($final_request);
+
+        $resp = Utilidades::fromJson(self::getMicroServicoJava('GeradorEtiqueta', $final_request));
+        
+        if(!$resp->sucesso){
+            
+            throw new Exception('falha');
+            
+        } else {
+
+            return $arquivo;
+            
+        }
         
     }
 
@@ -87,79 +126,72 @@ class Sistema {
         $ps->execute();
         $ps->close();
     }
-    
-    public static function getPragas($con){
-        
+
+    public static function getPragas($con) {
+
         $pragas = array();
-        
+
         $ps = $con->getConexao()->prepare("SELECT id,nome FROM praga WHERE excluida = false ORDER BY nome");
         $ps->execute();
-        $ps->bind_result($id,$nome);
-        
-        while($ps->fetch()){
-            
+        $ps->bind_result($id, $nome);
+
+        while ($ps->fetch()) {
+
             $praga = new Praga();
             $praga->id = $id;
             $praga->nome = $nome;
-            
+
             $pragas[] = $praga;
-            
         }
-        
+
         $ps->close();
-        
+
         return $pragas;
-        
     }
-    
-    public static function getCategoriaCliente($con){
-        
+
+    public static function getCategoriaCliente($con) {
+
         $cats = array();
-        
+
         $ps = $con->getConexao()->prepare("SELECT id,nome FROM categoria_cliente WHERE excluida = false ORDER BY nome");
         $ps->execute();
-        $ps->bind_result($id,$nome);
-        
-        while($ps->fetch()){
-            
+        $ps->bind_result($id, $nome);
+
+        while ($ps->fetch()) {
+
             $cat = new CategoriaCliente();
             $cat->id = $id;
             $cat->nome = $nome;
-            
+
             $cats[] = $cat;
-            
         }
-        
+
         $ps->close();
-        
+
         return $cats;
-        
     }
-    
-    public static function getCulturas($con){
-        
+
+    public static function getCulturas($con) {
+
         $culturas = array();
-        
+
         $ps = $con->getConexao()->prepare("SELECT id,nome FROM cultura WHERE excluida = false ORDER BY nome");
         $ps->execute();
-        $ps->bind_result($id,$nome);
-        
-        while($ps->fetch()){
-            
+        $ps->bind_result($id, $nome);
+
+        while ($ps->fetch()) {
+
             $cultura = new Cultura();
             $cultura->id = $id;
             $cultura->nome = $nome;
-            
+
             $culturas[] = $cultura;
-            
         }
-        
+
         $ps->close();
-        
+
         return $culturas;
-        
     }
-    
 
     public static function getStatusPedidoEntrada() {
 
@@ -206,14 +238,13 @@ class Sistema {
 
         return $cats;
     }
-    
-    public static function getEmailSistema(){
-        
+
+    public static function getEmailSistema() {
+
         $email = new Email("renan.miranda@agrofauna.com.br");
         $email->senha = "5hynespt";
-        
+
         return $email;
-        
     }
 
     public static function getPermissoes() {
@@ -307,7 +338,7 @@ class Sistema {
 
         $ps = $con->getConexao()->prepare("SELECT id, nome,base_calculo,ipi,icms_normal,icms FROM categoria_produto WHERE excluida=false");
         $ps->execute();
-        $ps->bind_result($id, $nome,$base_calculo,$ipi,$icms_normal,$icms);
+        $ps->bind_result($id, $nome, $base_calculo, $ipi, $icms_normal, $icms);
 
         while ($ps->fetch()) {
 
@@ -318,7 +349,7 @@ class Sistema {
             $cat->ipi = $ipi;
             $cat->icms_norma = $icms_normal;
             $cat->icms = $icms;
-            
+
             $cats[] = $cat;
         }
 
@@ -348,7 +379,7 @@ class Sistema {
 
         return $estados;
     }
-    
+
     public static function getUsuario($filtro) {
 
         $con = new ConnectionFactory();
@@ -405,7 +436,7 @@ class Sistema {
                 . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
                 . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
                 . "INNER JOIN estado ON cidade.id_estado = estado.id "
-                . "WHERE ". $filtro;
+                . "WHERE " . $filtro;
 
 
         $ps = $con->getConexao()->prepare($sql);
@@ -807,7 +838,5 @@ class Sistema {
 
         return $cidades;
     }
-    
-    
 
 }

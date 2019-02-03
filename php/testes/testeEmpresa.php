@@ -433,7 +433,26 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         
         $logo = Utilidades::getLogoTeste($empresa);
         */
-  
+        /*
+        $empresa = Utilidades::getEmpresaTeste();
+        
+        $pedido = Utilidades::getPedidoTeste($empresa);
+
+        $lotes = $empresa->getLotes($con, 0, 3);
+        
+        $qtd = $empresa->getCountLotes($con);
+        
+        echo $qtd;
+        */
+        /*
+        $empresa = Utilidades::getEmpresaTeste();
+        
+        $pedido = Utilidades::getPedidoTeste($empresa);
+        
+        $pendentes = $empresa->getCadastroLotesPendentes($con);
+        
+        echo Utilidades::toJson($pendentes);
+        */
         
     }
 

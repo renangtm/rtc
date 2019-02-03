@@ -21,6 +21,8 @@ class testeFornecedor extends PHPUnit_Framework_TestCase {
         $fornecedor = new Fornecedor();
         
         $fornecedor->nome = "Teste";
+        $fornecedor->habilitado=false;
+        $fornecedor->inscricao_estadual = "1231232";
         $fornecedor->telefones[] = new Telefone("111111");
         $fornecedor->cnpj = new CNPJ("11122233344455");
         $fornecedor->empresa = Utilidades::getEmpresaTeste();

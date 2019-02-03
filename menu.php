@@ -277,7 +277,7 @@ if(!isset($filtro)){
                                     <a class="nav-link" href="#"><i class="fas fa-exchange-alt"></i>Movimentação</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#"><i class="fas fa-cubes"></i>Lotes</a>
+                                    <a class="nav-link" href="lotes.php"><i class="fas fa-cubes"></i>Lotes</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="#"><i class="fas fa-check-square"></i>Habilitação de Produtos</a>

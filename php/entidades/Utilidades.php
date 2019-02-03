@@ -89,6 +89,18 @@ class Utilidades {
 
             $pilha = array();
         }
+        
+        if(is_array($obj)){
+            
+            foreach($obj as $key=>$value){
+                
+                $obj[$key] = self::getObject($value,$pilha);
+                
+            }
+            
+            return $obj;
+            
+        }
 
         if (!is_object($obj)) {
 

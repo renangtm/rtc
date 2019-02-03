@@ -108,7 +108,7 @@ class Produto {
 
     public function getLotes($con, $filtro = null, $ordem = null) {
 
-        $sql = "SELECT lote.id, UNIX_TIMESTAMP(lote.validade)*1000, UNIX_TIMESTAMP(lote.data_entrada)*1000, lote.quantidade_inicial, lote.grade, lote.quantidade_real, lote.codigo_fabricante, retirada.retirada FROM lote LEFT JOIN retirada ON lote.id=retirada.id_lote WHERE lote.excluido=false AND lote.id_produto=$this->id";
+        $sql = "SELECT lote.id,lote.numero,lote.rua,lote.altura, UNIX_TIMESTAMP(lote.validade)*1000, UNIX_TIMESTAMP(lote.data_entrada)*1000, lote.quantidade_inicial, lote.grade, lote.quantidade_real, lote.codigo_fabricante, retirada.retirada FROM lote LEFT JOIN retirada ON lote.id=retirada.id_lote WHERE lote.excluido=false AND lote.id_produto=$this->id";
         if ($filtro != null && $filtro != "") {
 
             $sql .= " AND (" . addslashes($filtro) . ")";
@@ -123,7 +123,7 @@ class Produto {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $validade, $entrada, $quantidade_inicial, $grade, $quantidade_real, $codigo_fabricante, $retirada);
+        $ps->bind_result($id,$numero,$rua,$altura, $validade, $entrada, $quantidade_inicial, $grade, $quantidade_real, $codigo_fabricante, $retirada);
 
         while ($ps->fetch()) {
 
@@ -131,6 +131,9 @@ class Produto {
 
                 $lote = new Lote();
                 $lote->id = $id;
+                $lote->numero = $numero;
+                $lote->rua = $rua;
+                $lote->altura = $altura;
                 $lote->validade = $validade;
                 $lote->entrada = $entrada;
                 $lote->quantidade_inicial = $quantidade_inicial;

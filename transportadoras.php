@@ -744,20 +744,24 @@
                                 </div>
 
                             </div>
-                            <div class="modal-footer" style="text-align: center;font-weight: bold;text-decoration: underline;font-size: 21px">
+                            <div class="modal-footer" style="text-align: center;font-weight: bold;text-decoration: underline;">
 
                                 <table class="table table-striped table-bordered first">
                                     <thead>
                                         <tr>
                                             <th>Cod</th>
                                             <th>Transportadora</th>
+                                            <th>Taxa Despacho</th>
                                             <th>Valor</th>
+                                            <th>Total</th>
                                         </tr>
                                     </thead>
                                     <tr ng-repeat="frete in fretes">
                                         <td>{{frete.transportadora.id}}</td>
                                         <td>{{frete.transportadora.razao_social}}</td>
+                                        <td>{{frete.transportadora.despacho}} R$</td>
                                         <td>{{frete.valor}} R$</td>
+                                        <td>{{frete.valor + frete.transportadora.despacho}} R$</td>
                                     </tr>
                                 </table>
 

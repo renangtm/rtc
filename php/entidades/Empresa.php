@@ -72,7 +72,7 @@ class Empresa {
         $ps->execute();
         $ps->close();
     }
-    
+
     public function delete($con) {
 
         $ps = $con->getConexao()->prepare("UPDATE empresa SET excluida = true WHERE id = " . $this->id);
@@ -269,6 +269,345 @@ class Empresa {
         return null;
     }
 
+    public function getCadastroLotesPendentes($con) {
+
+        $sql = "SELECT "
+                . "produto.id,"
+                . "produto.nome,"
+                . "(produto.estoque-l.quantidade),"
+                . "produto.grade "
+                . "FROM produto "
+                . "INNER JOIN (SELECT lote.id_produto,SUM(lote.quantidade_real) as 'quantidade' FROM lote WHERE lote.excluido=false GROUP BY lote.id_produto) l ON l.id_produto=produto.id "
+                . "WHERE produto.id_empresa = $this->id AND produto.excluido = false AND (produto.estoque-l.quantidade)>0";
+
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id, $nome, $quantidade, $grade);
+
+        $p = array();
+
+        while ($ps->fetch()) {
+
+            $c = new CadastroLotePendente();
+            $c->id_produto = $id;
+            $c->nome_produto = $nome;
+            $c->quantidade = $quantidade;
+            $c->grade = new Grade($grade);
+
+            $p[] = $c;
+        }
+
+        $ps->close();
+
+        return $p;
+    }
+
+    public function getCountLotes($con, $filtro = "") {
+
+        $sql = "SELECT COUNT(*) FROM lote INNER JOIN produto ON produto.id=lote.id_produto WHERE produto.id_empresa=$this->id AND lote.excluido=false ";
+
+        if ($filtro != "") {
+
+            $sql .= "AND $filtro";
+        }
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($qtd);
+
+        if ($ps->fetch()) {
+
+            $ps->close();
+            return $qtd;
+        }
+
+        $ps->close();
+        return 0;
+    }
+
+    public function getLotes($con, $x1, $x2, $filtro = "", $ordem = "") {
+
+        $campanhas = array();
+        $ofertas = array();
+
+        $ps = $con->getConexao()->prepare("SELECT "
+                . "campanha.id,"
+                . "campanha.inicio,"
+                . "campanha.fim,"
+                . "campanha.prazo,"
+                . "campanha.parcelas,"
+                . "campanha.cliente_expression,"
+                . "produto_campanha.id,"
+                . "produto_campanha.id_produto,"
+                . "UNIX_TIMESTAMP(produto_campanha.validade)*1000,"
+                . "produto_campanha.limite,"
+                . "produto_campanha.valor, "
+                . "empresa.id,"
+                . "empresa.nome,"
+                . "empresa.inscricao_estadual,"
+                . "empresa.consigna,"
+                . "empresa.aceitou_contrato,"
+                . "empresa.juros_mensal,"
+                . "empresa.cnpj,"
+                . "endereco.numero,"
+                . "endereco.id,"
+                . "endereco.rua,"
+                . "endereco.bairro,"
+                . "endereco.cep,"
+                . "cidade.id,"
+                . "cidade.nome,"
+                . "estado.id,"
+                . "estado.sigla,"
+                . "email.id,"
+                . "email.endereco,"
+                . "email.senha,"
+                . "telefone.id,"
+                . "telefone.numero "
+                . "FROM campanha "
+                . "INNER JOIN produto_campanha ON campanha.id = produto_campanha.id_campanha "
+                . "INNER JOIN empresa ON campanha.id_empresa=empresa.id "
+                . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
+                . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
+                . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
+                . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
+                . "INNER JOIN estado ON cidade.id_estado = estado.id "
+                . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
+
+        $ps->execute();
+        $ps->bind_result($id, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+
+        while ($ps->fetch()) {
+
+            if (!isset($campanhas[$id])) {
+
+                $campanhas[$id] = new Campanha();
+                $campanhas[$id]->id = $id;
+                $campanhas[$id]->inicio = $inicio;
+                $campanhas[$id]->fim = $fim;
+                $campanhas[$id]->prazo = $prazo;
+                $campanhas[$id]->parcelas = $parcelas;
+                $campanhas[$id]->cliente_expression = $cliente;
+
+                $empresa = new Empresa();
+                $empresa->id = $id_empresa;
+                $empresa->cnpj = new CNPJ($cnpj);
+                $empresa->inscricao_estadual = $inscricao_empresa;
+                $empresa->nome = $nome_empresa;
+                $empresa->aceitou_contrato = $aceitou_contrato;
+                $empresa->juros_mensal = $juros_mensal;
+                $empresa->consigna = $consigna;
+
+                $endereco = new Endereco();
+                $endereco->id = $id_endereco;
+                $endereco->rua = $rua;
+                $endereco->bairro = $bairro;
+                $endereco->cep = new CEP($cep);
+                $endereco->numero = $numero_endereco;
+
+                $cidade = new Cidade();
+                $cidade->id = $id_cidade;
+                $cidade->nome = $nome_cidade;
+
+                $estado = new Estado();
+                $estado->id = $id_estado;
+                $estado->sigla = $nome_estado;
+
+                $cidade->estado = $estado;
+
+                $endereco->cidade = $cidade;
+
+                $empresa->endereco = $endereco;
+
+                $email = new Email($endereco_email);
+                $email->id = $id_email;
+                $email->senha = $senha_email;
+
+                $empresa->email = $email;
+
+                $telefone = new Telefone($numero_telefone);
+                $telefone->id = $id_telefone;
+
+                $empresa->telefone = $telefone;
+
+                $campanhas[$id]->empresa = $empresa;
+            }
+
+            $campanha = $campanhas[$id];
+
+            $p = new ProdutoCampanha();
+            $p->id = $id_produto_campanha;
+            $p->validade = $validade;
+            $p->limite = $limite;
+            $p->valor = $valor;
+            $p->campanha = $campanha;
+
+            if (!isset($ofertas[$id_produto])) {
+
+                $ofertas[$id_produto] = array();
+            }
+
+            $ofertas[$id_produto][] = $p;
+
+            $campanhas[$id]->produtos[] = $p;
+        }
+        $ps->close();
+
+        $sql = "SELECT "
+                . "lote.id,"
+                . "lote.numero,"
+                . "lote.rua,"
+                . "lote.altura,"
+                . "UNIX_TIMESTAMP(lote.validade)*1000,"
+                . "UNIX_TIMESTAMP(lote.data_entrada)*1000,"
+                . "lote.grade,"
+                . "lote.quantidade_inicial,"
+                . "lote.quantidade_real,"
+                . "lote.codigo_fabricante,"
+                . "GROUP_CONCAT(retirada.retirada separator ';'),"
+                . "produto.id,"
+                . "produto.classe_risco,"
+                . "produto.fabricante,"
+                . "produto.imagem,"
+                . "produto.id_universal,"
+                . "produto.liquido,"
+                . "produto.quantidade_unidade,"
+                . "produto.habilitado,"
+                . "produto.valor_base,"
+                . "produto.custo,"
+                . "produto.peso_bruto,"
+                . "produto.peso_liquido,"
+                . "produto.estoque,"
+                . "produto.disponivel,"
+                . "produto.transito,"
+                . "produto.grade,"
+                . "produto.unidade,"
+                . "produto.ncm,"
+                . "produto.nome,"
+                . "produto.lucro_consignado,"
+                . "produto.ativo,"
+                . "produto.concentracao,"
+                . "categoria_produto.id,"
+                . "categoria_produto.nome,"
+                . "categoria_produto.base_calculo,"
+                . "categoria_produto.ipi,"
+                . "categoria_produto.icms_normal,"
+                . "categoria_produto.icms "
+                . "FROM lote "
+                . "LEFT JOIN retirada ON lote.id=retirada.id_lote "
+                . "INNER JOIN produto ON lote.id_produto=produto.id "
+                . "INNER JOIN categoria_produto ON categoria_produto.id=produto.id_categoria "
+                . "WHERE produto.id_empresa = $this->id AND lote.excluido = false ";
+
+        if ($filtro != "") {
+
+            $sql .= "AND $filtro ";
+        }
+        
+        $sql .= "GROUP BY lote.id ";
+
+        if ($ordem != "") {
+
+            $sql .= "ORDER BY $ordem ";
+        }
+        
+        $sql .= "LIMIT $x1," . ($x2 - $x1);
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id,$numero,$rua,$altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
+
+        $lotes = array();
+
+        $produtos = array();
+
+        while ($ps->fetch()) {
+
+            if (!isset($produtos[$id_pro])) {
+
+                $p = new Produto();
+                $p->id = $id_pro;
+                $p->classe_risco = $classe_risco;
+                $p->fabricante = $fabricante;
+                $p->imagem = $imagem;
+                $p->nome = $nome;
+                $p->id_universal = $id_uni;
+                $p->liquido = $liq == 1;
+                $p->quantidade_unidade = $qtd_un;
+                $p->habilitado = $hab;
+                $p->empresa = $this;
+                $p->valor_base = $vb;
+                $p->custo = $cus;
+                $p->peso_bruto = $pb;
+                $p->peso_liquido = $pl;
+                $p->estoque = $est;
+                $p->disponivel = $disp;
+                $p->ativo = $ativo;
+                $p->concentracao = $conc;
+                $p->transito = $tr;
+                $p->grade = new Grade($gr);
+                $p->unidade = $uni;
+                $p->ncm = $ncm;
+                $p->lucro_consignado = $lucro;
+                $p->ofertas = (!isset($ofertas[$p->id]) ? array() : $ofertas[$p->id]);
+
+                foreach ($p->ofertas as $key => $oferta) {
+
+                    $oferta->produto = $p;
+                }
+
+                $p->categoria = new CategoriaProduto();
+
+                $p->categoria->id = $cat_id;
+                $p->categoria->nome = $cat_nom;
+                $p->categoria->base_calculo = $cat_bs;
+                $p->categoria->icms = $cat_icms;
+                $p->categoria->icms_normal = $cat_icms_normal;
+                $p->categoria->ipi = $cat_ipi;
+
+                $p->empresa = $this;
+
+                $produtos[$id_pro] = $p;
+            }
+
+
+            $lote = new Lote();
+            $lote->id = $id;
+            $lote->numero = $numero;
+            $lote->rua = $rua;
+            $lote->altura = $altura;
+            $lote->validade = $validade;
+            $lote->entrada = $entrada;
+            $lote->quantidade_inicial = $quantidade_inicial;
+            $lote->grade = new Grade($grade);
+            $lote->quantidade_real = $quantidade_real;
+            $lote->produto = $produtos[$id_pro];
+            $lote->codigo_fabricante = $codigo_fabricante;
+
+            if ($retirada != null) {
+
+                $rets = explode(';', $retirada);
+
+                foreach ($rets as $key => $value) {
+
+                    $ret = explode(',', $value);
+                    foreach ($ret as $key => $value) {
+
+                        $ret[$key] = intval($ret[$key]);
+                    }
+
+                    $lote->retiradas[] = $ret;
+                }
+            }
+
+            $lotes[] = $lote;
+        }
+
+        $ps->close();
+
+        return $lotes;
+    }
+
     public function getPedidos($con, $x1, $x2, $filtro = "", $ordem = "") {
 
         $sql = "SELECT "
@@ -393,7 +732,7 @@ class Empresa {
             $cliente->cnpj = new CNPJ($cnpj);
             $cliente->cpf = new CPF($cpf);
             $cliente->rg = new RG($rg);
-            $cliente->pessoa_fisica = $pessoa_fisica==1;
+            $cliente->pessoa_fisica = $pessoa_fisica == 1;
             $cliente->nome_fantasia = $nome_fantasia_cliente;
             $cliente->razao_social = $nome_cliente;
             $cliente->empresa = $this;
@@ -407,7 +746,7 @@ class Empresa {
             $cliente->termino_limite = $fim;
             $cliente->limite_credito = $limite;
             $cliente->inscricao_suframa = $i_suf;
-            $cliente->suframado = $suf==1;
+            $cliente->suframado = $suf == 1;
             $cliente->empresa = $this;
             $cliente->inscricao_estadual = $ie;
 
@@ -442,7 +781,7 @@ class Empresa {
             $transportadora->email = new Email($email_tra_end);
             $transportadora->email->id = $email_tra_id;
             $transportadora->email->senha = $email_tra_senha;
-            $transportadora->habilitada = $tra_habilitada==1;
+            $transportadora->habilitada = $tra_habilitada == 1;
             $transportadora->inscricao_estadual = $tra_ie;
             $transportadora->nome_fantasia = $tra_nome_fantasia;
             $transportadora->razao_social = $tra_nome;
@@ -1091,6 +1430,8 @@ class Empresa {
                 . "fornecedor.id, "
                 . "fornecedor.nome,"
                 . "fornecedor.cnpj,"
+                . "fornecedor.habilitado,"
+                . "fornecedor.inscricao_estadual,"
                 . "endereco_fornecedor.id, "
                 . "endereco_fornecedor.rua, "
                 . "endereco_fornecedor.numero, "
@@ -1171,7 +1512,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_mov, $data_mov, $saldo_mov, $valor_mov, $juros_mov, $desc_mov, $id_venc, $val_venc, $data_venc, $hist_id, $hist_nom, $op_id, $op_nom, $op_deb, $ban_id, $ban_nom, $ban_cod, $ban_sal, $ban_con, $id_cliente, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $id_email_cliente, $end_email_cliente, $senh_email_cliente, $id_for, $nom_for, $cnpj_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for, $tra_id, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_email_tra, $end_email_tra, $sen_email_tra, $id_nf, $sai_nf, $cha_nf, $obs_nf, $dt_nf, $nf_inf_est);
+        $ps->bind_result($id_mov, $data_mov, $saldo_mov, $valor_mov, $juros_mov, $desc_mov, $id_venc, $val_venc, $data_venc, $hist_id, $hist_nom, $op_id, $op_nom, $op_deb, $ban_id, $ban_nom, $ban_cod, $ban_sal, $ban_con, $id_cliente, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $id_email_cliente, $end_email_cliente, $senh_email_cliente, $id_for, $nom_for, $cnpj_for, $hab_for, $ie_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for, $tra_id, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_email_tra, $end_email_tra, $sen_email_tra, $id_nf, $sai_nf, $cha_nf, $obs_nf, $dt_nf, $nf_inf_est);
 
         while ($ps->fetch()) {
 
@@ -1224,7 +1565,7 @@ class Empresa {
                 $cliente->cnpj = new CNPJ($cnpj);
                 $cliente->cpf = new CPF($cpf);
                 $cliente->rg = new RG($rg);
-                $cliente->pessoa_fisica = $pessoa_fisica==1;
+                $cliente->pessoa_fisica = $pessoa_fisica == 1;
                 $cliente->nome_fantasia = $nome_fantasia_cliente;
                 $cliente->razao_social = $nome_cliente;
                 $cliente->empresa = $this;
@@ -1238,7 +1579,7 @@ class Empresa {
                 $cliente->termino_limite = $fim;
                 $cliente->limite_credito = $limite;
                 $cliente->inscricao_suframa = $i_suf;
-                $cliente->suframado = $suf==1;
+                $cliente->suframado = $suf == 1;
                 $cliente->empresa = $this;
                 $cliente->inscricao_estadual = $ie;
 
@@ -1274,6 +1615,8 @@ class Empresa {
                 $fornecedor = new Fornecedor();
                 $fornecedor->id = $id_for;
                 $fornecedor->nome = $nom_for;
+                $fornecedor->habilitado = $hab_for == 1;
+                $fornecedor->inscricao_estadual = $ie_for;
                 $fornecedor->cnpj = new CNPJ($cnpj_for);
                 $fornecedor->empresa = $this;
                 $fornecedor->email = new Email($end_email_for);
@@ -1312,7 +1655,7 @@ class Empresa {
             $transportadora->email = new Email($end_email_tra);
             $transportadora->email->id = $id_email_tra;
             $transportadora->email->senha = $sen_email_tra;
-            $transportadora->habilitada = $tra_habilitada==1;
+            $transportadora->habilitada = $tra_habilitada == 1;
             $transportadora->inscricao_estadual = $tra_ie;
             $transportadora->nome_fantasia = $tra_nome_fantasia;
             $transportadora->razao_social = $tra_nome;
@@ -1493,6 +1836,8 @@ class Empresa {
                 . "fornecedor.id, "
                 . "fornecedor.nome,"
                 . "fornecedor.cnpj,"
+                . "fornecedor.habilitado,"
+                . "fornecedor.inscricao_estadual,"
                 . "endereco_fornecedor.id, "
                 . "endereco_fornecedor.rua, "
                 . "endereco_fornecedor.numero, "
@@ -1568,7 +1913,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_cliente, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $id_email_cliente, $end_email_cliente, $senh_email_cliente, $id_for, $nom_for, $cnpj_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for, $tra_id, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_email_tra, $end_email_tra, $sen_email_tra, $id_nf, $sai_nf, $cha_nf, $obs_nf, $dt_nf, $nf_inf_est);
+        $ps->bind_result($id_cliente, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $id_email_cliente, $end_email_cliente, $senh_email_cliente, $id_for, $nom_for, $cnpj_for, $hab_for, $ie_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for, $tra_id, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_email_tra, $end_email_tra, $sen_email_tra, $id_nf, $sai_nf, $cha_nf, $obs_nf, $dt_nf, $nf_inf_est);
 
         while ($ps->fetch()) {
 
@@ -1581,7 +1926,7 @@ class Empresa {
                 $cliente->cnpj = new CNPJ($cnpj);
                 $cliente->cpf = new CPF($cpf);
                 $cliente->rg = new RG($rg);
-                $cliente->pessoa_fisica = $pessoa_fisica==1;
+                $cliente->pessoa_fisica = $pessoa_fisica == 1;
                 $cliente->nome_fantasia = $nome_fantasia_cliente;
                 $cliente->razao_social = $nome_cliente;
                 $cliente->empresa = $this;
@@ -1595,7 +1940,7 @@ class Empresa {
                 $cliente->termino_limite = $fim;
                 $cliente->limite_credito = $limite;
                 $cliente->inscricao_suframa = $i_suf;
-                $cliente->suframado = $suf==1;
+                $cliente->suframado = $suf == 1;
                 $cliente->empresa = $this;
                 $cliente->inscricao_estadual = $ie;
 
@@ -1631,6 +1976,8 @@ class Empresa {
                 $fornecedor = new Fornecedor();
                 $fornecedor->id = $id_for;
                 $fornecedor->nome = $nom_for;
+                $fornecedor->habilitado = $hab == 1;
+                $fornecedor->inscricao_estadual = $ie_for;
                 $fornecedor->cnpj = new CNPJ($cnpj_for);
                 $fornecedor->empresa = $this;
                 $fornecedor->email = new Email($end_email_for);
@@ -1669,7 +2016,7 @@ class Empresa {
             $transportadora->email = new Email($end_email_tra);
             $transportadora->email->id = $id_email_tra;
             $transportadora->email->senha = $sen_email_tra;
-            $transportadora->habilitada = $tra_habilitada==1;
+            $transportadora->habilitada = $tra_habilitada == 1;
             $transportadora->inscricao_estadual = $tra_ie;
             $transportadora->nome_fantasia = $tra_nome_fantasia;
             $transportadora->razao_social = $tra_nome;
@@ -1866,6 +2213,8 @@ class Empresa {
                 . "fornecedor.id, "
                 . "fornecedor.nome,"
                 . "fornecedor.cnpj,"
+                . "fornecedor.habilitado,"
+                . "fornecedor.inscricao_estadual,"
                 . "endereco_fornecedor.id, "
                 . "endereco_fornecedor.rua, "
                 . "endereco_fornecedor.numero, "
@@ -1910,7 +2259,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pedido, $frete_incluso, $data, $prazo, $parcelas, $id_status, $frete, $obs, $tra_id, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_tra_id, $email_tra_end, $email_tra_senha, $email_usu_id, $email_usu_end, $email_usu_senha, $id_for, $nom_for, $cnpj_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for);
+        $ps->bind_result($id_pedido, $frete_incluso, $data, $prazo, $parcelas, $id_status, $frete, $obs, $tra_id, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_tra_id, $email_tra_end, $email_tra_senha, $email_usu_id, $email_usu_end, $email_usu_senha, $id_for, $nom_for, $cnpj_for, $hab_for, $ie_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for);
 
 
         $pedidos = array();
@@ -1923,6 +2272,8 @@ class Empresa {
             $fornecedor = new Fornecedor();
             $fornecedor->id = $id_for;
             $fornecedor->nome = $nom_for;
+            $fornecedor->habilitado = $hab_for;
+            $fornecedor->inscricao_estadual = $ie_for;
             $fornecedor->cnpj = new CNPJ($cnpj_for);
             $fornecedor->empresa = $this;
             $fornecedor->email = new Email($end_email_for);
@@ -1961,7 +2312,7 @@ class Empresa {
             $transportadora->email = new Email($email_tra_end);
             $transportadora->email->id = $email_tra_id;
             $transportadora->email->senha = $email_tra_senha;
-            $transportadora->habilitada = $tra_habilitada==1;
+            $transportadora->habilitada = $tra_habilitada == 1;
             $transportadora->inscricao_estadual = $tra_ie;
             $transportadora->nome_fantasia = $tra_nome_fantasia;
             $transportadora->razao_social = $tra_nome;
@@ -2196,6 +2547,8 @@ class Empresa {
                 . "fornecedor.id, "
                 . "fornecedor.nome,"
                 . "fornecedor.cnpj,"
+                . "fornecedor.habilitado,"
+                . "fornecedor.inscricao_estadual,"
                 . "endereco_fornecedor.id, "
                 . "endereco_fornecedor.rua, "
                 . "endereco_fornecedor.numero, "
@@ -2232,7 +2585,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_for, $nom_for, $cnpj_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for, $id_tel, $num_tel);
+        $ps->bind_result($id_for, $nom_for, $cnpj_for, $hab, $ie, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for, $id_tel, $num_tel);
 
         $fornecedores = array();
 
@@ -2242,6 +2595,8 @@ class Empresa {
 
                 $fornecedor = new Fornecedor();
                 $fornecedor->id = $id_for;
+                $fornecedor->habilitado = $hab == 1;
+                $fornecedor->inscricao_estadual = $ie;
                 $fornecedor->nome = $nom_for;
                 $fornecedor->cnpj = new CNPJ($cnpj_for);
                 $fornecedor->empresa = $this;
@@ -2339,6 +2694,8 @@ class Empresa {
                 . "fornecedor.id, "
                 . "fornecedor.nome,"
                 . "fornecedor.cnpj,"
+                . "fornecedor.habilitado,"
+                . "fornecedor.inscricao_estadual,"
                 . "endereco_fornecedor.id, "
                 . "endereco_fornecedor.rua, "
                 . "endereco_fornecedor.numero, "
@@ -2380,7 +2737,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_cotacao, $frete, $data, $em_litros, $id_status, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_for, $nom_for, $cnpj_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for);
+        $ps->bind_result($id_cotacao, $frete, $data, $em_litros, $id_status, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_for, $nom_for, $cnpj_for, $hab, $ie, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for);
 
         $cotacoes = array();
         $usuarios = array();
@@ -2391,6 +2748,8 @@ class Empresa {
             $fornecedor = new Fornecedor();
             $fornecedor->id = $id_for;
             $fornecedor->nome = $nom_for;
+            $fornecedor->habilitado = $hab == 1;
+            $fornecedor->inscricao_estadual = $ie;
             $fornecedor->cnpj = new CNPJ($cnpj_for);
             $fornecedor->empresa = $this;
             $fornecedor->email = new Email($end_email_for);
@@ -2759,7 +3118,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pro,$classe_risco,$fabricante,$imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
+        $ps->bind_result($id_pro, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
 
         while ($ps->fetch()) {
 
@@ -2770,7 +3129,7 @@ class Empresa {
             $p->imagem = $imagem;
             $p->nome = $nome;
             $p->id_universal = $id_uni;
-            $p->liquido = $liq==1;
+            $p->liquido = $liq == 1;
             $p->quantidade_unidade = $qtd_un;
             $p->habilitado = $hab;
             $p->valor_base = $vb;
@@ -3184,7 +3543,7 @@ class Empresa {
             $transportadora->email = new Email($end_email_tra);
             $transportadora->email->id = $id_email_tra;
             $transportadora->email->senha = $sen_email_tra;
-            $transportadora->habilitada = $tra_habilitada==1;
+            $transportadora->habilitada = $tra_habilitada == 1;
             $transportadora->inscricao_estadual = $tra_ie;
             $transportadora->nome_fantasia = $tra_nome_fantasia;
             $transportadora->razao_social = $tra_nome;
@@ -3360,7 +3719,7 @@ class Empresa {
             $cliente->cnpj = new CNPJ($cnpj);
             $cliente->cpf = new CPF($cpf);
             $cliente->rg = new RG($rg);
-            $cliente->pessoa_fisica = $pessoa_fisica==1;
+            $cliente->pessoa_fisica = $pessoa_fisica == 1;
             $cliente->nome_fantasia = $nome_fantasia_cliente;
             $cliente->razao_social = $nome_cliente;
             $cliente->empresa = $this;
@@ -3374,7 +3733,7 @@ class Empresa {
             $cliente->termino_limite = $fim;
             $cliente->limite_credito = $limite;
             $cliente->inscricao_suframa = $i_suf;
-            $cliente->suframado = $suf==1;
+            $cliente->suframado = $suf == 1;
             $cliente->empresa = $this;
             $cliente->inscricao_estadual = $ie;
 
