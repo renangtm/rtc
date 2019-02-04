@@ -236,8 +236,8 @@
                             <div class="modal-body">
                                 <form id="add-form" ng-submit="mergeCliente()" parsley-validate>
                                     <div class="form-group row">
-                                        <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Razao Social</label>
-                                        <div class="col-9 col-lg-10">
+                                        <label for="txtname" class="col-3 col-lg-3 col-form-label text-left">Razão social</label>
+                                        <div class="col-9 col-lg-9">
                                             <input id="txtname" type="text" ng-model="cliente.razao_social" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
@@ -245,8 +245,8 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtnamef" class="col-3 col-lg-2 col-form-label text-left">Nome Fantasia</label>
-                                        <div class="col-9 col-lg-10">
+                                        <label for="txtnamef" class="col-3 col-lg-3 col-form-label text-left">Nome Fantasia</label>
+                                        <div class="col-9 col-lg-9">
                                             <input id="txtnamef" type="text" ng-model="cliente.nome_fantasia" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
@@ -262,11 +262,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-4 col-lg-4" style="padding-top: 5px;">
+                                    <div class="col" style="padding-top: 5px;">
                                         <div class="row">
                                             <div class="col-md-6" style="text-align:center">
                                                 <label class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" name="radio-inline" data-ng-value="false" data-ng-model="cliente.pessoa_fisica" class="custom-control-input"><span class="custom-control-label">Pessoa Juridica</span>
+                                                    <input type="radio" name="radio-inline" data-ng-value="false" data-ng-model="cliente.pessoa_fisica" class="custom-control-input"><span class="custom-control-label">Pessoa Jurídica</span>
                                                 </label>
                                             </div>
                                             <div class="col-md-6" style="text-align:center">
@@ -282,7 +282,7 @@
                                     <div class="form-group row" ng-if="!cliente.pessoa_fisica">
                                         <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">CNPJ</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="cliente.cnpj.valor" required placeholder="00.000.000/0000-00" class="form-control cpf">
+                                            <input id="txtcnpj" type="text" ng-model="cliente.cnpj.valor" required placeholder="00.000.000/0000-00" class="form-control cnpj">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -291,7 +291,7 @@
                                     <div class="form-group row" ng-if="!cliente.pessoa_fisica">
                                         <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">Insc. Est</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="cliente.inscricao_estadual" required placeholder="00.000.000/0000-00" class="form-control cpf">
+                                            <input id="txtcnpj" type="text" ng-model="cliente.inscricao_estadual" required placeholder="000.000.000.000" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -309,7 +309,7 @@
                                     <div class="form-group row" ng-if="cliente.pessoa_fisica">
                                         <label for="txtrg" class="col-3 col-lg-2 col-form-label text-left">RG</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtrg" type="text" ng-model="cliente.rg.valor" required placeholder="000.000.000-00" class="form-control cpf">
+                                            <input id="txtrg" type="text" ng-model="cliente.rg.valor" required placeholder="000.000.000-00" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -344,8 +344,8 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label  class="col-3 col-lg-2 col-form-label text-left">Categoria Cliente</label>
-                                        <div class="col-9 col-lg-10">
+                                        <label  class="col-3 col-lg-4 col-form-label text-left">Categoria Cliente</label>
+                                        <div class="col-9 col-lg-8">
                                             <select ng-model="cliente.categoria" class="form-control">
                                                 <option ng-repeat="categoria in categorias_cliente" ng-value="categoria">{{categoria.nome}}</option>
                                             </select>
@@ -386,18 +386,15 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtsuf" class="col-3 col-lg-2 col-form-label text-left">Tem Suframa ?</label>
-                                        <div class="row">
-                                            <div class="col-md-6" style="text-align:center">
+                                        <label for="txtsuf" class="col-3 col-form-label text-left">Tem Suframa ?</label>
+                                        <div class="col-9">
                                                 <label class="custom-control custom-radio custom-control-inline">
                                                     <input type="radio" name="radio-inline2" data-ng-value="true" data-ng-model="cliente.suframado" class="custom-control-input"><span class="custom-control-label">Sim</span>
                                                 </label>
-                                            </div>
-                                            <div class="col-md-6" style="text-align:center">
-                                                <label class="custom-control custom-radio custom-control-inline">
+                                              <label class="custom-control custom-radio custom-control-inline">
                                                     <input type="radio" name="radio-inline2" data-ng-value="false" data-ng-model="cliente.suframado" checked="" class="custom-control-input"><span class="custom-control-label">Nao</span>
                                                 </label>
-                                            </div>
+                            
                                         </div>
                                         <div class="invalid-feedback">
                                             Please provide a valid text.
@@ -412,18 +409,19 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <hr style="margin: 30px 0px;">
                                     <div class="form-group row">
 
                                         <div class="col-md-10">
                                             Telefone
                                             <hr>
-                                            <input id="txttel" type="text" ng-model="telefone.numero" placeholder="" class="form-control cep" maxlength="9">
+                                            <input id="txttel" type="text" ng-model="telefone.numero" placeholder="" class="form-control sp_celphones" maxlength="9">
                                         </div>
 
                                         <div class="col-md-2">
                                             Adc
                                             <hr>
-                                            <button class="btn btn-success" ng-click="addTelefone()" type="button"><i class="fa fa-plus"></i></button>
+                                            <button class="btn btn-primary" ng-click="addTelefone()" type="button"><i class="fa fa-plus"></i></button>
                                         </div>
 
                                     </div>
@@ -431,7 +429,7 @@
                                         <table class="table table-striped table-bordered first">
                                             <thead>
                                                 <tr>
-                                                    <th>Numero</th>
+                                                    <th>Número</th>
                                                     <th><i class="fa fa-times"></i></th>
                                                 </tr>
                                             </thead>
@@ -441,6 +439,7 @@
                                             </tr>
                                         </table>
                                     </div>
+                                    <hr style="margin: 30px 0px;">
                                     <div class="form-group row">
 
                                         <div class="col-md-10">
@@ -454,7 +453,7 @@
                                         <div class="col-md-2">
                                             Adc
                                             <hr>
-                                            <button class="btn btn-success" onclick="$('#uploaderDocumentoCliente').click()" type="button"><i class="fa fa-plus"></i></button>
+                                            <button class="btn btn-primary" onclick="$('#uploaderDocumentoCliente').click()" type="button"><i class="fa fa-plus"></i></button>
                                             <input id="uploaderDocumentoCliente" style="display: none" type="file" multiple>
                                         </div>
 
@@ -470,7 +469,7 @@
                                             </thead>
                                             <tr ng-repeat="doc in cliente.documentos">
                                                 <td>{{doc.categoria.nome}}</td>
-                                                <td><a class="btn btn-primary" target="_blank" ng-href="{{doc.link}}"><i class="fa fa-random"></i></a></td>
+                                                <td><a class="btn btn-primary" target="_blank" ng-href="{{doc.link}}"><i class="fas fa-folder-open"></i></a></td>
                                                 <td><button type="button" class="btn btn-danger" ng-click="removeDocumento(doc)"><i class="fa fa-times"></i></button></td>
                                             </tr>
                                         </table>
