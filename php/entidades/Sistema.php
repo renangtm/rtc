@@ -17,6 +17,12 @@ class Sistema {
 
         return "";
     }
+    
+    public static function getMesesValidadeCurta(){
+        
+        return 4;
+        
+    }
 
     public static function mergeArquivo($nome, $conteudo) {
 

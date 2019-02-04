@@ -780,6 +780,7 @@ class Utilidades {
 
         $cat = new Campanha();
 
+        $cat->nome="Campanha teste";
         $cat->prazo = 12;
         $cat->inicio -= 100000;
         $cat->fim += 100000;

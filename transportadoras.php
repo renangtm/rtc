@@ -727,7 +727,7 @@
                                 <div class="form-group row">
                                     <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Valor</label>
                                     <div class="col-9 col-lg-10">
-                                        <input id="txtendnum" type="number" step="0.01" placeholder="00" ng-keyup="attResultado()" ng-model="valor_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
+                                        <input id="txtendnum" type="text" placeholder="00" ng-change="attResultado()" ng-model="valor_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
                                         <div class="invalid-feedback">
                                             Please provide a valid text.
                                         </div>
@@ -736,7 +736,7 @@
                                 <div class="form-group row">
                                     <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Peso</label>
                                     <div class="col-9 col-lg-10">
-                                        <input id="txtendnum" type="number" step="0.01" placeholder="00" ng-keyup="attResultado()" ng-model="peso_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
+                                        <input id="txtendnum" type="text" placeholder="00" ng-change="attResultado()" ng-model="peso_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
                                         <div class="invalid-feedback">
                                             Please provide a valid text.
                                         </div>
@@ -806,7 +806,7 @@
                                 <div class="form-group row">
                                     <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Valor</label>
                                     <div class="col-9 col-lg-10">
-                                        <input id="txtendnum" type="number" step="0.01" placeholder="00" ng-keyup="attResultadoIndividual()" ng-model="valor_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
+                                        <input id="txtendnum" type="text" step="0.01" placeholder="00" ng-change="attResultadoIndividual()" ng-model="valor_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
                                         <div class="invalid-feedback">
                                             Please provide a valid text.
                                         </div>
@@ -815,7 +815,7 @@
                                 <div class="form-group row">
                                     <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Peso</label>
                                     <div class="col-9 col-lg-10">
-                                        <input id="txtendnum" type="number" step="0.01" placeholder="00" ng-keyup="attResultadoIndividual()" ng-model="peso_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
+                                        <input id="txtendnum" type="text" step="0.01" placeholder="00" ng-change="attResultadoIndividual()" ng-model="peso_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
                                         <div class="invalid-feedback">
                                             Please provide a valid text.
                                         </div>
@@ -854,6 +854,28 @@
                 <!-- /.modal-content --> 
 
 
+                <!-- /.modal-content --> 
+                
+                <div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                
+                                <span class="dashboard-spinner spinner-success spinner-xl "></span>
+
+                            </div>
+                            <div class="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                 
+
                 <!-- jquery 3.3.1 -->
                 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
                 <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
@@ -884,6 +906,8 @@
 
                 <!-- Optional JavaScript -->
                 <script>
+
+      
                                             $(document).ready(function () {
                                                 $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
                                                 $('.btnedit').tooltip({title: "Editar", placement: "top"});

@@ -1046,8 +1046,9 @@ class Empresa {
 
         $sql = "SELECT "
                 . "campanha.id,"
-                . "campanha.inicio,"
-                . "campanha.fim,"
+                . "campanha.nome,"
+                . "UNIX_TIMESTAMP(campanha.inicio)*1000,"
+                . "UNIX_TIMESTAMP(campanha.fim)*1000,"
                 . "campanha.prazo,"
                 . "campanha.parcelas,"
                 . "campanha.cliente_expression,"
@@ -1102,16 +1103,11 @@ class Empresa {
                 . "email.senha,"
                 . "telefone.id,"
                 . "telefone.numero "
-                . "FROM (SELECT * FROM campanha WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false AND campanha.id_empresa=$this->id ";
+                . "FROM (SELECT * FROM campanha WHERE campanha.excluida=false AND campanha.id_empresa=$this->id ";
 
         if ($filtro != "") {
 
             $sql .= "AND $filtro ";
-        }
-
-        if ($ordem != "") {
-
-            $sql .= "ORDER BY $ordem ";
         }
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
@@ -1126,24 +1122,33 @@ class Empresa {
                 . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
                 . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
                 . "INNER JOIN estado ON cidade.id_estado = estado.id ";
+        
+        if ($ordem != "") {
+
+            $sql .= "ORDER BY $ordem ";
+        }
 
 
         $campanhas = array();
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id,$camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
 
 
         $prods = array();
-
+        $id_order = array();
+        
         while ($ps->fetch()) {
 
             if (!isset($campanhas[$id])) {
-
+                
+                $id_order[] = $id;
+                
                 $campanhas[$id] = new Campanha();
                 $campanhas[$id]->id = $id;
+                $campanhas[$id]->nome = $camp_nome;
                 $campanhas[$id]->inicio = $inicio;
                 $campanhas[$id]->fim = $fim;
                 $campanhas[$id]->prazo = $prazo;
@@ -1266,7 +1271,7 @@ class Empresa {
 
     public function getCountCampanha($con, $filtro = "") {
 
-        $sql = "SELECT COUNT(*) FROM campanha WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false AND campanha.id_empresa=$this->id ";
+        $sql = "SELECT COUNT(*) FROM campanha WHERE campanha.excluida=false AND campanha.id_empresa=$this->id ";
 
         if ($filtro != "") {
 

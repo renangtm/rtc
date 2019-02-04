@@ -96,6 +96,7 @@
                                         <nav aria-label="breadcrumb">
                                             <ol class="breadcrumb">      
                                                 <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">RTC</a></li>
+                                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Produtos</a></li>
                                                 <li class="breadcrumb-item active" aria-current="page">Lotes</li>
                                             </ol>
                                         </nav>
@@ -405,7 +406,26 @@
                     </div>
                 </div>
                 <!-- /.modal-content --> 
+                
+                <div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                
+                                <span class="dashboard-spinner spinner-success spinner-xl "></span>
 
+                            </div>
+                            <div class="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                 
 
                 <!-- jquery 3.3.1 -->
                 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
@@ -437,6 +457,38 @@
 
                 <!-- Optional JavaScript -->
                 <script>
+                    
+                    $("#loading").modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    })
+                    
+                    var sh = false;
+                    
+                    loading.show = function(){
+                        
+                        if(!sh){
+                            
+                            sh = true;
+                            $("#loading").modal("show");
+                        
+                        }
+                        
+                    }
+                    
+                    loading.close = function(){
+                        
+                        setTimeout(function(){
+                                if(sh){
+                                    sh = false;
+                                    $("#loading").modal("hide");
+                                }
+                        },500);
+                        
+                        
+                    }
+                    
+                    
                                             $(document).ready(function () {
                                                 $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
                                                 $('.btnedit').tooltip({title: "Editar", placement: "top"});

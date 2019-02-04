@@ -264,6 +264,9 @@ if(!isset($filtro)){
                         <a class="nav-link" href="lista-de-preco.php" ><i class="fas fa-clipboard-list"></i>Lista de Preço</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="campanhas.php" ><i class="fas fa-anchor"></i>Campanhas</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="fornecedores.php" ><i class="fas fa-industry"></i>Fornecedores</a>
                     </li>
                     <li class="nav-item">

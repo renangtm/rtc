@@ -1,3 +1,129 @@
+rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, produtoService, sistemaService) {
+
+    $scope.campanhas = createAssinc(campanhaService, 1, 3, 10);
+    $scope.campanhas.attList();
+    assincFuncs(
+            $scope.campanhas,
+            "campanha",
+            ["id", "nome", "inicio", "fim", "prazo", "parcelas"]);
+
+    $scope.produtos = createAssinc(produtoService, 1, 3, 4);
+    $scope.produtos.attList();
+    assincFuncs(
+            $scope.produtos,
+            "produto",
+            ["id", "nome", "estoque", "disponivel"], "filtroProdutos");
+
+
+    $scope.campanha = {};
+    $scope.campanha_nova = {};
+
+    $scope.produto_campanha_novo = {};
+
+    $scope.meses_validade_curta = 3;
+
+    campanhaService.getProdutoCampanha(function (p) {
+
+        $scope.produto_campanha_novo = p.produto_campanha;
+
+    })
+
+    campanhaService.getCampanha(function (p) {
+
+        $scope.campanha_nova = p.campanha;
+
+    })
+
+    sistemaService.getMesesValidadeCurta(function (p) {
+
+        $scope.meses_validade_curta = p.meses_validade_curta;
+
+    })
+
+    $scope.setCampanha = function (campanha) {
+
+        $scope.campanha = campanha;
+        $scope.campanha.inicio_texto = toTime(campanha.inicio);
+        $scope.campanha.fim_texto = toTime(campanha.fim);
+        
+    }
+
+    $scope.mergeCampanha = function () {
+        $scope.campanha.inicio = fromTime($scope.campanha.inicio_texto);
+        $scope.campanha.fim = fromTime($scope.campanha.fim_texto);
+
+        if ($scope.campanha.inicio < 0) {
+
+            msg.erro("Data de inicio incorreta");
+            return;
+
+        }
+
+        if ($scope.campanha.fim < 0) {
+
+            msg.erro("Data de fim incorreta");
+            return;
+
+        }
+
+        baseService.merge($scope.campanha, function (r) {
+            if (r.sucesso) {
+                $scope.campanha = r.o;
+                if (r.sucesso) {
+                    msg.alerta("Operacao efetuada com sucesso");
+                    $scope.campanhas.attList();
+                } else {
+                    msg.erro("Fornecedor alterado, porém ocorreu um problema ao subir os documentos");
+                }
+            } else {
+                msg.erro("Problema ao efetuar operacao. ");
+            }
+        });
+    }
+
+    $scope.getValidades = function (produto) {
+
+        produtoService.getValidades($scope.meses_validade_curta,produto, function (validades) {
+
+            produto.validades = validades;
+
+        })
+
+    }
+
+    $scope.addProdutoCampanha = function (produto, validade) {
+
+        var pc = angular.copy($scope.produto_campanha_novo);
+        pc.produto = produto;
+        pc.campanha = $scope.campanha;
+        $scope.campanha.produtos[$scope.campanha.produtos.length] = pc;
+        pc.valor = produto.valor_base;
+        pc.validade = validade.validade;
+        pc.limite = validade.quantidade;
+        
+        msg.alerta("Adicionado com sucesso");
+
+    }
+
+    $scope.deleteProdutoCampanha = function (campanha, produto) {
+
+        remove(campanha.produtos, produto);
+
+    }
+
+    $scope.deleteCampanha = function () {
+        baseService.delete($scope.campanha, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.campanhas.attList();
+            } else {
+                msg.erro("Problema ao efetuar operacao");
+            }
+        });
+    }
+
+})
+
 rtc.controller("crtLotes", function ($scope, loteService, baseService) {
 
     $scope.lotes = createAssinc(loteService, 1, 3, 10);
@@ -169,20 +295,20 @@ rtc.controller("crtLotes", function ($scope, loteService, baseService) {
                 id_produto: lote.produto.id,
                 nome_produto: lote.produto.nome,
                 validade: toDate(lote.validade),
-                codigo: "*"+cod+"*",
-                empresa:lote.produto.empresa.nome
+                codigo: "*" + cod + "*",
+                empresa: lote.produto.empresa.nome
             };
             etiquetas[etiquetas.length] = etiqueta;
         }
 
-        loteService.getEtiquetas(etiquetas,function(a){ 
-            if(a.sucesso){
-                window.open(projeto+"/php/uploads/"+a.arquivo);
-            }else{
+        loteService.getEtiquetas(etiquetas, function (a) {
+            if (a.sucesso) {
+                window.open(projeto + "/php/uploads/" + a.arquivo);
+            } else {
                 msg.erro("Ocorreu um problema de servidor, tente mais tarde");
             }
         });
-        
+
     }
 
 

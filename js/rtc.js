@@ -67,7 +67,7 @@ function recParaJson(objeto, pilha) {
 
         if (pilha[i] === objeto) {
 
-            r = '{"recursao":' + (pilha.length - i + 1) + '}';
+            r = '{"recursao":' + (pilha.length - i) + '}';
 
             return r;
 
@@ -223,7 +223,7 @@ function assincFuncs(lista, base, campos, filtro) {
     var b = [];
     var e = [];
 
-    $((filtro == null) ? "#filtro" : "#" + filtro).keyup(function () {
+    $((filtro == null) ? "#filtro" : "#" + filtro).change(function () {
 
         var f = "";
         var v = $(this).val();
@@ -424,6 +424,50 @@ function toDate(lo) {
 
 }
 
+function toTime(lo) {
+
+    var d = new Date(lo);
+
+    var dia = d.getDate();
+    var mes = (d.getMonth() + 1);
+    var ano = (d.getYear() + 1900);
+    
+    var hora = d.getHours();
+    var minuto = d.getMinutes();
+
+    return  ((dia < 10) ? "0" : "") + dia + "/" + ((mes < 10) ? "0" : "") + mes + "/" + ano+" "+hora+":"+minuto;
+
+}
+
+function fromTime(str) {
+
+    var l = str.split(" ");
+    
+    var k = l[0].split("/");
+    
+    var m = l[1].split(":");
+
+    if (k.length != 3 || m.length != 2)
+        return -1;
+
+    var dia = parseInt(k[0]);
+    var mes = parseInt(k[1]);
+    var ano = parseInt(k[2]);
+    
+    var hora = parseInt(m[0]);
+    var minuto = parseInt(m[1]);
+
+    var d = new Date();
+    d.setDate(dia);
+    d.setMonth(mes - 1);
+    d.setYear(ano);
+    d.setHours(hora);
+    d.setMinutes(minuto);
+
+    return d.getTime();
+
+}
+
 function fromDate(str) {
 
     var k = str.split("/");
@@ -479,12 +523,14 @@ function baseService(http, q, obj, get, cancel) {
         data: "c=" + obj.query.split("&").join("<e>").split("+").join("<m>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("<e>").split("+").join("<m>")) : ""),
         timeout: p.promise,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (exx) {
-
+        
+        loading.close();
+        
         if (typeof obj["sucesso"] !== 'undefined') {
             obj.sucesso(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&")));
         }
 
-        loading.close();
+        
 
     }, function (exx) {
 

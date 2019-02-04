@@ -167,7 +167,7 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($empresa->getCountPedidos($con),3);
         
-         
+        */ 
         
         $empresa = Utilidades::getEmpresaTeste();
         
@@ -183,6 +183,7 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($empresa->getCountCampanha($con),2);
         
+        /*
         
         $empresa = Utilidades::getEmpresaTeste();
         
@@ -290,10 +291,7 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($empresa->getCountCotacoesEntrada($con),5);
         
-        
-        
-        
-        
+
         $empresa = Utilidades::getEmpresaTeste();
         
         $produto = Utilidades::getProdutoTeste($empresa);
@@ -320,9 +318,7 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         $this->assertEquals($produtos[1]->id,$produto->id);
         
         $this->assertEquals($empresa->getCountProdutos($con),6);
-        
-        
-        
+
         
         
         $empresa = Utilidades::getEmpresaTeste();
