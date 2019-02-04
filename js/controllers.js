@@ -18,9 +18,17 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     $scope.campanha = {};
     $scope.campanha_nova = {};
 
+    $scope.criacao_campanhas = [];
+
     $scope.produto_campanha_novo = {};
 
+    $scope.produto = {};
+    $scope.produto_campanha_validade = {};
+
     $scope.meses_validade_curta = 3;
+
+    var data = new Date();
+    var dia = 1000 * 60 * 60 * 24;
 
     campanhaService.getProdutoCampanha(function (p) {
 
@@ -28,11 +36,240 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
 
     })
 
+    $scope.setAutoValidade = function (v) {
+
+        $scope.produto_campanha_validade.validade = v.validade;
+    }
+
+    $scope.setProdutoValidade = function (produto_campanha) {
+
+        $scope.produto = produto_campanha.produto;
+        $scope.produto_campanha_validade = produto_campanha;
+
+        $scope.getValidades($scope.produto);
+
+
+    }
+
+    $scope.selecionarValor = function (produto, v) {
+
+        var k = !v.selecionado;
+
+        for (var i = 0; i < produto.valores.length; i++) {
+            produto.valores[i].selecionado = false;
+        }
+        produto.valor_editavel.selecionado = false;
+
+        v.selecionado = k;
+
+    }
+
     campanhaService.getCampanha(function (p) {
 
         $scope.campanha_nova = p.campanha;
 
+        for (var i = 0; i < 5; i++) {
+
+            var c = angular.copy($scope.campanha_nova);
+            c.campanhas = [{
+                    inicio: toTime(data.getTime() + dia * i),
+                    fim: toTime(data.getTime() + (dia + 1) * i),
+                    nome: "Campanha A ",
+                    prazo: 0,
+                    parcelas: 1,
+                    id: 0
+                }]
+            c.inicio = toTime(data.getTime() + dia * i);
+            c.fim = toTime(data.getTime() + (dia + 1) * i);
+            c.nome = "Nova campanha";
+
+            c.numero = i;
+
+            while (new Date(c.fim).getDay() == 0 || new Date(c.fim).getDay() == 6) {
+
+                c.fim += dia;
+
+            }
+
+            $scope.criacao_campanhas[$scope.criacao_campanhas.length] = c;
+
+        }
+
     })
+
+    $scope.getNumeracaoAlfabetica = function (numero) {
+
+        var c = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z";
+
+        c = c.split(" ");
+        var r = "";
+        do {
+            r = c[numero % c.length] + r;
+            numero = (numero - (numero % c.length)) / c.length;
+        } while (numero > 0)
+
+        return r;
+    }
+
+    $scope.addNumeracao = function (prod) {
+
+        prod.numeracao++;
+
+        var c = prod.campanha.campanhas;
+        var add = true;
+
+        for (var i = 0; i < c.length; i++) {
+            if (c[i].id === prod.numeracao) {
+                add = false;
+                break;
+            }
+        }
+        if (add) {
+            c = prod.campanha;
+
+            c.campanhas[c.campanhas.length] = {
+                inicio: c.inicio,
+                fim: c.fim,
+                nome: "Campanha " + $scope.getNumeracaoAlfabetica(prod.numeracao),
+                id: prod.numeracao,
+                prazo: 0,
+                parcelas: 1
+            };
+        }
+        var c = prod.campanha.campanhas;
+
+        lbl:
+                for (var i = 0; i < c.length; i++) {
+
+            for (var j = 0; j < prod.campanha.produtos.length; j++) {
+
+                if (prod.campanha.produtos[j].numeracao == c[i].id) {
+
+                    continue lbl;
+
+                }
+
+            }
+
+            c[i] = null;
+
+            for (var a = i; a < c.length - 1; a++) {
+                c[a] = c[a + 1];
+            }
+            c.length--;
+
+        }
+
+    }
+
+    $scope.removeNumeracao = function (prod) {
+
+        prod.numeracao--;
+
+        var c = prod.campanha.campanhas;
+
+        lbl:
+                for (var i = 0; i < c.length; i++) {
+
+            for (var j = 0; j < prod.campanha.produtos.length; j++) {
+
+                if (prod.campanha.produtos[j].numeracao == c[i].id) {
+
+                    continue lbl;
+
+                }
+
+            }
+
+            c[i] = null;
+
+            for (var a = i; a < c.length - 1; a++) {
+                c[a] = c[a + 1];
+            }
+            c.length--;
+
+        }
+
+    }
+
+    $scope.getNumeracaoCor = function (numero) {
+
+        var c = ['DarkRed', 'DarkGreen', 'DarkGray', 'DarkBlue', 'Purple', 'DarkOrange', 'SteelBlue'];
+
+        return c[numero % c.length];
+
+    }
+
+    $scope.terminarCadastro = function () {
+
+        var r = [];
+
+        for (var i = 0; i < $scope.campanha.campanhas.length; i++) {
+
+            var c = $scope.campanha.campanhas[i];
+
+            var camp = angular.copy($scope.campanha_nova);
+            camp.nome = c.nome;
+            camp.prazo = c.prazo;
+            camp.parcelas = c.parcelas;
+            camp.inicio = fromTime(c.inicio);
+            camp.fim = fromTime(c.fim);
+
+            for (var j = 0; j < $scope.campanha.produtos.length; j++) {
+
+                var p = $scope.campanha.produtos[j];
+
+                if (p.numeracao != c.id) {
+
+                    continue;
+
+                }
+
+                
+
+            }
+
+        }
+
+    }
+
+    $scope.setCampanhaCriacao = function (campanha) {
+
+        if (campanha.produtos.length == 0) {
+
+            campanhaService.getProdutosDia(new Date(campanha.inicio).getDay(), function (prods) {
+
+                for (var i = 0; i < prods.produtos.length; i++) {
+
+                    var produto = prods.produtos[i];
+
+                    var produto_campanha = angular.copy($scope.produto_campanha_novo);
+                    produto_campanha.produto = produto;
+                    produto_campanha.validade = -1;
+                    produto_campanha.campanha = campanha;
+                    produto_campanha.valores = [{valor: produto.valor_base, selecionado: false}];
+                    produto_campanha.valor_editavel = {valor: produto.valor_base, selecionado: false};
+                    produto_campanha.numeracao = 0;
+
+                    for (var j = 0; j < 3; j++) {
+                        produto_campanha.valores[j + 1] = {valor: (produto_campanha.valores[j].valor * 0.95).toFixed(2), selecionado: false};
+                    }
+
+                    campanha.produtos[campanha.produtos.length] = produto_campanha;
+
+                }
+
+                campanha.lista = createList(campanha.produtos, 1, 3, "produto.nome");
+
+
+
+            })
+
+        }
+
+        $scope.campanha = campanha;
+
+    }
 
     sistemaService.getMesesValidadeCurta(function (p) {
 
@@ -45,7 +282,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
         $scope.campanha = campanha;
         $scope.campanha.inicio_texto = toTime(campanha.inicio);
         $scope.campanha.fim_texto = toTime(campanha.fim);
-        
+
     }
 
     $scope.mergeCampanha = function () {
@@ -83,7 +320,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
 
     $scope.getValidades = function (produto) {
 
-        produtoService.getValidades($scope.meses_validade_curta,produto, function (validades) {
+        produtoService.getValidades($scope.meses_validade_curta, produto, function (validades) {
 
             produto.validades = validades;
 
@@ -100,7 +337,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
         pc.valor = produto.valor_base;
         pc.validade = validade.validade;
         pc.limite = validade.quantidade;
-        
+
         msg.alerta("Adicionado com sucesso");
 
     }

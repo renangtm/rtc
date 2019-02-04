@@ -33,6 +33,8 @@ class Campanha {
         $this->empresa = null;
         $this->cliente_expression = "*";
         $this->produtos = array();
+        $this->prazo = 0;
+        $this->parcelas = 0;
         
     }
     

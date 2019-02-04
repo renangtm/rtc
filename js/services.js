@@ -32,7 +32,7 @@ rtc.service('campanhaService', function ($http, $q) {
     this.getProdutosDia = function (dia, fn) {
         baseService($http, $q, {
             o: {dia: dia},
-            query: "$total=($empresa->getCountProdutos($c,'produto.disponivel>0')/7);$x1=($o->dia-1)*$total;$x2=$o->dia*$total;$r->produtos=$empresa->getProdutos($c,$x1,$x2,'produto.disponivel>0','');",
+            query: "$total=round($empresa->getCountProdutos($c,'produto.disponivel>0')/7);$x1=($o->dia-1)*$total;$x2=$o->dia*$total;$r->produtos=$empresa->getProdutos($c,$x1,$x2,'produto.disponivel>0','');",
             sucesso: fn,
             falha: fn
         });
