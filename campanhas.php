@@ -578,7 +578,7 @@
 
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary"><i class="fas fa-check"></i>&nbsp; Terminar</button>
+                                <button class="btn btn-primary" data-dismiss="modal" aria-label="Close" ng-click="terminarCadastro()"><i class="fas fa-check"></i>&nbsp; Terminar</button>
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
                             </div>
                         </div>

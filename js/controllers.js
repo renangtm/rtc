@@ -1,3 +1,70 @@
+rtc.controller("crtListaPreco", function ($scope, listaPrecoProdutoService, listaPrecoPragaService, listaPrecoCulturaService) {
+
+    $scope.produtos = createAssinc(listaPrecoProdutoService, 1, 3, 10);
+    $scope.produtos.attList();
+    assincFuncs(
+            $scope.produtos,
+            "produto",
+            ["id", "nome", "estoque", "disponivel", "transito", "valor_base", "ativo", "classe_risco"]);
+
+    $scope.culturas = createAssinc(listaPrecoCulturaService, 1, 3, 5);
+    $scope.culturas.attList();
+    assincFuncs(
+            $scope.culturas,
+            "cultura",
+            ["id", "nome"], "filtroCultura");
+
+    $scope.pragas = createAssinc(listaPrecoPragaService, 1, 3, 5);
+    $scope.pragas.attList();
+    assincFuncs(
+            $scope.pragas,
+            "praga",
+            ["id", "nome"], "filtroPraga");
+
+    $scope.produto = null;
+    $scope.cultura = null;
+    $scope.praga = null;
+
+    $scope.setCultura = function (cultura) {
+
+        $scope.cultura = cultura;
+        listaPrecoPragaService.cultura = cultura;
+        listaPrecoProdutoService.cultura = cultura;
+
+        $scope.pragas.attList();
+        $scope.culturas.attList();
+        $scope.produtos.attList();
+
+    }
+
+    $scope.setPraga = function (praga) {
+
+        $scope.praga = praga;
+        listaPrecoCulturaService.praga = praga;
+        listaPrecoProdutoService.praga = praga;
+
+        $scope.pragas.attList();
+        $scope.culturas.attList();
+        $scope.produtos.attList();
+
+    }
+
+    $scope.setProduto = function (produto) {
+
+        $scope.produto = produto;
+        listaPrecoCulturaService.produto = produto;
+        listaPrecoPragaService.produto = produto;
+
+
+        $scope.produtos.attList();
+        $scope.pragas.attList();
+        $scope.culturas.attList();
+
+
+    }
+
+})
+
 rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, produtoService, sistemaService) {
 
     $scope.campanhas = createAssinc(campanhaService, 1, 3, 10);
@@ -74,10 +141,10 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
             c.campanhas = [{
                     inicio: toTime(data.getTime() + dia * i),
                     fim: toTime(data.getTime() + (dia + 1) * i),
-                    nome: "Campanha A ",
+                    nome: "Campanha A",
+                    id: 0,
                     prazo: 0,
-                    parcelas: 1,
-                    id: 0
+                    parcelas: 1
                 }]
             c.inicio = toTime(data.getTime() + dia * i);
             c.fim = toTime(data.getTime() + (dia + 1) * i);
@@ -143,7 +210,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
 
             for (var j = 0; j < prod.campanha.produtos.length; j++) {
 
-                if (prod.campanha.produtos[j].numeracao == c[i].id) {
+                if (prod.campanha.produtos[j].numeracao === c[i].id) {
 
                     continue lbl;
 
@@ -167,13 +234,34 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
         prod.numeracao--;
 
         var c = prod.campanha.campanhas;
+        var add = true;
+
+        for (var i = 0; i < c.length; i++) {
+            if (c[i].id === prod.numeracao) {
+                add = false;
+                break;
+            }
+        }
+        if (add) {
+            c = prod.campanha;
+
+            c.campanhas[c.campanhas.length] = {
+                inicio: c.inicio,
+                fim: c.fim,
+                nome: "Campanha " + $scope.getNumeracaoAlfabetica(prod.numeracao),
+                id: prod.numeracao,
+                prazo: 0,
+                parcelas: 1
+            };
+        }
+        var c = prod.campanha.campanhas;
 
         lbl:
                 for (var i = 0; i < c.length; i++) {
 
             for (var j = 0; j < prod.campanha.produtos.length; j++) {
 
-                if (prod.campanha.produtos[j].numeracao == c[i].id) {
+                if (prod.campanha.produtos[j].numeracao === c[i].id) {
 
                     continue lbl;
 
@@ -200,6 +288,24 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
 
     }
 
+    var salvarCampanha = function (obj, campanha) {
+
+        baseService.merge(campanha, function (r) {
+            if (r.sucesso) {
+                obj.atual++;
+            } else {
+                obj.erro++;
+            }
+            loading.setProgress(obj.atual * 100 / obj.total);
+            if (obj.total == (obj.erro + obj.atual)) {
+                msg.alerta("Campanhas cadastradas" + (obj.erro > 0 ? ". Porem contem erros" : " com sucesso"));
+
+                $scope.campanhas.attList();
+            }
+        });
+
+    }
+
     $scope.terminarCadastro = function () {
 
         var r = [];
@@ -215,27 +321,71 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
             camp.inicio = fromTime(c.inicio);
             camp.fim = fromTime(c.fim);
 
+            if (camp.inicio < 0 || camp.fim < 0) {
+                msg.erro("Data da campanha '" + camp.nome + "' invalida");
+                return;
+            }
+
+            camp.produtos = [];
+
             for (var j = 0; j < $scope.campanha.produtos.length; j++) {
 
                 var p = $scope.campanha.produtos[j];
 
-                if (p.numeracao != c.id) {
+                if (p.numeracao !== c.id || p.validade < 0) {
 
                     continue;
 
                 }
 
-                
+
+                var prod = angular.copy($scope.produto_campanha_novo);
+                prod.produto = p.produto;
+                prod.campanha = camp;
+                prod.limite = p.limite;
+                prod.valor = -1;
+                prod.validade = p.validade;
+
+                for (var k = 0; k < p.valores.length; k++) {
+                    if (p.valores[k].selecionado) {
+                        prod.valor = p.valores[k].valor;
+                        break;
+                    }
+                }
+
+                if (p.valor_editavel.selecionado) {
+
+                    prod.valor = p.valor_editavel.valor;
+
+                }
+
+                if (prod.valor > 0) {
+
+                    camp.produtos[camp.produtos.length] = prod;
+
+                }
 
             }
 
+            if (camp.produtos.length > 0) {
+
+                r[r.length] = camp;
+
+            }
+
+        }
+
+        var obj = {total: r.length, atual: 0, erro: 0};
+
+        for (var i = 0; i < r.length; i++) {
+            salvarCampanha(obj, r[i]);
         }
 
     }
 
     $scope.setCampanhaCriacao = function (campanha) {
 
-        if (campanha.produtos.length == 0) {
+        if (campanha.produtos.length === 0) {
 
             campanhaService.getProdutosDia(new Date(campanha.inicio).getDay(), function (prods) {
 

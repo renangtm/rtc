@@ -42,14 +42,14 @@ class Campanha {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO campanha(inicio,fim,prazo,parcelas,excluida,cliente_expression,id_empresa,nome) VALUES(FROM_UNIXTIME($this->inicio/1000),FROM_UNIXTIME($this->fim/1000),$this->prazo,$this->parcelas,false,$this->cliente_expression,".$this->empresa->id.",'".addslashes($this->nome)."')");
+            $ps = $con->getConexao()->prepare("INSERT INTO campanha(inicio,fim,prazo,parcelas,excluida,cliente_expression,id_empresa,nome) VALUES(FROM_UNIXTIME($this->inicio/1000),FROM_UNIXTIME($this->fim/1000),$this->prazo,$this->parcelas,false,'$this->cliente_expression',".$this->empresa->id.",'".addslashes($this->nome)."')");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
             
         }else{
             
-            $ps = $con->getConexao()->prepare("UPDATE campanha SET inicio = FROM_UNIXTIME($this->inicio/1000), fim = FROM_UNIXTIME($this->fim/1000), excluida=false, prazo=$this->prazo,parcelas=$this->parcelas,cliente_expression=$this->cliente_expression,id_empresa=".$this->empresa->id.",nome='".addslashes($this->nome)."' WHERE id = ".$this->id);
+            $ps = $con->getConexao()->prepare("UPDATE campanha SET inicio = FROM_UNIXTIME($this->inicio/1000), fim = FROM_UNIXTIME($this->fim/1000), excluida=false, prazo=$this->prazo,parcelas=$this->parcelas,cliente_expression='$this->cliente_expression',id_empresa=".$this->empresa->id.",nome='".addslashes($this->nome)."' WHERE id = ".$this->id);
             $ps->execute();
             $ps->close();
             

@@ -2649,7 +2649,7 @@ class Empresa {
 
     public function getCountFornecedores($con, $filtro = "") {
 
-        $sql = "SELECT COUNT(*) FROM fornecedor WHERE id_empresa=$this->id AND excluido=false ";
+        $sql = "SELECT COUNT(*) FROM fornecedor LEFT JOIN email email_fornecedor ON email_fornecedor.id_entidade=fornecedor.id AND email_fornecedor.tipo_entidade='FOR' WHERE fornecedor.id_empresa=$this->id AND fornecedor.excluido=false ";
 
         if ($filtro != "") {
 
@@ -3387,7 +3387,7 @@ class Empresa {
         $produtos = array();
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
-
+        
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
         $ps->bind_result($id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $rec_id, $rec_ins, $cul_id, $cul_nom, $prag_id, $prag_nom);
@@ -3458,7 +3458,7 @@ class Empresa {
 
     public function getCountReceituario($con, $filtro = "", $group = "") {
 
-        $sql = "SELECT COUNT(*) FROM (SELECT receituario.id FROM receituario INNER JOIN produto ON produto.id=receituario.id_produto WHERE receituario.excluido=false AND produto.id_empresa=$this->id";
+        $sql = "SELECT COUNT(*) FROM (SELECT receituario.id FROM receituario INNER JOIN produto ON produto.id=receituario.id_produto INNER JOIN cultura ON cultura.id=receituario.id_cultura INNER JOIN praga ON receituario.id_praga=praga.id WHERE receituario.excluido=false AND produto.id_empresa=$this->id";
 
         if ($filtro != "") {
 
@@ -3471,8 +3471,6 @@ class Empresa {
         }
 
         $sql .= ") k";
-
-        echo $sql . "  @@@@@";
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();

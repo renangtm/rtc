@@ -167,7 +167,7 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($empresa->getCountPedidos($con),3);
         
-        */ 
+
         
         $empresa = Utilidades::getEmpresaTeste();
         
@@ -183,7 +183,7 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         
         $this->assertEquals($empresa->getCountCampanha($con),2);
         
-        /*
+
         
         $empresa = Utilidades::getEmpresaTeste();
         
@@ -321,6 +321,7 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
 
         
         
+        
         $empresa = Utilidades::getEmpresaTeste();
         
         $r = Utilidades::getReceituarioTeste($empresa);
@@ -328,7 +329,10 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         $r = Utilidades::getReceituarioTeste($empresa);
         $r = Utilidades::getReceituarioTeste($empresa);
         
-        $recsg = $empresa->getReceituario($con, 0, 2,"","","produto.nome");
+        $recsg = $empresa->getReceituario($con, 0, 2,"","","cultura.id");
+   
+        echo Utilidades::toJson($recsg);
+        
         
         $recs = $empresa->getReceituario($con, 2, 4);
         
@@ -449,6 +453,8 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
         
         echo Utilidades::toJson($pendentes);
         */
+        
+      
         
     }
 

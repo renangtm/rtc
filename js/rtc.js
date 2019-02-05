@@ -172,7 +172,6 @@ function createAssinc(lista, cols, rows, maxPage) {
 
             lista.getCount(este.filtro, function (r) {
                 //----------------------------
-
                 var np = Math.ceil(r.qtd / (este.por_pagina * este.por_coluna));
                 este.pagina = Math.max(Math.min(este.pagina, np - 1), 0);
 
@@ -244,7 +243,7 @@ function assincFuncs(lista, base, campos, filtro) {
 
         }
 
-        lista.filtro = "(" + f + ")";
+        lista.filtro = "(" + f + ") ";
 
         lista.attList();
 

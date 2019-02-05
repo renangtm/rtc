@@ -1,3 +1,81 @@
+rtc.service('listaPrecoProdutoService', function ($http, $q) {
+    this.cultura = null;
+    this.praga = null;
+    this.getElementos = function (x0, x1, filtro, ordem,fn) {
+        var convert = function(r){
+            for(var i=0;i<r.elementos.length;i++){
+                r.elementos[i] = r.elementos[i].produto;
+            }
+            fn(r);
+        }
+        baseService($http, $q, {
+            o:{cultura:this.cultura,praga:this.praga,x1:x1,x0:x0,filtro:filtro,ordem:ordem},
+            query: "$filtro=$o->filtro;if($o->cultura!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' cultura.id = '.$o->cultura->id.' ';};if($o->praga!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' praga.id = '.$o->praga->id;};$r->elementos=$empresa->getReceituario($c,$o->x0,$o->x1,$filtro,$o->ordem,'produto.id');",
+            sucesso: convert,
+            falha: convert
+        });
+    }
+    this.getCount = function (filtro,fn) {
+        baseService($http, $q, {
+            o:{cultura:this.cultura,praga:this.praga,filtro:filtro},
+            query: "$filtro=$o->filtro;if($o->cultura!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' cultura.id = '.$o->cultura->id.' ';};if($o->praga!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' praga.id = '.$o->praga->id;};$r->qtd=$empresa->getCountReceituario($c,$filtro,'produto.id');",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('listaPrecoCulturaService', function ($http, $q) {
+    this.produto = null;
+    this.praga = null;
+    this.getElementos = function (x0, x1, filtro, ordem,fn) {
+        var convert = function(r){
+            for(var i=0;i<r.elementos.length;i++){
+                r.elementos[i] = r.elementos[i].cultura;
+            }
+            fn(r);
+        }
+        baseService($http, $q, {
+            o:{produto:this.produto,praga:this.praga,x1:x1,x0:x0,filtro:filtro,ordem:ordem},
+            query: "$filtro=$o->filtro;if($o->produto!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' produto.id = '.$o->produto->id.' ';};if($o->praga!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' praga.id = '.$o->praga->id;};$r->elementos=$empresa->getReceituario($c,$o->x0,$o->x1,$filtro,$o->ordem,'cultura.id');",
+            sucesso: convert,
+            falha: convert
+        });
+    }
+    this.getCount = function (filtro,fn) {
+        baseService($http, $q, {
+            o:{produto:this.produto,praga:this.praga,filtro:filtro},
+            query: "$filtro=$o->filtro;if($o->produto!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' produto.id = '.$o->produto->id.' ';};if($o->praga!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' praga.id = '.$o->praga->id;};$r->qtd=$empresa->getCountReceituario($c,$filtro,'cultura.id');",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('listaPrecoPragaService', function ($http, $q) {
+    this.produto = null;
+    this.cultura = null;
+    this.getElementos = function (x0, x1, filtro, ordem,fn) {
+        var convert = function(r){
+            for(var i=0;i<r.elementos.length;i++){
+                r.elementos[i] = r.elementos[i].praga;
+            }
+            fn(r);
+        }
+        baseService($http, $q, {
+            o:{produto:this.produto,cultura:this.cultura,x1:x1,x0:x0,filtro:filtro,ordem:ordem},
+            query: "$filtro=$o->filtro;if($o->produto!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' produto.id = '.$o->produto->id.' ';};if($o->cultura!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' cultura.id = '.$o->cultura->id;};$r->elementos=$empresa->getReceituario($c,$o->x0,$o->x1,$filtro,$o->ordem,'praga.id');",
+            sucesso: convert,
+            falha: convert
+        });
+    }
+    this.getCount = function (filtro,fn) {
+        baseService($http, $q, {
+            o:{produto:this.produto,praga:this.praga,filtro:filtro},
+            query: "$filtro=$o->filtro;if($o->produto!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' produto.id = '.$o->produto->id.' ';};if($o->cultura!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' cultura.id = '.$o->cultura->id;};$r->qtd=$empresa->getCountReceituario($c,$filtro,'praga.id');",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('campanhaService', function ($http, $q) {
     this.getCampanha = function (fn) {
         baseService($http, $q, {
