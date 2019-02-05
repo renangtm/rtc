@@ -62,4 +62,5 @@ $(function() {
   })
 
   $('pre').each(function(i, e) {hljs.highlightBlock(e)});
+  $('.suf').mask('000000000');
 });
