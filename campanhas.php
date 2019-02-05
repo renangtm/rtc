@@ -93,17 +93,17 @@
                                                         <th data-ordem="campanha.fim">Fim</th>
                                                         <th data-ordem="campanha.prazo">Prazo</th>
                                                         <th data-ordem="campanha.parcelas">Parcelas</th>
-                                                        <th width="150px">Ação</th>
+                                                        <th width="180px">Ação</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr ng-repeat-start="campanha in campanhas.elementos">
-                                                        <td>{{campanha[0].id}}</td>
+                                                        <td class="text-center">{{campanha[0].id}}</td>
                                                         <td>{{campanha[0].nome}}</td>
                                                         <td>{{campanha[0].inicio| data}}</td>
                                                         <td>{{campanha[0].fim| data}}</td>
-                                                        <td>{{campanha[0].prazo}}</td>
-                                                        <td>{{campanha[0].parcelas}}</td>
+                                                        <td class="text-center">{{campanha[0].prazo}}</td>
+                                                        <td class="text-center">{{campanha[0].parcelas}}</td>
                                                         <th>
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setCampanha(campanha[0])" data-target="#demo{{campanha[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
@@ -113,7 +113,7 @@
                                                         </th>
                                                     </tr>
                                                     <tr ng-repeat-end>
-                                                        <td colspan="6" class="hiddenRow">
+                                                        <td colspan="7" class="hiddenRow">
                                                             <div class="accordian-body collapse" id="demo{{campanha[0].id}}">
                                                                 <div class="row mx-auto m-b-30">
                                                                     <div class="col">
@@ -122,15 +122,15 @@
                                                                             <th>Cod.</th>
                                                                             <th>Produto</th>
                                                                             <th>Validade</th>
-                                                                            <th>Limite</th>
-                                                                            <th>Valor</th>
+                                                                            <th class="text-center">Limite</th>
+                                                                            <th class="text-center">Valor</th>
                                                                             </thead>
                                                                             <tr ng-repeat="prod in campanha[0].produtos">
-                                                                                <th>{{prod.produto.id}}</th>
+                                                                                <th class="text-center">{{prod.produto.id}}</th>
                                                                                 <th>{{prod.produto.nome}}</th>
                                                                                 <th>{{prod.validade| data}}</th>
-                                                                                <th>{{prod.limite}}</th>
-                                                                                <th>{{prod.valor}} R$</th>
+                                                                                <th class="text-center">{{prod.limite}}</th>
+                                                                                <th class="text-center">R$ {{prod.valor}}</th>
                                                                             </tr>
                                                                         </table>
                                                                     </div>	
@@ -138,7 +138,7 @@
                                                                         <table class="table-bordered w-100">
                                                                             <tr>
                                                                                 <td>Expressão de cliente:</td>
-                                                                                <td>{{campanha[0].cliente_expression}}</td>
+                                                                                <td class="text-center">{{campanha[0].cliente_expression}}</td>
                                                                             </tr>
                                                                         </table>
                                                                     </div>																
@@ -207,7 +207,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere os dados de sua Campanha</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere os dados de sua Campanha</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">×</span>
                                 </button>
@@ -491,6 +491,7 @@
                 </div>
                 <!-- /.modal-content --> 
 
+                <!-- /.modal-content MONTAGEM DE CAMPANHA --> 
                 <div class="modal fade" style="overflow-y:scroll" id="add" tabindex="-1" role="dialog" aria-labelledby="add" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content" >
@@ -585,6 +586,8 @@
                     </div>
                 </div>
 
+                <!-- /.modal-content VALIDADE DE PRODUTO --> 
+                
                 <div class="modal fade" id="validadeProduto" tabindex="99" role="dialog" aria-labelledby="validadeProduto" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -617,12 +620,12 @@
                     </div>
                 </div>
 
-                <!-- /.modal-content DELETE --> 
+                <!-- /.modal-content PRODUTOS --> 
                 <div class="modal fade" id="produtos" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Selecao de produtos</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Seleção de produtos</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
@@ -715,6 +718,29 @@
 
                 <!-- Optional JavaScript -->
                 <script>
+                    $(document).ready(function () {
+                                        $(document).on({
+                                            'show.bs.modal': function () {
+                                                var zIndex = 1040 + (10 * $('.modal:visible').length);
+                                                $(this).css('z-index', zIndex);
+                                                setTimeout(function () {
+                                                    $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+                                                }, 0);
+                                            },
+                                            'hidden.bs.modal': function () {
+                                                if ($('.modal:visible').length > 0) {
+                                                    // restore the modal-open class to the body element, so that scrolling works
+                                                    // properly after de-stacking a modal.
+                                                    setTimeout(function () {
+                                                        $(document.body).addClass('modal-open');
+                                                    }, 0);
+                                                }
+                                            }
+                                        }, '.modal');
+                                    });
+                    
+                    
+                    
                                                         $(document).ready(function () {
                                                             $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
                                                             $('.btnedit').tooltip({title: "Editar", placement: "top"});
