@@ -4496,7 +4496,7 @@ Pills vertical
 
 .page-link:hover {
     z-index: 2;
-    color: #fff;
+    color: #fff !important;  
     text-decoration: none;
     background-color: #4aaf51;
     border-color: #4aaf51;

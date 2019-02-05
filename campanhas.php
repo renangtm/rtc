@@ -24,6 +24,9 @@
         <!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">-->
         <title>RTC (Reltrab Cliente) - WEB</title>
         <style>
+            .page-link:hover {
+                color:#fff !important;
+            }
         </style>
     </head>
 
@@ -93,17 +96,17 @@
                                                         <th data-ordem="campanha.fim">Fim</th>
                                                         <th data-ordem="campanha.prazo">Prazo</th>
                                                         <th data-ordem="campanha.parcelas">Parcelas</th>
-                                                        <th width="150px">Ação</th>
+                                                        <th width="180px">Ação</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr ng-repeat-start="campanha in campanhas.elementos">
-                                                        <td>{{campanha[0].id}}</td>
+                                                        <td class="text-center">{{campanha[0].id}}</td>
                                                         <td>{{campanha[0].nome}}</td>
                                                         <td>{{campanha[0].inicio| data}}</td>
                                                         <td>{{campanha[0].fim| data}}</td>
-                                                        <td>{{campanha[0].prazo}}</td>
-                                                        <td>{{campanha[0].parcelas}}</td>
+                                                        <td class="text-center">{{campanha[0].prazo}}</td>
+                                                        <td class="text-center">{{campanha[0].parcelas}}</td>
                                                         <th>
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setCampanha(campanha[0])" data-target="#demo{{campanha[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
@@ -113,7 +116,7 @@
                                                         </th>
                                                     </tr>
                                                     <tr ng-repeat-end>
-                                                        <td colspan="6" class="hiddenRow">
+                                                        <td colspan="7" class="hiddenRow">
                                                             <div class="accordian-body collapse" id="demo{{campanha[0].id}}">
                                                                 <div class="row mx-auto m-b-30">
                                                                     <div class="col">
@@ -122,15 +125,15 @@
                                                                             <th>Cod.</th>
                                                                             <th>Produto</th>
                                                                             <th>Validade</th>
-                                                                            <th>Limite</th>
-                                                                            <th>Valor</th>
+                                                                            <th class="text-center">Limite</th>
+                                                                            <th class="text-center">Valor</th>
                                                                             </thead>
                                                                             <tr ng-repeat="prod in campanha[0].produtos">
-                                                                                <th>{{prod.produto.id}}</th>
+                                                                                <th class="text-center">{{prod.produto.id}}</th>
                                                                                 <th>{{prod.produto.nome}}</th>
                                                                                 <th>{{prod.validade| data}}</th>
-                                                                                <th>{{prod.limite}}</th>
-                                                                                <th>{{prod.valor}} R$</th>
+                                                                                <th class="text-center">{{prod.limite}}</th>
+                                                                                <th class="text-center">R$ {{prod.valor}}</th>
                                                                             </tr>
                                                                         </table>
                                                                     </div>	
@@ -138,7 +141,7 @@
                                                                         <table class="table-bordered w-100">
                                                                             <tr>
                                                                                 <td>Expressão de cliente:</td>
-                                                                                <td>{{campanha[0].cliente_expression}}</td>
+                                                                                <td class="text-center">{{campanha[0].cliente_expression}}</td>
                                                                             </tr>
                                                                         </table>
                                                                     </div>																
@@ -165,7 +168,7 @@
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
                                                         <li class="page-item" ng-click="campanhas.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in campanhas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                        <li class="page-item" ng-repeat="pg in campanhas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
                                                         <li class="page-item" ng-click="campanhas.next()"><a class="page-link" href="">Próximo</a></li>
                                                     </ul>
                                                 </nav>
@@ -207,7 +210,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere os dados de sua Campanha</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere os dados de sua Campanha</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">×</span>
                                 </button>
@@ -226,7 +229,7 @@
                                     <div class="form-group row">
                                         <label for="txtemail" class="col-3 col-lg-2 col-form-label text-left">Inicio</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtemail" ng-model="campanha.inicio_texto" type="text" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <input id="txtemail" ng-model="campanha.inicio_texto" type="text" required data-parsley-type="email" placeholder="" class="form-control date_time">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -235,7 +238,7 @@
                                     <div class="form-group row">
                                         <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">Fim</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="campanha.fim_texto" class="form-control">
+                                            <input id="txtcnpj" type="text" ng-model="campanha.fim_texto" class="form-control date_time">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -259,10 +262,12 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
+                                    <hr>
+                                    <div class="form-group row" style="padding: 15px;">
                                         <br>
-                                        <button class="btn btn-default" type="button" onclick="$('#produtos').modal('show')"><i class="fa fa-plus-circle"></i>&nbsp; Adcionar produto</button>
-                                        <hr>
+                                        <button class="btn btn-primary m-b-20" type="button" onclick="$('#produtos').modal('show')"><i class="fa fa-plus-circle"></i>&nbsp; Adicionar produto</button>
+                                        <br>
+                                        
                                         <table class="table table-striped table-bordered first">
                                             <thead>
                                             <th>Cod.</th>
@@ -491,6 +496,7 @@
                 </div>
                 <!-- /.modal-content --> 
 
+                <!-- /.modal-content MONTAGEM DE CAMPANHA --> 
                 <div class="modal fade" style="overflow-y:scroll" id="add" tabindex="-1" role="dialog" aria-labelledby="add" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content" >
@@ -536,10 +542,10 @@
                                                 <input type="text" class="form-control" ng-model="cc.parcelas">
                                             </div>
                                             <div class="col-md-3" style="text-align:left">
-                                                <input type="text" class="form-control" ng-model="cc.inicio">
+                                                <input type="text" class="form-control date_time" ng-model="cc.inicio">
                                             </div>
                                             <div class="col-md-3" style="text-align:left">
-                                                <input type="text" class="form-control" ng-model="cc.fim">
+                                                <input type="text" class="form-control date_time" ng-model="cc.fim">
                                             </div>
                                         </div>
                                         <hr>
@@ -568,7 +574,7 @@
                                             <nav aria-label="Page navigation example">
                                                 <ul class="pagination justify-content-end">
 
-                                                    <li class="page-item" ng-repeat="pg in campanha.lista.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                    <li class="page-item" ng-repeat="pg in campanha.lista.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
 
                                                 </ul>
                                             </nav>
@@ -585,6 +591,8 @@
                     </div>
                 </div>
 
+                <!-- /.modal-content VALIDADE DE PRODUTO --> 
+                
                 <div class="modal fade" id="validadeProduto" tabindex="99" role="dialog" aria-labelledby="validadeProduto" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -617,12 +625,12 @@
                     </div>
                 </div>
 
-                <!-- /.modal-content DELETE --> 
+                <!-- /.modal-content PRODUTOS --> 
                 <div class="modal fade" id="produtos" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Selecao de produtos</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Seleção de produtos</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
@@ -670,7 +678,7 @@
                                     <nav aria-label="Page navigation example">
                                         <ul class="pagination justify-content-end">
                                             <li class="page-item" ng-click="produtos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                            <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
                                             <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Próximo</a></li>
                                         </ul>
                                     </nav>
@@ -684,6 +692,27 @@
                     </div>
                 </div>
                 <!-- /.modal-content --> 
+                
+                 <!-- /.modal-content LOADING --> 
+                <div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                
+                                <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
+                                <br>
+                                <h3 style="margin-top:20px;">Carregando as informações...</h3>
+
+                            </div>
+                            <div class="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
 
                 <!-- jquery 3.3.1 -->
@@ -715,49 +744,67 @@
 
                 <!-- Optional JavaScript -->
                 <script>
-                                                        $(document).ready(function () {
-                                                            $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
-                                                            $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                                                            $('.btndel').tooltip({title: "Deletar", placement: "top"});
-                                                        });
-                                                        $(document).ready(function () {
-                                                            $('#clientes').DataTable({
-                                                                "language": {//Altera o idioma do DataTable para o português do Brasil
-                                                                    "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
-                                                                },
-                                                            });
-
-                                                            $.getJSON('estados_cidades.json', function (data) {
-                                                                var items = [];
-                                                                var options = '<option value="">escolha um estado</option>';
-                                                                $.each(data, function (key, val) {
-                                                                    options += '<option value="' + val.nome + '">' + val.nome + '</option>';
-                                                                });
-                                                                $("#estados").html(options);
-
-                                                                $("#estados").change(function () {
-
-                                                                    var options_cidades = '';
-                                                                    var str = "";
-
-                                                                    $("#estados option:selected").each(function () {
-                                                                        str += $(this).text();
-                                                                    });
-
-                                                                    $.each(data, function (key, val) {
-                                                                        if (val.nome == str) {
-                                                                            $.each(val.cidades, function (key_city, val_city) {
-                                                                                options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
-                                                                            });
-                                                                        }
-                                                                    });
-                                                                    $("#cidades").html(options_cidades);
-
-                                                                }).change();
-
-                                                            });
-                                                        });
-
+                    $(document).ready(function () {
+                                        $(document).on({
+                                            'show.bs.modal': function () {
+                                                var zIndex = 1040 + (10 * $('.modal:visible').length);
+                                                $(this).css('z-index', zIndex);
+                                                setTimeout(function () {
+                                                    $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+                                                }, 0);
+                                            },
+                                            'hidden.bs.modal': function () {
+                                                if ($('.modal:visible').length > 0) {
+                                                    // restore the modal-open class to the body element, so that scrolling works
+                                                    // properly after de-stacking a modal.
+                                                    setTimeout(function () {
+                                                        $(document.body).addClass('modal-open');
+                                                    }, 0);
+                                                }
+                                            }
+                                        }, '.modal');
+                                    });
+                                    
+                                    $("#loading").modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    })
+                    
+                    var sh = false;
+                    
+                    loading.show = function(){
+                        
+                        if(!sh){
+                            
+                            sh = true;
+                            $("#loading").modal("show");
+                        
+                        }
+                        
+                    }
+                    
+                    loading.close = function(){
+                        
+                        setTimeout(function(){
+                                if(sh){
+                                    sh = false;
+                                    $("#loading").modal("hide");
+                                }
+                        },500);
+                        
+                        
+                    }
+                    
+                    $(document).on('keyup', '.date_time', function() {
+                        $(this).mask('00/00/0000 00:00:00');
+                    });
+                    
+                     $(document).ready(function () {
+                         $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                         $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                         $('.btndel').tooltip({title: "Deletar", placement: "top"});
+                     });
+                                                        
                 </script>
 
                 </body>

@@ -24,6 +24,9 @@
         <!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">-->
         <title>RTC (Reltrab Cliente) - WEB</title>
         <style>
+            .page-link:hover {
+                color:#fff !important;
+            }
         </style>
     </head>
 
@@ -115,7 +118,7 @@
                                                         </th>
                                                     </tr>
                                                     <tr ng-repeat-end>
-                                                        <td colspan="6" class="hiddenRow">
+                                                        <td colspan="8" class="hiddenRow">
                                                             <div class="accordian-body collapse" id="demo{{cliente[0].id}}">
                                                                 <div class="row mx-auto m-b-30">
                                                                     <div class="col">
@@ -176,7 +179,7 @@
                                                         <th>Lim Cre</th>
                                                         <th>Ini Lim</th>
                                                         <th>Fim Lim</th>
-                                                        <th width="150px">Ação</th>
+                                                        <th width="180px">Ação</th>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -186,7 +189,7 @@
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
                                                         <li class="page-item" ng-click="clientes.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in clientes.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                        <li class="page-item" ng-repeat="pg in clientes.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
                                                         <li class="page-item" ng-click="clientes.next()"><a class="page-link" href="">Próximo</a></li>
                                                     </ul>
                                                 </nav>
@@ -291,7 +294,7 @@
                                     <div class="form-group row" ng-if="!cliente.pessoa_fisica">
                                         <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">Insc. Est</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="cliente.inscricao_estadual" required placeholder="000.000.000.000" class="form-control">
+                                            <input id="txtcnpj" type="text" ng-model="cliente.inscricao_estadual" required placeholder="000.000.000.000" class="form-control ie">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -309,7 +312,7 @@
                                     <div class="form-group row" ng-if="cliente.pessoa_fisica">
                                         <label for="txtrg" class="col-3 col-lg-2 col-form-label text-left">RG</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtrg" type="text" ng-model="cliente.rg.valor" required placeholder="000.000.000-00" class="form-control">
+                                            <input id="txtrg" type="text" ng-model="cliente.rg.valor" required placeholder="000.000.000-00" class="form-control rg">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -403,7 +406,7 @@
                                     <div class="form-group row" ng-if="cliente.suframado">
                                         <label for="txtsuf" class="col-3 col-lg-2 col-form-label text-left">Suframa</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtsuf" type="text" ng-model="cliente.inscricao_suframa" placeholder="" class="form-control cep" maxlength="9">
+                                            <input id="txtsuf" type="text" ng-model="cliente.inscricao_suframa" placeholder="000000000" class="form-control txtsuf" maxlength="9">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -682,6 +685,28 @@
                     </div>
                 </div>
                 <!-- /.modal-content --> 
+                
+                
+                <!-- /.modal-content LOADING --> 
+                <div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                
+                                <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
+                                <br>
+                                <h3 style="margin-top:20px;">Carregando as informações...</h3>
+
+                            </div>
+                            <div class="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
 
                 <!-- jquery 3.3.1 -->
@@ -714,48 +739,79 @@
 
                 <!-- Optional JavaScript -->
                 <script>
+                    $(document).ready(function () {
+                                        $(document).on({
+                                            'show.bs.modal': function () {
+                                                var zIndex = 1040 + (10 * $('.modal:visible').length);
+                                                $(this).css('z-index', zIndex);
+                                                setTimeout(function () {
+                                                    $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+                                                }, 0);
+                                            },
+                                            'hidden.bs.modal': function () {
+                                                if ($('.modal:visible').length > 0) {
+                                                    // restore the modal-open class to the body element, so that scrolling works
+                                                    // properly after de-stacking a modal.
+                                                    setTimeout(function () {
+                                                        $(document.body).addClass('modal-open');
+                                                    }, 0);
+                                                }
+                                            }
+                                        }, '.modal');
+                                    });
+                                    
+                    $("#loading").modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    })
+                    
+                    var sh = false;
+                    
+                    loading.show = function(){
+                        
+                        if(!sh){
+                            
+                            sh = true;
+                            $("#loading").modal("show");
+                        
+                        }
+                        
+                    }
+                    
+                    loading.close = function(){
+                        
+                        setTimeout(function(){
+                                if(sh){
+                                    sh = false;
+                                    $("#loading").modal("hide");
+                                }
+                        },500);
+                        
+                        
+                    }
+                    
+                    $(document).on('keyup', '.txtsuf', function() {
+                        $(this).mask('000000000');
+                    });
+                    $(document).on('keyup', '.cnpj', function() {
+                        $(this).mask('00.000.000/0000-00', {reverse: true});
+                    });
+                    $(document).on('keyup', '.cpf', function() {
+                        $(this).mask('000.000.000-00', {reverse: true});
+                    });
+                    $(document).on('keyup', '.rg', function() {
+                        $(this).mask('99.999.999-A', {reverse: true});
+                    });
+                    $(document).on('keyup', '.ie_', function() {
+                        $(this).mask('000000000000000', {reverse: true});
+                    });
+                    
                                             $(document).ready(function () {
                                                 $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
                                                 $('.btnedit').tooltip({title: "Editar", placement: "top"});
                                                 $('.btndel').tooltip({title: "Deletar", placement: "top"});
                                             });
-                                            $(document).ready(function () {
-                                                $('#clientes').DataTable({
-                                                    "language": {//Altera o idioma do DataTable para o português do Brasil
-                                                        "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
-                                                    },
-                                                });
-
-                                                $.getJSON('estados_cidades.json', function (data) {
-                                                    var items = [];
-                                                    var options = '<option value="">escolha um estado</option>';
-                                                    $.each(data, function (key, val) {
-                                                        options += '<option value="' + val.nome + '">' + val.nome + '</option>';
-                                                    });
-                                                    $("#estados").html(options);
-
-                                                    $("#estados").change(function () {
-
-                                                        var options_cidades = '';
-                                                        var str = "";
-
-                                                        $("#estados option:selected").each(function () {
-                                                            str += $(this).text();
-                                                        });
-
-                                                        $.each(data, function (key, val) {
-                                                            if (val.nome == str) {
-                                                                $.each(val.cidades, function (key_city, val_city) {
-                                                                    options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
-                                                                });
-                                                            }
-                                                        });
-                                                        $("#cidades").html(options_cidades);
-
-                                                    }).change();
-
-                                                });
-                                            });
+                                            
 
                 </script>
 
