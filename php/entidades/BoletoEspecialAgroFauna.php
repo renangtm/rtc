@@ -22,6 +22,7 @@ class BoletoEspecialAgroFauna extends FormaPagamento{
     
     public function aoFinalizarPedido($pedido){
         
+        return "teste.html";
         
     }
     

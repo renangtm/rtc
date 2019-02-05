@@ -1,23 +1,91 @@
+rtc.service('pedidoService', function ($http, $q) {
+    this.getPedido = function (fn) {
+        baseService($http, $q, {
+            query: "$r->pedido=new Pedido();$r->pedido->usuario=$usuario;$r->pedido->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.atualizarCustos = function (pedido, fn) {
+        baseService($http, $q, {
+            o: pedido,
+            query: "$o->atualizarCustos()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getProdutos = function (pedido, fn) {
+        baseService($http, $q, {
+            o: pedido,
+            query: "$r->produtos=$o->pedido->getProdutos($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountPedidos($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getPedidos($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('produtoPedidoService', function ($http, $q) {
+    this.getProdutoPedido = function (fn) {
+        baseService($http, $q, {
+            query: "$r->produto_pedido=new ProdutoPedido()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('formaPagamentoService', function ($http, $q) {
+    this.getFormasPagamento = function (pedido, fn) {
+        baseService($http, $q, {
+            o: pedido,
+            query: "$formas = Sistema::getFormasPagamento();$r->formas = array();foreach($formas as $key=>$value){if($value->habilitada($o)){$o->formas[]=$value;}}",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.aoFinalizarPedido = function (forma,pedido, fn) {
+        baseService($http, $q, {
+            o: {forma:forma,pedido:pedido},
+            query: "$r->retorno=$o->forma->aoFinalizarPedido($o->pedido)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('listaPrecoProdutoService', function ($http, $q) {
     this.cultura = null;
     this.praga = null;
-    this.getElementos = function (x0, x1, filtro, ordem,fn) {
-        var convert = function(r){
-            for(var i=0;i<r.elementos.length;i++){
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        var convert = function (r) {
+            for (var i = 0; i < r.elementos.length; i++) {
                 r.elementos[i] = r.elementos[i].produto;
             }
             fn(r);
         }
         baseService($http, $q, {
-            o:{cultura:this.cultura,praga:this.praga,x1:x1,x0:x0,filtro:filtro,ordem:ordem},
+            o: {cultura: this.cultura, praga: this.praga, x1: x1, x0: x0, filtro: filtro, ordem: ordem},
             query: "$filtro=$o->filtro;if($o->cultura!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' cultura.id = '.$o->cultura->id.' ';};if($o->praga!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' praga.id = '.$o->praga->id;};$r->elementos=$empresa->getReceituario($c,$o->x0,$o->x1,$filtro,$o->ordem,'produto.id');",
             sucesso: convert,
             falha: convert
         });
     }
-    this.getCount = function (filtro,fn) {
+    this.getCount = function (filtro, fn) {
         baseService($http, $q, {
-            o:{cultura:this.cultura,praga:this.praga,filtro:filtro},
+            o: {cultura: this.cultura, praga: this.praga, filtro: filtro},
             query: "$filtro=$o->filtro;if($o->cultura!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' cultura.id = '.$o->cultura->id.' ';};if($o->praga!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' praga.id = '.$o->praga->id;};$r->qtd=$empresa->getCountReceituario($c,$filtro,'produto.id');",
             sucesso: fn,
             falha: fn
@@ -27,23 +95,23 @@ rtc.service('listaPrecoProdutoService', function ($http, $q) {
 rtc.service('listaPrecoCulturaService', function ($http, $q) {
     this.produto = null;
     this.praga = null;
-    this.getElementos = function (x0, x1, filtro, ordem,fn) {
-        var convert = function(r){
-            for(var i=0;i<r.elementos.length;i++){
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        var convert = function (r) {
+            for (var i = 0; i < r.elementos.length; i++) {
                 r.elementos[i] = r.elementos[i].cultura;
             }
             fn(r);
         }
         baseService($http, $q, {
-            o:{produto:this.produto,praga:this.praga,x1:x1,x0:x0,filtro:filtro,ordem:ordem},
+            o: {produto: this.produto, praga: this.praga, x1: x1, x0: x0, filtro: filtro, ordem: ordem},
             query: "$filtro=$o->filtro;if($o->produto!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' produto.id = '.$o->produto->id.' ';};if($o->praga!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' praga.id = '.$o->praga->id;};$r->elementos=$empresa->getReceituario($c,$o->x0,$o->x1,$filtro,$o->ordem,'cultura.id');",
             sucesso: convert,
             falha: convert
         });
     }
-    this.getCount = function (filtro,fn) {
+    this.getCount = function (filtro, fn) {
         baseService($http, $q, {
-            o:{produto:this.produto,praga:this.praga,filtro:filtro},
+            o: {produto: this.produto, praga: this.praga, filtro: filtro},
             query: "$filtro=$o->filtro;if($o->produto!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' produto.id = '.$o->produto->id.' ';};if($o->praga!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' praga.id = '.$o->praga->id;};$r->qtd=$empresa->getCountReceituario($c,$filtro,'cultura.id');",
             sucesso: fn,
             falha: fn
@@ -53,23 +121,23 @@ rtc.service('listaPrecoCulturaService', function ($http, $q) {
 rtc.service('listaPrecoPragaService', function ($http, $q) {
     this.produto = null;
     this.cultura = null;
-    this.getElementos = function (x0, x1, filtro, ordem,fn) {
-        var convert = function(r){
-            for(var i=0;i<r.elementos.length;i++){
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        var convert = function (r) {
+            for (var i = 0; i < r.elementos.length; i++) {
                 r.elementos[i] = r.elementos[i].praga;
             }
             fn(r);
         }
         baseService($http, $q, {
-            o:{produto:this.produto,cultura:this.cultura,x1:x1,x0:x0,filtro:filtro,ordem:ordem},
+            o: {produto: this.produto, cultura: this.cultura, x1: x1, x0: x0, filtro: filtro, ordem: ordem},
             query: "$filtro=$o->filtro;if($o->produto!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' produto.id = '.$o->produto->id.' ';};if($o->cultura!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' cultura.id = '.$o->cultura->id;};$r->elementos=$empresa->getReceituario($c,$o->x0,$o->x1,$filtro,$o->ordem,'praga.id');",
             sucesso: convert,
             falha: convert
         });
     }
-    this.getCount = function (filtro,fn) {
+    this.getCount = function (filtro, fn) {
         baseService($http, $q, {
-            o:{produto:this.produto,praga:this.praga,filtro:filtro},
+            o: {produto: this.produto, praga: this.praga, filtro: filtro},
             query: "$filtro=$o->filtro;if($o->produto!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' produto.id = '.$o->produto->id.' ';};if($o->cultura!=null){if($filtro!=''){$filtro.='AND';}$filtro.=' cultura.id = '.$o->cultura->id;};$r->qtd=$empresa->getCountReceituario($c,$filtro,'praga.id');",
             sucesso: fn,
             falha: fn
@@ -385,6 +453,22 @@ rtc.service('categoriaDocumentoService', function ($http, $q) {
         });
     }
 })
+rtc.service('statusPedidoSaidaService', function ($http, $q) {
+    this.getStatus = function (fn) {
+        baseService($http, $q, {
+            query: "$r->status=Sistema::getStatusPedidoSaida()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getStatusExcluido = function (fn) {
+        baseService($http, $q, {
+            query: "$r->status=Sistema::getStatusExcluidoPedidoSaida()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('categoriaClienteService', function ($http, $q) {
     this.getElementos = function (fn) {
         baseService($http, $q, {
@@ -492,7 +576,7 @@ rtc.service('produtoService', function ($http, $q) {
 
                 if (diff < meses_validade_curta) {
 
-                    validades[validades.length] = {validade: lote.validade, quantidade: lote.quantidade_real, alem:false};
+                    validades[validades.length] = {validade: lote.validade, quantidade: lote.quantidade_real, alem: false, validades: []};
 
                 } else {
 
@@ -507,18 +591,49 @@ rtc.service('produtoService', function ($http, $q) {
 
                     if (criar) {
 
-                        validades[validades.length] = {validade: lote.validade, quantidade: lote.quantidade_real, alem:false};
+                        validades[validades.length] = {validade: lote.validade, quantidade: lote.quantidade_real, alem: false, validades: []};
 
                     } else {
 
-                        validades[validades.length - 1].quantidade += lote.quantidade_real;
-                        validades[validades.length - 1].alem = true;
-                        
+                        var v = validades[validades.length - 1];
+
+                        v.quantidade += lote.quantidade_real;
+                        v.alem = true;
+
+                        for (var m = 0; m < v.validades.length; m++) {
+                            if (v.validades[m].validade === lote.validade) {
+                                v.validades[m].quantidade += lote.quantidade;
+                                continue lbl;
+                            }
+                        }
+
+                        v.validades[v.validades.length] = {validade: lote.validade, quantidade: lote.quantidade_real};
+
                     }
 
 
                 }
 
+            }
+            
+            lbl:
+            for(var i=0;i<validades.length;i++){
+                
+                for(var j=0;j<produto.ofertas;j++){
+                    
+                    if(validades[i].validade === produto.ofertas[j].validade){
+                    
+                        validades[i].valor = produto.ofertas[j].valor;
+                        validades[i].limite = produto.ofertas[j].limite;
+                        continue lbl;
+                
+                    }
+                    
+                }
+                
+                validades[i].valor = produto.valor_base;
+                validades[i].limite = -1;
+                
             }
 
             fn(validades);

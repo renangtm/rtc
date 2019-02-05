@@ -1,3 +1,196 @@
+rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, baseService, produtoService, sistemaService, statusPedidoSaidaService, formaPagamentoService, transportadoraService, clienteService, produtoPedidoService) {
+
+    $scope.pedidos = createAssinc(pedidoService, 1, 3, 10);
+    $scope.pedidos.attList();
+    assincFuncs(
+            $scope.pedidos,
+            "pedido",
+            ["id", "cliente.nome", "data", "frete", "id_status", "usuario.nome"]);
+
+    $scope.produtos = createAssinc(produtoService, 1, 3, 4);
+    $scope.produtos.attList();
+    assincFuncs(
+            $scope.produtos,
+            "produto",
+            ["id", "nome", "disponivel"], "filtroProdutos");
+
+    $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 4);
+    $scope.transportadoras.attList();
+    assincFuncs(
+            $scope.transportadoras,
+            "transportadora",
+            ["id", "nome"], "filtroTransportadoras");
+
+    $scope.clientes = createAssinc(clienteService, 1, 3, 4);
+    $scope.clientes.attList();
+    assincFuncs(
+            $scope.transportadoras,
+            "transportadora",
+            ["id", "nome"], "filtroTransportadoras");
+
+
+    $scope.meses_validade_curta = 3;
+
+    $scope.status_pedido = [];
+
+    $scope.status_excluido = {};
+
+    $scope.pedido_novo = {};
+
+    $scope.produto_pedido_novo = {};
+
+    $scope.pedido = {};
+
+    $scope.fretes = [];
+
+    $scope.quantidade = 0;
+
+    $scope.produto = {};
+    
+    $scope.formas_pagamento = {};
+    
+    formaPagamentoService.getFormasPagamento(function(f){
+        
+        $scope.formas_pagamento = f.formas_pagamento;
+        
+    })
+
+    statusPedidoSaidaService.getStatus(function (st) {
+
+        $scope.status_pedido = st.status;
+
+        statusPedidoSaidaService.getStatusExcluido(function (st) {
+
+            $scope.status_excluido = st.status;
+
+            $scope.status_pedido[$scope.status_pedido.length] = $scope.status_excluido;
+
+        })
+
+    })
+
+
+
+    produtoPedidoService.getProdutoPedido(function (pp) {
+
+        $scope.produto_pedido_novo = pp.produto_pedido;
+
+    })
+
+    $scope.addProduto = function (produto, validade) {
+
+        var validades = [validade];
+        var quantidades = [Math.min($scope.quantidade, (validade.limite > 0) ? validade.limite : $scope.quantidade)];
+
+        while (validades[validades.length - 1].quantidade < quantidades[quantidades.length - 1]) {
+
+            var v = validades[validades.length - 1];
+
+            quantidades[quantidades.length] = quantidades[quantidades.length - 1] - v.quantidade;
+
+            quantidades[quantidades.length - 1] = v.quantidade;
+
+            var v0 = validades[0];
+
+            if (v0.validades.length < validades.length) {
+
+                msg.erro("Sem estoque suficiente");
+                return;
+
+            }
+
+            validades[validades.length] = v0.validades[validades.length - 1];
+
+        }
+
+        for (var i = 0; i < validades.length; i++) {
+
+            var pp = angular.copy($scope.produto_pedido_novo);
+            pp.produto = produto;
+            pp.pedido = $scope.pedido;
+            pp.validade_minima = validades[i].validade;
+            pp.valor_base = validade.valor;
+            pp.quantidade = quantidades[i];
+
+            $scope.pedido.produtos[$scope.pedido.produtos.length - 1] = pp;
+
+        }
+
+    }
+
+    $scope.removerProduto = function (produto) {
+
+        remove($scope.pedido.produtos, produto);
+
+    }
+
+    $scope.setProduto = function (produto) {
+
+        produtoService.getValidades($scope.meses_validade_curta, produto, function (v) {
+
+            produto.validades = v;
+
+        })
+
+    }
+
+    $scope.calculoPronto = function () {
+
+        if ($scope.pedido.cliente !== null && $scope.pedido.produtos !== null) {
+            if ($scope.pedido.produtos.length > 0) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+
+    this.getFretes = function () {
+
+        var pesoTotal = 0;
+        var valorTotal = 0;
+
+        for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+            var p = $scope.pedido.produtos[i];
+            valorTotal += (p.valor_base + p.juros + p.icms) * p.quantidade;
+            pesoTotal += p.produto.peso_bruto * p.quantidade;
+        }
+
+        tabelaService.getFretes(null, {cidade: $scope.pedido.cliente.endereco.cidade, valor: valorTotal, peso: pesoTotal}, function (f) {
+
+            $scope.fretes = f.fretes;
+
+        })
+
+    }
+
+    this.atualizaCustos = function () {
+
+        pedidoService.atualizarCustos($scope.pedido, function (np) {
+
+            $scope.pedido = np;
+
+        })
+
+    }
+
+    this.setPedido = function (pedido) {
+
+        this.pedido = pedido;
+
+        pedidoService.getProdutos(pedido, function (p) {
+
+            pedido.produtos = p.produtos;
+            equalize(pedido, "status", $scope.status_pedido);
+
+        })
+
+    }
+
+})
+
+
 rtc.controller("crtListaPreco", function ($scope, listaPrecoProdutoService, listaPrecoPragaService, listaPrecoCulturaService) {
 
     $scope.produtos = createAssinc(listaPrecoProdutoService, 1, 3, 10);

@@ -187,7 +187,7 @@
                                                         <th data-ordem="produto.transito">Transito</th>
                                                         <th data-ordem="produto.valor_base">Valor</th>
                                                         <th data-ordem="produto.ativo">Ativo</th>
-                                                        <th width="150px">Ação</th>
+                                                        <th width="150px">Ofertas</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -200,7 +200,7 @@
                                                         <td ng-click="setProduto(produt[0])">{{produt[0].ativo}}</td>
                                                         <td>
                                                             <div class="product-btn">
-                                                                <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" data-target="#demo{{produt[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
+                                                                <a href="#" style="color:#FFFFFF;background-color:{{produt[0].ofertas.length>0?'DarkOrange':'LightGray'}}" class="btn btn-outline-light btninfo" data-toggle="collapse" data-target="#demo{{produt[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -221,11 +221,11 @@
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                <tr ng-repeat="o in produto[0].ofertas">
-                                                                                    <td>{{o.valor}}</td>
+                                                                                <tr ng-repeat="o in produt[0].ofertas">
+                                                                                    <td>{{o.valor}} R$</td>
                                                                                     <td>{{o.validade | data}}</td>
-                                                                                    <td>{{o.inicio | data}}</td>
-                                                                                    <td>{{o.fim | data}}</td>
+                                                                                    <td>{{o.campanha.inicio | data}}</td>
+                                                                                    <td>{{o.campanha.fim | data}}</td>
                                                                                 </tr>
                                                                             </tbody>
                                                                         </table>
@@ -244,7 +244,7 @@
                                                         <th>Transito</th>
                                                         <th>Valor</th>
                                                         <th>Ativo</th>
-                                                        <th width="150px">Ação</th>
+                                                        <th width="150px">Ofertas</th>
                                                     </tr>
                                                 </tfoot>
                                             </table>
