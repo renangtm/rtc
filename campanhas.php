@@ -603,7 +603,7 @@
                                     </thead>
                                     <tr ng-repeat="v in produto.validades">
                                         <th>{{produto.nome}}</th>
-                                        <th>{{v.validade | data}}</th>
+                                        <th>{{v.validade | data}} <i class="fas fa-arrow-up" ng-if="v.alem" ></i></th>
                                         <th>{{v.quantidade}}</th>
                                         <th><button class="btn btn-success" data-dismiss="modal" aria-label="Close" ng-click="setAutoValidade(v)"><i class="fas fa-plus-circle"></i></th>
                                     </tr>
