@@ -771,9 +771,12 @@
                     })
                     
                     var sh = false;
+                    var it = null;
                     
                     loading.show = function(){
-                        
+                        if(it != null){
+                            clearInterval(it);
+                        }
                         if(!sh){
                             
                             sh = true;
@@ -785,12 +788,12 @@
                     
                     loading.close = function(){
                         
-                        setTimeout(function(){
+                        it = setTimeout(function(){
                                 if(sh){
                                     sh = false;
                                     $("#loading").modal("hide");
                                 }
-                        },500);
+                        },2000);
                         
                         
                     }

@@ -701,11 +701,11 @@ class Empresa {
                 . "INNER JOIN email email_cliente ON email_cliente.id_entidade=cliente.id AND email_cliente.tipo_entidade='CLI' "
                 . "INNER JOIN email email_tra ON email_tra.id_entidade=transportadora.id AND email_tra.tipo_entidade='TRA' "
                 . "INNER JOIN email email_usu ON email_usu.id_entidade=usuario.id AND email_usu.tipo_entidade='USU' "
-                . "WHERE pedido.id_empresa = $this->id ";
+                . "WHERE pedido.id_empresa = $this->id AND pedido.excluido = false ";
 
         if ($filtro != "") {
 
-            $sql .= " AND $filtro ";
+            $sql .= "AND $filtro ";
         }
 
         if ($ordem != "") {
@@ -713,7 +713,7 @@ class Empresa {
             $sql .= "ORDER BY $ordem ";
         }
 
-        $sql .= " LIMIT $x1, " . ($x2 - $x1);
+        $sql .= "LIMIT $x1, " . ($x2 - $x1);
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
@@ -866,7 +866,7 @@ class Empresa {
             }
 
             $pedido->frete = $frete;
-            $pedido->frete_incluso = $frete_incluso;
+            $pedido->incluir_frete = $frete_incluso==1;
             $pedido->id = $id_pedido;
             $pedido->observacoes = $obs;
             $pedido->parcelas = $parcelas;

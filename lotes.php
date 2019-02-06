@@ -134,7 +134,7 @@
                                                 <tbody>
                                                     <tr ng-repeat-start="lote in lotes.elementos">
                                                         <td>{{lote[0].id}}</td>
-                                                        <td>{{lote[0].produto.nome}}</td>
+                                                        <td>{{lote[0].produto.id}} - {{lote[0].produto.nome}}</td>
                                                         <td>{{lote[0].quantidade_real}}</td>
                                                         <td>{{lote[0].validade| data}}</td>
                                                         <td>{{lote[0].numero}}</td>

@@ -20,7 +20,7 @@ class StatusPedidoSaida {
     public $emailCliente;
     public $emailInterno;
     
-    function __construct($id,$nome,$estoque,$reserva,$emailCliente = false,$emailInterno = false) {
+    function __construct($id=0,$nome="",$estoque=false,$reserva=false,$emailCliente = false,$emailInterno = false) {
         
         $this->id = $id;
         $this->nome = $nome;

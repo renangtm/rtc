@@ -1,11 +1,11 @@
-rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, baseService, produtoService, sistemaService, statusPedidoSaidaService, formaPagamentoService, transportadoraService, clienteService, produtoPedidoService) {
+rtc.controller("crtPedidos", function ($scope, $window, pedidoService, tabelaService, baseService, produtoService, sistemaService, statusPedidoSaidaService, formaPagamentoService, transportadoraService, clienteService, produtoPedidoService) {
 
-    $scope.pedidos = createAssinc(pedidoService, 1, 3, 10);
+    $scope.pedidos = createAssinc(pedidoService, 1, 10, 10);
     $scope.pedidos.attList();
     assincFuncs(
             $scope.pedidos,
             "pedido",
-            ["id", "cliente.nome", "data", "frete", "id_status", "usuario.nome"]);
+            ["id", "cliente.razao_social", "data", "frete", "id_status", "usuario.nome"]);
 
     $scope.produtos = createAssinc(produtoService, 1, 3, 4);
     $scope.produtos.attList();
@@ -19,14 +19,14 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
     assincFuncs(
             $scope.transportadoras,
             "transportadora",
-            ["id", "nome"], "filtroTransportadoras");
+            ["id", "razao_social"], "filtroTransportadoras");
 
     $scope.clientes = createAssinc(clienteService, 1, 3, 4);
     $scope.clientes.attList();
     assincFuncs(
-            $scope.transportadoras,
-            "transportadora",
-            ["id", "nome"], "filtroTransportadoras");
+            $scope.clientes,
+            "cliente",
+            ["id", "razao_social"], "filtroClientes");
 
 
     $scope.meses_validade_curta = 3;
@@ -43,17 +43,46 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
 
     $scope.fretes = [];
 
-    $scope.quantidade = 0;
+    $scope.qtd = 0;
 
     $scope.produto = {};
-    
+
+
+    $scope.getPesoBrutoPedido = function () {
+
+        var tot = 0;
+
+        for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+
+            var p = $scope.pedido.produtos[i];
+
+            tot += (p.produto.peso_bruto) * p.quantidade;
+
+        }
+
+        return tot;
+
+    }
+
+    $scope.getTotalPedido = function () {
+
+        var tot = 0;
+
+        for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+
+            var p = $scope.pedido.produtos[i];
+
+            tot += (p.valor_base + p.icms + p.juros + p.frete) * p.quantidade;
+
+        }
+
+        return tot;
+
+    }
+
     $scope.formas_pagamento = {};
-    
-    formaPagamentoService.getFormasPagamento(function(f){
-        
-        $scope.formas_pagamento = f.formas_pagamento;
-        
-    })
+
+
 
     statusPedidoSaidaService.getStatus(function (st) {
 
@@ -69,7 +98,19 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
 
     })
 
+    $scope.setTransportadora = function (trans) {
 
+        $scope.pedido.transportadora = trans;
+        $scope.atualizaCustos();
+
+    }
+
+    $scope.setCliente = function (cli) {
+
+        $scope.pedido.cliente = cli;
+        $scope.atualizaCustos();
+
+    }
 
     produtoPedidoService.getProdutoPedido(function (pp) {
 
@@ -79,8 +120,15 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
 
     $scope.addProduto = function (produto, validade) {
 
-        var validades = [validade];
-        var quantidades = [Math.min($scope.quantidade, (validade.limite > 0) ? validade.limite : $scope.quantidade)];
+        var validades = [angular.copy(validade)];
+
+        for (var i = 0; i < validades[0].validades.length; i++) {
+
+            validades[0].quantidade -= validades[0].validades[i].quantidade;
+
+        }
+
+        var quantidades = [Math.min($scope.qtd, (validade.limite > 0) ? validade.limite : $scope.qtd)];
 
         while (validades[validades.length - 1].quantidade < quantidades[quantidades.length - 1]) {
 
@@ -88,7 +136,7 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
 
             quantidades[quantidades.length] = quantidades[quantidades.length - 1] - v.quantidade;
 
-            quantidades[quantidades.length - 1] = v.quantidade;
+            quantidades[quantidades.length - 2] = v.quantidade;
 
             var v0 = validades[0];
 
@@ -104,23 +152,56 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
         }
 
         for (var i = 0; i < validades.length; i++) {
-
             var pp = angular.copy($scope.produto_pedido_novo);
             pp.produto = produto;
             pp.pedido = $scope.pedido;
             pp.validade_minima = validades[i].validade;
             pp.valor_base = validade.valor;
             pp.quantidade = quantidades[i];
-
-            $scope.pedido.produtos[$scope.pedido.produtos.length - 1] = pp;
-
+            $scope.pedido.produtos[$scope.pedido.produtos.length] = pp;
         }
+
+        $scope.atualizaCustos();
 
     }
 
     $scope.removerProduto = function (produto) {
 
         remove($scope.pedido.produtos, produto);
+        $scope.atualizaCustos();
+
+    }
+
+    $scope.mergePedido = function () {
+
+        var p = $scope.pedido;
+
+        if (p.cliente == null) {
+            msg.erro("Pedido sem cliente.");
+            return;
+        }
+
+        if (p.transportadora == null) {
+            msg.erro("Pedido sem transportadora.");
+            return;
+        }
+
+        baseService.merge(p, function (r) {
+            if (r.sucesso) {
+                $scope.pedido = r.o;
+                msg.alerta("Operacao efetuada com sucesso");
+            } else {
+                msg.erro("Ocorreu o seguinte problema: " + r.mensagem);
+            }
+        });
+
+    }
+
+    $scope.setFrete = function (fr) {
+
+        $scope.pedido.frete = fr.valor;
+        $scope.pedido.transportadora = fr.transportadora;
+        $scope.atualizaCustos();
 
     }
 
@@ -136,7 +217,7 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
 
     $scope.calculoPronto = function () {
 
-        if ($scope.pedido.cliente !== null && $scope.pedido.produtos !== null) {
+        if ($scope.pedido.cliente != null && $scope.pedido.produtos != null) {
             if ($scope.pedido.produtos.length > 0) {
                 return true;
             }
@@ -146,7 +227,7 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
     }
 
 
-    this.getFretes = function () {
+    $scope.getFretes = function () {
 
         var pesoTotal = 0;
         var valorTotal = 0;
@@ -165,28 +246,132 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
 
     }
 
-    this.atualizaCustos = function () {
+    $scope.atualizaCustos = function () {
 
         pedidoService.atualizarCustos($scope.pedido, function (np) {
 
-            $scope.pedido = np;
+            $scope.pedido = np.o;
+
+            equalize($scope.pedido, "status", $scope.status_pedido);
+            equalize($scope.pedido, "forma_pagamento", $scope.formas_pagamento);
 
         })
 
     }
 
-    this.setPedido = function (pedido) {
+    pedidoService.getPedido(function (ped) {
 
-        this.pedido = pedido;
+        ped.pedido.produtos = [];
+        $scope.pedido_novo = ped.pedido;
+
+    })
+
+    $scope.novoPedido = function () {
+
+        $scope.setPedido(angular.copy($scope.pedido_novo));
+
+    }
+
+    $scope.setPedido = function (pedido) {
+
+        $scope.pedido = pedido;
 
         pedidoService.getProdutos(pedido, function (p) {
 
             pedido.produtos = p.produtos;
             equalize(pedido, "status", $scope.status_pedido);
 
+            formaPagamentoService.getFormasPagamento($scope.pedido, function (f) {
+                $scope.formas_pagamento = f.formas;
+                equalize(pedido, "forma_pagamento", $scope.formas_pagamento);
+            })
+
+            var ic = $("#myIframe").contents();
+
+            ic.find("#logoEmpresa img").remove();
+            ic.find("#logoEmpresa").append($("#logo").clone().addClass("product-image"));
+            ic.find("#infoEmpresa").html(pedido.empresa.nome + ", " + pedido.empresa.endereco.cidade.nome + "-" + pedido.empresa.endereco.cidade.estado.sigla);
+            ic.find("#infoEmpresa2").html(pedido.empresa.endereco.bairro + ", " + pedido.empresa.endereco.cep.valor + " - " + pedido.empresa.telefone.numero);
+
+            ic.find("#idPedido").html($scope.pedido.id);
+            ic.find("#nomeUsuario").html($scope.pedido.usuario.nome);
+            ic.find("#nomeCliente").html($scope.pedido.cliente.nome);
+            ic.find("#cnpjCliente").html($scope.pedido.cliente.cnpj.valor);
+            ic.find("#ruaCliente").html($scope.pedido.cliente.endereco.rua);
+            ic.find("#cidadeCliente").html($scope.pedido.cliente.endereco.cidade.nome);
+
+
+            var p = ic.find("#produto").each(function () {
+                p = $(this);
+            });
+
+            p.hide();
+
+            ic.find("#produtos").find("tr").each(function () {
+                if (typeof $(this).data("gerado") !== 'undefined') {
+                    $(this).remove();
+                }
+            });
+
+            var p = p.clone();
+
+            var icms = 0;
+            var base = 0;
+            var total = 0;
+            for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+
+                p = p.clone();
+
+                var pro = $scope.pedido.produtos[i];
+                icms += pro.icms;
+                base += pro.base_calculo;
+                p.find("[data-tipo='nome']").html(pro.produto.nome);
+                p.find("[data-tipo='valor']").html((pro.valor_base + pro.frete + pro.juros + pro.icms).toFixed(2));
+                p.find("[data-tipo='quantidade']").html(pro.quantidade);
+                p.find("[data-tipo='validade']").html(toDate(pro.validade_minima));
+                p.find("[data-tipo='total']").html(((pro.valor_base + pro.frete + pro.juros + pro.icms) * pro.quantidade).toFixed(2));
+                p.data("gerado", true);
+
+                ic.find("#produtos").append(p);
+                p.show();
+
+                total += (pro.valor_base + pro.frete + pro.juros + pro.icms) * pro.quantidade;
+
+            }
+            var alicota = (icms * 100 / base).toFixed(2);
+
+            ic.find("#prazo").html(pedido.prazo);
+            ic.find("#alicota").html(alicota);
+            ic.find("#icms").html(icms);
+
+            ic.find("#tipoFrete").html(pedido.frete_incluso ? 'CIF' : 'FOB');
+            ic.find("#nomeTransportadora").html(pedido.transportadora.nome);
+            ic.find("#contato").html(pedido.transportadora.email.endereco);
+            ic.find("#valorFrete").html(pedido.frete);
+
+            ic.find("#observacoes").html(pedido.observacoes);
+            ic.find("#nomeUsuario2").html(pedido.usuario.nome);
+
         })
 
+
     }
+
+    $scope.deletePedido = function () {
+
+        baseService.delete($scope.pedido, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.pedido = angular.copy($scope.novo_pedido);
+                $scope.pedidos.attList();
+            } else {
+                msg.erro("Problema ao efetuar operacao");
+            }
+        });
+
+    }
+
+
 
 })
 
@@ -950,6 +1135,13 @@ rtc.controller("crtLotes", function ($scope, loteService, baseService) {
             msg.erro("A quantidade de palet deve ser maior do que 0");
             return;
 
+        }
+        
+        if((palet%pendencia.grade.gr[pendencia.grade.gr.length-1]) != 0){
+            
+            msg.erro("A quantidade de palet deve ser multipla de "+pendencia.grade.gr[pendencia.grade.gr.length-1]);
+            return;
+            
         }
 
         var qtd = pendencia.quantidade;
@@ -1889,7 +2081,7 @@ rtc.controller("crtLogin", function ($scope, loginService) {
     $scope.email = "";
     $scope.logar = function () {
         loginService.login($scope.usuario, $scope.senha, function (r) {
-            if (r.usuario == null || !r.sucesso) {
+            if (r.usuario === null || !r.sucesso) {
                 msg.erro("Esse usuário não existe");
             } else {
                 window.location = "index_em_branco.php";

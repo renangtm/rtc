@@ -24,7 +24,7 @@ if(!isset($filtro)){
 
 <div class="dashboard-header">
     <nav class="navbar navbar-expand-lg bg-white fixed-top">
-        <a class="navbar-brand" href="index.html"><img style="" src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" title=""></a>
+        <a class="navbar-brand" href="index.html"><img id="logo" style="" src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" title=""></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>

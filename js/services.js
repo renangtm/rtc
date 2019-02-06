@@ -15,11 +15,17 @@ rtc.service('pedidoService', function ($http, $q) {
         });
     }
     this.getProdutos = function (pedido, fn) {
+        var f = function(p){
+            for(var i=0;i<p.produtos.length;i++){
+                p.produtos[i].pedido = pedido;
+            }
+            fn(p);    
+        }
         baseService($http, $q, {
             o: pedido,
-            query: "$r->produtos=$o->pedido->getProdutos($c)",
-            sucesso: fn,
-            falha: fn
+            query: "$r->produtos=$o->getProdutos($c)",
+            sucesso: f,
+            falha: f
         });
     }
     this.getCount = function (filtro, fn) {
@@ -42,7 +48,7 @@ rtc.service('pedidoService', function ($http, $q) {
 rtc.service('produtoPedidoService', function ($http, $q) {
     this.getProdutoPedido = function (fn) {
         baseService($http, $q, {
-            query: "$r->produto_pedido=new ProdutoPedido()",
+            query: "$r->produto_pedido=new ProdutoPedidoSaida()",
             sucesso: fn,
             falha: fn
         });
@@ -52,7 +58,7 @@ rtc.service('formaPagamentoService', function ($http, $q) {
     this.getFormasPagamento = function (pedido, fn) {
         baseService($http, $q, {
             o: pedido,
-            query: "$formas = Sistema::getFormasPagamento();$r->formas = array();foreach($formas as $key=>$value){if($value->habilitada($o)){$o->formas[]=$value;}}",
+            query: "$formas=Sistema::getFormasPagamento();$r->formas=array();foreach($formas as $key=>$value){if($value->habilitada($o)){$r->formas[]=$value;}}",
             sucesso: fn,
             falha: fn
         });
@@ -619,7 +625,7 @@ rtc.service('produtoService', function ($http, $q) {
             lbl:
             for(var i=0;i<validades.length;i++){
                 
-                for(var j=0;j<produto.ofertas;j++){
+                for(var j=0;j<produto.ofertas.length;j++){
                     
                     if(validades[i].validade === produto.ofertas[j].validade){
                     

@@ -20,7 +20,7 @@ class Permissao {
     public $alt;
     public $cons;
     
-    function __construct($id,$nome,$in=false,$del=false,$alt=false,$cons=false){
+    function __construct($id=0,$nome="",$in=false,$del=false,$alt=false,$cons=false){
         
         $this->id = $id;
         $this->nome = $nome;

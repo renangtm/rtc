@@ -48,6 +48,8 @@ class Pedido {
         $this->status = null;
         $this->produtos = null;
         $this->forma_pagamento = null;
+        $this->incluir_frete = true;
+        
     }
 
     public function getProdutos($con) {
@@ -479,8 +481,11 @@ class Pedido {
             try {
 
                 $value->merge($con);
+                
             } catch (Exception $ex) {
 
+                $value->delete($con);
+                
                 $erro = $ex->getMessage() . ", produto cod: " . $value->produto->id . ", estoque: " . $value->produto->estoque . ", disponivel: " . $value->produto->disponivel . ", quantidade: " . $value->quantidade;
             }
         }

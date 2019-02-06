@@ -38,6 +38,7 @@ class ProdutoPedidoSaida {
         $this->influencia_estoque = 0;
         $this->influencia_reserva = 0;
         $this->retiradas = array();
+        
     }
 
     public function merge($con) {
@@ -323,6 +324,7 @@ class ProdutoPedidoSaida {
             foreach ($this->pedido->produtos as $produto) {
 
                 $total += $produto->valor_base * $produto->quantidade;
+                
             }
 
             if ($total > 0) {
@@ -331,7 +333,13 @@ class ProdutoPedidoSaida {
                 
                 $this->frete = round((($this->pedido->frete * $perc) / $this->quantidade), 2);
             }
+            
+        }else{
+            
+            $this->frete = 0;
+            
         }
+        
     }
 
     public function delete($con) {
