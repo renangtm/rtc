@@ -42,7 +42,7 @@ class Empresa {
     public function merge($con) {
 
         if ($this->id == 0) {
-
+            
             $ps = $con->getConexao()->prepare("INSERT INTO empresa(nome,excluida,inscricao_estadual,consigna,aceitou_contrato,juros_mensal,cnpj) VALUES('" . addslashes($this->nome) . "',false,'" . $this->inscricao_estadual . "'," . ($this->consigna ? "true" : "false") . "," . ($this->aceitou_contrato ? "true" : "false") . ",$this->juros_mensal,'" . $this->cnpj->valor . "')");
             $ps->execute();
             $this->id = $ps->insert_id;
@@ -274,11 +274,11 @@ class Empresa {
         $sql = "SELECT "
                 . "produto.id,"
                 . "produto.nome,"
-                . "(produto.estoque-l.quantidade),"
+                . "(produto.estoque-IFNULL(l.quantidade,0)),"
                 . "produto.grade "
                 . "FROM produto "
-                . "INNER JOIN (SELECT lote.id_produto,SUM(lote.quantidade_real) as 'quantidade' FROM lote WHERE lote.excluido=false GROUP BY lote.id_produto) l ON l.id_produto=produto.id "
-                . "WHERE produto.id_empresa = $this->id AND produto.excluido = false AND (produto.estoque-l.quantidade)>0";
+                . "LEFT JOIN (SELECT lote.id_produto,SUM(lote.quantidade_real) as 'quantidade' FROM lote WHERE lote.excluido=false GROUP BY lote.id_produto) l ON l.id_produto=produto.id "
+                . "WHERE produto.id_empresa = $this->id AND produto.excluido = false AND (produto.estoque-IFNULL(l.quantidade,0))>0";
 
 
         $ps = $con->getConexao()->prepare($sql);
@@ -503,19 +503,20 @@ class Empresa {
 
             $sql .= "AND $filtro ";
         }
-        
+
         $sql .= "GROUP BY lote.id ";
 
         if ($ordem != "") {
 
             $sql .= "ORDER BY $ordem ";
         }
-        
+
         $sql .= "LIMIT $x1," . ($x2 - $x1);
+        
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id,$numero,$rua,$altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
+        $ps->bind_result($id, $numero, $rua, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
 
         $lotes = array();
 
@@ -866,7 +867,7 @@ class Empresa {
             }
 
             $pedido->frete = $frete;
-            $pedido->incluir_frete = $frete_incluso==1;
+            $pedido->incluir_frete = $frete_incluso == 1;
             $pedido->id = $id_pedido;
             $pedido->observacoes = $obs;
             $pedido->parcelas = $parcelas;
@@ -1110,6 +1111,11 @@ class Empresa {
             $sql .= "AND $filtro ";
         }
 
+        if ($ordem != "") {
+
+            $sql .= "ORDER BY $ordem ";
+        }
+
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
 
         $sql .= ") campanha "
@@ -1122,10 +1128,11 @@ class Empresa {
                 . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
                 . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
                 . "INNER JOIN estado ON cidade.id_estado = estado.id ";
-        
+
         if ($ordem != "") {
 
             $sql .= "ORDER BY $ordem ";
+            
         }
 
 
@@ -1133,19 +1140,19 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id,$camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
 
 
         $prods = array();
         $id_order = array();
-        
+
         while ($ps->fetch()) {
 
             if (!isset($campanhas[$id])) {
-                
+
                 $id_order[] = $id;
-                
+
                 $campanhas[$id] = new Campanha();
                 $campanhas[$id]->id = $id;
                 $campanhas[$id]->nome = $camp_nome;
@@ -3387,7 +3394,7 @@ class Empresa {
         $produtos = array();
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
-        
+
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
         $ps->bind_result($id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $rec_id, $rec_ins, $cul_id, $cul_nom, $prag_id, $prag_nom);

@@ -441,22 +441,25 @@ class Pedido {
             try {
 
                 $value->delete($con);
+                
             } catch (Exception $ex) {
 
                 $erro = $ex->getMessage();
+                
             }
         }
-
+        
+        $np = array();
         foreach ($this->produtos as $key2 => $value2) {
-
             try {
-
                 $value2->merge($con);
+                $np[] = $value2;
             } catch (Exception $ex) {
-
+                $value2->delete($con);
                 $erro = $ex->getMessage() . ", produto cod: " . $value2->produto->id . ", estoque: " . $value2->produto->estoque . ", disponivel: " . $value2->produto->disponivel . ", quantidade: " . $value2->quantidade;
             }
         }
+        $this->produtos = $np;
 
         if ($erro !== null) {
 

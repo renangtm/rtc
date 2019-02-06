@@ -1,6 +1,7 @@
 var projeto = "http://192.168.18.121:888/novo_rtc_web";
 
 
+
 function resolverRecursao(obj, pilha) {
 
     if (typeof obj == 'number' || typeof obj == 'string' || typeof obj == 'boolean' || obj == null) {
@@ -430,20 +431,20 @@ function toTime(lo) {
     var dia = d.getDate();
     var mes = (d.getMonth() + 1);
     var ano = (d.getYear() + 1900);
-    
+
     var hora = d.getHours();
     var minuto = d.getMinutes();
 
-    return  ((dia < 10) ? "0" : "") + dia + "/" + ((mes < 10) ? "0" : "") + mes + "/" + ano+" "+hora+":"+minuto;
+    return  ((dia < 10) ? "0" : "") + dia + "/" + ((mes < 10) ? "0" : "") + mes + "/" + ano + " " + hora + ":" + minuto;
 
 }
 
 function fromTime(str) {
 
     var l = str.split(" ");
-    
+
     var k = l[0].split("/");
-    
+
     var m = l[1].split(":");
 
     if (k.length != 3 || m.length != 2)
@@ -452,7 +453,7 @@ function fromTime(str) {
     var dia = parseInt(k[0]);
     var mes = parseInt(k[1]);
     var ano = parseInt(k[2]);
-    
+
     var hora = parseInt(m[0]);
     var minuto = parseInt(m[1]);
 
@@ -522,14 +523,14 @@ function baseService(http, q, obj, get, cancel) {
         data: "c=" + obj.query.split("&").join("<e>").split("+").join("<m>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("<e>").split("+").join("<m>")) : ""),
         timeout: p.promise,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (exx) {
-        
+
         loading.close();
-        
+
         if (typeof obj["sucesso"] !== 'undefined') {
             obj.sucesso(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&")));
         }
 
-        
+
 
     }, function (exx) {
 
@@ -653,6 +654,7 @@ function getRandom(v) {
 
 var rtc = angular.module("appRtc", []);
 
+
 rtc.service('uploadService', function ($http, $q) {
 
     var up = function (arquivo, obj, fn) {
@@ -667,7 +669,7 @@ rtc.service('uploadService', function ($http, $q) {
 
                 if (k == offset) {
 
-                    obj.arquivos[obj.arquivos.length] = projeto+"/php/uploads/" + nome;
+                    obj.arquivos[obj.arquivos.length] = projeto + "/php/uploads/" + nome;
 
                     if (obj.arquivos.length == (obj.qtdArquivos - obj.qtdFalhas)) {
                         if (obj.qtdFalhas == 0) {
@@ -753,5 +755,8 @@ rtc.service('uploadService', function ($http, $q) {
 
 })
 
-
-    
+//rtc.directive('ng-confirm',function(){
+//   return{ 
+//   
+//   }; 
+//});

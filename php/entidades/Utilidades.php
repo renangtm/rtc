@@ -740,9 +740,9 @@ class Utilidades {
         $produto->ncm = "12341234";
         $produto->peso_liquido = 12;
         $produto->peso_bruto = 23;
-        $produto->estoque = 12;
-        $produto->disponivel = 13;
-        $produto->transito = 14;
+        $produto->estoque = 4000;
+        $produto->disponivel = 4000;
+        $produto->transito = 0;
         $produto->grade = new Grade("15,2,1");
 
         $produto->merge(new ConnectionFactory());
@@ -1026,7 +1026,6 @@ class Utilidades {
         $produto->nome = "teste";
         $produto->id_universal = 12;
         $produto->categoria = $categoria;
-        $produto->categoria->id = 2;
         $produto->liquido = false;
         $produto->unidade = "Galao";
         $produto->quantidade_unidade = 0.25;
@@ -1073,17 +1072,6 @@ class Utilidades {
         $lote3->codigo_fabricante = "1234";
 
         $lote3->merge(new ConnectionFactory());
-
-        $lote4 = new Lote();
-
-        $lote4->quantidade_inicial = 100;
-        $lote4->quantidade_real = 100;
-        $lote4->validade = round(microtime(true) * 1000) + (60 * 24 * 60 * 60 * 1000);
-        $lote4->grade = $produto->grade;
-        $lote4->produto = $produto;
-        $lote4->codigo_fabricante = "1234";
-
-        $lote4->merge(new ConnectionFactory());
 
         $produto2 = new Produto();
 

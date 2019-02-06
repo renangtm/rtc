@@ -152,6 +152,10 @@ rtc.controller("crtPedidos", function ($scope, $window, pedidoService, tabelaSer
         }
 
         for (var i = 0; i < validades.length; i++) {
+            
+            if(quantidades[i]==0)
+                continue;
+            
             var pp = angular.copy($scope.produto_pedido_novo);
             pp.produto = produto;
             pp.pedido = $scope.pedido;
@@ -189,8 +193,13 @@ rtc.controller("crtPedidos", function ($scope, $window, pedidoService, tabelaSer
         baseService.merge(p, function (r) {
             if (r.sucesso) {
                 $scope.pedido = r.o;
+                equalize($scope.pedido, "status", $scope.status_pedido);
+                equalize($scope.pedido, "forma_pagamento", $scope.formas_pagamento);
                 msg.alerta("Operacao efetuada com sucesso");
             } else {
+                $scope.pedido = r.o;
+                equalize($scope.pedido, "status", $scope.status_pedido);
+                equalize($scope.pedido, "forma_pagamento", $scope.formas_pagamento);
                 msg.erro("Ocorreu o seguinte problema: " + r.mensagem);
             }
         });
@@ -890,6 +899,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
 })
 
 rtc.controller("crtLotes", function ($scope, loteService, baseService) {
+
 
     $scope.lotes = createAssinc(loteService, 1, 3, 10);
     $scope.lotes.attList();

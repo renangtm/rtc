@@ -24,16 +24,15 @@
         <!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">-->
         <title>RTC (Reltrab Cliente) - WEB</title>
         <style>
-
             .arvore ul{
-               background-color:#FAFAFA;
+                background-color:#FAFAFA;
                 border-radius:5px;
                 padding: 15px;
                 margin-bottom: 5px;
                 border:2px solid DarkGray;
                 border-left:10px solid DarkGray;
             }
-            
+
             .arvore ul:hover{
                 border-radius:5px;
                 padding: 15px;
@@ -42,21 +41,13 @@
                 border-left:10px solid Green;
                 cursor:pointer;
             }
-
-
             .arvore i{
-
                 cursor:pointer;
-
             }
-
             .arvore i:hover{
-
                 cursor:pointer;
                 color:Green;
-
             }
-
         </style>
     </head>
 
@@ -128,7 +119,7 @@
                                                         <th data-ordem="lote.numero">Numero</th>
                                                         <th data-ordem="lote.rua">Rua</th>
                                                         <th data-ordem="lote.altura">Altura</th>
-                                                        <th width="150px">AÃ§Ã£o</th>
+                                                        <th width="150px">Acao</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -186,18 +177,18 @@
                                                         <th>Numero</th>
                                                         <th>Rua</th>
                                                         <th>Altura</th>
-                                                        <th>AÃ§Ã£o</th>
+                                                        <th>Acao</th>
                                                     </tr>
                                                 </tfoot>
                                             </table>
 
-                                            <!-- paginaÃ§Ã£o  -->
+                                            <!-- paginação  -->
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
                                                         <li class="page-item" ng-click="lotes.prev()"><a class="page-link" href="">Anterior</a></li>
                                                         <li class="page-item" ng-repeat="pg in lotes.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="lotes.next()"><a class="page-link" href="">PrÃ³ximo</a></li>
+                                                        <li class="page-item" ng-click="lotes.next()"><a class="page-link" href="">Proximo</a></li>
                                                     </ul>
                                                 </nav>
                                             </div>
@@ -216,7 +207,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="copyright">
-                                    <p>Copyright Â© 2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
+                                    <p>Copyright © 2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
                                 </div>
                             </div>
                         </div>
@@ -246,7 +237,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Cadastros pendentes</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Ã—</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
 
@@ -294,7 +285,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Cadastros de lotes</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Ã—</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
 
@@ -332,7 +323,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Edite os dados de seu Lote</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Ã—</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
                                 <form ng-submit="mergeLote()">
@@ -372,7 +363,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
 
                                     <hr>
                                     <div class="modal-footer">
@@ -392,7 +383,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de seu Lote</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Ã—</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
                                 <p class="text-center"> Tem certeza de que deseja excluir este Lote?</p>
@@ -400,13 +391,11 @@
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-primary" ng-click="deletarLote(lote)">Sim</button>
-                                <button type="button" class="btn btn-light" data-dismiss="modal">NÃ£o</button>
+                                <button type="button" class="btn btn-light" data-dismiss="modal">Não</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- /.modal-content --> 
-                
                 <div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -414,9 +403,11 @@
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Ã—</span></button>
                             </div>
-                            <div class="modal-body">
+                            <div class="modal-body text-center">
                                 
-                                <span class="dashboard-spinner spinner-success spinner-xl "></span>
+                                <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
+                                <br>
+                                <h3 style="margin-top:20px;">Carregando as informaÃ§Ãµes...</h3>
 
                             </div>
                             <div class="modal-footer">
@@ -424,18 +415,16 @@
                         </div>
                     </div>
                 </div>
-                
-                 
+
 
                 <!-- jquery 3.3.1 -->
                 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
                 <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
                 <script src="assets/libs/js/form-mask.js"></script>
-
-                <!-- bootstap bundle js -->
                 <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-                <!-- datatables js -->
 
+                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+                <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
                 <!-- slimscroll js -->
                 <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
                 <!-- main js -->
@@ -458,15 +447,13 @@
                 <!-- Optional JavaScript -->
                 <script>
                     
-                    $("#loading").modal({
-                        backdrop: 'static',
-                        keyboard: false
-                    })
-                    
                     var sh = false;
+                    var it = null;
                     
                     loading.show = function(){
-                        
+                        if(it != null){
+                            clearInterval(it);
+                        }
                         if(!sh){
                             
                             sh = true;
@@ -478,29 +465,28 @@
                     
                     loading.close = function(){
                         
-                        setTimeout(function(){
+                        it = setTimeout(function(){
                                 if(sh){
                                     sh = false;
                                     $("#loading").modal("hide");
                                 }
-                        },500);
+                        },2000);
                         
                         
                     }
-                    
-                    
+
+
                                             $(document).ready(function () {
-                                                $('.btninfo').tooltip({title: "Mais informaÃ§Ã£o", placement: "top"});
+                                                $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
                                                 $('.btnedit').tooltip({title: "Editar", placement: "top"});
                                                 $('.btndel').tooltip({title: "Deletar", placement: "top"});
                                             });
                                             $(document).ready(function () {
                                                 $('#clientes').DataTable({
-                                                    "language": {//Altera o idioma do DataTable para o portuguÃªs do Brasil
+                                                    "language": {//Altera o idioma do DataTable para o português do Brasil
                                                         "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
                                                     },
                                                 });
-
                                                 $.getJSON('estados_cidades.json', function (data) {
                                                     var items = [];
                                                     var options = '<option value="">escolha um estado</option>';
@@ -508,16 +494,12 @@
                                                         options += '<option value="' + val.nome + '">' + val.nome + '</option>';
                                                     });
                                                     $("#estados").html(options);
-
                                                     $("#estados").change(function () {
-
                                                         var options_cidades = '';
                                                         var str = "";
-
                                                         $("#estados option:selected").each(function () {
                                                             str += $(this).text();
                                                         });
-
                                                         $.each(data, function (key, val) {
                                                             if (val.nome == str) {
                                                                 $.each(val.cidades, function (key_city, val_city) {
@@ -526,12 +508,9 @@
                                                             }
                                                         });
                                                         $("#cidades").html(options_cidades);
-
                                                     }).change();
-
                                                 });
                                             });
-
                 </script>
 
                 </body>

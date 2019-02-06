@@ -343,7 +343,8 @@ class ProdutoPedidoSaida {
     }
 
     public function delete($con) {
-
+        
+        $this->produto->atualizarEstoque($con);
         $this->produto->estoque -= $this->influencia_estoque;
         $this->produto->disponivel -= $this->influencia_reserva;
         $this->produto->merge($con);

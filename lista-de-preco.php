@@ -677,17 +677,36 @@
                     </div>
                 </div>
                 <!-- /.modal-content --> 
+<!-- /.modal-content LOADING --> 
+                <div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                
+                                <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
+                                <br>
+                                <h3 style="margin-top:20px;">Carregando as informações...</h3>
+
+                            </div>
+                            <div class="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
 
                 <!-- jquery 3.3.1 -->
                 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
                 <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
                 <script src="assets/libs/js/form-mask.js"></script>
-
-                <!-- bootstap bundle js -->
                 <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-                <!-- datatables js -->
 
+                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+                <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
                 <!-- slimscroll js -->
                 <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
                 <!-- main js -->
@@ -709,6 +728,35 @@
 
                 <!-- Optional JavaScript -->
                 <script>
+                    
+                    var sh = false;
+                    var it = null;
+                    
+                    loading.show = function(){
+                        if(it != null){
+                            clearInterval(it);
+                        }
+                        if(!sh){
+                            
+                            sh = true;
+                            $("#loading").modal("show");
+                        
+                        }
+                        
+                    }
+                    
+                    loading.close = function(){
+                        
+                        it = setTimeout(function(){
+                                if(sh){
+                                    sh = false;
+                                    $("#loading").modal("hide");
+                                }
+                        },2000);
+                        
+                        
+                    }
+                    
                                             $(document).ready(function () {
                                                 $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
                                                 $('.btnedit').tooltip({title: "Editar", placement: "top"});
