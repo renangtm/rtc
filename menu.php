@@ -1,6 +1,4 @@
 <?php
-
-
 include("includes.php");
 
 $ses = new SessionManager();
@@ -8,18 +6,16 @@ $empresa = $ses->get('empresa');
 $usuario = $ses->get('usuario');
 
 
-if($usuario == null || $empresa==null){
+if ($usuario == null || $empresa == null) {
 
     header('location:index.php');
-    
 }
 
 $logo = $empresa->getLogo(new ConnectionFactory());
 
-if(!isset($filtro)){
+if (!isset($filtro)) {
     $filtro = "";
 }
-
 ?>
 
 <div class="dashboard-header">
@@ -34,7 +30,7 @@ if(!isset($filtro)){
                     <div id="custom-search" class="top-search-bar">
                         <div class="form-group">
                             <div class="icon-addon addon-sm">
-                                <input class="form-control" type="search" id="filtro" placeholder="Digite o que procura" aria-label="Search" size="80%" <?php echo $filtro;?>>
+                                <input class="form-control" type="search" id="filtro" placeholder="Digite o que procura" aria-label="Search" size="80%" <?php echo $filtro; ?>>
                                 <label for="email" class="fa fa-search" rel="tooltip" title="email"></label>
                             </div>
                         </div>
@@ -269,44 +265,34 @@ if(!isset($filtro)){
                     <li class="nav-item">
                         <a class="nav-link" href="fornecedores.php" ><i class="fas fa-industry"></i>Fornecedores</a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link " href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fas fa-box-open"></i>Produtos</a>
-                        <div id="submenu-1" class="collapse submenu" style="">
-                            <ul class="nav flex-column">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="cadastro-de-produtos.php"><i class="fas fa-cube"></i>Cadastro de Produtos</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#"><i class="fas fa-exchange-alt"></i>Movimentação</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="lotes.php"><i class="fas fa-cubes"></i>Lotes</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#"><i class="fas fa-check-square"></i>Habilitação de Produtos</a>
-                                </li>
-                            </ul>
-                        </div>
+                        <a class="nav-link" href="cadastro-de-produtos.php"><i class="fas fa-cube"></i>Cadastro de Produtos</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-exchange-alt"></i>Movimentação</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="lotes.php"><i class="fas fa-cubes"></i>Lotes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-check-square"></i>Habilitação de Produtos</a>
+                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="clientes.php" ><i class="fas fa-users"></i>Clientes</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="transportadoras.php" ><i class="fas fa-truck"></i>Transportadoras</a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link " href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2"><i class="far fa-clipboard"></i>Pedidos</a>
-                        <div id="submenu-2" class="collapse submenu" style="">
-                            <ul class="nav flex-column">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="visualizar-pedidos-compra.php"><i class="fas fa-tasks"></i>Pedidos de Compra</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="visualizar-pedidos-venda.php"><i class="fas fa-tasks"></i>Pedidos de Venda</a>
-                                </li>
-                            </ul>
-                        </div>
+                        <a class="nav-link" href="visualizar-pedidos-compra.php"><i class="fas fa-tasks"></i>Pedidos de Compra</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="visualizar-pedidos-venda.php"><i class="fas fa-tasks"></i>Pedidos de Venda</a>
+                    </li>
+
                     <li class="nav-divider">
                         Administrativo
                     </li>
