@@ -11,29 +11,49 @@
  *
  * @author Renan
  */
-
 include('includes.php');
 
 class testeEmail extends PHPUnit_Framework_TestCase {
 
     public function testSimple() {
+
+
+        $mail = new PHPMailer\PHPMailer\PHPMailer(true);
         
-        $email = new Email("1234");
-        $email->senha = "teste";
-       
-        $this->assertEquals($email->endereco,"emailinvalido@invalido.com.br");
-        
-        $email = new Email("renan.miranda@agrofauna.com.br");
-        $email->senha = "teste";
-        
-        $this->assertEquals($email->endereco,"renan.miranda@agrofauna.com.br");
-        
-        $email->merge(new ConnectionFactory());
-        
-        $email->merge(new ConnectionFactory());
-        
-        $email->delete(new ConnectionFactory());
-        
+        $mail->IsSMTP();
+        $mail->SMTPAuth = true;
+        $mail->Host = "mail.agrofauna.com.br";
+        $mail->Port = 587;
+        $mail->SMTPSecure = "tls";
+        $mail->IsHTML(true);
+        $mail->Username = "renan.miranda@agrofauna.com.br"; // your gmail address
+        $mail->Password = "5hynespt"; // password
+        $mail->SetFrom("renan.miranda@agrofauna.com.br");
+        $mail->Subject = "Using PHPMailer without composer"; // Mail subject
+        $mail->Body = "teste";
+        $mail->AddAddress("renan_goncalves@outlook.com.br");
+        try{
+            $mail->Send();
+        }catch(Exception $ex){
+            echo $ex->getMessage();
+        }
+        /*
+          $email = new Email("1234");
+          $email->senha = "teste";
+
+          $this->assertEquals($email->endereco,"emailinvalido@invalido.com.br");
+
+          $email = new Email("renan.miranda@agrofauna.com.br");
+          $email->senha = "teste";
+
+          $this->assertEquals($email->endereco,"renan.miranda@agrofauna.com.br");
+
+          $email->merge(new ConnectionFactory());
+
+          $email->merge(new ConnectionFactory());
+
+          $email->delete(new ConnectionFactory());
+         */
     }
 
 }

@@ -49,7 +49,6 @@ class Pedido {
         $this->produtos = null;
         $this->forma_pagamento = null;
         $this->incluir_frete = true;
-        
     }
 
     public function getProdutos($con) {
@@ -102,7 +101,7 @@ class Pedido {
                 . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
 
         $ps->execute();
-        $ps->bind_result($id,$camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
@@ -159,7 +158,6 @@ class Pedido {
                 $empresa->telefone = $telefone;
 
                 $campanhas[$id]->empresa = $empresa;
-                
             }
 
             $campanha = $campanhas[$id];
@@ -177,9 +175,8 @@ class Pedido {
             }
 
             $ofertas[$id_produto][] = $p;
-            
+
             $campanhas[$id]->produtos[] = $p;
-            
         }
 
         $ps->close();
@@ -256,7 +253,7 @@ class Pedido {
                 . " WHERE produto_pedido_saida.id_pedido=$this->id");
 
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro,$classe_risco,$fabricante,$imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro,$ativo,$conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
@@ -412,11 +409,26 @@ class Pedido {
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
+            
         } else {
 
             $ps = $con->getConexao()->prepare("UPDATE pedido SET id_cliente=" . $this->cliente->id . ",id_transportadora=" . $this->transportadora->id . ",frete=$this->frete,observacoes='$this->observacoes',frete_inclusao=" . ($this->frete_incluso ? "true" : "false") . ",id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data/1000),excluido=false,id_usuario=" . $this->usuario->id . ",id_nota=$this->ficha,prazo=$this->prazo,parcelas=$this->parcelas,id_status=" . $this->status->id . ",id_forma_pagamento=" . $this->forma_pagamento->id . " WHERE id=$this->id");
             $ps->execute();
             $ps->close();
+        }
+
+        if ($this->status->emailCliente) {
+
+            try {
+
+                $html = Sistema::getHtml('pedido_cliente', $this);
+
+                $this->usuario->email->enviarEmail($this->cliente->email, "Pedido", $html);
+                
+            } catch (Exception $ex) {
+                
+            }
+            
         }
 
         $prods = $this->getProdutos($con);
@@ -441,14 +453,12 @@ class Pedido {
             try {
 
                 $value->delete($con);
-                
             } catch (Exception $ex) {
 
                 $erro = $ex->getMessage();
-                
             }
         }
-        
+
         $np = array();
         foreach ($this->produtos as $key2 => $value2) {
             try {
@@ -484,11 +494,10 @@ class Pedido {
             try {
 
                 $value->merge($con);
-                
             } catch (Exception $ex) {
 
                 $value->delete($con);
-                
+
                 $erro = $ex->getMessage() . ", produto cod: " . $value->produto->id . ", estoque: " . $value->produto->estoque . ", disponivel: " . $value->produto->disponivel . ", quantidade: " . $value->quantidade;
             }
         }

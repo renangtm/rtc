@@ -22,4 +22,16 @@ foreach($it as $file){
     }
 }
 
+
+                                    
+$it = new RecursiveDirectoryIterator("/Program Files (x86)/EasyPHP-Webserver-14.1b2/www/novo_rtc_web/PHPMailer/src/");
+$it = new RecursiveIteratorIterator($it,RecursiveIteratorIterator::SELF_FIRST);
+
+foreach($it as $file){
+    if($file->isFile()){
+        require $file;
+    }
+}
+
+
 ?>

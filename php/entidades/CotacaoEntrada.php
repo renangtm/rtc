@@ -38,7 +38,7 @@ class CotacaoEntrada {
     }
 
     public function getProdutos($con) {
-        
+
         $campanhas = array();
         $ofertas = array();
 
@@ -87,7 +87,7 @@ class CotacaoEntrada {
                 . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
 
         $ps->execute();
-        $ps->bind_result($id,$camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
@@ -144,7 +144,6 @@ class CotacaoEntrada {
                 $empresa->telefone = $telefone;
 
                 $campanhas[$id]->empresa = $empresa;
-                
             }
 
             $campanha = $campanhas[$id];
@@ -160,7 +159,7 @@ class CotacaoEntrada {
 
                 $ofertas[$id_produto] = array();
             }
-            
+
             $campanhas[$id]->produtos[] = $p;
 
             $ofertas[$id_produto][] = $p;
@@ -230,13 +229,13 @@ class CotacaoEntrada {
                 . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
                 . "INNER JOIN estado ON cidade.id_estado = estado.id "
                 . " WHERE produto_cotacao_entrada.id_cotacao=$this->id");
-        
+
         $ps->execute();
-        $ps->bind_result($id,$classe_risco,$fabricante,$imagem, $quantidade, $valor, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro,$ativo,$conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms,$id_empresa,$nome_empresa,$inscricao_empresa,$consigna,$aceitou_contrato,$juros_mensal,$cnpj,$numero_endereco,$id_endereco,$rua,$bairro,$cep,$id_cidade,$nome_cidade,$id_estado,$nome_estado,$id_email,$endereco_email,$senha_email,$id_telefone,$numero_telefone);
+        $ps->bind_result($id, $classe_risco, $fabricante, $imagem, $quantidade, $valor, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
-      
+
         while ($ps->fetch()) {
 
             $p = new Produto();
@@ -263,11 +262,10 @@ class CotacaoEntrada {
             $p->ncm = $ncm;
             $p->lucro_consignado = $lucro;
             $p->ofertas = (!isset($ofertas[$p->id]) ? array() : $ofertas[$p->id]);
-            
-            foreach($p->ofertas as $key=>$oferta){
-                
+
+            foreach ($p->ofertas as $key => $oferta) {
+
                 $oferta->produto = $p;
-                
             }
 
             $p->categoria = new CategoriaProduto();
@@ -278,7 +276,7 @@ class CotacaoEntrada {
             $p->categoria->icms = $cat_icms;
             $p->categoria->icms_normal = $cat_icms_normal;
             $p->categoria->ipi = $cat_ipi;
-            
+
             $empresa = new Empresa();
             $empresa->id = $id_empresa;
             $empresa->cnpj = new CNPJ($cnpj);
@@ -287,89 +285,88 @@ class CotacaoEntrada {
             $empresa->aceitou_contrato = $aceitou_contrato;
             $empresa->juros_mensal = $juros_mensal;
             $empresa->consigna = $consigna;
-            
+
             $endereco = new Endereco();
             $endereco->id = $id_endereco;
             $endereco->rua = $rua;
             $endereco->bairro = $bairro;
             $endereco->cep = new CEP($cep);
             $endereco->numero = $numero_endereco;
-            
+
             $cidade = new Cidade();
             $cidade->id = $id_cidade;
             $cidade->nome = $nome_cidade;
-            
+
             $estado = new Estado();
             $estado->id = $id_estado;
             $estado->sigla = $nome_estado;
-            
+
             $cidade->estado = $estado;
-            
+
             $endereco->cidade = $cidade;
-            
+
             $empresa->endereco = $endereco;
-            
+
             $email = new Email($endereco_email);
             $email->id = $id_email;
             $email->senha = $senha_email;
-            
+
             $empresa->email = $email;
-            
+
             $telefone = new Telefone($numero_telefone);
             $telefone->id = $id_telefone;
 
             $empresa->telefone = $telefone;
-            
-            
+
+
             $p->empresa = $empresa;
-            
+
             $pp = new ProdutoCotacaoEntrada();
             $pp->id = $id;
             $pp->quantidade = $quantidade;
             $pp->valor = $valor;
             $pp->cotacao = $this;
             $pp->produto = $p;
-            
-            
-            $retorno[$pp->id] = $pp;
 
-            
+
+            $retorno[$pp->id] = $pp;
         }
 
         $ps->close();
-        
+
         $real_ret = array();
-        
-        foreach($retorno as $key=>$value){
-            
+
+        foreach ($retorno as $key => $value) {
+
             $real_ret[] = $value;
-            
         }
-        
+
         return $real_ret;
-        
     }
 
     public function merge($con) {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO cotacao_entrada(id_fornecedor,frete,id_status,excluida,id_usuario,id_empresa,data,tratar_em_litros) VALUES(" . $this->fornecedor->id . ",$this->frete," . $this->status->id . ",false," . $this->usuario->id . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data),".($this->tratar_em_litros?"true":"false").")");
+            $ps = $con->getConexao()->prepare("INSERT INTO cotacao_entrada(id_fornecedor,frete,id_status,excluida,id_usuario,id_empresa,data,tratar_em_litros) VALUES(" . $this->fornecedor->id . ",$this->frete," . $this->status->id . ",false," . $this->usuario->id . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data)," . ($this->tratar_em_litros ? "true" : "false") . ")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
-            
-            if($this->status->envia_email){
-                
-                $html = Sistema::getHtml('cotacao_fornecedor',$this);
-                
-                $this->usuario->email->enviarEmail($this->fornecedor->email,"Cotacao de produtos",$html);
-                
+
+            if ($this->status->envia_email) {
+
+                try {
+
+                    $html = Sistema::getHtml('cotacao_fornecedor', $this);
+
+                    $this->usuario->email->enviarEmail($this->fornecedor->email, "Cotacao de produtos", $html);
+                } catch (Exception $ex) {
+                    
+                }
             }
-            
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE cotacao_entrada SET id_fornecedor=" . $this->fornecedor->id . ",frete=$this->frete,id_status=" . $this->status->id . ",excluida=false,id_usuario=" . $this->usuario->id . ",id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data), tratar_em_litros=".($this->tratar_em_litros?"true":"false")." WHERE id = $this->id");
+            $ps = $con->getConexao()->prepare("UPDATE cotacao_entrada SET id_fornecedor=" . $this->fornecedor->id . ",frete=$this->frete,id_status=" . $this->status->id . ",excluida=false,id_usuario=" . $this->usuario->id . ",id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data), tratar_em_litros=" . ($this->tratar_em_litros ? "true" : "false") . " WHERE id = $this->id");
             $ps->execute();
             $ps->close();
         }
@@ -400,7 +397,6 @@ class CotacaoEntrada {
         $ps = $con->getConexao()->prepare("UPDATE cotacao_entrada SET excluida=true WHERE id = " . $this->id);
         $ps->execute();
         $ps->close();
-        
     }
 
 }

@@ -377,6 +377,20 @@ class PedidoEntrada {
         }
 
         $prods = $this->getProdutos($con);
+        
+        if ($this->status->envia_email) {
+
+            try {
+
+                $html = Sistema::getHtml('pedido_fornecedor', $this);
+
+                $this->usuario->email->enviarEmail($this->fornecedor->email, "Pedido de Compra", $html);
+                
+            } catch (Exception $ex) {
+                
+            }
+            
+        }
 
         foreach ($prods as $key => $value) {
 

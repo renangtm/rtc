@@ -18,6 +18,10 @@ class Email {
     public $excluido;
     public $senha;
     
+    private static $SERVIDORES = array(
+        "gmail.com" => array("smtp.gmail.com",587,true),
+    );
+    
     function __construct($str="") {
         
         $this->id = 0;
@@ -35,7 +39,37 @@ class Email {
     
     public function enviarEmail($destino, $titulo, $conteudo){
         
+        if($this->endereco == "emailinvalido@invalido.com.br")
+            return;
         
+        $servidor = explode('@', $this->endereco);
+        $servidor = $servidor[1];
+        
+        if(isset(self::$SERVIDORES[$servidor])){
+            $servidor = self::$SERVIDORES[$servidor];
+        }else{
+            $servidor = array("mail.".$servidor,587,true);
+        }
+        
+        $mail = new PHPMailer\PHPMailer\PHPMailer();
+        
+        $mail->IsSMTP();
+        $mail->SMTPAuth = true;
+        $mail->Host = $servidor[0];
+        $mail->Port = $servidor[2];
+        
+        if($servidor[3]){
+            $mail->SMTPSecure = "tls";
+        }
+        
+        $mail->IsHTML(true);
+        $mail->Username = $this->endereco; // your gmail address
+        $mail->Password = $this->senha; // password
+        $mail->SetFrom($this->endereco);
+        $mail->Subject = $titulo; // Mail subject
+        $mail->Body = $conteudo;
+        $mail->AddAddress($destino);
+        $mail->Send();
         
     }
     

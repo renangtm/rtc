@@ -242,7 +242,7 @@ if (!isset($filtro)) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav flex-column">
                     <li class="nav-divider">
-                        Loja
+                        Compras
                     </li>
                     <li class="nav-item ">
                         <a class="nav-link" href="comprar.php" ><i class="fa fa-fw fa-shopping-basket"></i>Comprar</a>
@@ -255,6 +255,9 @@ if (!isset($filtro)) {
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="carrinho-de-encomenda.php" ><i class="fa fa-fw fa-shopping-cart"></i>Carrinho Encomenda</a>
+                    </li>
+                    <li class="nav-divider">
+                        <?php echo $empresa->nome; ?>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="lista-de-preco.php" ><i class="fas fa-clipboard-list"></i>Lista de Preço</a>
@@ -276,16 +279,14 @@ if (!isset($filtro)) {
                         <a class="nav-link" href="lotes.php"><i class="fas fa-cubes"></i>Lotes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-check-square"></i>Habilitação de Produtos</a>
-                    </li>
-
-                    <li class="nav-item">
                         <a class="nav-link" href="clientes.php" ><i class="fas fa-users"></i>Clientes</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="transportadoras.php" ><i class="fas fa-truck"></i>Transportadoras</a>
                     </li>
-
+                    <li class="nav-item">
+                        <a class="nav-link" href="cotacao-compra.php"><i class="fas fa-check-square"></i>Cotacao</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="visualizar-pedidos-compra.php"><i class="fas fa-tasks"></i>Pedidos de Compra</a>
                     </li>
@@ -294,7 +295,7 @@ if (!isset($filtro)) {
                     </li>
 
                     <li class="nav-divider">
-                        Administrativo
+                        Administrativo RTC
                     </li>
                     <li class="nav-item ">
                         <a class="nav-link" href="http://www.tratordecompras.com.br/rtc_erp/downloads/apresentacao_rtc_v2.pdf" target="_blank"><i class="fa fa-fw fa-file-alt"></i>Projeto Novos Rumos</a>

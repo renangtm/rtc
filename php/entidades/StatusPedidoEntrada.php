@@ -17,13 +17,15 @@ class StatusPedidoEntrada {
     public $nome;
     public $estoque;
     public $transito;
-
-    function __construct($id,$nome,$estoque,$reserva) {
+    public $envia_email;
+    
+    function __construct($id,$nome,$estoque,$reserva,$envia_email) {
         
         $this->id = $id;
         $this->nome = $nome;
         $this->estoque = $estoque;
         $this->transito = $reserva;
+        $this->envia_email = $envia_email;
         
     }
   
