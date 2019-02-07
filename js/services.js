@@ -1,3 +1,70 @@
+var debuger = function (l) {
+    alert(paraJson(l));
+}
+rtc.service('pedidoEntradaService', function ($http, $q) {
+    this.getPedido = function (fn) {
+        baseService($http, $q, {
+            query: "$r->pedido=new PedidoEntrada();$r->pedido->usuario=$usuario;$r->pedido->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getProdutos = function (pedido, fn) {
+        var f = function (p) {
+            for (var i = 0; i < p.produtos.length; i++) {
+                p.produtos[i].pedido = pedido;
+            }
+            fn(p);
+        }
+        baseService($http, $q, {
+            o: pedido,
+            query: "$r->produtos=$o->getProdutos($c)",
+            sucesso: f,
+            falha: f
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountPedidosEntrada($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getPedidosEntrada($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('produtoPedidoEntradaService', function ($http, $q) {
+    this.getProdutoPedido = function (fn) {
+        baseService($http, $q, {
+            query: "$r->produto_pedido=new ProdutoPedidoEntrada()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('statusPedidoEntradaService', function ($http, $q) {
+    this.getStatus = function (fn) {
+        baseService($http, $q, {
+            query: "$r->status=Sistema::getStatusPedidoEntrada()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getStatusCancelado = function (fn) {
+        baseService($http, $q, {
+            query: "$r->status=Sistema::getStatusCanceladoPedidoEntrada()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('pedidoService', function ($http, $q) {
     this.getPedido = function (fn) {
         baseService($http, $q, {
@@ -15,11 +82,11 @@ rtc.service('pedidoService', function ($http, $q) {
         });
     }
     this.getProdutos = function (pedido, fn) {
-        var f = function(p){
-            for(var i=0;i<p.produtos.length;i++){
+        var f = function (p) {
+            for (var i = 0; i < p.produtos.length; i++) {
                 p.produtos[i].pedido = pedido;
             }
-            fn(p);    
+            fn(p);
         }
         baseService($http, $q, {
             o: pedido,
@@ -63,9 +130,9 @@ rtc.service('formaPagamentoService', function ($http, $q) {
             falha: fn
         });
     }
-    this.aoFinalizarPedido = function (forma,pedido, fn) {
+    this.aoFinalizarPedido = function (forma, pedido, fn) {
         baseService($http, $q, {
-            o: {forma:forma,pedido:pedido},
+            o: {forma: forma, pedido: pedido},
             query: "$r->retorno=$o->forma->aoFinalizarPedido($o->pedido)",
             sucesso: fn,
             falha: fn
@@ -621,25 +688,25 @@ rtc.service('produtoService', function ($http, $q) {
                 }
 
             }
-            
+
             lbl:
-            for(var i=0;i<validades.length;i++){
-                
-                for(var j=0;j<produto.ofertas.length;j++){
-                    
-                    if(validades[i].validade === produto.ofertas[j].validade){
-                    
+                    for (var i = 0; i < validades.length; i++) {
+
+                for (var j = 0; j < produto.ofertas.length; j++) {
+
+                    if (validades[i].validade === produto.ofertas[j].validade) {
+
                         validades[i].valor = produto.ofertas[j].valor;
                         validades[i].limite = produto.ofertas[j].limite;
                         continue lbl;
-                
+
                     }
-                    
+
                 }
-                
+
                 validades[i].valor = produto.valor_base;
                 validades[i].limite = -1;
-                
+
             }
 
             fn(validades);

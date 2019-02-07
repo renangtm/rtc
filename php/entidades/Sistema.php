@@ -121,7 +121,9 @@ class Sistema {
 
     public static function getStatusCanceladoPedidoEntrada() {
 
-        return Sistema::getStatusPedidoEntrada()[4];
+        $st = Sistema::getStatusPedidoEntrada();
+        return $st[3];
+        
     }
 
     public static function relacionarFilial($empresa1, $empresa2) {
@@ -304,7 +306,7 @@ class Sistema {
         $status[] = new StatusPedidoSaida(9, "Finalizado", true, true, true, false);
         $status[] = new StatusPedidoSaida(10, "Cancelado", false, false, true, true);
         $status[] = new StatusPedidoSaida(30, "Excluido", false, false, false, true);
-
+        
         return $status;
     }
 

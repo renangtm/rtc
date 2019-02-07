@@ -42,6 +42,8 @@ class PedidoEntrada {
         $this->produtos = null;
         $this->prazo = 0;
         $this->parcelas = 1;
+        $this->observacoes = "";
+        
     }
 
     public function getProdutos($con) {

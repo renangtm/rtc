@@ -1,4 +1,351 @@
-rtc.controller("crtPedidos", function ($scope, $window, pedidoService, tabelaService, baseService, produtoService, sistemaService, statusPedidoSaidaService, formaPagamentoService, transportadoraService, clienteService, produtoPedidoService) {
+rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabelaService, baseService, produtoService, sistemaService, statusPedidoEntradaService, transportadoraService, fornecedorService, produtoPedidoEntradaService) {
+
+    $scope.pedidos = createAssinc(pedidoEntradaService, 1, 10, 10);
+    $scope.pedidos.attList();
+    assincFuncs(
+            $scope.pedidos,
+            "pedido_entrada",
+            ["id", "fornecedor.nome", "id_status", "frete", "prazo", "data"]);
+            
+    $scope.produtos = createAssinc(produtoService, 1, 3, 4);
+    $scope.produtos.attList();
+    assincFuncs(
+            $scope.produtos,
+            "produto",
+            ["id", "nome", "disponivel"], "filtroProdutos");
+
+    $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 4);
+    $scope.transportadoras.attList();
+    assincFuncs(
+            $scope.transportadoras,
+            "transportadora",
+            ["id", "razao_social"], "filtroTransportadoras");
+
+    $scope.fornecedores = createAssinc(fornecedorService, 1, 3, 4);
+    $scope.fornecedores.attList();
+    assincFuncs(
+            $scope.fornecedores,
+            "fornecedor",
+            ["id", "nome"], "filtroFornecedores");
+
+
+    $scope.meses_validade_curta = 3;
+
+    $scope.status_pedido = [];
+
+    $scope.pedido_novo = {};
+
+    $scope.produto_pedido_novo = {};
+
+    $scope.pedido = {};
+
+    $scope.fretes = [];
+
+    $scope.qtd = 0;
+
+    $scope.valor = 0;
+
+    $scope.produto = {};
+
+
+    $scope.getPesoBrutoPedido = function () {
+
+        var tot = 0;
+
+        for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+
+            var p = $scope.pedido.produtos[i];
+
+            tot += (p.produto.peso_bruto) * p.quantidade;
+
+        }
+
+        return tot;
+
+    }
+
+    $scope.getTotalPedido = function () {
+
+        var tot = 0;
+
+        for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+
+            var p = $scope.pedido.produtos[i];
+
+            tot += (p.valor) * p.quantidade;
+
+        }
+
+        return tot;
+
+    }
+
+    statusPedidoEntradaService.getStatus(function (st) {
+
+        $scope.status_pedido = st.status;
+
+    })
+
+    $scope.setTransportadora = function (trans) {
+
+        $scope.pedido.transportadora = trans;
+        $scope.atualizaCustos();
+
+    }
+
+    $scope.setFornecedor = function (forn) {
+
+        $scope.pedido.fornecedor = forn;
+
+    }
+
+    produtoPedidoEntradaService.getProdutoPedido(function (pp) {
+
+        $scope.produto_pedido_novo = pp.produto_pedido;
+
+    })
+
+    $scope.addProduto = function (produto) {
+
+        var pp = angular.copy($scope.produto_pedido_novo);
+        pp.produto = produto;
+        pp.pedido = $scope.pedido;
+        pp.valor = $scope.valor;
+        pp.quantidade = $scope.qtd;
+
+        for (var j = 0; j < $scope.pedido.produtos.length; j++) {
+
+            var pr = $scope.pedido.produtos[j];
+
+            if (pr.produto.id === pp.produto.id) {
+
+                pr.quantidade += pp.quantidade;
+                return;
+
+            }
+
+        }
+
+        pp.valor_unitario = pp.valor/pp.produto.quantidade_unidade;
+
+        $scope.pedido.produtos[$scope.pedido.produtos.length] = pp;
+
+    }
+
+    $scope.removerProduto = function (produto) {
+
+        remove($scope.pedido.produtos, produto);
+
+    }
+
+    $scope.mergePedido = function () {
+
+        var p = $scope.pedido;
+
+        if (p.fornecedor == null) {
+            msg.erro("Pedido sem fornecedor.");
+            return;
+        }
+
+        if (p.transportadora == null) {
+            msg.erro("Pedido sem transportadora.");
+            return;
+        }
+
+        if (p.status == null) {
+            msg.erro("Pedido sem status.");
+            return;
+        }
+        
+        baseService.merge(p, function (r) {
+            if (r.sucesso) {
+                $scope.pedido = r.o;
+                equalize($scope.pedido, "status", $scope.status_pedido);
+                msg.alerta("Operacao efetuada com sucesso");
+            } else {
+                $scope.pedido = r.o;
+                equalize($scope.pedido, "status", $scope.status_pedido);
+                msg.erro("Ocorreu o seguinte problema: " + r.mensagem);
+            }
+        });
+
+    }
+
+    $scope.setFrete = function (fr) {
+
+        $scope.pedido.frete = fr.valor+fr.transportadora.despacho;
+        $scope.pedido.transportadora = fr.transportadora;
+        $scope.atualizaCustos();
+
+    }
+
+    $scope.calculoPronto = function () {
+
+        if ($scope.pedido.fornecedor != null && $scope.pedido.produtos != null) {
+            if ($scope.pedido.produtos.length > 0) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+
+    $scope.getFretes = function () {
+
+        var pesoTotal = 0;
+        var valorTotal = 0;
+
+        for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+            var p = $scope.pedido.produtos[i];
+            valorTotal += (p.valor_base) * p.quantidade;
+            pesoTotal += p.produto.peso_bruto * p.quantidade;
+        }
+
+        tabelaService.getFretes(null, {cidade: $scope.pedido.fornecedor.endereco.cidade, valor: valorTotal, peso: pesoTotal}, function (f) {
+
+            $scope.fretes = f.fretes;
+
+        })
+
+    }
+
+
+    pedidoEntradaService.getPedido(function (ped) {
+
+        ped.pedido.produtos = [];
+        $scope.pedido_novo = ped.pedido;
+
+    })
+
+    $scope.novoPedido = function () {
+
+        $scope.setPedido(angular.copy($scope.pedido_novo));
+
+    }
+    
+    $scope.attValorUnitario = function(produto){
+        
+        produto.valor = produto.valor_unitario*produto.produto.quantidade_unidade;
+        
+    }
+    
+    $scope.attValor = function(produto){
+        
+        produto.valor_unitario = produto.valor/produto.produto.quantidade_unidade;
+        
+    }
+
+    $scope.setPedido = function (pedido) {
+
+        $scope.pedido = pedido;
+
+        if ($scope.pedido.id === 0) {
+
+            $scope.pedido.status = $scope.status_pedido[0];
+
+            return;
+
+        }
+
+        pedidoEntradaService.getProdutos(pedido, function (p) {
+   
+            pedido.produtos = p.produtos;
+            equalize(pedido, "status", $scope.status_pedido);
+
+            var ic = $("#myIframe").contents();
+
+            ic.find("#logoEmpresa img").remove();
+            ic.find("#logoEmpresa").append($("#logo").clone().addClass("product-image"));
+            ic.find("#infoEmpresa").html(pedido.empresa.nome + ", " + pedido.empresa.endereco.cidade.nome + "-" + pedido.empresa.endereco.cidade.estado.sigla);
+            ic.find("#infoEmpresa2").html(pedido.empresa.endereco.bairro + ", " + pedido.empresa.endereco.cep.valor + " - " + pedido.empresa.telefone.numero);
+
+            ic.find("#idPedido").html($scope.pedido.id);
+            ic.find("#nomeUsuario").html($scope.pedido.usuario.nome);
+            ic.find("#nomeCliente").html($scope.pedido.fornecedor.nome);
+            ic.find("#cnpjCliente").html($scope.pedido.fornecedor.cnpj.valor);
+            ic.find("#ruaCliente").html($scope.pedido.fornecedor.endereco.rua);
+            ic.find("#cidadeCliente").html($scope.pedido.fornecedor.endereco.cidade.nome);
+
+
+            var p = ic.find("#produto").each(function () {
+                p = $(this);
+            });
+
+            p.hide();
+
+            ic.find("#produtos").find("tr").each(function () {
+                if (typeof $(this).data("gerado") !== 'undefined') {
+                    $(this).remove();
+                }
+            });
+
+            var p = p.clone();
+
+            var icms = 0;
+            var base = 0;
+            var total = 0;
+            for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+
+                p = p.clone();
+
+                var pro = $scope.pedido.produtos[i];
+                
+                pro.valor_unitario = pro.valor/pro.produto.quantidade_unidade;
+                
+                icms += pro.icms;
+                base += pro.base_calculo;
+                p.find("[data-tipo='nome']").html(pro.produto.nome);
+                p.find("[data-tipo='valor']").html((pro.valor/pro.produto.quantidade_unidade).toFixed(2));
+                p.find("[data-tipo='quantidade']").html((pro.quantidade*pro.produto.quantidade_unidade).toFixed(2));
+                p.find("[data-tipo='validade']").html('-----');
+                p.find("[data-tipo='total']").html(((pro.valor) * pro.quantidade).toFixed(2));
+                p.data("gerado", true);
+
+                ic.find("#produtos").append(p);
+                p.show();
+
+                total += (pro.valor) * pro.quantidade;
+
+            }
+            var alicota = (icms * 100 / base).toFixed(2);
+
+            ic.find("#prazo").html(pedido.prazo);
+            ic.find("#alicota").html('----');
+            ic.find("#icms").html('-----');
+
+            ic.find("#tipoFrete").html(pedido.frete_incluso ? 'CIF' : 'FOB');
+            ic.find("#nomeTransportadora").html(pedido.transportadora.nome);
+            ic.find("#contato").html(pedido.transportadora.email.endereco);
+            ic.find("#valorFrete").html(pedido.frete);
+
+            ic.find("#observacoes").html(pedido.observacoes);
+            ic.find("#nomeUsuario2").html(pedido.usuario.nome);
+
+        })
+
+
+    }
+
+    $scope.deletePedido = function () {
+
+        baseService.delete($scope.pedido, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.pedido = angular.copy($scope.novo_pedido);
+                $scope.pedidos.attList();
+            } else {
+                msg.erro("Problema ao efetuar operacao");
+            }
+        });
+
+    }
+
+
+
+})
+
+rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, baseService, produtoService, sistemaService, statusPedidoSaidaService, formaPagamentoService, transportadoraService, clienteService, produtoPedidoService) {
 
     $scope.pedidos = createAssinc(pedidoService, 1, 10, 10);
     $scope.pedidos.attList();
@@ -82,19 +429,9 @@ rtc.controller("crtPedidos", function ($scope, $window, pedidoService, tabelaSer
 
     $scope.formas_pagamento = {};
 
-
-
     statusPedidoSaidaService.getStatus(function (st) {
 
         $scope.status_pedido = st.status;
-
-        statusPedidoSaidaService.getStatusExcluido(function (st) {
-
-            $scope.status_excluido = st.status;
-
-            $scope.status_pedido[$scope.status_pedido.length] = $scope.status_excluido;
-
-        })
 
     })
 
@@ -151,18 +488,35 @@ rtc.controller("crtPedidos", function ($scope, $window, pedidoService, tabelaSer
 
         }
 
-        for (var i = 0; i < validades.length; i++) {
-            
-            if(quantidades[i]==0)
+        lbl:
+                for (var i = 0; i < validades.length; i++) {
+
+            if (quantidades[i] === 0)
                 continue;
-            
+
+
             var pp = angular.copy($scope.produto_pedido_novo);
             pp.produto = produto;
             pp.pedido = $scope.pedido;
             pp.validade_minima = validades[i].validade;
             pp.valor_base = validade.valor;
             pp.quantidade = quantidades[i];
+
+            for (var j = 0; j < $scope.pedido.produtos.length; j++) {
+
+                var pr = $scope.pedido.produtos[j];
+
+                if (pr.produto.id === pp.produto.id && pr.validade_minima === pp.validade_minima) {
+
+                    pr.quantidade += pp.quantidade;
+                    continue lbl;
+
+                }
+
+            }
+
             $scope.pedido.produtos[$scope.pedido.produtos.length] = pp;
+
         }
 
         $scope.atualizaCustos();
@@ -171,7 +525,25 @@ rtc.controller("crtPedidos", function ($scope, $window, pedidoService, tabelaSer
 
     $scope.removerProduto = function (produto) {
 
+        var dt = new Date().getTime();
+        dt += $scope.meses_validade_curta * 30 * 24 * 60 * 60 * 1000;
+
         remove($scope.pedido.produtos, produto);
+
+        if (produto.validade_minima > dt) {
+            for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+
+                var p = $scope.pedido.produtos[i];
+
+                if (p.validade_minima > produto.validade_minima) {
+
+                    remove($scope.pedido.produtos, p);
+                    i--;
+
+                }
+            }
+        }
+
         $scope.atualizaCustos();
 
     }
@@ -187,6 +559,16 @@ rtc.controller("crtPedidos", function ($scope, $window, pedidoService, tabelaSer
 
         if (p.transportadora == null) {
             msg.erro("Pedido sem transportadora.");
+            return;
+        }
+
+        if (p.status == null) {
+            msg.erro("Pedido sem status.");
+            return;
+        }
+
+        if (p.forma_pagamento == null) {
+            msg.erro("Pedido sem forma de pagamento.");
             return;
         }
 
@@ -208,7 +590,7 @@ rtc.controller("crtPedidos", function ($scope, $window, pedidoService, tabelaSer
 
     $scope.setFrete = function (fr) {
 
-        $scope.pedido.frete = fr.valor;
+        $scope.pedido.frete = fr.valor + fr.transportadora.despacho;
         $scope.pedido.transportadora = fr.transportadora;
         $scope.atualizaCustos();
 
@@ -284,6 +666,21 @@ rtc.controller("crtPedidos", function ($scope, $window, pedidoService, tabelaSer
     $scope.setPedido = function (pedido) {
 
         $scope.pedido = pedido;
+
+        if ($scope.pedido.id === 0) {
+
+            $scope.pedido.status = $scope.status_pedido[0];
+
+            formaPagamentoService.getFormasPagamento($scope.pedido, function (f) {
+
+                $scope.formas_pagamento = f.formas;
+                $scope.pedido.forma_pagamento = $scope.formas_pagamento[0];
+
+            });
+
+            return;
+
+        }
 
         pedidoService.getProdutos(pedido, function (p) {
 
@@ -1146,12 +1543,12 @@ rtc.controller("crtLotes", function ($scope, loteService, baseService) {
             return;
 
         }
-        
-        if((palet%pendencia.grade.gr[pendencia.grade.gr.length-1]) != 0){
-            
-            msg.erro("A quantidade de palet deve ser multipla de "+pendencia.grade.gr[pendencia.grade.gr.length-1]);
+
+        if ((palet % pendencia.grade.gr[pendencia.grade.gr.length - 1]) != 0) {
+
+            msg.erro("A quantidade de palet deve ser multipla de " + pendencia.grade.gr[pendencia.grade.gr.length - 1]);
             return;
-            
+
         }
 
         var qtd = pendencia.quantidade;

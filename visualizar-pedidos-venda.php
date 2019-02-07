@@ -185,7 +185,7 @@
                                             <div class="col-2">
                                                 <input type="text" ng-model="pedido.cliente.id" class="form-control" placeholder="Cod." value="9" disabled>
                                             </div>
-                                            <div class="col">
+                                            <div class="col-md-8">
                                                 <input type="text" ng-model="pedido.cliente.razao_social" class="form-control" placeholder="Nome do cliente" value="" disabled="">
                                             </div>
                                             <div class="col">
@@ -256,7 +256,7 @@
                                                 <td>{{prod.produto.nome}}</td>
                                                 <td class="text-center" width="100px">{{prod.quantidade}}</td>
                                                 <td class="text-center">{{prod.validade_minima | data}}</td>
-                                                <td class="text-center"><input type=text ng-blur="atualizaCustos()" class="form-control" ng-model="prod.valor_base"></td>
+                                                <td class="text-center"><input type=text ng-confirm="atualizaCustos()" class="form-control" ng-model="prod.valor_base"></td>
                                                 <td class="text-center">{{prod.juros}}</td>
                                                 <td class="text-center">{{prod.frete}}</td>
                                                 <td class="text-center">{{prod.icms}}</td>
@@ -280,7 +280,7 @@
                                                 <td></td>
                                                 <td>
                                                     <div class="product-btn">
-                                                        <a href="#" class="btn btn-outline-light btnaddprod" data-title="addproduto" data-toggle="modal" data-target="#produtos"><i class="fas fa-plus-circle"></i></a>
+                                                        <a href="#" class="btn btn-outline-light btnaddprod" ng-click="produtos.attList()" data-title="addproduto" data-toggle="modal" data-target="#produtos"><i class="fas fa-plus-circle"></i></a>
                                                     </div>
                                                 </td>
 
@@ -321,11 +321,11 @@
                                             </div>
                                             <div class="form-inline">
                                                 <label for="" style="margin-left: 25px;margin-right: 10px;">Prazo:</label>
-                                                <input type="number" class="form-control col-5" ng-model="pedido.prazo" ng-blur="atualizaCustos()" placeholder="5" min="0" max="90" value="0">
+                                                <input type="number" class="form-control col-5" ng-model="pedido.prazo" ng-confirm="atualizaCustos()" placeholder="5" min="0" max="90" value="0">
                                             </div>
                                             <div class="form-inline">
                                                 <label for="" style="margin-left: 25px;margin-right: 10px;">Parcelas:</label>
-                                                <input type="number" class="form-control col-5" ng-model="pedido.parcelas" ng-blur="atualizaCustos()" placeholder="1" min="0" max="90" value="1">
+                                                <input type="number" class="form-control col-5" ng-model="pedido.parcelas" ng-confirm="atualizaCustos()" placeholder="1" min="0" max="90" value="1">
                                             </div>
                                         </div>
                                     </div>
@@ -651,7 +651,7 @@
                                     <div class="form-row">
                                         <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;" ng-repeat="frete in fretes">
                                             <input type="radio" id="customRadioInline3" ng-click="setFrete(frete)" name="customRadioInline1" class="custom-control-input">
-                                            <label class="custom-control-label" for="customRadioInline3">R$ {{frete.valor.toFixed(2)}} - {{frete.transportadora.razao_social}}</label>
+                                            <label class="custom-control-label" for="customRadioInline3">R$ {{frete.valor.toFixed(2)}} + ({{frete.transportadora.despacho}}) - {{frete.transportadora.razao_social}}</label>
                                         </div>
                                     </div>
                                 </div>

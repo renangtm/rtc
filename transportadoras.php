@@ -716,7 +716,7 @@
                                 <div class="form-group row">
                                     <label  class="col-3 col-lg-2 col-form-label text-left">Cidade</label>
                                     <div class="col-9 col-lg-10">
-                                        <select ng-model="cidade_teste" ng-change="attResultado()" class="form-control">
+                                        <select ng-model="cidade_teste" ng-confirm="attResultado()" class="form-control">
                                             <option ng-repeat="cidade in estado_teste.cidades" ng-value="cidade">{{cidade.nome}}</option>
                                         </select>
                                         <div class="invalid-feedback">
@@ -727,7 +727,7 @@
                                 <div class="form-group row">
                                     <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Valor</label>
                                     <div class="col-9 col-lg-10">
-                                        <input id="txtendnum" type="text" placeholder="00" ng-change="attResultado()" ng-model="valor_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
+                                        <input id="txtendnum" type="text" placeholder="00" ng-confirm="attResultado()" ng-model="valor_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
                                         <div class="invalid-feedback">
                                             Please provide a valid text.
                                         </div>
@@ -736,7 +736,7 @@
                                 <div class="form-group row">
                                     <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Peso</label>
                                     <div class="col-9 col-lg-10">
-                                        <input id="txtendnum" type="text" placeholder="00" ng-change="attResultado()" ng-model="peso_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
+                                        <input id="txtendnum" type="text" placeholder="00" ng-confirm="attResultado()" ng-model="peso_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
                                         <div class="invalid-feedback">
                                             Please provide a valid text.
                                         </div>
@@ -795,7 +795,7 @@
                                 <div class="form-group row">
                                     <label  class="col-3 col-lg-2 col-form-label text-left">Cidade</label>
                                     <div class="col-9 col-lg-10">
-                                        <select ng-model="cidade_teste" ng-change="attResultadoIndividual()" class="form-control">
+                                        <select ng-model="cidade_teste" ng-confirm="attResultadoIndividual()" class="form-control">
                                             <option ng-repeat="cidade in estado_teste.cidades" ng-value="cidade">{{cidade.nome}}</option>
                                         </select>
                                         <div class="invalid-feedback">
@@ -806,7 +806,7 @@
                                 <div class="form-group row">
                                     <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Valor</label>
                                     <div class="col-9 col-lg-10">
-                                        <input id="txtendnum" type="text" step="0.01" placeholder="00" ng-change="attResultadoIndividual()" ng-model="valor_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
+                                        <input id="txtendnum" type="text" step="0.01" placeholder="00" ng-confirm="attResultadoIndividual()" ng-model="valor_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
                                         <div class="invalid-feedback">
                                             Please provide a valid text.
                                         </div>
@@ -815,7 +815,7 @@
                                 <div class="form-group row">
                                     <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Peso</label>
                                     <div class="col-9 col-lg-10">
-                                        <input id="txtendnum" type="text" step="0.01" placeholder="00" ng-change="attResultadoIndividual()" ng-model="peso_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
+                                        <input id="txtendnum" type="text" step="0.01" placeholder="00" ng-confirm="attResultadoIndividual()" ng-model="peso_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
                                         <div class="invalid-feedback">
                                             Please provide a valid text.
                                         </div>

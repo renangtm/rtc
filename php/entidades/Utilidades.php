@@ -1276,12 +1276,13 @@ class Utilidades {
         
         // criando categorias de produto
         
-        $categoria = new stdClass();
-        $categoria->id = 1;
+        $categoria = new CategoriaProduto();
+        $categoria->id = 0;
         $categoria->ipi = 0;
         $categoria->base_calculo = 40;
         $categoria->icms = 0;
         $categoria->icms_normal = true;
+        $categoria->merge(new ConnectionFactory());
         
         // criando produtos
         
@@ -1290,7 +1291,6 @@ class Utilidades {
         $produto->nome = "teste";
         $produto->id_universal = 12;
         $produto->categoria = $categoria;
-        $produto->categoria->id=2;
         $produto->liquido = false;
         $produto->unidade = "Galao";
         $produto->quantidade_unidade = 0.25;

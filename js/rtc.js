@@ -755,8 +755,14 @@ rtc.service('uploadService', function ($http, $q) {
 
 })
 
-//rtc.directive('ng-confirm',function(){
-//   return{ 
-//   
-//   }; 
-//});
+rtc.directive('ngConfirm',function($parse){
+   return{ 
+       restrict:'A',
+       link:function(scope,element,attrs){
+           var exp = $parse(attrs.ngConfirm);
+           $(element).change(function(){
+               exp(scope,{});
+           })
+       }
+   }; 
+});

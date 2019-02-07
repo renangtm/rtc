@@ -91,7 +91,8 @@ class ProdutoPedidoEntrada {
     }
 
     public function delete($con) {
-
+        
+        $this->produto->atualizarEstoque($con);
         $this->produto->estoque -= $this->influencia_estoque;
         $this->produto->disponivel -= $this->influencia_estoque;
         $this->produto->transito -= $this->influencia_transito;
