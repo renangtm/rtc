@@ -13,11 +13,11 @@
  */
 class Sistema {
 
-    public static function getHtml($nom, $p) {
+    public static function getHtml($nom, $p=null) {
 
         $servico = realpath('../html_email');
         $servico .= "/$nom.php";
-        $html = "'". addslashes(include($servico))."'";
+        $html = "'".addslashes(include($servico))."'";
         
         return $html;
         

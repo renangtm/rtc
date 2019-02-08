@@ -27,8 +27,8 @@ class testeEmail extends PHPUnit_Framework_TestCase {
         $mail->SMTPSecure = "tls";
         $mail->IsHTML(true);
         $mail->Username = "renan.miranda@agrofauna.com.br"; // your gmail address
-        $mail->Password = "5hynespt"; // password
-        $mail->SetFrom("renan.miranda@agrofauna.com.br");
+        $mail->Password = "a1g2r304"; // password
+        $mail->SetFrom("agro.49.comunicado@gmail.com");
         $mail->Subject = "Using PHPMailer without composer"; // Mail subject
         $mail->Body = "teste";
         $mail->AddAddress("renan_goncalves@outlook.com.br");
