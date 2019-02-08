@@ -1,3 +1,314 @@
+rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tabelaService, baseService, produtoService, sistemaService, statusCotacaoEntradaService, fornecedorService, produtoCotacaoEntradaService) {
+
+    $scope.cotacoes = createAssinc(cotacaoEntradaService, 1, 10, 10);
+    $scope.cotacoes.attList();
+    assincFuncs(
+            $scope.cotacoes,
+            "cotacao_entrada",
+            ["id", "fornecedor.nome", "id_status","data", "usuario.nome"]);
+            
+    $scope.produtos = createAssinc(produtoService, 1, 3, 4);
+    $scope.produtos.attList();
+    assincFuncs(
+            $scope.produtos,
+            "produto",
+            ["id", "nome", "disponivel"], "filtroProdutos");
+
+    $scope.fornecedores = createAssinc(fornecedorService, 1, 3, 4);
+    $scope.fornecedores.attList();
+    assincFuncs(
+            $scope.fornecedores,
+            "fornecedor",
+            ["id", "nome"], "filtroFornecedores");
+
+
+    $scope.status_cotacao = [];
+
+    $scope.cotacao_novo = {};
+
+    $scope.produto_cotacao_novo = {};
+
+    $scope.cotacao = {};
+
+    $scope.qtd = 0;
+
+    $scope.valor = 0;
+
+    $scope.produto = {};
+
+    $scope.fretes = [];
+
+    statusCotacaoEntradaService.getStatus(function (st) {
+
+        $scope.status_cotacao = st.status;
+
+    })
+
+
+    $scope.setFornecedor = function (forn) {
+
+        $scope.pedido.fornecedor = forn;
+
+    }
+
+    produtoCotacaoEntradaService.getProdutoCotacao(function (pp) {
+
+        $scope.produto_cotacao_novo = pp.produto_cotacao;
+
+    })
+    
+     $scope.getTotalCotacao = function () {
+
+        var tot = 0;
+
+        for (var i = 0; i < $scope.cotacao.produtos.length; i++) {
+
+            var p = $scope.cotacao.produtos[i];
+
+            tot += (p.valor) * p.quantidade;
+
+        }
+
+        return tot;
+
+    }
+
+    $scope.addProduto = function (produto) {
+
+        var pp = angular.copy($scope.produto_cotacao_novo);
+        pp.produto = produto;
+        pp.cotacao = $scope.cotacao;
+        pp.valor = $scope.valor;
+        pp.quantidade = $scope.qtd;
+
+        for (var j = 0; j < $scope.cotacao.produtos.length; j++) {
+
+            var pr = $scope.cotacao.produtos[j];
+
+            if (pr.produto.id === pp.produto.id) {
+
+                pr.quantidade += pp.quantidade;
+                return;
+
+            }
+
+        }
+
+        pp.valor_unitario = pp.valor/pp.produto.quantidade_unidade;
+
+        $scope.cotacao.produtos[$scope.cotacao.produtos.length] = pp;
+
+    }
+
+    $scope.removerProduto = function (produto) {
+
+        remove($scope.cotacao.produtos, produto);
+
+    }
+
+    $scope.mergeCotacao = function () {
+
+        var p = $scope.cotacao;
+
+        if (p.fornecedor == null) {
+            msg.erro("Cotacao sem fornecedor.");
+            return;
+        }
+
+        if (p.status == null) {
+            msg.erro("Cotacao sem status.");
+            return;
+        }
+        
+        baseService.merge(p, function (r) {
+            if (r.sucesso) {
+                $scope.cotacao = r.o;
+                equalize($scope.cotacao, "status", $scope.status_cotacao);
+                $scope.cotacoes.attList();
+                msg.alerta("Operacao efetuada com sucesso");
+            } else {
+                $scope.cotacao = r.o;
+                equalize($scope.cotacao, "status", $scope.status_cotacao);
+                msg.erro("Ocorreu o seguinte problema: " + r.mensagem);
+            }
+        });
+
+    }
+
+    $scope.calculoPronto = function () {
+
+        if ($scope.cotacao.fornecedor != null && $scope.cotacao.produtos != null) {
+            if ($scope.cotacao.produtos.length > 0) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+
+    $scope.getFretes = function () {
+
+        var pesoTotal = 0;
+        var valorTotal = 0;
+
+        for (var i = 0; i < $scope.cotacao.produtos.length; i++) {
+            var p = $scope.cotacao.produtos[i];
+            valorTotal += (p.valor_base) * p.quantidade;
+            pesoTotal += p.produto.peso_bruto * p.quantidade;
+        }
+
+        tabelaService.getFretes(null, {cidade: $scope.cotacao.fornecedor.endereco.cidade, valor: valorTotal, peso: pesoTotal}, function (f) {
+
+            $scope.fretes = f.fretes;
+
+        })
+
+    }
+
+
+    cotacaoEntradaService.getCotacao(function (ped) {
+
+        ped.cotacao.produtos = [];
+        $scope.cotacao_novo = ped.cotacao;
+
+    })
+
+    $scope.novoCotacao = function () {
+
+        $scope.setCotacao(angular.copy($scope.cotacao_novo));
+
+    }
+    
+    $scope.attValorUnitario = function(produto){
+        
+        produto.valor = produto.valor_unitario*produto.produto.quantidade_unidade;
+        
+    }
+    
+    $scope.attValor = function(produto){
+        
+        produto.valor_unitario = produto.valor/produto.produto.quantidade_unidade;
+        
+    }
+
+    $scope.setCotacao = function (cotacao) {
+
+        $scope.cotacao = cotacao;
+
+        if ($scope.cotacao.id === 0) {
+
+            $scope.cotacao.status = $scope.status_cotacao[0];
+
+            return;
+
+        }
+
+        cotacaoEntradaService.getProdutos(cotacao, function (p) {
+   
+            cotacao.produtos = p.produtos;
+            equalize(cotacao, "status", $scope.status_cotacao);
+
+            var ic = $("#myIframe").contents();
+
+            ic.find("#logoEmpresa img").remove();
+            ic.find("#logoEmpresa").append($("#logo").clone().addClass("product-image"));
+            ic.find("#infoEmpresa").html(cotacao.empresa.nome + ", " + cotacao.empresa.endereco.cidade.nome + "-" + cotacao.empresa.endereco.cidade.estado.sigla);
+            ic.find("#infoEmpresa2").html(cotacao.empresa.endereco.bairro + ", " + cotacao.empresa.endereco.cep.valor + " - " + cotacao.empresa.telefone.numero);
+
+            ic.find("#idPedido").html($scope.cotacao.id);
+            ic.find("#nomeUsuario").html($scope.cotacao.usuario.nome);
+            ic.find("#nomeCliente").html($scope.cotacao.fornecedor.nome);
+            ic.find("#cnpjCliente").html($scope.cotacao.fornecedor.cnpj.valor);
+            ic.find("#ruaCliente").html($scope.cotacao.fornecedor.endereco.rua);
+            ic.find("#cidadeCliente").html($scope.cotacao.fornecedor.endereco.cidade.nome);
+
+
+            var p = ic.find("#produto").each(function () {
+                p = $(this);
+            });
+
+            p.hide();
+
+            ic.find("#produtos").find("tr").each(function () {
+                if (typeof $(this).data("gerado") !== 'undefined') {
+                    $(this).remove();
+                }
+            });
+
+            var p = p.clone();
+
+            var icms = 0;
+            var base = 0;
+            var total = 0;
+            for (var i = 0; i < $scope.cotacao.produtos.length; i++) {
+
+                p = p.clone();
+
+                var pro = $scope.cotacao.produtos[i];
+                
+                pro.valor_unitario = pro.valor/pro.produto.quantidade_unidade;
+                
+                icms += pro.icms;
+                base += pro.base_calculo;
+                p.find("[data-tipo='nome']").html(pro.produto.nome);
+                p.find("[data-tipo='valor']").html((pro.valor/pro.produto.quantidade_unidade).toFixed(2));
+                p.find("[data-tipo='quantidade']").html((pro.quantidade*pro.produto.quantidade_unidade).toFixed(2));
+                p.find("[data-tipo='validade']").html('-----');
+                p.find("[data-tipo='total']").html(((pro.valor) * pro.quantidade).toFixed(2));
+                p.data("gerado", true);
+
+                ic.find("#produtos").append(p);
+                p.show();
+
+                total += (pro.valor) * pro.quantidade;
+
+            }
+            var alicota = (icms * 100 / base).toFixed(2);
+
+            ic.find("#prazo").html(cotacao.prazo);
+            ic.find("#alicota").html('----');
+            ic.find("#icms").html('-----');
+
+            ic.find("#tipoFrete").html(cotacao.frete_incluso ? 'CIF' : 'FOB');
+            ic.find("#nomeTransportadora").html(cotacao.transportadora.razao_social);
+            ic.find("#contato").html(cotacao.transportadora.email.endereco);
+            ic.find("#valorFrete").html(cotacao.frete);
+
+            ic.find("#observacoes").html(cotacao.observacoes);
+            ic.find("#nomeUsuario2").html(cotacao.usuario.nome);
+
+        })
+
+
+    }
+
+    
+    $scope.setFornecedor = function (forn) {
+
+        $scope.cotacao.fornecedor = forn;
+
+    }
+
+    $scope.deleteCotacao = function () {
+
+        baseService.delete($scope.cotacao, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.cotacao = angular.copy($scope.novo_cotacao);
+                $scope.cotacoes.attList();
+            } else {
+                msg.erro("Problema ao efetuar operacao");
+            }
+        });
+
+    }
+
+
+
+})
+
+
 rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabelaService, baseService, produtoService, sistemaService, statusPedidoEntradaService, transportadoraService, fornecedorService, produtoPedidoEntradaService) {
 
     $scope.pedidos = createAssinc(pedidoEntradaService, 1, 10, 10);
@@ -315,7 +626,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
             ic.find("#icms").html('-----');
 
             ic.find("#tipoFrete").html(pedido.frete_incluso ? 'CIF' : 'FOB');
-            ic.find("#nomeTransportadora").html(pedido.transportadora.nome);
+            ic.find("#nomeTransportadora").html(pedido.transportadora.razao_social);
             ic.find("#contato").html(pedido.transportadora.email.endereco);
             ic.find("#valorFrete").html(pedido.frete);
 
@@ -701,7 +1012,7 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
 
             ic.find("#idPedido").html($scope.pedido.id);
             ic.find("#nomeUsuario").html($scope.pedido.usuario.nome);
-            ic.find("#nomeCliente").html($scope.pedido.cliente.nome);
+            ic.find("#nomeCliente").html($scope.pedido.cliente.razao_social);
             ic.find("#cnpjCliente").html($scope.pedido.cliente.cnpj.valor);
             ic.find("#ruaCliente").html($scope.pedido.cliente.endereco.rua);
             ic.find("#cidadeCliente").html($scope.pedido.cliente.endereco.cidade.nome);
@@ -751,7 +1062,7 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
             ic.find("#icms").html(icms);
 
             ic.find("#tipoFrete").html(pedido.frete_incluso ? 'CIF' : 'FOB');
-            ic.find("#nomeTransportadora").html(pedido.transportadora.nome);
+            ic.find("#nomeTransportadora").html(pedido.transportadora.razao_social);
             ic.find("#contato").html(pedido.transportadora.email.endereco);
             ic.find("#valorFrete").html(pedido.frete);
 

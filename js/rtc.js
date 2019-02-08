@@ -179,7 +179,7 @@ function createAssinc(lista, cols, rows, maxPage) {
                 lista.getElementos(este.pagina * (este.por_pagina * este.por_coluna),
                         Math.min((este.pagina + 1) * (este.por_pagina * este.por_coluna), r.qtd),
                         este.filtro, este.ordem, function (e) {
-
+                
                             este.elementos = [];
 
                             var els = e.elementos;
@@ -203,6 +203,8 @@ function createAssinc(lista, cols, rows, maxPage) {
                             }
 
                         });
+                        
+                                   
                 //-----------------------------
 
             });

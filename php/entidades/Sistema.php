@@ -15,11 +15,18 @@ class Sistema {
 
     public static function getHtml($nom, $p=null) {
 
-        $servico = realpath('../html_email');
-        $servico .= "/$nom.php";
-        $html = "'".addslashes(include($servico))."'";
         
-        return $html;
+        global $obj;
+        $obj = $p;
+        
+        $servico = realpath('../../html_email');
+        $servico .= "/$nom.php";
+        
+        ob_start();
+        include($servico);
+        $html = ob_get_clean();
+        
+        return utf8_decode($html);
         
     }
     

@@ -409,28 +409,12 @@ class Pedido {
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
-            
         } else {
 
             $ps = $con->getConexao()->prepare("UPDATE pedido SET id_cliente=" . $this->cliente->id . ",id_transportadora=" . $this->transportadora->id . ",frete=$this->frete,observacoes='$this->observacoes',frete_inclusao=" . ($this->frete_incluso ? "true" : "false") . ",id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data/1000),excluido=false,id_usuario=" . $this->usuario->id . ",id_nota=$this->ficha,prazo=$this->prazo,parcelas=$this->parcelas,id_status=" . $this->status->id . ",id_forma_pagamento=" . $this->forma_pagamento->id . " WHERE id=$this->id");
             $ps->execute();
             $ps->close();
         }
-
-        if ($this->status->emailCliente) {
-
-            try {
-
-                $html = Sistema::getHtml('pedido_cliente', $this);
-
-                $this->usuario->email->enviarEmail($this->cliente->email, "Pedido", $html);
-                
-            } catch (Exception $ex) {
-                
-            }
-            
-        }
-
         $prods = $this->getProdutos($con);
 
         if ($this->produtos == null) {
@@ -470,6 +454,10 @@ class Pedido {
             }
         }
         $this->produtos = $np;
+        
+        $html = Sistema::getHtml('visualizar-pedido-print', $this);
+
+        $this->usuario->email->enviarEmail($this->cliente->email, "Pedido numero " . $this->id, $html);
 
         if ($erro !== null) {
 

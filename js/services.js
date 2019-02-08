@@ -1,6 +1,63 @@
 var debuger = function (l) {
     alert(paraJson(l));
 }
+rtc.service('cotacaoEntradaService', function ($http, $q) {
+    this.getCotacao = function (fn) {
+        baseService($http, $q, {
+            query: "$r->cotacao=new CotacaoEntrada();$r->cotacao->usuario=$usuario;$r->cotacao->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getProdutos = function (pedido, fn) {
+        var f = function (p) {
+            for (var i = 0; i < p.produtos.length; i++) {
+                p.produtos[i].cotacao = pedido;
+            }
+            fn(p);
+        }
+        baseService($http, $q, {
+            o: pedido,
+            query: "$r->produtos=$o->getProdutos($c)",
+            sucesso: f,
+            falha: f
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountCotacoesEntrada($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getCotacoesEntrada($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('produtoCotacaoEntradaService', function ($http, $q) {
+    this.getProdutoCotacao = function (fn) {
+        baseService($http, $q, {
+            query: "$r->produto_cotacao=new ProdutoCotacaoEntrada()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('statusCotacaoEntradaService', function ($http, $q) {
+    this.getStatus = function (fn) {
+        baseService($http, $q, {
+            query: "$r->status=Sistema::getStatusCotacaoEntrada()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('pedidoEntradaService', function ($http, $q) {
     this.getPedido = function (fn) {
         baseService($http, $q, {

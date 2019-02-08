@@ -231,7 +231,7 @@ class CotacaoEntrada {
                 . " WHERE produto_cotacao_entrada.id_cotacao=$this->id");
 
         $ps->execute();
-        $ps->bind_result($id, $classe_risco, $fabricante, $imagem, $quantidade, $valor, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $quantidade, $valor, $id_pro, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
@@ -357,7 +357,7 @@ class CotacaoEntrada {
 
                 try {
 
-                    $html = Sistema::getHtml('cotacao_fornecedor', $this);
+                    $html = Sistema::getHtml('visualizar-cotacao-entrada', $this);
 
                     $this->usuario->email->enviarEmail($this->fornecedor->email, "Cotacao de produtos", $html);
                 } catch (Exception $ex) {

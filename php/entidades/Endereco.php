@@ -23,7 +23,8 @@ class Endereco {
     function __construct() {
         
         $this->id = 0;
-        $this->cidade = null;
+        $this->cidade = new Cidade();
+       
         $this->cep = new CEP("");
         
     }
