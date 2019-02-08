@@ -17,7 +17,7 @@ class StatusCotacaoEntrada {
     public $nome;
     public $envia_email;
     
-    function __construct($id,$nome,$envia_email = false) {
+    function __construct($id,$nome,$envia_email = true) {
         
         $this->id = $id;
         $this->nome = $nome;

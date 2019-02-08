@@ -98,8 +98,8 @@
                                                     <tr ng-repeat="pedid in cotacoes.elementos">
                                                         <td>{{pedid[0].id}}</td>
                                                         <td>{{pedid[0].fornecedor.nome}}</td>
-                                                        <td style="{{pedid[0].status.id==2?'color:Green':''}}">{{pedid[0].status.nome}}</td>
-                                                        <td>{{pedid[0].data | data}}</td>
+                                                        <td style="{{pedid[0].status.id==2?'color:Green':''}}{{pedid[0].status.id==3?'color:Blue':''}}">{{pedid[0].status.nome}}</td>
+                                                        <td>{{pedid[0].data| data}}</td>
                                                         <td>{{pedid[0].usuario.nome}}</td>
                                                         <th>
                                                             <div class="product-btn">
@@ -195,9 +195,18 @@
                                     <div class="form-row">			
                                         <div class="col">
                                             <div class="form-group">
-
+                                                Observacoes:
+                                                <textarea class="form-control" ng-model="cotacao.observacao"></textarea>
                                             </div>
+                                            <br>
                                         </div>
+                                       
+                                    </div>
+                                    <div class="form-row" style="position:relative;height:30px">			
+                             
+                                        <input class="custom-control-input" id="chk1" style="display: inline-block;position:absolute;top:0px;left:5px" type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="cotacao.tratar_em_litros">
+                                        <label class="custom-control-label" style="cursor:pointer;" for="chk1"><strong style="position:absolute;top:0px;left:27px">Tratar em litros/kilos com o fornecedor ao inves de embalagem</strong></label>
+
                                     </div>
                                     <hr>
                                     <br>
@@ -258,8 +267,11 @@
                                     <hr>
                                     <div class="form-group">
                                         <div class="form-row">
-                                            <div class="form-inline col-3" style="margin-left: 40px;">
+                                            <div class="form-inline col-6" style="margin-left: 40px;">
                                                 <a href="#" class="btn btn-primary" data-title="calcFrete" data-toggle="modal" ng-click="getFretes()" data-target="#calcFrete" ng-if="calculoPronto()">Simular Frete</a>
+                                            </div>
+                                            <div class="form-inline col-3" style="margin-left: 40px;">
+                                                <a href="#" class="btn btn-primary" data-title="calcFrete" data-toggle="modal" data-target="#transportadoras" ng-if="podeFormarPedido()">Formar Pedido</a>
                                             </div>
                                         </div>
                                     </div>
@@ -274,9 +286,9 @@
                                             </div>
                                         </div>
                                     </div>	
-                                    
+
                                 </form>
-                            
+
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
@@ -289,7 +301,48 @@
                 </div>
                 <!-- /.modal-content --> 				
 
+                <!-- /.modal-content TRANSPORTADORAS --> 
+                <div class="modal fade" id="transportadoras" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Seleção de Transporte</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="text" class="form-control" id="filtroTransportadoras" placeholder="Filtro">
+                                <hr>
+                                Frete: <input type="text" class="form-control" ng-model="frete" placeholder="Filtro">
+                                <hr>
+                                <table class="table table-striped table-bordered first">
+                                    <thead>
+                                    <th data-ordem="transportadora.id">Cod.</th>
+                                    <th data-ordem="transportadora.razao_social">Nome</th>
+                                    <th>Selecionar</th>
+                                    </thead>
+                                    <tr ng-repeat="trans in transportadoras.elementos">
+                                        <th>{{trans[0].id}}</th>
+                                        <th>{{trans[0].razao_social}}</th>
+                                        <th><button class="btn btn-success" ng-click="formarPedido(trans[0])"><i class="fa fa-info"></i></button></th>
+                                    </tr> 
+                                </table>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-end">
+                                            <li class="page-item" ng-click="transportadoras.prev()"><a class="page-link" href="">Anterior</a></li>
+                                            <li class="page-item" ng-repeat="pg in transportadoras.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                            <li class="page-item" ng-click="transportadoras.next()"><a class="page-link" href="">Próximo</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
 
+                            </div>
+                            <div class="modal-footer">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- /.modal-content DELETE --> 
                 <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
@@ -577,40 +630,40 @@
             <!-- Optional JavaScript -->
             <script>
 
-                                                    var sh = false;
-                                                    var it = null;
+                                                        var sh = false;
+                                                        var it = null;
 
-                                                    loading.show = function () {
-                                                        if (it != null) {
-                                                            clearInterval(it);
-                                                        }
-                                                        if (!sh) {
-
-                                                            sh = true;
-                                                            $("#loading").modal("show");
-
-                                                        }
-
-                                                    }
-
-                                                    loading.close = function () {
-
-                                                        it = setTimeout(function () {
-                                                            if (sh) {
-                                                                sh = false;
-                                                                $("#loading").modal("hide");
+                                                        loading.show = function () {
+                                                            if (it != null) {
+                                                                clearInterval(it);
                                                             }
-                                                        }, 2000);
+                                                            if (!sh) {
+
+                                                                sh = true;
+                                                                $("#loading").modal("show");
+
+                                                            }
+
+                                                        }
+
+                                                        loading.close = function () {
+
+                                                            it = setTimeout(function () {
+                                                                if (sh) {
+                                                                    sh = false;
+                                                                    $("#loading").modal("hide");
+                                                                }
+                                                            }, 2000);
 
 
-                                                    }
+                                                        }
 
-                                                    $(document).ready(function () {
-                                                        $('.btnvis').tooltip({title: "Visualizar", placement: "top"});
-                                                        $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                                                        $('.btndel').tooltip({title: "Deletar", placement: "top"});
-                                                        $('.btnaddprod').tooltip({title: "Adicionar", placement: "top"});
-                                                    });
+                                                        $(document).ready(function () {
+                                                            $('.btnvis').tooltip({title: "Visualizar", placement: "top"});
+                                                            $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                                                            $('.btndel').tooltip({title: "Deletar", placement: "top"});
+                                                            $('.btnaddprod').tooltip({title: "Adicionar", placement: "top"});
+                                                        });
 
 
             </script>

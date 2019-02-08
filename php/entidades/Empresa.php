@@ -24,10 +24,11 @@ class Empresa {
     public $aceitou_contrato;
     public $juros_mensal;
     public $inscricao_estadual;
+    
 
-    function __construct() {
+    function __construct($id=0) {
 
-        $this->id = 0;
+        $this->id = $id;
         $this->email = null;
         $this->telefone = null;
         $this->endereco = null;
@@ -2686,7 +2687,8 @@ class Empresa {
     public function getCotacoesEntrada($con, $x1, $x2, $filtro = "", $ordem = "") {
 
         $sql = "SELECT "
-                . "cotacao_entrada.id, "
+                . "cotacao_entrada.id,"
+                . "cotacao_entrada.observacao,"
                 . "cotacao_entrada.frete, "
                 . "UNIX_TIMESTAMP(cotacao_entrada.data)*1000, "
                 . "cotacao_entrada.tratar_em_litros, "
@@ -2754,7 +2756,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_cotacao, $frete, $data, $em_litros, $id_status, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_for, $nom_for, $cnpj_for, $hab, $ie, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for);
+        $ps->bind_result($id_cotacao,$obs, $frete, $data, $em_litros, $id_status, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_for, $nom_for, $cnpj_for, $hab, $ie, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for);
 
         $cotacoes = array();
         $usuarios = array();
@@ -2838,6 +2840,7 @@ class Empresa {
             $cotacao = new CotacaoEntrada();
 
             $cotacao->id = $id_cotacao;
+            $cotacao->observacao = $obs;
             $cotacao->fornecedor = $fornecedor;
             $cotacao->data = $data;
             $cotacao->empresa = $this;

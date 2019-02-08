@@ -9,6 +9,22 @@ rtc.service('cotacaoEntradaService', function ($http, $q) {
             falha: fn
         });
     }
+    this.getCotacaoEspecifica = function (id_cotacao,id_empresa,fn) {
+        baseService($http, $q, {
+            o:{id_cotacao:id_cotacao,id_empresa:id_empresa},
+            query: "$e=new Empresa($o->id_empresa);$cots=$e->getCotacoesEntrada($c,0,1,'cotacao_entrada.id_status=1 AND cotacao_entrada.id='.$o->id_cotacao,'');$r->cotacoes=$cots;",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.formarPedido = function(cotacao,transportadora,frete,fn){
+        baseService($http, $q, {
+            o:{cotacao:cotacao,transportadora:transportadora,frete:frete},
+            query: "$o->cotacao->formarPedido($c,$o->transportadora,$o->frete)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getProdutos = function (pedido, fn) {
         var f = function (p) {
             for (var i = 0; i < p.produtos.length; i++) {

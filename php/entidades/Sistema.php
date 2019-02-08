@@ -15,7 +15,6 @@ class Sistema {
 
     public static function getHtml($nom, $p=null) {
 
-        
         global $obj;
         $obj = $p;
         
@@ -321,15 +320,15 @@ class Sistema {
         
         return $status;
     }
-
+    
     public static function getStatusCotacaoEntrada() {
 
         $sts = array();
 
-        $sts[] = new StatusCotacaoEntrada(1, "Aguardando resposta");
-        $sts[] = new StatusCotacaoEntrada(2, "Respondida");
-        $sts[] = new StatusCotacaoEntrada(3, "Pedido fechado");
-        $sts[] = new StatusCotacaoEntrada(4, "Cancelada");
+        $sts[] = new StatusCotacaoEntrada(1, "Aguardando resposta",true);
+        $sts[] = new StatusCotacaoEntrada(2, "Respondida",false);
+        $sts[] = new StatusCotacaoEntrada(3, "Pedido fechado",false);
+        $sts[] = new StatusCotacaoEntrada(4, "Cancelada",true);
 
         return $sts;
     }

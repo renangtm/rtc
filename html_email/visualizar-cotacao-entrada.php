@@ -53,7 +53,7 @@
             <br>
             <table style="width:100%; border: 1px solid black;">
                 <tr style="background-color:#ccc;">
-                    <th style="padding:10px; border: 1px solid black;">Dados do pedido de compra - nº <strong id="idPedido"><?php echo $p->id; ?></strong></th>
+                    <th style="padding:10px; border: 1px solid black;">Cotacao de compra - nº <strong id="idPedido"><?php echo $p->id; ?></strong>&nbsp&nbsp&nbsp&nbsp<a href="http://192.168.18.121:888/novo_rtc_web/resposta_cotacao.php?cotacao=<?php echo $p->id; ?>&empresa=<?php echo $p->empresa->id; ?>" style="font-weight:bold;font-size:20px;color:#ffc108;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black">CLIQUE AQUI PARA RESPONDER</a></th>
                 </tr>
                 <tr>
                     <td style="padding:10px;">
@@ -89,7 +89,7 @@
                 </tr>
                 <tr>
                     <td class="text-center" style="padding:10px; border: 1px solid black;">Produto</td>
-                    <td class="text-center" style="padding:10px; border: 1px solid black;">Quantidade</td>
+                    <td class="text-center" style="padding:10px; border: 1px solid black;">Quantidade <?php echo $p->tratar_em_litros?'Lt/Kg':'Emb' ?></td>
                     <td class="text-center" style="padding:10px; border: 1px solid black;">Valor</td>
                     <td class="text-center" style="padding:10px; border: 1px solid black;">Total</td>
                 </tr>
@@ -99,8 +99,8 @@
                     ?>
                     <tr id="produto">
                         <td data-tipo="nome" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $value->produto->nome; ?></td>
-                        <td data-tipo="quantidade" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $value->quantidade; ?></td>
-                        <td data-tipo="valor" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo ($value->valor); ?> R$</td>
+                        <td data-tipo="quantidade" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $p->tratar_em_litros?($value->quantidade*$value->produto->quantidade_unidade):$value->quantidade; ?></td>
+                        <td data-tipo="valor" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $p->tratar_em_litros?$value->valor:$value->valor/$value->produto->quantidade_unidade; ?> R$</td>
                         <td data-tipo="total" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $value->quantidade * ($value->valor); ?></td>
                     </tr>
 
@@ -125,7 +125,7 @@
                     <th colspan="6" class="text-center" style="padding:10px; border: 1px solid black;">Observações</th>
                 </tr>
                 <tr>
-                    <td class="text-center" style="padding:10px; border: 1px solid black;" id="observacoes"><?php echo $p->observacoes; ?></td>
+                    <td class="text-center" style="padding:10px; border: 1px solid black;" id="observacoes"><?php echo $p->observacao; ?></td>
                 </tr>  
             </table>
             <table style="width:100%;">

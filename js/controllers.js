@@ -1,18 +1,25 @@
-rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tabelaService, baseService, produtoService, sistemaService, statusCotacaoEntradaService, fornecedorService, produtoCotacaoEntradaService) {
+rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, transportadoraService, tabelaService, baseService, produtoService, sistemaService, statusCotacaoEntradaService, fornecedorService, produtoCotacaoEntradaService) {
 
     $scope.cotacoes = createAssinc(cotacaoEntradaService, 1, 10, 10);
     $scope.cotacoes.attList();
     assincFuncs(
             $scope.cotacoes,
             "cotacao_entrada",
-            ["id", "fornecedor.nome", "id_status","data", "usuario.nome"]);
-            
+            ["id", "fornecedor.nome", "id_status", "data", "usuario.nome"]);
+
     $scope.produtos = createAssinc(produtoService, 1, 3, 4);
     $scope.produtos.attList();
     assincFuncs(
             $scope.produtos,
             "produto",
             ["id", "nome", "disponivel"], "filtroProdutos");
+
+    $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 4);
+    $scope.transportadoras.attList();
+    assincFuncs(
+            $scope.transportadoras,
+            "transportadora",
+            ["id", "razao_social"], "filtroTransportadoras");
 
     $scope.fornecedores = createAssinc(fornecedorService, 1, 3, 4);
     $scope.fornecedores.attList();
@@ -32,11 +39,42 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, ta
 
     $scope.qtd = 0;
 
+    $scope.frete = 0;
+
     $scope.valor = 0;
 
     $scope.produto = {};
 
     $scope.fretes = [];
+
+    $scope.podeFormarPedido = function () {
+
+        return $scope.cotacao.status.id == 2;
+
+    }
+
+
+
+    $scope.formarPedido = function (transportadora) {
+
+        cotacaoEntradaService.formarPedido($scope.cotacao, transportadora, $scope.frete, function (f) {
+
+            if (f.sucesso) {
+
+                $scope.cotacao = f.o.cotacao;
+                equalize($scope.cotacao, "status", $scope.status_cotacao);
+                msg.alerta("Operacao efetuada com sucesso, altere os detahes do pedido gerado.");
+
+            } else {
+
+                msg.erro("Problema ao efetuar operacao");
+
+            }
+
+
+        })
+
+    }
 
     statusCotacaoEntradaService.getStatus(function (st) {
 
@@ -56,8 +94,8 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, ta
         $scope.produto_cotacao_novo = pp.produto_cotacao;
 
     })
-    
-     $scope.getTotalCotacao = function () {
+
+    $scope.getTotalCotacao = function () {
 
         var tot = 0;
 
@@ -94,7 +132,7 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, ta
 
         }
 
-        pp.valor_unitario = pp.valor/pp.produto.quantidade_unidade;
+        pp.valor_unitario = pp.valor / pp.produto.quantidade_unidade;
 
         $scope.cotacao.produtos[$scope.cotacao.produtos.length] = pp;
 
@@ -110,6 +148,12 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, ta
 
         var p = $scope.cotacao;
 
+        if (typeof rtc["id_cotacao"] !== 'undefined' && typeof rtc['id_empresa'] !== 'undefined') {
+
+            $scope.cotacao.status = $scope.status_cotacao[1];
+
+        }
+
         if (p.fornecedor == null) {
             msg.erro("Cotacao sem fornecedor.");
             return;
@@ -119,7 +163,7 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, ta
             msg.erro("Cotacao sem status.");
             return;
         }
-        
+
         baseService.merge(p, function (r) {
             if (r.sucesso) {
                 $scope.cotacao = r.o;
@@ -174,22 +218,39 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, ta
 
     })
 
+    $scope.temCotacao = function () {
+
+        return typeof $scope.cotacao["id"] !== 'undefined';
+
+    }
+
+    if (typeof rtc["id_cotacao"] !== 'undefined' && typeof rtc['id_empresa'] !== 'undefined') {
+
+        cotacaoEntradaService.getCotacaoEspecifica(rtc["id_cotacao"], rtc["id_empresa"], function (f) {
+            if (f.cotacoes.length > 0) {
+                $scope.cotacao = f.cotacoes[0];
+                $scope.setCotacao($scope.cotacao);
+            }
+        })
+
+    }
+
     $scope.novoCotacao = function () {
 
         $scope.setCotacao(angular.copy($scope.cotacao_novo));
 
     }
-    
-    $scope.attValorUnitario = function(produto){
-        
-        produto.valor = produto.valor_unitario*produto.produto.quantidade_unidade;
-        
+
+    $scope.attValorUnitario = function (produto) {
+
+        produto.valor = produto.valor_unitario * produto.produto.quantidade_unidade;
+
     }
-    
-    $scope.attValor = function(produto){
-        
-        produto.valor_unitario = produto.valor/produto.produto.quantidade_unidade;
-        
+
+    $scope.attValor = function (produto) {
+
+        produto.valor_unitario = produto.valor / produto.produto.quantidade_unidade;
+
     }
 
     $scope.setCotacao = function (cotacao) {
@@ -205,7 +266,7 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, ta
         }
 
         cotacaoEntradaService.getProdutos(cotacao, function (p) {
-   
+
             cotacao.produtos = p.produtos;
             equalize(cotacao, "status", $scope.status_cotacao);
 
@@ -246,14 +307,14 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, ta
                 p = p.clone();
 
                 var pro = $scope.cotacao.produtos[i];
-                
-                pro.valor_unitario = pro.valor/pro.produto.quantidade_unidade;
-                
+
+                pro.valor_unitario = pro.valor / pro.produto.quantidade_unidade;
+
                 icms += pro.icms;
                 base += pro.base_calculo;
                 p.find("[data-tipo='nome']").html(pro.produto.nome);
-                p.find("[data-tipo='valor']").html((pro.valor/pro.produto.quantidade_unidade).toFixed(2));
-                p.find("[data-tipo='quantidade']").html((pro.quantidade*pro.produto.quantidade_unidade).toFixed(2));
+                p.find("[data-tipo='valor']").html(($scope.cotacao.tratar_em_litros ? (pro.valor / pro.produto.quantidade_unidade) : pro.valor).toFixed(2));
+                p.find("[data-tipo='quantidade']").html(($scope.cotacao.tratar_em_litros ? (pro.quantidade * pro.produto.quantidade_unidade) : pro.quantidade).toFixed(2));
                 p.find("[data-tipo='validade']").html('-----');
                 p.find("[data-tipo='total']").html(((pro.valor) * pro.quantidade).toFixed(2));
                 p.data("gerado", true);
@@ -283,7 +344,7 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, ta
 
     }
 
-    
+
     $scope.setFornecedor = function (forn) {
 
         $scope.cotacao.fornecedor = forn;
@@ -317,7 +378,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
             $scope.pedidos,
             "pedido_entrada",
             ["id", "fornecedor.nome", "id_status", "frete", "prazo", "data"]);
-            
+
     $scope.produtos = createAssinc(produtoService, 1, 3, 4);
     $scope.produtos.attList();
     assincFuncs(
@@ -437,7 +498,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
 
         }
 
-        pp.valor_unitario = pp.valor/pp.produto.quantidade_unidade;
+        pp.valor_unitario = pp.valor / pp.produto.quantidade_unidade;
 
         $scope.pedido.produtos[$scope.pedido.produtos.length] = pp;
 
@@ -467,7 +528,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
             msg.erro("Pedido sem status.");
             return;
         }
-        
+
         baseService.merge(p, function (r) {
             if (r.sucesso) {
                 $scope.pedido = r.o;
@@ -484,7 +545,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
 
     $scope.setFrete = function (fr) {
 
-        $scope.pedido.frete = fr.valor+fr.transportadora.despacho;
+        $scope.pedido.frete = fr.valor + fr.transportadora.despacho;
         $scope.pedido.transportadora = fr.transportadora;
         $scope.atualizaCustos();
 
@@ -534,17 +595,17 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
         $scope.setPedido(angular.copy($scope.pedido_novo));
 
     }
-    
-    $scope.attValorUnitario = function(produto){
-        
-        produto.valor = produto.valor_unitario*produto.produto.quantidade_unidade;
-        
+
+    $scope.attValorUnitario = function (produto) {
+
+        produto.valor = produto.valor_unitario * produto.produto.quantidade_unidade;
+
     }
-    
-    $scope.attValor = function(produto){
-        
-        produto.valor_unitario = produto.valor/produto.produto.quantidade_unidade;
-        
+
+    $scope.attValor = function (produto) {
+
+        produto.valor_unitario = produto.valor / produto.produto.quantidade_unidade;
+
     }
 
     $scope.setPedido = function (pedido) {
@@ -560,7 +621,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
         }
 
         pedidoEntradaService.getProdutos(pedido, function (p) {
-   
+
             pedido.produtos = p.produtos;
             equalize(pedido, "status", $scope.status_pedido);
 
@@ -601,14 +662,14 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
                 p = p.clone();
 
                 var pro = $scope.pedido.produtos[i];
-                
-                pro.valor_unitario = pro.valor/pro.produto.quantidade_unidade;
-                
+
+                pro.valor_unitario = pro.valor / pro.produto.quantidade_unidade;
+
                 icms += pro.icms;
                 base += pro.base_calculo;
                 p.find("[data-tipo='nome']").html(pro.produto.nome);
-                p.find("[data-tipo='valor']").html((pro.valor/pro.produto.quantidade_unidade).toFixed(2));
-                p.find("[data-tipo='quantidade']").html((pro.quantidade*pro.produto.quantidade_unidade).toFixed(2));
+                p.find("[data-tipo='valor']").html((pro.valor / pro.produto.quantidade_unidade).toFixed(2));
+                p.find("[data-tipo='quantidade']").html((pro.quantidade * pro.produto.quantidade_unidade).toFixed(2));
                 p.find("[data-tipo='validade']").html('-----');
                 p.find("[data-tipo='total']").html(((pro.valor) * pro.quantidade).toFixed(2));
                 p.data("gerado", true);

@@ -28,7 +28,8 @@ class ProdutoPedidoEntrada {
         $this->quantidade = 0;
         $this->valor = 0;
         $this->pedido = null;
-        
+        $this->influencia_estoque = 0;
+        $this->influencia_transito = 0;
     }
 
     public function merge($con) {

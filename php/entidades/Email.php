@@ -52,7 +52,7 @@ class Email {
         }
         
         
-        $mail = new PHPMailer\PHPMailer\PHPMailer();
+        $mail = new PHPMailer\PHPMailer\PHPMailer(true);
         
         $mail->IsSMTP();
         $mail->SMTPAuth = true;

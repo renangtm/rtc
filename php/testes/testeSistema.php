@@ -77,7 +77,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
        */
         
         $empresa = new Empresa();
-        $empresa->id=34;
+        $empresa->id=35;
         
         $pedido = $empresa->getPedidos($con, 0, 1);
         $pedido = $pedido[0];
@@ -86,10 +86,8 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         $em = new Email("renan.miranda@agrofauna.com.br");
         $em->senha = "5hynespt";
         
-        
-        $html = Sistema::getHtml('visualizar-pedido-print', $pedido);
-        
-     
+   
+        $em->enviarEmail(new Email("renan_goncalves@outlook.com.br"), "teste", "testew");
         
         
         

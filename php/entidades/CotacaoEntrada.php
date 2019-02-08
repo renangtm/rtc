@@ -23,7 +23,8 @@ class CotacaoEntrada {
     public $data;
     public $produtos;
     public $tratar_em_litros;
-
+    public $observacao;
+    
     function __construct() {
 
         $this->id = 0;
@@ -31,6 +32,7 @@ class CotacaoEntrada {
         $this->frete = 0;
         $this->status = null;
         $this->excluida = false;
+        $this->tratar_em_litros = true;
         $this->usuario = null;
         $this->empresa = null;
         $this->data = round(microtime(true) * 1000);
@@ -343,30 +345,54 @@ class CotacaoEntrada {
 
         return $real_ret;
     }
+    
+    public function formarPedido($con,$transportadora,$frete){
+        
+        $this->status = Sistema::getStatusCotacaoEntrada();
+        $this->status = $this->status[2];
+        
+        $ped = new PedidoEntrada();
+        $ped->fornecedor = $this->fornecedor;
+        $ped->usuario = $this->usuario;
+        $ped->transportadora = $transportadora;
+        $ped->frete = $frete;
+        $ped->empresa = $this->empresa;
+        $ped->observacoes = $this->observacao;
+        $p = array();
+        
+        foreach($this->produtos as $key=>$value){
+            
+            $prod = new ProdutoPedidoEntrada();
+            $prod->quantidade = $value->quantidade;
+            $prod->valor = $value->valor;
+            $prod->produto = $value->produto;
+            $prod->pedido = $ped;
+            
+            $p[] = $prod;
+            
+        }
+        
+        $ped->produtos = $p;
+        
+        $ped->status = Sistema::getStatusPedidoEntrada();
+        $ped->status = $ped->status[0];
+        
+        $this->merge($con);
+        $ped->merge($con);
+        
+    }
 
     public function merge($con) {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO cotacao_entrada(id_fornecedor,frete,id_status,excluida,id_usuario,id_empresa,data,tratar_em_litros) VALUES(" . $this->fornecedor->id . ",$this->frete," . $this->status->id . ",false," . $this->usuario->id . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data)," . ($this->tratar_em_litros ? "true" : "false") . ")");
+            $ps = $con->getConexao()->prepare("INSERT INTO cotacao_entrada(id_fornecedor,frete,id_status,excluida,id_usuario,id_empresa,data,tratar_em_litros,observacao) VALUES(" . $this->fornecedor->id . ",$this->frete," . $this->status->id . ",false," . $this->usuario->id . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data)," . ($this->tratar_em_litros ? "true" : "false") . ",'".addslashes($this->observacao)."')");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
-
-            if ($this->status->envia_email) {
-
-                try {
-
-                    $html = Sistema::getHtml('visualizar-cotacao-entrada', $this);
-
-                    $this->usuario->email->enviarEmail($this->fornecedor->email, "Cotacao de produtos", $html);
-                } catch (Exception $ex) {
-                    
-                }
-            }
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE cotacao_entrada SET id_fornecedor=" . $this->fornecedor->id . ",frete=$this->frete,id_status=" . $this->status->id . ",excluida=false,id_usuario=" . $this->usuario->id . ",id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data), tratar_em_litros=" . ($this->tratar_em_litros ? "true" : "false") . " WHERE id = $this->id");
+            $ps = $con->getConexao()->prepare("UPDATE cotacao_entrada SET id_fornecedor=" . $this->fornecedor->id . ",frete=$this->frete,id_status=" . $this->status->id . ",excluida=false,id_usuario=" . $this->usuario->id . ",id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data), tratar_em_litros=" . ($this->tratar_em_litros ? "true" : "false") . ",observacao='".addslashes($this->observacao)."' WHERE id = $this->id");
             $ps->execute();
             $ps->close();
         }
@@ -389,6 +415,18 @@ class CotacaoEntrada {
         foreach ($this->produtos as $key2 => $value2) {
 
             $value2->merge($con);
+        }
+
+
+        if ($this->status->envia_email) {
+            try {
+                
+                $html = Sistema::getHtml("visualizar-cotacao-entrada", $this);
+
+                $this->usuario->email->enviarEmail($this->fornecedor->email, "Cotacao de produtos", $html);
+            } catch (Exception $ex) {
+                
+            }
         }
     }
 
