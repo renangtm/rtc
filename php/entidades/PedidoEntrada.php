@@ -382,7 +382,7 @@ class PedidoEntrada {
 
             try {
 
-                $html = Sistema::getHtml('pedido_fornecedor', $this);
+                $html = Sistema::getHtml('visualizar-pedidos-compra', $this);
 
                 $this->usuario->email->enviarEmail($this->fornecedor->email, "Pedido de Compra", $html);
                 

@@ -22,7 +22,8 @@ class Cidade {
         
         $this->id = 0;
         $this->excluida = false;
-        $this->estado = null;
+        $this->estado = new Estado();
+        
         
     }
     

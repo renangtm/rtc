@@ -927,8 +927,8 @@ class Utilidades {
 
         $usuario->endereco = $e;
 
-        $usuario->email = new Email("teserewfdwefd");
-
+        $usuario->email = new Email("renan.miranda@agrofauna.com.br");
+        $usuario->email->senha = "5hynespt";
         $usuario->permissoes = Sistema::getPermissoesIniciais();
 
         $usuario->merge(new ConnectionFactory());

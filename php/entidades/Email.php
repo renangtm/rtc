@@ -51,14 +51,15 @@ class Email {
             $servidor = array("mail.".$servidor,587,true);
         }
         
+        
         $mail = new PHPMailer\PHPMailer\PHPMailer();
         
         $mail->IsSMTP();
         $mail->SMTPAuth = true;
         $mail->Host = $servidor[0];
-        $mail->Port = $servidor[2];
+        $mail->Port = $servidor[1];
         
-        if($servidor[3]){
+        if($servidor[2]){
             $mail->SMTPSecure = "tls";
         }
         
@@ -68,7 +69,7 @@ class Email {
         $mail->SetFrom($this->endereco);
         $mail->Subject = $titulo; // Mail subject
         $mail->Body = $conteudo;
-        $mail->AddAddress($destino);
+        $mail->AddAddress($destino->endereco);
         $mail->Send();
         
     }

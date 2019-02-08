@@ -37,6 +37,10 @@ class Empresa {
         $this->aceitou_contrato = false;
         $this->consigna = false;
         $this->juros_mensal = 0;
+        $this->telefone = new Telefone();
+        $this->email = new Email();
+        $this->endereco = new Endereco();
+        
     }
 
     public function merge($con) {
@@ -244,6 +248,7 @@ class Empresa {
         if (($n = $ses->get("logo_$this->id")) != null) {
 
             return $n;
+            
         }
 
         $ps = $com->getConexao()->prepare("SELECT id,logo,cor_predominante FROM logo WHERE id_empresa=$this->id");

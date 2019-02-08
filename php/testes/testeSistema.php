@@ -18,6 +18,8 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
     public function testSimple() {
         
+        
+        
         $con = new ConnectionFactory();
         /*
         $estados = Sistema::getEstados($con);
@@ -73,6 +75,23 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         echo $obj->merge(new ConnectionFactory());
        */
+        
+        $empresa = new Empresa();
+        $empresa->id=34;
+        
+        $pedido = $empresa->getPedidos($con, 0, 1);
+        $pedido = $pedido[0];
+        $pedido->produtos = $pedido->getProdutos($con);
+        
+        $em = new Email("renan.miranda@agrofauna.com.br");
+        $em->senha = "5hynespt";
+        
+        
+        $html = Sistema::getHtml('visualizar-pedido-print', $pedido);
+        
+     
+        
+        
         
     }
 

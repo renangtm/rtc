@@ -13,4 +13,10 @@ foreach(glob("../entidades/*.php") as $filename){
     
 }
 
+foreach(glob("../../PHPMailer/src/*.php") as $filename){
+    
+    include $filename;
+    
+}
+
 ?>
