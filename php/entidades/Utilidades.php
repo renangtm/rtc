@@ -13,6 +13,15 @@
  */
 class Utilidades {
 
+    public static function copyId0($entidade){
+        
+        $ne = unserialize(serialize($entidade));
+        $ne->id = 0;
+        
+        return $ne;
+        
+    }
+    
     public static function toJson($object, $pilha = null) {
 
         if ($object === null) {

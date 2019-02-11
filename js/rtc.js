@@ -10,6 +10,7 @@ function resolverRecursao(obj, pilha) {
 
     }
 
+
     if (Array.isArray(obj)) {
 
         for (var i = 0; i < obj.length; i++) {
@@ -577,7 +578,9 @@ function equalize(obj, param, vect) {
     }
 }
 
-function xmlToJson(r, e) {
+
+
+function privateXmlToJson(r, e) {
     for (var t = ["<", ">", "</", "/>"], l = "", a = {}, n = "", h = -1, i = !1, s = !1; e < r.length; e++) {
         for (var f = e, g = 0; g < t.length; g++) {
             var c = f;
@@ -607,7 +610,7 @@ function xmlToJson(r, e) {
                 } else {
                     var u = n.length;
                     void 0 != a[n = n.split(" ")[0]] && (Array.isArray(a[n]) || (a[n] = [a[n]]));
-                    var y = pJson(r, e - u - 2);
+                    var y = privateXmlToJson(r, e - u - 2);
                     e = y[1] - 1, Array.isArray(a[n]) ? a[n][a[n].length] = y[0] : a[n] = y[0]
                 }
                 for (; e + 1 < r.length && " " == r.charAt(e + 1); )
@@ -621,10 +624,23 @@ function xmlToJson(r, e) {
         } else
             3 == h && (e--, n = "")
     }
-    return[a, e]
+    
+    return[a, e];
 }
 
 
+function xmlToJson(xxx) {
+    
+    var xml = xxx;
+    
+    if (xml.indexOf('<?xml version="1.0" encoding="UTF-8"?>') < 0) {
+        xml = '<?xml version="1.0" encoding="UTF-8"?>' + xml;
+    }
+    xml = xml.split("\n").join("").split("\t").join("").split("\r").join("");
+
+    return privateXmlToJson(xml, 0)[0];
+
+}
 
 
 function getExt(nome) {
@@ -787,17 +803,17 @@ rtc.directive('email', function () {
         restrict: 'E',
         scope: {
             emailAtual: "=atributo",
-            temSenha:"=senha",
-            alterar:"="
+            temSenha: "=senha",
+            alterar: "="
         },
         templateUrl: 'email.html',
         link: function (scope, element, attrs) {
-            
+
             scope.idUnico = idsUnicos;
             idsUnicos++;
             scope.entidade = attrs.entidade;
             scope.selectEmail = function () {
-           
+
                 var e = scope.emailAtual.endereco.split(";");
 
                 var emailEnvio = "";
@@ -805,13 +821,13 @@ rtc.directive('email', function () {
                 //Nomes dos grupos devem condizer com a da classe Email.php, acoplado :(, porém infelizmente não vai dar tempo de tomar uma abordagem mais correta;
                 //De qualquer forma, salvo este acoplamento nestes dois locais, essa abordagem nao tráz prejuizos maiores;
 
-                var grupos = [{nome: "Emails Principais", enderecos: [],principal:true},
-                    {nome: "Logistica", enderecos: [],principal:false},
-                    {nome: "Compras", enderecos: [],principal:false},
-                    {nome: "Vendas", enderecos: [],principal:false},
-                    {nome: "Manutencao", enderecos: [],principal:false},
-                    {nome: "Diretoria", enderecos: [],principal:false},
-                    {nome: "Administrativo", enderecos: [],principal:false}];
+                var grupos = [{nome: "Emails Principais", enderecos: [], principal: true},
+                    {nome: "Logistica", enderecos: [], principal: false},
+                    {nome: "Compras", enderecos: [], principal: false},
+                    {nome: "Vendas", enderecos: [], principal: false},
+                    {nome: "Manutencao", enderecos: [], principal: false},
+                    {nome: "Diretoria", enderecos: [], principal: false},
+                    {nome: "Administrativo", enderecos: [], principal: false}];
 
                 for (var i = 0, j = 0; i < e.length; i++) {
 
@@ -844,7 +860,7 @@ rtc.directive('email', function () {
                         }
 
                         if (gr === null) {
-                            gr = {nome: nome_grupo, enderecos: [], principal:false};
+                            gr = {nome: nome_grupo, enderecos: [], principal: false};
                             grupos[grupos.length] = gr;
                         }
 
@@ -876,11 +892,11 @@ rtc.directive('email', function () {
                             ne += g[i].enderecos[j].endereco;
                         }
                     } else {
-                        
-                        if(g[i].enderecos.length==0){
+
+                        if (g[i].enderecos.length == 0) {
                             continue;
                         }
-                        
+
                         if (ne !== "") {
                             ne += ";";
                         }
@@ -893,7 +909,7 @@ rtc.directive('email', function () {
                         }
                     }
                 }
-                
+
                 scope.emailAtual.endereco = ne;
 
             };
@@ -905,13 +921,13 @@ rtc.directive('email', function () {
                 scope.attString();
             };
             scope.addEmail = function (grupo) {
-                
-                if(scope.endereco_email === ""){
+
+                if (scope.endereco_email === "") {
                     msg.erro("Insira algo no campo de email");
                     return;
                 }
-                
-                grupo.enderecos[grupo.enderecos.length] = {endereco:scope.endereco_email};
+
+                grupo.enderecos[grupo.enderecos.length] = {endereco: scope.endereco_email};
                 scope.endereco_email = "";
                 scope.attString();
             };

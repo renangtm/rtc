@@ -1,3 +1,38 @@
+rtc.controller("crtEntrada", function ($scope) {
+    
+    $scope.xmls = [];
+
+    var buscarPedido = function(xml){
+        
+        alert(paraJson(xml));
+        
+    }
+
+    $("#flXML").change(function () {
+
+        var arquivos = $(this).prop("files");
+
+        for (var i = 0; i < arquivos.length; i++) {
+            var sp = arquivos[i].name.split(".");
+            if (sp[sp.length - 1] != "xml") {
+                msg.alerta("Arquivo: " + arquivos[i].name + ", invalido");
+                $("#grpArquivos").removeClass("has-success").addClass("has-error");
+                return;
+            }
+        }
+        
+        for (var i = 0; i < arquivos.length; i++) {
+            var reader = new FileReader();
+            reader.onload = function (arquivo) {    
+                buscarPedido(xmlToJson(arquivo.target.result));
+            };
+            reader.readAsText(arquivos[i]);
+        }
+
+    });
+
+
+})
 rtc.controller("crtProdutoClienteLogistic", function ($scope, produtoClienteLogisticService) {
 
     $scope.produtos = createAssinc(produtoClienteLogisticService, 1, 3, 10);
@@ -9,8 +44,8 @@ rtc.controller("crtProdutoClienteLogistic", function ($scope, produtoClienteLogi
 
     $scope.to = function (num) {
         var k = [];
-        for(var i=0;i<num;i++){
-            k[i]=i;
+        for (var i = 0; i < num; i++) {
+            k[i] = i;
         }
         return k;
     }

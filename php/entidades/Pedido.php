@@ -40,7 +40,7 @@ class Pedido {
         $this->observacoes = "";
         $this->frete_incluso = "";
         $this->empresa = null;
-        $this->data = round(microtime(true)*1000);
+        $this->data = round(microtime(true) * 1000);
         $this->excluido = false;
         $this->usuario = null;
         $this->id_nota = 0;
@@ -425,6 +425,86 @@ class Pedido {
         }
     }
 
+    public function getTotal() {
+
+        $total = 0;
+
+        foreach ($this->produtos as $key => $value) {
+
+            $total += ($value->valor_base + $value->icms + $value->juros + $value->frete + $value->ipi) * $value->quantidade;
+        }
+
+        return $total;
+    }
+
+    private function gerarNotaPadrao() {
+
+        $this->parcelas = max($this->parcelas, 1);
+
+        $nota = new Nota();
+        $nota->saida = true;
+        $nota->empresa = $this->empresa;
+        $nota->cliente = $this->cliente;
+        $nota->emitida = false;
+        $nota->cancelada = false;
+        $nota->forma_pagamento = $this->forma_pagamento;
+        $nota->interferir_estoque = false;
+        $nota->observacao = "Nota referente a pedido $this->id";
+        $nota->frete_destinatario_remetente = !$this->frete_incluso;
+        $nota->transportadora = $this->transportadora;
+        
+        $total = $this->getTotal();
+
+        $vencimentos = array();
+
+        $dias = 0;
+        for ($i = 0; $i < $this->parcelas; $i++) {
+
+            $valor = (($total - ($total % $this->parcelas)) / $this->parcelas);
+            $data = (($this->prazo - ($this->prazo % $this->parcelas)) / $this->parcelas);
+
+            if ($i == 0) {
+
+                $valor += ($total % $this->parcelas);
+                $data += ($this->prazo % $this->parcelas);
+            }
+
+            $dias += $data;
+
+            $vencimento = new Vencimento();
+            $vencimento->data = $this->data + ($dias * 24 * 60 * 60 * 1000);
+            $vencimento->valor = $valor;
+            $vencimento->nota = $nota;
+
+            $vencimentos[] = $vencimento;
+        }
+        $nota->vencimentos = $vencimentos;
+
+        $produtos_nota = array();
+
+        foreach ($this->produtos as $key => $value) {
+
+            $pn = new ProdutoNota();
+            $pn->base_calculo = $value->base_calculo;
+            $pn->cfop = "5152"; // verificar esse ponto depois
+            $pn->icms = $value->icms;
+            $pn->base_calculo = $value->base_calculo;
+            $pn->ipi = $value->ipi;
+            $pn->produto = $value->produto;
+            $pn->quantidade = $value->quantidade;
+            $pn->valor_unitario = ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete);
+            $pn->informacao_adicional = "Produto referente a nota "; //Verificar esse ponto tambem;
+            $pn->nota = $nota;
+            $pn->valor_total = $pn->valor_unitario * $pn->quantidade;
+
+            $produtos_nota[] = $pn;
+        }
+
+        $nota->produtos = $produtos_nota;
+
+        return $nota;
+    }
+
     public function merge($con) {
 
         $prods = $this->getProdutos($con);
@@ -505,6 +585,32 @@ class Pedido {
             $html = Sistema::getHtml('visualizar-pedido-print', $this);
 
             $this->usuario->email->enviarEmail($this->empresa->email->filtro(Email::$LOGISTICA), "Pedido numero " . $this->id, $html);
+        }
+
+        if ($this->status->nota && $this->id_nota == 0) {
+
+            $nota = $this->gerarNotaPadrao();
+
+
+            $nota->merge($con);
+
+            $this->id_nota = $nota->id;
+
+            $ps = $con->getConexao()->prepare("UPDATE pedido SET id_nota=$this->id_nota WHERE id=$this->id");
+            $ps->execute();
+            $ps->close();
+
+            if ($this->logistica !== null) {
+
+                $getter = new Getter($this->logistica);
+
+                $nota_logistica_empresa = $this->gerarNotaPadrao();
+                $nota_logistica_empresa->empresa = $this->logistica;
+                $nota_logistica_empresa->cliente = $getter->getClienteViaEmpresa($con, $this->empresa);
+
+                $nota_logistica_empresa->merge($con);
+                
+            }
         }
 
         if ($erro !== null) {

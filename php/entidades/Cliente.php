@@ -30,7 +30,7 @@ class Cliente {
     public $suframado;
     public $inscricao_suframa;
     public $empresa;
-    public $categoria_cliente;
+    public $categoria;
 
     function __construct() {
 
@@ -41,7 +41,7 @@ class Cliente {
         $this->rg = new RG("");
         $this->endereco = new Endereco();
         $this->empresa = null;
-        $this->categoria_cliente = null;
+        $this->categoria = null;
         $this->pessoa_fisica=false;
         $this->telefones = array();
         $this->excluido = false;
@@ -57,7 +57,6 @@ class Cliente {
         $this->categoria->merge($con);
 
         if ($this->id == 0) {
-
             $ps = $con->getConexao()->prepare("INSERT INTO cliente(razao_social,nome_fantasia,limite_credito,inicio_limite,termino_limite,pessoa_fisica,cpf,rg,cnpj,excluido,id_categoria,id_empresa,inscricao_estadual,suframado,inscricao_suframa) VALUES('" . addslashes($this->razao_social) . "','" . addslashes($this->nome_fantasia) . "','$this->limite_credito',FROM_UNIXTIME($this->inicio_limite/1000),FROM_UNIXTIME($this->termino_limite/1000)," . ($this->pessoa_fisica ? "true" : "false") . ",'" . addslashes($this->cpf->valor) . "','" . addslashes($this->rg->valor) . "','" . $this->cnpj->valor . "',false," . $this->categoria->id . "," . $this->empresa->id . ",'$this->inscricao_estadual'," . ($this->suframado ? "true" : "false") . ",'" . addslashes($this->inscricao_suframa) . "')");
             $ps->execute();
             $this->id = $ps->insert_id;

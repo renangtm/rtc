@@ -401,6 +401,11 @@ class Nota {
         return $real_ret;
     }
 
+    public function manifestar($con){
+        
+        
+    }
+    
     public function emitir($con) {
         
     }
@@ -456,9 +461,11 @@ class Nota {
 
         if ($totv != $totp) {
 
-            throw new Exception('Somatorio das parcelas difere do valor da nota');
+            throw new Exception('Somatorio das parcelas difere do valor da nota ');
             
         }
+        
+        
 
         if ($this->emitida && $this->ficha == 0) {
 
@@ -473,6 +480,8 @@ class Nota {
                 $this->ficha = 1;
             }
         }
+        
+       
 
         if ($this->id == 0) {
             

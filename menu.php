@@ -304,6 +304,9 @@ if (!isset($filtro)) {
                         <a class="nav-link" href="visualizar-pedidos-compra.php"><i class="fas fa-tasks"></i>Pedidos de Compra</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="entrada_nota.php"><i class="fas fa-code"></i>Entrada NFe</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="visualizar-pedidos-venda.php"><i class="fas fa-tasks"></i>Pedidos de Venda</a>
                     </li>
 

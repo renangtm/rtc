@@ -357,8 +357,8 @@
                                             </div>
                                             <div class="form-inline col-5">
                                                 <label for="" style="margin-right: 20px;">Forma pagamento</label>
-                                                <select class="form-control col-7" id="status" ng-model="pedido.forma_pagamento">    
-                                                    <option ng-disabled="!pedido.status.altera" ng-value="forma_pagamento" ng-repeat="forma_pagamento in formas_pagamento">{{forma_pagamento.nome}}</option>
+                                                <select ng-disabled="!pedido.status.altera" class="form-control col-7" id="ped" ng-model="pedido.forma_pagamento">    
+                                                    <option ng-value="forma_pagamento" ng-repeat="forma_pagamento in formas_pagamento">{{forma_pagamento.nome}}</option>
                                                 </select>
                                             </div>
                                         </div>
