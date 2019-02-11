@@ -27,7 +27,7 @@
         </style>
     </head>
 
-    <body ng-controller="crtFornecedores">
+    <body ng-controller="crtBancos">
         <!-- ============================================================== -->
         <!-- main wrapper -->
         <!-- ============================================================== -->
@@ -57,13 +57,13 @@
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="page-header">
-                                    <h2 class="pageheader-title">Fornecedores</h2>
+                                    <h2 class="pageheader-title">Bancos</h2>
                                     <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
                                     <div class="page-breadcrumb">
                                         <nav aria-label="breadcrumb">
                                             <ol class="breadcrumb">      
                                                 <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">RTC</a></li>
-                                                <li class="breadcrumb-item active" aria-current="page">Fornecedores</li>
+                                                <li class="breadcrumb-item active" aria-current="page">Bancos</li>
                                             </ol>
                                         </nav>
                                     </div>
@@ -82,93 +82,44 @@
                                     <div class="card-body">
                                         <div class="table-responsive">
                                             <div class="product-btn m-b-20">
-                                                <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ng-click="novoFornecedor()"><i class="fas fa-plus-circle m-r-10"></i>Adicionar Fornecedor</a>
+                                                <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ng-click="novoBanco()"><i class="fas fa-plus-circle m-r-10"></i>Adicionar Banco</a>
                                             </div>
                                             <table id="clientes" class="table table-striped table-bordered first">
                                                 <thead>
                                                     <tr>
-                                                        <th data-ordem="fornecedor.id">Cod.</th>
-                                                        <th data-ordem="fornecedor.nome">Nome</th>
-                                                        <th data-ordem="fornecedor.email_fornecedor.endereco">Email</th>
-                                                        <th data-ordem="fornecedor.cnpj">CNPJ</th>
-                                                        <th data-ordem="fornecedor.inscricao_estadual">IE</th>
-                                                        <th data-ordem="fornecedor.habilitado">Habilitado</th>
+                                                        <th data-ordem="banco.id">Id.</th>
+                                                        <th data-ordem="banco.codigo">Codigo</th>
+                                                        <th data-ordem="banco.nome">Nome</th>
+                                                        <th data-ordem="banco.conta">Conta</th>
+                                                        <th data-ordem="banco.agencia">Agencia</th>
+                                                        <th data-ordem="banco.saldo">Saldo</th>
                                                         <th width="150px">Ação</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr ng-repeat-start="fornecedor in fornecedores.elementos">
-                                                        <td>{{fornecedor[0].id}}</td>
-                                                        <td>{{fornecedor[0].nome}}</td>
-                                                        <td><email entidade="Fornecedor" atributo="fornecedor[0].email" senha="false" alterar="false"></email></td>
-                                                        <td>{{fornecedor[0].cnpj.valor}}</td>
-                                                        <td>{{fornecedor[0].inscricao_estadual}}</td>
-                                                        <td>{{fornecedor[0].habilitado?'Sim':'Nao'}}</td>
-                                                       <th>
-                                                            <div class="product-btn">
-                                                                <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setFornecedor(fornecedor[0])" data-target="#demo{{fornecedor[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setFornecedor(fornecedor[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setFornecedor(fornecedor[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
+                                                    <tr ng-repeat="banc in bancos.elementos">
+                                                        <td>{{banc[0].id}}</td>
+                                                        <td>{{banc[0].codigo}}</td>
+                                                        <td>{{banc[0].nome}}</td>
+                                                        <td>{{banc[0].conta}}</td>
+                                                        <td>{{banc[0].agencia}}</td>
+                                                        <td>{{banc[0].saldo}} R$</td>
+                                                        <th>
+                                                            <div class="product-btn">      
+                                                                <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setBanco(banc[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
+                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setBanco(banc[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
                                                             </div>
                                                         </th>
-                                                    </tr>
-                                                    <tr ng-repeat-end>
-                                                        <td colspan="6" class="hiddenRow">
-                                                            <div class="accordian-body collapse" id="demo{{fornecedor[0].id}}">
-                                                                <div class="row mx-auto m-b-30">
-                                                                    <div class="col">
-                                                                        <table class="table table-bordered w-100">
-                                                                            <tr>
-                                                                                <td>IE:</td>
-                                                                                <td>{{fornecedor[0].inscricao_estadual}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>CNPJ:</td>
-                                                                                <td>{{fornecedor[0].cnpj.valor}}</td>
-                                                                            </tr>
-                                                                        </table>
-                                                                    </div>	
-                                                                    <div class="col">
-                                                                        <table class="table-bordered w-100">
-                                                                            <tr>
-                                                                                <td>Endereço:</td>
-                                                                                <td>{{fornecedor[0].endereco.rua}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Número:</td>
-                                                                                <td>{{fornecedor[0].endereco.numero}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Bairro</td>
-                                                                                <td>{{fornecedor[0].endereco.bairro}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Cidade</td>
-                                                                                <td>{{fornecedor[0].endereco.cidade.nome}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Estado</td>
-                                                                                <td>{{fornecedor[0].endereco.cidade.estado.sigla}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>CEP</td>
-                                                                                <td>{{fornecedor[0].endereco.cep.valor}}</td>
-                                                                            </tr>
-                                                                        </table>
-                                                                    </div>																
-                                                                </div>	
-                                                            </div> 
-                                                        </td>
                                                     </tr>
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <th>Cod.</th>
+                                                        <th>Id.</th>
+                                                        <th>Codigo</th>
                                                         <th>Nome</th>
-                                                        <th>Email</th>
-                                                        <th>CNPJ</th>
-                                                        <th>IE</th>
-                                                        <th>Habilitado</th>
+                                                        <th>Conta</th>
+                                                        <th>Agencia</th>
+                                                        <th>Saldo</th>
                                                         <th width="150px">Ação</th>
                                                     </tr>
                                                 </tfoot>
@@ -178,9 +129,9 @@
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="fornecedores.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in fornecedores.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="fornecedores.next()"><a class="page-link" href="">Próximo</a></li>
+                                                        <li class="page-item" ng-click="bancos.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                        <li class="page-item" ng-repeat="pg in bancos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                        <li class="page-item" ng-click="bancos.next()"><a class="page-link" href="">Próximo</a></li>
                                                     </ul>
                                                 </nav>
                                             </div>
@@ -221,174 +172,57 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere os dados de seu Fornecedor</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere os dados de seu Banco</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">×</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form id="add-form" ng-submit="mergeFornecedor()" parsley-validate>
+                                <form id="add-form" ng-submit="mergeBanco()" parsley-validate>
                                     <div class="form-group row">
-                                        <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Nome</label>
+                                        <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Codigo</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtname" type="text" ng-model="fornecedor.nome" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <input id="txtname" type="text" ng-model="banco.codigo" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
+                                        <label for="txtemail" class="col-3 col-lg-2 col-form-label text-left">Nome</label>
                                         <div class="col-9 col-lg-10">
-                                            <email entidade="Fornecedor" atributo="fornecedor.email" senha="false" alterar="true"></email>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">CNPJ</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="fornecedor.cnpj.valor" required placeholder="00.000.000/0000-00" class="form-control cpf">
+                                            <input id="txtemail" ng-model="banco.nome" type="text" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">Insc. Est</label>
+                                        <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">Conta</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="fornecedor.inscricao_estadual" required placeholder="00.000.000/0000-00" class="form-control cpf">
+                                            <input id="txtcnpj" type="text" ng-model="banco.conta" required class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endereço</label>
+                                        <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">Agencia</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtend" type="text" ng-model="fornecedor.endereco.rua" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <input id="txtcnpj" type="text" ng-model="banco.agencia" required class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Número</label>
+                                        <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Saldo</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtendnum" type="text" ng-model="fornecedor.endereco.numero" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <input id="txtend" type="text" ng-model="banco.saldo" required data-parsley-type="text" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="txtbairro" class="col-3 col-lg-2 col-form-label text-left">Bairro</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtbairro" ng-model="fornecedor.endereco.bairro" type="text" required placeholder="" class="form-control">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label  class="col-3 col-lg-2 col-form-label text-left">Estado</label>
-                                        <div class="col-9 col-lg-10">
-                                            <select ng-model="estado" class="form-control">
-                                                <option ng-repeat="e in estados" ng-value="e">{{e.sigla}}</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label  class="col-3 col-lg-2 col-form-label text-left">Cidade</label>
-                                        <div class="col-9 col-lg-10">
-                                            <select ng-model="fornecedor.endereco.cidade" class="form-control">
-                                                <option ng-repeat="cidade in estado.cidades" ng-value="cidade">{{cidade.nome}}</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="txtcep" class="col-3 col-lg-2 col-form-label text-left">CEP</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtcep" type="text" ng-model="fornecedor.endereco.cep.valor" required placeholder="" class="form-control cep" maxlength="9">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row" ng-if="fornecedor.suframado">
-                                        <label for="txtsuf" class="col-3 col-lg-2 col-form-label text-left">Suframa</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtsuf" type="text" ng-model="cliente.inscricao_suframa" placeholder="" class="form-control cep" maxlength="9">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-
-                                        <div class="col-md-10">
-                                            Telefone
-                                            <hr>
-                                            <input id="txttel" type="text" ng-model="telefone.numero" placeholder="" class="form-control cep" maxlength="9">
-                                        </div>
-
-                                        <div class="col-md-2">
-                                            Adc
-                                            <hr>
-                                            <button class="btn btn-success" ng-click="addTelefone()" type="button"><i class="fa fa-plus"></i></button>
-                                        </div>
-
-                                    </div>
-                                    <div class="form-group row">
-                                        <table class="table table-striped table-bordered first">
-                                            <thead>
-                                                <tr>
-                                                    <th>Numero</th>
-                                                    <th><i class="fa fa-times"></i></th>
-                                                </tr>
-                                            </thead>
-                                            <tr ng-repeat="t in fornecedor.telefones">
-                                                <td>{{t.numero}}</td>
-                                                <td><button type="button" class="btn btn-danger" ng-click="removeTelefone(t)"><i class="fa fa-times"></i></button></td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                    <div class="form-group row">
-
-                                        <div class="col-md-10">
-                                            Documento
-                                            <hr>
-                                            <select ng-model="documento.categoria" class="form-control">
-                                                <option ng-repeat="categoria in categorias_documento" ng-value="categoria">{{categoria.nome}}</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="col-md-2">
-                                            Adc
-                                            <hr>
-                                            <button class="btn btn-success" onclick="$('#uploaderDocumentoFornecedor').click()" type="button"><i class="fa fa-plus"></i></button>
-                                            <input id="uploaderDocumentoFornecedor" style="display: none" type="file" multiple>
-                                        </div>
-
-                                    </div>
-                                    <div class="form-group row">
-                                        <table class="table table-striped table-bordered first">
-                                            <thead>
-                                                <tr>
-                                                    <th>Documento</th>
-                                                    <th>Abrir</th>
-                                                    <th><i class="fa fa-times"></i></th>
-                                                </tr>
-                                            </thead>
-                                            <tr ng-repeat="doc in fornecedor.documentos">
-                                                <td>{{doc.categoria.nome}}</td>
-                                                <td><a class="btn btn-primary" target="_blank" ng-href="{{doc.link}}"><i class="fa fa-random"></i></a></td>
-                                                <td><button type="button" class="btn btn-danger" ng-click="removeDocumento(doc)"><i class="fa fa-times"></i></button></td>
-                                            </tr>
-                                        </table>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
@@ -584,14 +418,14 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de seu Fornecedor</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de seu Banco</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
-                                <p class="text-center"> Tem certeza de que deseja excluir este Fornecedor?</p>
+                                <p class="text-center"> Tem certeza de que deseja excluir este Banco?</p>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary" ng-click="deleteFornecedor(fornecedor)">Sim</button>
+                                <button class="btn btn-primary" ng-click="deleteBanco(banco)">Sim</button>
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Não</button>
                             </div>
                         </div>
@@ -599,7 +433,7 @@
                 </div>
                 <!-- /.modal-content --> 
 
-<!-- /.modal-content LOADING --> 
+                <!-- /.modal-content LOADING --> 
                 <div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -608,7 +442,7 @@
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body text-center">
-                                
+
                                 <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
                                 <br>
                                 <h3 style="margin-top:20px;">Carregando as informações...</h3>
@@ -650,35 +484,35 @@
 
                 <!-- Optional JavaScript -->
                 <script>
-                    
-                    var sh = false;
-                    var it = null;
-                    
-                    loading.show = function(){
-                        if(it != null){
-                            clearInterval(it);
-                        }
-                        if(!sh){
-                            
-                            sh = true;
-                            $("#loading").modal("show");
-                        
-                        }
-                        
-                    }
-                    
-                    loading.close = function(){
-                        
-                        it = setTimeout(function(){
-                                if(sh){
-                                    sh = false;
-                                    $("#loading").modal("hide");
-                                }
-                        },2000);
-                        
-                        
-                    }
-                    
+
+                                            var sh = false;
+                                            var it = null;
+
+                                            loading.show = function () {
+                                                if (it != null) {
+                                                    clearInterval(it);
+                                                }
+                                                if (!sh) {
+
+                                                    sh = true;
+                                                    $("#loading").modal("show");
+
+                                                }
+
+                                            }
+
+                                            loading.close = function () {
+
+                                                it = setTimeout(function () {
+                                                    if (sh) {
+                                                        sh = false;
+                                                        $("#loading").modal("hide");
+                                                    }
+                                                }, 2000);
+
+
+                                            }
+
                                             $(document).ready(function () {
                                                 $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
                                                 $('.btnedit').tooltip({title: "Editar", placement: "top"});

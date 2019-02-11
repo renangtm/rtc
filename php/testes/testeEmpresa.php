@@ -451,17 +451,14 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
           $pendentes = $empresa->getCadastroLotesPendentes($con);
 
           echo Utilidades::toJson($pendentes);
-         */
-        
+*/
         $empresa = new Empresa();
-        $empresa->id = 35;
+        $empresa->id = 53;
         
-        $pedidos = $empresa->getCotacoesEntrada($con, 0, 3,"");
+        $pedidos = $empresa->getProdutos($con, 0, 3,"produto.id_logistica>0");
         
         echo Utilidades::toJson($pedidos);
-        
 
-        
         
     }
 

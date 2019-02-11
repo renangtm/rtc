@@ -1,0 +1,52 @@
+<div style="width:100%;background-color:#F0F0F0;padding:10px;border-radius: 5px">
+    <table style="background-color:#FFFFFF;border:3px solid #F0F0F0;border-radius: 5px">
+        <tr>
+            <td>
+<a href="#" class="btn btn-outline-light" type="button" ng-click="selectEmail()" data-toggle="collapse" data-target="#demo{{idUnico}}" class="accordion-toggle">
+    <i class="fas fa-cloud"> Configuracao de email do {{entidade}}</i>
+                </a>
+            </td>
+        </tr>
+        <tr style="background-color:#FFFFFF" style="margin-top:10px">
+            <td style="background-color:#FFFFFF" class="hiddenRow">
+                    <div class="accordian-body collapse" id="demo{{idUnico}}">
+                        <div class="row mx-auto m-b-30" style="padding:10px">
+                            Grupos de email:
+                            <br>
+                            <input type="text" class="form-control" style="margin-top:5px;margin-bottom:5px" ng-disabled="!alterar" ng-model="endereco_email">
+                            <table class="table table-bordered w-100">
+                                <tr ng-repeat="grupo in grupos">
+                                    <td>{{grupo.nome}}</td>
+                                    <td>
+                                        <i class="fas fa-plus" style="color:Green;cursor:pointer" ng-click="addEmail(grupo)" ng-if="alterar"></i>
+                                        <i class="fas fa-plus" style="color:Gray;cursor:pointer" ng-if="!alterar"></i>
+                                    </td>
+                                    <td>
+                                        <table class="table table-bordered w-100">
+                                            <tr ng-repeat="end in grupo.enderecos">
+                                                <td>{{end.endereco}}</td>
+                                                <td>
+                                                    <i class="fas fa-trash" style="color:Red;cursor:pointer" ng-if="alterar" ng-click="removeEmail(end)"></i>
+                                                    <i class="fas fa-trash" style="color:Gray;cursor:pointer" ng-if="!alterar"></i>
+                                                </td>
+                                            </tr>
+                                            <tr ng-if="temSenha && grupo.principal && grupo.enderecos.length > 0">
+                                                <td colspan="2">
+                                                    Senha do email principal {{emailEnvio}}
+                                                    <br>
+                                                    <input type="password" class="form-control" ng-model="emailAtual.senha">
+                                                </td>
+                                            </tr>
+                                        </table>	
+
+
+                                    </td>
+                                </tr>
+                            </table>																	
+                        </div>	
+                    </div> 
+                </td>
+            </tr>
+
+        </table>
+    </div>

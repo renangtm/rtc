@@ -33,14 +33,14 @@ class Endereco {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO endereco(rua,numero,bairro,cep,id_cidade) VALUES('" . addslashes($this->rua) . "',".$this->numero.",'".$this->bairro."','".$this->cep->valor."',".$this->cidade->id.")");
+            $ps = $con->getConexao()->prepare("INSERT INTO endereco(rua,numero,bairro,cep,id_cidade) VALUES('" . addslashes($this->rua) . "','".addslashes($this->numero)."','".$this->bairro."','".$this->cep->valor."',".$this->cidade->id.")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
             
         }else{
             
-            $ps = $con->getConexao()->prepare("UPDATE endereco SET rua = '" . addslashes($this->rua) . "', numero=".$this->numero.", bairro='".$this->bairro."',cep='".$this->cep->valor."', id_cidade=".$this->cidade->id." WHERE id = ".$this->id);
+            $ps = $con->getConexao()->prepare("UPDATE endereco SET rua = '" . addslashes($this->rua) . "', numero='".addslashes($this->numero)."', bairro='".$this->bairro."',cep='".$this->cep->valor."', id_cidade=".$this->cidade->id." WHERE id = ".$this->id);
             $ps->execute();
             $ps->close();
             

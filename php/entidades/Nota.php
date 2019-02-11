@@ -18,7 +18,6 @@ class Nota {
     public $fornecedor;
     public $cliente;
     public $saida;
-    public $chave;
     public $empresa;
     public $data_emissao;
     public $excluida;
@@ -26,6 +25,16 @@ class Nota {
     public $produtos;
     public $observacao;
     public $vencimentos;
+    public $frete_destinatario_remetente;
+    public $forma_pagamento;
+    public $emitida;
+    public $xml;
+    public $danfe;
+    public $chave;
+    public $numero;
+    public $ficha;
+    public $cancelada;
+    public $protocolo;
 
     function __construct() {
 
@@ -39,8 +48,13 @@ class Nota {
         $this->data_emissao = round(microtime(true) * 1000);
         $this->produtos = null;
         $this->vencimentos = null;
-        $this->interferir_estoque = false;
-        
+        $this->interferir_estoque = true;
+        $this->forma_pagamento = null;
+        $this->frete_destinatario_remetente = false;
+        $this->emitida = false;
+        $this->numero = 0;
+        $this->ficha = 0;
+        $this->cancelada = false;
     }
 
     public function getProdutos($con) {
@@ -62,6 +76,7 @@ class Nota {
                 . "produto_campanha.limite,"
                 . "produto_campanha.valor, "
                 . "empresa.id,"
+                . "empresa.is_logistica,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -93,7 +108,7 @@ class Nota {
                 . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
 
         $ps->execute();
-        $ps->bind_result($id,$camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa,$is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
@@ -109,6 +124,13 @@ class Nota {
                 $campanhas[$id]->cliente_expression = $cliente;
 
                 $empresa = new Empresa();
+                
+                if($is_logistica==1){
+                    
+                    $empresa = new Logistica();
+                    
+                }
+                
                 $empresa->id = $id_empresa;
                 $empresa->cnpj = new CNPJ($cnpj);
                 $empresa->inscricao_estadual = $inscricao_empresa;
@@ -174,6 +196,7 @@ class Nota {
         $ps->close();
 
         $ps = $con->getConexao()->prepare("SELECT produto_nota.id,"
+                . "produto_nota.informacao_adicional,"
                 . "produto_nota.quantidade,"
                 . "produto_nota.valor_unitario,"
                 . "produto_nota.valor_total,"
@@ -183,6 +206,7 @@ class Nota {
                 . "produto_nota.ipi,"
                 . "produto_nota.influencia_estoque,"
                 . "produto.id,"
+                . "produto.id_logistica,"
                 . "produto.classe_risco,"
                 . "produto.fabricante,"
                 . "produto.imagem,"
@@ -211,6 +235,7 @@ class Nota {
                 . "categoria_produto.icms_normal,"
                 . "categoria_produto.icms,"
                 . "empresa.id,"
+                . "empresa.is_logistica,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -241,9 +266,9 @@ class Nota {
                 . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
                 . "INNER JOIN estado ON cidade.id_estado = estado.id "
                 . " WHERE produto_nota.id_nota=$this->id");
-
+        
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $valor_unitario, $valor_total, $base_calculo, $cfop, $icms, $ipi, $influencia_estoque, $id_pro,$classe_risco,$fabricante,$imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro,$ativo,$conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $info_adic, $quantidade, $valor_unitario, $valor_total, $base_calculo, $cfop, $icms, $ipi, $influencia_estoque, $id_pro,$id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa,$is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
@@ -251,6 +276,7 @@ class Nota {
         while ($ps->fetch()) {
 
             $p = new Produto();
+            $p->logistica =  $id_log;
             $p->id = $id_pro;
             $p->nome = $nome;
             $p->classe_risco = $classe_risco;
@@ -292,6 +318,13 @@ class Nota {
             $p->categoria->ipi = $cat_ipi;
 
             $empresa = new Empresa();
+            
+            if($is_logistica==1){
+                
+                $empresa = new Logistica();
+                
+            }
+            
             $empresa->id = $id_empresa;
             $empresa->cnpj = new CNPJ($cnpj);
             $empresa->inscricao_estadual = $inscricao_empresa;
@@ -337,6 +370,7 @@ class Nota {
 
             $pp = new ProdutoNota();
             $pp->id = $id;
+            $pp->informacao_adicional = $info_adic;
             $pp->quantidade = $quantidade;
             $pp->valor_total = $valor_total;
             $pp->valor_unitario = $valor_unitario;
@@ -352,6 +386,10 @@ class Nota {
         }
 
         $ps->close();
+        
+        foreach($retorno as $key=>$value){
+            $value->produto->logistica = Sistema::getLogisticaById($con,$value->produto->logistica);
+        }
 
         $real_ret = array();
 
@@ -363,22 +401,95 @@ class Nota {
         return $real_ret;
     }
 
+    public function emitir($con) {
+        
+    }
+
+    public function cancelar($con, $motivo) {
+
+        $ps = $con->getConexao()->prepare("SELECT movimento.id FROM movimento "
+                . "INNER JOIN vencimento ON vencimento.id_movimento=movimento.id AND vencimento.id_nota=$this->id "
+                . "LEFT JOIN movimento est ON est.estorno=movimento.id WHERE est.id IS NULL");
+        $ps->execute();
+        $ps->bind_result($idm);
+        if ($ps->fetch()) {
+            $ps->close();
+            throw new Exception('O movimento bancario ' . $idm . ', esta relacionado com a nota, e necessario que seja estornado ou excluido');
+        }
+        $ps->close();
+    }
+
+    public function corrigir($con, $correcao) {
+        
+    }
+
     public function merge($con) {
 
-        if ($this->id == 0) {
+        $vencimentos = $this->getVencimentos($con);
 
-            $ps = $con->getConexao()->prepare("INSERT INTO nota(saida,chave,id_cliente,id_fornecedor,observacao,id_empresa,data_emissao,excluida,influenciar_estoque,id_transportadora) VALUES(" . ($this->saida ? "true" : "false") . ",'$this->chave'," . ($this->cliente != null ? $this->cliente->id : 0) . "," . ($this->fornecedor != null ? $this->fornecedor->id : 0) . ",'$this->observacao'," . $this->empresa->id . ",FROM_UNIXTIME($this->data_emissao/1000),false," . ($this->interferir_estoque ? "true" : "false") . ",".$this->transportadora->id.")");
+        if ($this->vencimentos == null) {
+
+            $this->vencimentos = $vencimentos;
+        }
+
+        $prods = $this->getProdutos($con);
+
+        if ($this->produtos == null) {
+
+            $this->produtos = $prods;
+        }
+
+
+        $totv = 0;
+
+        foreach ($this->vencimentos as $key => $value) {
+
+            $totv += $value->valor;
+        }
+
+        $totp = 0;
+
+        foreach ($this->produtos as $key => $value) {
+
+            $totp += $value->valor_total;
+        }
+
+        if ($totv != $totp) {
+
+            throw new Exception('Somatorio das parcelas difere do valor da nota');
+            
+        }
+
+        if ($this->emitida && $this->ficha == 0) {
+
+            $ps = $con->getConexao()->prepare("SELECT MAX(ficha) FROM nota WHERE id_empresa = " . $this->empresa->id);
+            $ps->execute();
+            $ps->bind_result($ficha);
+            if ($ps->fetch()) {
+                $ps->close();
+                $this->ficha = $ficha + 1;
+            } else {
+                $ps->close();
+                $this->ficha = 1;
+            }
+        }
+
+        if ($this->id == 0) {
+            
+            $ps = $con->getConexao()->prepare("INSERT INTO nota(saida,chave,id_cliente,id_fornecedor,observacao,id_empresa,data_emissao,excluida,influenciar_estoque,id_transportadora,id_forma_pagamento,frete_destinatario_remetente,emitida,numero,ficha,cancelada,danfe,xml,protocolo) VALUES(" . ($this->saida ? "true" : "false") . ",'$this->chave'," . ($this->cliente != null ? $this->cliente->id : 0) . "," . ($this->fornecedor != null ? $this->fornecedor->id : 0) . ",'$this->observacao'," . $this->empresa->id . ",FROM_UNIXTIME($this->data_emissao/1000),false," . ($this->interferir_estoque ? "true" : "false") . "," . $this->transportadora->id . "," . $this->forma_pagamento->id . "," . ($this->frete_destinatario_remetente ? "true" : "false") . "," . ($this->emitida ? "true" : "false") . ",$this->numero,$this->ficha," . ($this->cancelada ? "true" : "false") . ",'$this->danfe','$this->xml','$this->protocolo')");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE nota SET saida=" . ($this->saida ? "true" : "false") . ",chave='$this->chave',id_cliente=" . ($this->cliente != null ? $this->cliente->id : 0) . ",id_fornecedor=" . ($this->fornecedor != null ? $this->fornecedor->id : 0) . ",observacao='$this->observacao',id_empresa=" . $this->empresa->id . ",data_emissao=FROM_UNIXTIME($this->data_emissao/1000),excluida=false,influenciar_estoque=" . ($this->interferir_estoque ? "true" : "false") . ", id_transportadora=".$this->transportadora->id." WHERE id=$this->id");
+            $ps = $con->getConexao()->prepare("UPDATE nota SET saida=" . ($this->saida ? "true" : "false") . ",chave='$this->chave',id_cliente=" . ($this->cliente != null ? $this->cliente->id : 0) . ",id_fornecedor=" . ($this->fornecedor != null ? $this->fornecedor->id : 0) . ",observacao='$this->observacao',id_empresa=" . $this->empresa->id . ",data_emissao=FROM_UNIXTIME($this->data_emissao/1000),excluida=false,influenciar_estoque=" . ($this->interferir_estoque ? "true" : "false") . ", id_transportadora=" . $this->transportadora->id . ", id_forma_pagamento=" . $this->forma_pagamento->id . ",frete_destinatario_remetente=" . ($this->interferir_estoque ? "true" : "false") . ", emitida=" . ($this->emitida ? "true" : "false") . ",numero=$this->numero,ficha=$this->ficha,cancelada=" . ($this->cancelada ? "true" : "false") . ",danfe='$this->danfe',xml='$this->xml',protocolo='$this->protocolo' WHERE id=$this->id");
             $ps->execute();
             $ps->close();
         }
 
-        $prods = $this->getProdutos($con);
+
+
+
 
         foreach ($prods as $key => $value) {
 
@@ -404,12 +515,7 @@ class Nota {
             }
         }
 
-        $vencimentos = $this->getVencimentos($con);
 
-        if ($this->vencimentos == null) {
-
-            $this->vencimentos = $vencimentos;
-        }
 
         foreach ($vencimentos as $key => $v) {
 
@@ -465,10 +571,10 @@ class Nota {
     public function getVencimentos($con) {
 
         $vencimentos = array();
- 
-        $ps = $con->getConexao()->prepare("SELECT vencimento.id,vencimento.valor,UNIX_TIMESTAMP(vencimento.data)*1000,movimento.id,UNIX_TIMESTAMP(movimento.data)*1000,movimento.saldo_anterior,movimento.valor,movimento.juros,movimento.descontos,historico.id,historico.nome,operacao.id,operacao.nome,operacao.debito,banco.id,banco.nome,banco.conta,banco.saldo,banco.codigo FROM vencimento LEFT JOIN movimento ON movimento.id=vencimento.id_movimento LEFT JOIN banco ON movimento.id_banco=banco.id LEFT JOIN operacao ON operacao.id=movimento.id_operacao LEFT JOIN historico ON historico.id=movimento.id_historico WHERE id_nota=$this->id");
+
+        $ps = $con->getConexao()->prepare("SELECT vencimento.id,vencimento.valor,UNIX_TIMESTAMP(vencimento.data)*1000,movimento.id,UNIX_TIMESTAMP(movimento.data)*1000,movimento.saldo_anterior,movimento.valor,movimento.juros,movimento.descontos,movimento.estorno,historico.id,historico.nome,operacao.id,operacao.nome,operacao.debito,banco.id,banco.nome,banco.conta,banco.saldo,banco.codigo FROM vencimento LEFT JOIN movimento ON movimento.id=vencimento.id_movimento LEFT JOIN banco ON movimento.id_banco=banco.id LEFT JOIN operacao ON operacao.id=movimento.id_operacao LEFT JOIN historico ON historico.id=movimento.id_historico WHERE id_nota=$this->id");
         $ps->execute();
-        $ps->bind_result($id, $valor, $data, $id_mov, $data_mov, $sal_mov, $val_mov, $mov_jur, $mov_desc, $hist_id, $hist_nom, $op_id, $op_nom, $op_deb, $ban_id, $ban_nom, $ban_cont, $ban_sal, $ban_cod);
+        $ps->bind_result($id, $valor, $data, $id_mov, $data_mov, $sal_mov, $val_mov, $mov_jur, $mov_desc, $mov_estorno, $hist_id, $hist_nom, $op_id, $op_nom, $op_deb, $ban_id, $ban_nom, $ban_cont, $ban_sal, $ban_cod);
 
         while ($ps->fetch()) {
 
@@ -487,6 +593,7 @@ class Nota {
                 $m->saldo_anterior = $sal_mov;
                 $m->valor = $val_mov;
                 $m->juros = $mov_jur;
+                $m->estorno = $mov_estorno;
                 $m->descontos = $mov_desc;
                 $m->vencimento = $v;
 

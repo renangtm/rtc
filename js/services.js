@@ -1,6 +1,137 @@
 var debuger = function (l) {
     alert(paraJson(l));
 }
+
+rtc.service('movimentoService', function ($http, $q) {
+    this.getMovimento = function (fn) {
+        baseService($http, $q, {
+            query: "$r->movimento=new Movimento();",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountMovimentos($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getMovimentos($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('notaService', function ($http, $q) {
+    this.getNota = function (fn) {
+        baseService($http, $q, {
+            query: "$r->nota=new Nota();$r->nota->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getProdutos = function (nota, fn) {
+        var f = function (p) {
+            for (var i = 0; i < p.produtos.length; i++) {
+                p.produtos[i].nota = nota;
+            }
+            fn(p);
+        }
+        baseService($http, $q, {
+            o: nota,
+            query: "$r->produtos=$o->getProdutos($c)",
+            sucesso: f,
+            falha: f
+        });
+    }
+    this.getVencimentos = function (nota, fn) {
+        var f = function (p) {
+            for (var i = 0; i < p.vencimentos.length; i++) {
+                p.vencimentos[i].nota = nota;
+            }
+            fn(p);
+        }
+        baseService($http, $q, {
+            o: nota,
+            query: "$r->vencimentos=$o->getVencimentos($c)",
+            sucesso: f,
+            falha: f
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountNotas($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        if (typeof this["filtro_base"] === 'undefined') {
+            baseService($http, $q, {
+                o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+                query: "$r->elementos=$empresa->getNotas($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+                sucesso: fn,
+                falha: fn
+            });
+        } else {
+            baseService($http, $q, {
+                o: {x0: x0, x1: x1, filtro: filtro + (filtro !== "" ? "AND " : "") + this["filtro_base"] + " ", ordem: ordem},
+                query: "$r->elementos=$empresa->getNotas($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+                sucesso: fn,
+                falha: fn
+            });
+        }
+    }
+})
+rtc.service('produtoNotaService', function ($http, $q) {
+    this.getProdutoNota = function (fn) {
+        baseService($http, $q, {
+            query: "$r->produto_nota=new ProdutoNota()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('vencimentoService', function ($http, $q) {
+    this.getVencimento = function (fn) {
+        baseService($http, $q, {
+            query: "$r->vencimento=new Vencimento()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('bancoService', function ($http, $q) {
+    this.getBanco = function (fn) {
+        baseService($http, $q, {
+            query: "$r->banco=new Banco();$r->banco->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountBancos($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getBancos($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('cotacaoEntradaService', function ($http, $q) {
     this.getCotacao = function (fn) {
         baseService($http, $q, {
@@ -9,17 +140,17 @@ rtc.service('cotacaoEntradaService', function ($http, $q) {
             falha: fn
         });
     }
-    this.getCotacaoEspecifica = function (id_cotacao,id_empresa,fn) {
+    this.getCotacaoEspecifica = function (id_cotacao, id_empresa, fn) {
         baseService($http, $q, {
-            o:{id_cotacao:id_cotacao,id_empresa:id_empresa},
+            o: {id_cotacao: id_cotacao, id_empresa: id_empresa},
             query: "$e=new Empresa($o->id_empresa);$cots=$e->getCotacoesEntrada($c,0,1,'cotacao_entrada.id_status=1 AND cotacao_entrada.id='.$o->id_cotacao,'');$r->cotacoes=$cots;",
             sucesso: fn,
             falha: fn
         });
     }
-    this.formarPedido = function(cotacao,transportadora,frete,fn){
+    this.formarPedido = function (cotacao, transportadora, frete, fn) {
         baseService($http, $q, {
-            o:{cotacao:cotacao,transportadora:transportadora,frete:frete},
+            o: {cotacao: cotacao, transportadora: transportadora, frete: frete},
             query: "$o->cotacao->formarPedido($c,$o->transportadora,$o->frete)",
             sucesso: fn,
             falha: fn
@@ -412,20 +543,38 @@ rtc.service('transportadoraService', function ($http, $q) {
         });
     }
     this.getCount = function (filtro, fn) {
-        baseService($http, $q, {
-            o: {filtro: filtro},
-            query: "$r->qtd=$empresa->getCountTransportadoras($c,$o->filtro)",
-            sucesso: fn,
-            falha: fn
-        });
+        if (typeof this["empresa"] === "undefined") {
+            baseService($http, $q, {
+                o: {filtro: filtro},
+                query: "$r->qtd=$empresa->getCountTransportadoras($c,$o->filtro)",
+                sucesso: fn,
+                falha: fn
+            });
+        } else {
+            baseService($http, $q, {
+                o: {filtro: filtro,empresa:this["empresa"]},
+                query: "$r->qtd=$o->empresa->getCountTransportadoras($c,$o->filtro)",
+                sucesso: fn,
+                falha: fn
+            });
+        }
     }
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
-        baseService($http, $q, {
-            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
-            query: "$r->elementos=$empresa->getTransportadoras($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
-            sucesso: fn,
-            falha: fn
-        });
+        if (typeof this["empresa"] === "undefined") {
+            baseService($http, $q, {
+                o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+                query: "$r->elementos=$empresa->getTransportadoras($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+                sucesso: fn,
+                falha: fn
+            });
+        } else {
+            baseService($http, $q, {
+                o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem, empresa: this["empresa"]},
+                query: "$r->elementos=$o->empresa->getTransportadoras($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+                sucesso: fn,
+                falha: fn
+            });
+        }
     }
 })
 rtc.service('tabelaService', function ($http, $q) {
@@ -447,7 +596,7 @@ rtc.service('tabelaService', function ($http, $q) {
     this.getFretes = function (empresa, parametros, fn) {
         baseService($http, $q, {
             o: {p: parametros, e: empresa},
-            query: "if(isset($o->empresa)){$empresa=$o->empresa;}$r->fretes=array();$t=$empresa->getTransportadoras($c,0,$empresa->getCountTransportadoras($c,'transportadora.habilitada=true AND tabela.nome IS NOT NULL'),'transportadora.habilitada=true AND tabela.nome IS NOT NULL','');$valores=array();foreach($t as $key=>$tr){if($tr->tabela->atende($o->p->cidade,$o->p->peso,$o->p->valor)){$f=new stdClass();$f->transportadora=$tr;$f->valor=$tr->tabela->valor($o->p->cidade,$o->p->peso,$o->p->valor);$r->fretes[]=$f;}}",
+            query: "if(isset($o->e)){$empresa=$o->e;}$r->fretes=array();$t=$empresa->getTransportadoras($c,0,$empresa->getCountTransportadoras($c,'transportadora.habilitada=true AND tabela.nome IS NOT NULL'),'transportadora.habilitada=true AND tabela.nome IS NOT NULL','');$valores=array();foreach($t as $key=>$tr){if($tr->tabela->atende($o->p->cidade,$o->p->peso,$o->p->valor)){$f=new stdClass();$f->transportadora=$tr;$f->valor=$tr->tabela->valor($o->p->cidade,$o->p->peso,$o->p->valor);$r->fretes[]=$f;}}",
             sucesso: fn,
             falha: fn
         });
@@ -677,6 +826,14 @@ rtc.service('baseService', function ($http, $q) {
             falha: fn
         });
     }
+    this.insert = function (obj, fn) {
+        baseService($http, $q, {
+            o: obj,
+            query: "$o->insert($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
 })
 rtc.service('produtoService', function ($http, $q) {
     this.getProduto = function (fn) {
@@ -796,20 +953,56 @@ rtc.service('produtoService', function ($http, $q) {
         });
     }
     this.getCount = function (filtro, fn) {
-        baseService($http, $q, {
-            o: {filtro: filtro},
-            query: "$r->qtd=$empresa->getCountProdutos($c,$o->filtro)",
-            sucesso: fn,
-            falha: fn
-        });
+        if (typeof this["empresa"] === 'undefined') {
+            if (typeof this["filtro_base"] === 'undefined') {
+                baseService($http, $q, {
+                    o: {filtro: filtro},
+                    query: "$r->qtd=$empresa->getCountProdutos($c,$o->filtro)",
+                    sucesso: fn,
+                    falha: fn
+                });
+            } else {
+                baseService($http, $q, {
+                    o: {filtro: (filtro + (filtro !== "" ? "AND " : "") + this["filtro_base"] + " ")},
+                    query: "$r->qtd=$empresa->getCountProdutos($c,$o->filtro)",
+                    sucesso: fn,
+                    falha: fn
+                });
+            }
+        } else {
+            baseService($http, $q, {
+                o: {filtro: filtro, id_empresa: this["empresa"]},
+                query: "$e=new Empresa($o->id_empresa);$r->qtd=$e->getCountProdutos($c,$o->filtro)",
+                sucesso: fn,
+                falha: fn
+            });
+        }
     }
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
-        baseService($http, $q, {
-            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
-            query: "$r->elementos=$empresa->getProdutos($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
-            sucesso: fn,
-            falha: fn
-        });
+        if (typeof this["empresa"] === 'undefined') {
+            if (typeof this["filtro_base"] === 'undefined') {
+                baseService($http, $q, {
+                    o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+                    query: "$r->elementos=$empresa->getProdutos($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+                    sucesso: fn,
+                    falha: fn
+                });
+            } else {
+                baseService($http, $q, {
+                    o: {x0: x0, x1: x1, filtro: (filtro + (filtro !== "" ? "AND " : "") + this["filtro_base"] + " "), ordem: ordem},
+                    query: "$r->elementos=$empresa->getProdutos($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+                    sucesso: fn,
+                    falha: fn
+                });
+            }
+        } else {
+            baseService($http, $q, {
+                o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem, id_empresa: this["empresa"]},
+                query: "$e=new Empresa($o->id_empresa);$r->elementos=$e->getProdutos($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+                sucesso: fn,
+                falha: fn
+            });
+        }
     }
 })
 rtc.service('acessoService', function ($http, $q) {
@@ -843,6 +1036,35 @@ rtc.service('sistemaService', function ($http, $q) {
     this.getMesesValidadeCurta = function (fn) {
         baseService($http, $q, {
             query: "$r->meses_validade_curta=Sistema::getMesesValidadeCurta()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getIcmsEstado = function (estado, fn) {
+        baseService($http, $q, {
+            o: estado,
+            query: "$r->icms=Sistema::getIcmsEstado($o)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getOperacoes = function (fn) {
+        baseService($http, $q, {
+            query: "$r->operacoes=Sistema::getOperacoes($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getLogisticas = function (fn) {
+        baseService($http, $q, {
+            query: "$r->logisticas=Sistema::getLogisticas($c,false)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getHistoricos = function (fn) {
+        baseService($http, $q, {
+            query: "$r->historicos=Sistema::getHistorico($c)",
             sucesso: fn,
             falha: fn
         });

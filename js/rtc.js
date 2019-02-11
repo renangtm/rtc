@@ -179,7 +179,7 @@ function createAssinc(lista, cols, rows, maxPage) {
                 lista.getElementos(este.pagina * (este.por_pagina * este.por_coluna),
                         Math.min((este.pagina + 1) * (este.por_pagina * este.por_coluna), r.qtd),
                         este.filtro, este.ordem, function (e) {
-                
+
                             este.elementos = [];
 
                             var els = e.elementos;
@@ -203,8 +203,8 @@ function createAssinc(lista, cols, rows, maxPage) {
                             }
 
                         });
-                        
-                                   
+
+
                 //-----------------------------
 
             });
@@ -757,14 +757,165 @@ rtc.service('uploadService', function ($http, $q) {
 
 })
 
-rtc.directive('ngConfirm',function($parse){
-   return{ 
-       restrict:'A',
-       link:function(scope,element,attrs){
-           var exp = $parse(attrs.ngConfirm);
-           $(element).change(function(){
-               exp(scope,{});
-           })
-       }
-   }; 
+rtc.directive('ngConfirm', function ($parse) {
+    return{
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            var exp = $parse(attrs.ngConfirm);
+            $(element).change(function () {
+                exp(scope, {});
+                scope.$apply();
+            })
+        }
+    };
+});
+
+rtc.directive('ngDownload', function () {
+    return{
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            $(element).click(function () {
+                window.open(attrs.ngDownload);
+            })
+        }
+    };
+});
+
+var idsUnicos = 1;
+rtc.directive('email', function () {
+    return{
+        restrict: 'E',
+        scope: {
+            emailAtual: "=atributo",
+            temSenha:"=senha",
+            alterar:"="
+        },
+        templateUrl: 'email.html',
+        link: function (scope, element, attrs) {
+            
+            scope.idUnico = idsUnicos;
+            idsUnicos++;
+            scope.entidade = attrs.entidade;
+            scope.selectEmail = function () {
+           
+                var e = scope.emailAtual.endereco.split(";");
+
+                var emailEnvio = "";
+
+                //Nomes dos grupos devem condizer com a da classe Email.php, acoplado :(, porém infelizmente não vai dar tempo de tomar uma abordagem mais correta;
+                //De qualquer forma, salvo este acoplamento nestes dois locais, essa abordagem nao tráz prejuizos maiores;
+
+                var grupos = [{nome: "Emails Principais", enderecos: [],principal:true},
+                    {nome: "Logistica", enderecos: [],principal:false},
+                    {nome: "Compras", enderecos: [],principal:false},
+                    {nome: "Vendas", enderecos: [],principal:false},
+                    {nome: "Manutencao", enderecos: [],principal:false},
+                    {nome: "Diretoria", enderecos: [],principal:false},
+                    {nome: "Administrativo", enderecos: [],principal:false}];
+
+                for (var i = 0, j = 0; i < e.length; i++) {
+
+                    var a = e[i];
+
+                    if (a.indexOf(':') < 0) {
+
+                        grupos[0].enderecos[grupos[0].enderecos.length] = {endereco: a};
+
+                        if (j === 0) {
+
+                            emailEnvio = a;
+
+                        }
+
+                        j++;
+
+                    } else {
+
+                        var nome_grupo = a.split(":")[0];
+                        var emails_grupo = a.split(":")[1].split(",");
+
+                        var gr = null;
+
+                        for (var t = 0; t < grupos.length; t++) {
+                            if (grupos[t].nome === nome_grupo) {
+                                gr = grupos[t];
+                                break;
+                            }
+                        }
+
+                        if (gr === null) {
+                            gr = {nome: nome_grupo, enderecos: [], principal:false};
+                            grupos[grupos.length] = gr;
+                        }
+
+                        for (var g = 0; g < emails_grupo.length; g++) {
+
+                            gr.enderecos[gr.enderecos.length] = {endereco: emails_grupo[g]};
+
+                        }
+
+                    }
+
+                }
+
+                scope.grupos = grupos;
+                scope.emailEnvio = emailEnvio;
+
+            };
+            scope.attString = function () {
+
+                var ne = "";
+                var g = scope.grupos;
+
+                for (var i = 0; i < g.length; i++) {
+                    if (i === 0) {
+                        for (var j = 0; j < g[i].enderecos.length; j++) {
+                            if (ne !== "") {
+                                ne += ";";
+                            }
+                            ne += g[i].enderecos[j].endereco;
+                        }
+                    } else {
+                        
+                        if(g[i].enderecos.length==0){
+                            continue;
+                        }
+                        
+                        if (ne !== "") {
+                            ne += ";";
+                        }
+                        ne += g[i].nome + ":";
+                        for (var j = 0; j < g[i].enderecos.length; j++) {
+                            if (ne !== "") {
+                                ne += ",";
+                            }
+                            ne += g[i].enderecos[j].endereco;
+                        }
+                    }
+                }
+                
+                scope.emailAtual.endereco = ne;
+
+            };
+            scope.endereco_email = "";
+            scope.removeEmail = function (e) {
+                for (var i = 0; i < scope.grupos.length; i++) {
+                    remove(scope.grupos[i].enderecos, e);
+                }
+                scope.attString();
+            };
+            scope.addEmail = function (grupo) {
+                
+                if(scope.endereco_email === ""){
+                    msg.erro("Insira algo no campo de email");
+                    return;
+                }
+                
+                grupo.enderecos[grupo.enderecos.length] = {endereco:scope.endereco_email};
+                scope.endereco_email = "";
+                scope.attString();
+            };
+            scope.$apply();
+        }
+    };
 });

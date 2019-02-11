@@ -125,6 +125,10 @@
                                                                 <div class="row mx-auto m-b-30">
                                                                     <div class="col">
                                                                         <table class="table table-bordered w-100">
+                                                                            <tr ng-if="produto[0].logistica !== null">
+                                                                                <td>Armazenado em Logistica:</td>
+                                                                                <td>{{produto[0].logistica.nome}}</td>
+                                                                            </tr>
                                                                             <tr>
                                                                                 <td>Qtd caixa:</td>
                                                                                 <td>{{produto[0].grade.str}}</td>
@@ -358,6 +362,14 @@
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Logistica</label>
+                                                <div class="col-9 col-lg-9 text-left">
+                                                    <select ng-model="produto.logistica" class="form-control" >
+                                                        <option ng-repeat="l in logisticas" ng-value="l">{{l.nome}}</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="form-group row">

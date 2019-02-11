@@ -19,8 +19,12 @@ class StatusPedidoSaida {
     public $reserva;
     public $emailCliente;
     public $emailInterno;
+    public $volta_status;
+    public $altera;
+    public $parado;
+    public $nota;
     
-    function __construct($id=0,$nome="",$estoque=false,$reserva=false,$emailCliente = false,$emailInterno = false) {
+    function __construct($id=0,$nome="",$estoque=false,$reserva=false,$emailCliente = false,$emailInterno = false,$volta_status=true,$altera_pedido=true,$parado=true,$nota=false) {
         
         $this->id = $id;
         $this->nome = $nome;
@@ -28,6 +32,11 @@ class StatusPedidoSaida {
         $this->reserva = $reserva;
         $this->emailCliente = $emailCliente;
         $this->emailInterno = $emailInterno;
+        
+        $this->volta_status = $volta_status;
+        $this->altera = $altera_pedido;
+        $this->parado = $parado;
+        $this->nota = $nota;
         
     }
   

@@ -17,7 +17,7 @@ class testeEmail extends PHPUnit_Framework_TestCase {
 
     public function testSimple() {
 
-
+         /*
         $mail = new PHPMailer\PHPMailer\PHPMailer(true);
         
         $mail->IsSMTP();
@@ -37,7 +37,7 @@ class testeEmail extends PHPUnit_Framework_TestCase {
         }catch(Exception $ex){
             echo $ex->getMessage();
         }
-        /*
+       
           $email = new Email("1234");
           $email->senha = "teste";
 
@@ -47,13 +47,18 @@ class testeEmail extends PHPUnit_Framework_TestCase {
           $email->senha = "teste";
 
           $this->assertEquals($email->endereco,"renan.miranda@agrofauna.com.br");
-
           $email->merge(new ConnectionFactory());
+
 
           $email->merge(new ConnectionFactory());
 
           $email->delete(new ConnectionFactory());
          */
+        
+        $email = new Email("renan_goncalves@outlook.com.br;matheus@agrofauna.com.br;MANUTENCAO:matheus@dedede.com.br,matheus@aaa.com.br;VENDAS:renan.miranda@agrofauna.com.br");
+        
+        echo print_r($email->filtro("VENDAS")->getEnderecos());
+        
     }
 
 }

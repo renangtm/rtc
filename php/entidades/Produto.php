@@ -39,6 +39,7 @@ class Produto {
     public $imagem;
     public $fabricante;
     public $classe_risco;
+    public $logistica;
 
     function __construct() {
 
@@ -63,40 +64,38 @@ class Produto {
         $this->classe_risco = 0;
         $this->ativo = "";
         $this->concentracao = "";
-        
+        $this->logistica = null;
     }
 
     public function merge($con) {
 
         if ($this->id == 0) {
-            $ps = $con->getConexao()->prepare("INSERT INTO produto(id_universal,nome,id_categoria,liquido,quantidade_unidade,excluido,habilitado,id_empresa,valor_base,custo,peso_bruto,peso_liquido,estoque,disponivel,transito,grade,unidade,ncm,lucro_consignado,ativo,concentracao,classe_risco,fabricante,imagem) VALUES($this->id_universal,'".addslashes($this->nome)."'," . $this->categoria->id . "," . ($this->liquido ? "true" : "false") . ",$this->quantidade_unidade,false," . ($this->habilitado ? "true" : "false") . "," . $this->empresa->id . ",$this->valor_base,$this->custo,$this->peso_bruto,$this->peso_liquido,$this->estoque,$this->disponivel,$this->transito,'" . $this->grade->str . "','" . addslashes($this->unidade) . "','" . addslashes($this->ncm) . "',$this->lucro_consignado,'$this->ativo','$this->concentracao',$this->classe_risco,'$this->fabricante','$this->imagem')");
+            $ps = $con->getConexao()->prepare("INSERT INTO produto(id_universal,nome,id_categoria,liquido,quantidade_unidade,excluido,habilitado,id_empresa,valor_base,custo,peso_bruto,peso_liquido,estoque,disponivel,transito,grade,unidade,ncm,lucro_consignado,ativo,concentracao,classe_risco,fabricante,imagem,id_logistica) VALUES($this->id_universal,'" . addslashes($this->nome) . "'," . $this->categoria->id . "," . ($this->liquido ? "true" : "false") . ",$this->quantidade_unidade,false," . ($this->habilitado ? "true" : "false") . "," . $this->empresa->id . ",$this->valor_base,$this->custo,$this->peso_bruto,$this->peso_liquido,$this->estoque,$this->disponivel,$this->transito,'" . $this->grade->str . "','" . addslashes($this->unidade) . "','" . addslashes($this->ncm) . "',$this->lucro_consignado,'$this->ativo','$this->concentracao',$this->classe_risco,'$this->fabricante','$this->imagem'," . ($this->logistica !== null ? $this->logistica->id : 0) . ")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE produto SET nome = '" . addslashes($this->nome) . "', id_universal=$this->id_universal, id_categoria=" . $this->categoria->id . ",liquido=" . ($this->liquido ? "true" : "false") . ", id_empresa=" . $this->empresa->id . ", valor_base=" . $this->valor_base . ",custo=$this->custo,peso_bruto=$this->peso_bruto,peso_liquido=$this->peso_liquido,estoque=$this->estoque,disponivel=$this->disponivel,transito=$this->transito,excluido=false,habilitado=" . ($this->habilitado ? "true" : "false") . ",grade='" . $this->grade->str . "',unidade='" . addslashes($this->unidade) . "',ncm='" . addslashes($this->ncm) . "',quantidade_unidade=$this->quantidade_unidade,lucro_consignado=$this->lucro_consignado, ativo='$this->ativo', concentracao='$this->concentracao',classe_risco=$this->classe_risco,fabricante='$this->fabricante',imagem='$this->imagem' WHERE id = " . $this->id);
+            $ps = $con->getConexao()->prepare("UPDATE produto SET nome = '" . addslashes($this->nome) . "', id_universal=$this->id_universal, id_categoria=" . $this->categoria->id . ",liquido=" . ($this->liquido ? "true" : "false") . ", id_empresa=" . $this->empresa->id . ", valor_base=" . $this->valor_base . ",custo=$this->custo,peso_bruto=$this->peso_bruto,peso_liquido=$this->peso_liquido,estoque=$this->estoque,disponivel=$this->disponivel,transito=$this->transito,excluido=false,habilitado=" . ($this->habilitado ? "true" : "false") . ",grade='" . $this->grade->str . "',unidade='" . addslashes($this->unidade) . "',ncm='" . addslashes($this->ncm) . "',quantidade_unidade=$this->quantidade_unidade,lucro_consignado=$this->lucro_consignado, ativo='$this->ativo', concentracao='$this->concentracao',classe_risco=$this->classe_risco,fabricante='$this->fabricante',imagem='$this->imagem', id_logistica=" . ($this->logistica !== null ? $this->logistica->id : 0) . " WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
         }
     }
-    
-    public function atualizarEstoque($con){
-        
+
+    public function atualizarEstoque($con) {
+
         $ps = $con->getConexao()->prepare("SELECT estoque,disponivel,transito FROM produto WHERE id = $this->id");
         $ps->execute();
-        $ps->bind_result($estoque,$disponivel,$transito);
-        
-        if($ps->fetch()){
-            
+        $ps->bind_result($estoque, $disponivel, $transito);
+
+        if ($ps->fetch()) {
+
             $this->estoque = $estoque;
             $this->disponivel = $disponivel;
             $this->transito = $transito;
-            
         }
-           
+
         $ps->close();
-        
     }
 
     public function delete($con) {
@@ -123,7 +122,7 @@ class Produto {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id,$numero,$rua,$altura, $validade, $entrada, $quantidade_inicial, $grade, $quantidade_real, $codigo_fabricante, $retirada);
+        $ps->bind_result($id, $numero, $rua, $altura, $validade, $entrada, $quantidade_inicial, $grade, $quantidade_real, $codigo_fabricante, $retirada);
 
         while ($ps->fetch()) {
 

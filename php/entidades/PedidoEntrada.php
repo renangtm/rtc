@@ -65,6 +65,7 @@ class PedidoEntrada {
                 . "produto_campanha.limite,"
                 . "produto_campanha.valor, "
                 . "empresa.id,"
+                . "empresa.is_logistica,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -96,7 +97,7 @@ class PedidoEntrada {
                 . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
 
         $ps->execute();
-        $ps->bind_result($id,$camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id,$camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa,$is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
@@ -112,6 +113,13 @@ class PedidoEntrada {
                 $campanhas[$id]->cliente_expression = $cliente;
 
                 $empresa = new Empresa();
+                
+                if($is_logistica==1){
+                    
+                    $empresa = new Logistica();
+                    
+                }
+                
                 $empresa->id = $id_empresa;
                 $empresa->cnpj = new CNPJ($cnpj);
                 $empresa->inscricao_estadual = $inscricao_empresa;
@@ -183,6 +191,7 @@ class PedidoEntrada {
                 . "produto_pedido_entrada.influencia_estoque,"
                 . "produto_pedido_entrada.influencia_transito,"
                 . "produto.id,"
+                . "produto.id_logistica,"
                 . "produto.classe_risco,"
                 . "produto.fabricante,"
                 . "produto.imagem,"
@@ -211,6 +220,7 @@ class PedidoEntrada {
                 . "categoria_produto.icms_normal,"
                 . "categoria_produto.icms,"
                 . "empresa.id,"
+                . "empresa.is_logistica,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -244,7 +254,7 @@ class PedidoEntrada {
 
 
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $valor,$ie,$it, $id_pro,$classe_risco,$fabricante,$imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro,$ativo,$conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms,$id_empresa,$nome_empresa,$inscricao_empresa,$consigna,$aceitou_contrato,$juros_mensal,$cnpj,$numero_endereco,$id_endereco,$rua,$bairro,$cep,$id_cidade,$nome_cidade,$id_estado,$nome_estado,$id_email,$endereco_email,$senha_email,$id_telefone,$numero_telefone);
+        $ps->bind_result($id, $quantidade, $valor,$ie,$it, $id_pro,$id_log,$classe_risco,$fabricante,$imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro,$ativo,$conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms,$id_empresa,$is_logistica,$nome_empresa,$inscricao_empresa,$consigna,$aceitou_contrato,$juros_mensal,$cnpj,$numero_endereco,$id_endereco,$rua,$bairro,$cep,$id_cidade,$nome_cidade,$id_estado,$nome_estado,$id_email,$endereco_email,$senha_email,$id_telefone,$numero_telefone);
 
         $retorno = array();
 
@@ -252,6 +262,7 @@ class PedidoEntrada {
         while ($ps->fetch()) {
 
             $p = new Produto();
+            $p->logistica = $id_log;
             $p->id = $id_pro;
             $p->classe_risco = $classe_risco;
             $p->fabricante = $fabricante;
@@ -292,6 +303,13 @@ class PedidoEntrada {
             $p->categoria->ipi = $cat_ipi;
             
             $empresa = new Empresa();
+            
+            if($is_logistica==1){
+                
+                $empresa = new Logistica();
+                
+            }
+            
             $empresa->id = $id_empresa;
             $empresa->cnpj = new CNPJ($cnpj);
             $empresa->inscricao_estadual = $inscricao_empresa;
@@ -349,6 +367,10 @@ class PedidoEntrada {
         }
 
         $ps->close();
+        
+        foreach($retorno as $key=>$value){
+            $value->produto->logistica = Sistema::getLogisticaById($con,$value->produto->logistica);
+        }
 
         $real_ret = array();
 
@@ -384,7 +406,7 @@ class PedidoEntrada {
 
                 $html = Sistema::getHtml('visualizar-pedidos-compra', $this);
 
-                $this->usuario->email->enviarEmail($this->fornecedor->email, "Pedido de Compra", $html);
+                $this->usuario->email->enviarEmail($this->fornecedor->email->filtro(Email::$VENDAS), "Pedido de Compra", $html);
                 
             } catch (Exception $ex) {
                 

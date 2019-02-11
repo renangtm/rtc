@@ -210,7 +210,6 @@ class Utilidades {
         $produto->nome = "teste";
         $produto->id_universal = 12;
         $produto->categoria = $categoria;
-        $produto->categoria->id=2;
         $produto->liquido = false;
         $produto->unidade = "Galao";
         $produto->quantidade_unidade = 0.25;
@@ -501,12 +500,12 @@ class Utilidades {
 
         // criando categorias de produto
 
-        $categoria = new stdClass();
-        $categoria->id = 1;
+        $categoria = new CategoriaProduto();
         $categoria->ipi = 0;
         $categoria->base_calculo = 40;
         $categoria->icms = 0;
         $categoria->icms_normal = true;
+        $categoria->merge($con);
 
         // criando produtos
 
@@ -515,7 +514,6 @@ class Utilidades {
         $produto->nome = "teste";
         $produto->id_universal = 12;
         $produto->categoria = $categoria;
-        $produto->categoria->id = 2;
         $produto->liquido = false;
         $produto->unidade = "Galao";
         $produto->quantidade_unidade = 0.25;
@@ -662,6 +660,8 @@ class Utilidades {
         $nota->fornecedor = $fornecedor;
         $nota->incluir_frete = true;
         $nota->transportadora = $tra;
+        $nota->forma_pagamento = Sistema::getFormasPagamento();
+        $nota->forma_pagamento = $nota->forma_pagamento[0];
         $nota->saida = false;
         $nota->chave = "";
         $nota->interferir_estoque = true;
@@ -709,6 +709,7 @@ class Utilidades {
         $nota->produtos[] = $pp4;
 
         $nota->interferir_estoque = false;
+        
 
         $nota->merge(new ConnectionFactory());
         
@@ -1563,6 +1564,36 @@ class Utilidades {
         return $cliente;
     }
 
+    public static function getLogisticaTeste() {
+
+        $empresa = new Logistica();
+
+        $empresa->nome = "Logistic Center Gru";
+        $empresa->cnpj = new CNPJ("11122233344455");
+        $empresa->inscricao_estadual = "1234412";
+        $empresa->juros_mensal = 1.5;
+
+        $e1 = new Endereco();
+
+        $e1->rua = "Rua Teste";
+        $e1->bairro = "Bairro Teste";
+        $e1->numero = 0;
+        $e1->cep = new CEP("07195201");
+        $e1->cidade = Sistema::getCidades(new ConnectionFactory());
+        $e1->cidade = $e1->cidade[0];
+
+        $empresa->endereco = $e1;
+
+        $empresa->email = new Email("teserewfdwefd");
+
+        $empresa->telefone = new Telefone("t1241243");
+
+
+        $empresa->merge(new ConnectionFactory());
+
+        return $empresa;
+    }
+    
     public static function getEmpresaTeste() {
 
         $empresa = new Empresa();

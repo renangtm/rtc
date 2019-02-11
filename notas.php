@@ -24,7 +24,7 @@
 
     </head>
 
-    <body ng-controller="crtPedidos">
+    <body ng-controller="crtNotas">
         <!-- ============================================================== -->
         <!-- main wrapper -->
         <!-- ============================================================== -->
@@ -54,14 +54,13 @@
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="page-header">
-                                    <h2 class="pageheader-title">Pedidos de Venda</h2>
+                                    <h2 class="pageheader-title">Notas</h2>
                                     <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
                                     <div class="page-breadcrumb">
                                         <nav aria-label="breadcrumb">
                                             <ol class="breadcrumb">      
                                                 <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">RTC</a></li>
-                                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Pedidos</a></li>
-                                                <li class="breadcrumb-item active" aria-current="page">Pedidos de Venda</li>
+                                                <li class="breadcrumb-item active" aria-current="page">Notas</li>
                                             </ol>
                                         </nav>
                                     </div>
@@ -80,45 +79,71 @@
                                     <div class="card-body">
                                         <div class="table-responsive">
                                             <div class="product-btn m-b-20">
-                                                <a href="#" class="btn btn-primary" data-title="AddCompra" ng-click="novoPedido()" data-toggle="modal" data-target="#editCompra" ><i class="fas fa-plus-circle m-r-10"></i>Cadastrar Pedido de Venda</a>
+                                                <a href="#" class="btn btn-primary" data-title="AddCompra" ng-click="novoNota()" data-toggle="modal" data-target="#editCompra" ><i class="fas fa-plus-circle m-r-10"></i>Cadastrar Nota</a>
                                             </div>
                                             <hr><br>
                                             <table id="pedidos" class="table table-striped table-bordered first">
                                                 <thead>
                                                     <tr>
-                                                        <th data-ordem="pedido.id">Cod.</th>
-                                                        <th data-ordem="pedido.cliente.razao_social">Cliente</th>
-                                                        <th data-ordem="pedido.data">Data</th>
-                                                        <th data-ordem="pedido.frete">frete</th>
-                                                        <th data-ordem="pedido.id_status">Status</th>
-                                                        <th data-ordem="pedido.usuario.nome">Vendedor</th>
+                                                        <th data-ordem="nota.ficha">Ficha</th>
+                                                        <th data-ordem="nota.numero">Numero</th>
+                                                        <th data-ordem="nota.transportadora.razao_social">Transportadora</th>
+                                                        <th data-ordem="nota.saida">Tipo</th>
+                                                        <th data-ordem="nota.data">Data Emissao</th>
+                                                        <th data-ordem="nota.cliente.razao_social">Cliente</th>
+                                                        <th data-ordem="nota.fornecedor.nome">Fornecedor</th>
+                                                        <th>Status</th>
                                                         <th>Acao</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr ng-repeat="pedid in pedidos.elementos">
-                                                        <td>{{pedid[0].id}}</td>
-                                                        <td>{{pedid[0].cliente.razao_social}}</td>
-                                                        <td>{{pedid[0].data| data}}</td>
-                                                        <td>{{pedid[0].frete}}</td>
-                                                        <td>{{pedid[0].status.nome}}</td>
-                                                        <td>{{pedid[0].usuario.nome}}</td>
+                                                    <tr ng-repeat-start="notaa in notas.elementos" style="{{notaa[0].cancelada?'color:DarkRed':(!notaa[0].emitida?'color:DarkOrange':'')}}">
+                                                        <td>{{notaa[0].ficha}}</td>
+                                                        <td>{{notaa[0].numero}}</td>
+                                                        <td>{{notaa[0].transportadora.razao_social}}</td>
+                                                        <td>{{notaa[0].saida ? 'Saída' : 'Entrada'}}</td>
+                                                        <td ng-if="notaa[0].emitida">{{notaa[0].data_emissao| data}}</td>
+                                                        <td ng-if="!notaa[0].emitida">---------</td>
+                                                        <td>{{notaa[0].cliente == null ? '--------' : notaa[0].cliente.razao_social}}</td>
+                                                        <td>{{notaa[0].fornecedor == null ? '--------' : notaa[0].fornecedor.nome}}</td>
+                                                        <td>{{notaa[0].cancelada ? 'Cancelada' :( notaa[0].emitida ? 'Emitida' : 'Aguardando Emissao...')}}</td>
                                                         <th>
                                                             <div class="product-btn">
-                                                                <a href="#" class="btn btn-outline-light btnvis" data-title="vizPedido" ng-click="setPedido(pedid[0])" data-toggle="modal" data-target="#vizPedido"><i class="fas fa-eye"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setPedido(pedid[0])" data-toggle="modal" data-target="#editCompra"><i class="fas fa-pencil-alt"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setPedido(pedid[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
+                                                                <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setNota(notaa[0])" data-target="#demo{{notaa[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
+                                                                <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setNota(notaa[0])" data-toggle="modal" data-target="#editCompra"><i class="fas fa-pencil-alt"></i></a>
+                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setNota(notaa[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
                                                             </div>
                                                         </th>
                                                     </tr>
+                                                    <tr ng-repeat-end>
+                                                        <td colspan="6" class="hiddenRow">
+                                                            <div class="accordian-body collapse" id="demo{{notaa[0].id}}">
+                                                                <div class="row mx-auto m-b-30">
+                                                                    <div class="col">
+                                                                        <table class="table table-bordered w-100">
+
+                                                                        </table>
+                                                                    </div>	
+                                                                    <div class="col">
+                                                                        <table class="table-bordered w-100">
+
+                                                                        </table>
+                                                                    </div>																
+                                                                </div>	
+                                                            </div> 
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <th>Cod.</th>
+                                                        <th>Ficha</th>
+                                                        <th>Numero</th>
+                                                        <th>Transportadora</th>
+                                                        <th>Tipo</th>
+                                                        <th>Data Emissao</th>
                                                         <th>Cliente</th>
-                                                        <th>Data</th>
-                                                        <th>frete</th>
+                                                        <th>Fornecedor</th>
                                                         <th>Status</th>
-                                                        <th>Vendedor</th>
                                                         <th>Acao</th>
                                                     </tr>
                                                 </tfoot>
@@ -126,9 +151,9 @@
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="pedidos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in pedidos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="pedidos.next()"><a class="page-link" href="">Proximo</a></li>
+                                                        <li class="page-item" ng-click="notas.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                        <li class="page-item" ng-repeat="pg in notas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                        <li class="page-item" ng-click="notas.next()"><a class="page-link" href="">Proximo</a></li>
                                                     </ul>
                                                 </nav>
                                             </div>
@@ -172,40 +197,54 @@
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Configure os dados de seu Pedido de Venda ({{pedido.id}})</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Configure os dados de sua Nota ({{nota.numero}})</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">×</span>
                                 </button>
                             </div>
                             <div class="modal-body">
                                 <form>
-                                    <div class="form-group">
-                                        <label for="">Cliente</label>
-                                        <div class="form-row">
-                                            <div class="col-2">
-                                                <input type="text" ng-model="pedido.cliente.id" class="form-control" placeholder="Cod." value="9" disabled>
+                                    <div class="col-4 col-lg-4" style="padding-top: 5px;">
+                                        Tipo de Nota:
+                                        <div class="row">
+                                            <div class="col-md-6" style="text-align:center">
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="radio-inline" data-ng-value="true" data-ng-model="nota.saida" class="custom-control-input" ng-disabled="nota.emitida"><span class="custom-control-label">Saida</span>
+                                                </label>
                                             </div>
-                                            <div class="col-md-8">
-                                                <input type="text" ng-model="pedido.cliente.razao_social" class="form-control" placeholder="Nome do cliente" value="" disabled="">
-                                            </div>
-                                            <div class="col">
-                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#clientes" ng-disabled="!pedido.status.altera"><i class="fas fa-search"></i></a>
+                                            <div class="col-md-6" style="text-align:center">
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="radio-inline" data-ng-value="false" data-ng-model="nota.saida" checked="" class="custom-control-input" ng-disabled="nota.emitida"><span class="custom-control-label">Entrada</span>
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
-                                    <hr>
-                                    <div class="form-group">
-                                        <label for="">Logistica</label>
+                                    <div class="form-group" ng-if='nota.saida'>
+                                        <label for="">Cliente</label>
                                         <div class="form-row">
-                                            <select ng-model="pedido.logistica" style="width:40%" class="form-control" ng-change="resetarPedido()" ng-disabled="!pedido.status.altera">
-                                                <option ng-repeat="l in logisticas" ng-value="l">{{l.nome}}</option>
-                                            </select>
+                                            <div class="col-2">
+                                                <input type="text" ng-model="nota.cliente.id" class="form-control" placeholder="Cod." value="9" disabled>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="text" ng-model="nota.cliente.razao_social" class="form-control" placeholder="Nome do cliente" value="" disabled="">
+                                            </div>
+                                            <div class="col">
+                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#clientes"><i class="fas fa-search"></i></a>
+                                            </div>
                                         </div>
-                                        <div ng-if="pedido.logistica===null" style="color:SteelBlue">
-                                            Pedido normal feito com estoque da <?php echo $empresa->nome; ?>
-                                        </div>
-                                        <div ng-if="pedido.logistica!==null" style="color:Orange">
-                                            Pedido feito por meio do {{pedido.logistica.nome}}
+                                    </div>
+                                    <div class="form-group" ng-if='!nota.saida'>
+                                        <label for="">Fornecedor</label>
+                                        <div class="form-row">
+                                            <div class="col-2">
+                                                <input type="text" ng-model="nota.fornecedor.id" class="form-control" placeholder="Cod." value="9" disabled>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="text" ng-model="nota.fornecedor.nome" class="form-control" placeholder="Nome do fornecedor" value="" disabled="">
+                                            </div>
+                                            <div class="col">
+                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#fornecedores"><i class="fas fa-search"></i></a>
+                                            </div>
                                         </div>
                                     </div>
                                     <hr>
@@ -213,39 +252,84 @@
                                         <label for="">Transportadora</label>
                                         <div class="form-row">
                                             <div class="col-2">
-                                                <input type="text" class="form-control" placeholder="Cod." ng-model="pedido.transportadora.id" disabled>
+                                                <input type="text" class="form-control" placeholder="Cod." ng-model="nota.transportadora.id" disabled>
                                             </div>
                                             <div class="col-5">
-                                                <input type="text" class="form-control" ng-model="pedido.transportadora.razao_social" placeholder="Nome da Transportadora" disabled>
+                                                <input type="text" class="form-control" ng-model="nota.transportadora.razao_social" placeholder="Nome da Transportadora" disabled>
                                             </div>
                                             <div class="col">
-                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#transportadoras" ng-disabled="!pedido.status.altera"><i class="fas fa-search"></i></a>
+                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#transportadoras"><i class="fas fa-search"></i></a>
                                             </div>
-                                            <div class="form-inline col-4">
-                                                <label for="" style="margin-left: 25px;margin-right: 10px;">Frete R$</label>
-                                                <input type="text" class="form-control col-3" placeholder="0.0" ng-model="pedido.frete" ng-confirm="atualizaCustos()" ng-disabled="!pedido.status.altera">
-                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row" ng-if="nota.emitida">
+                                        <div class="col-9">
+                                            <div class="form-group">                                             
+                                                <div class="form-row" style="margin-bottom:5px">
+                                                    <div class="col-md-5">
+                                                        <label for="">Data e Hora de emissao</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <input type="text" class="form-control" ng-model="nota.data_emissao_texto"></input>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row" style="margin-bottom:5px">
+                                                    <div class="col-md-3">
+                                                        <label for="">Chave da nota</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <input type="text" class="form-control" ng-model="nota.chave"></input>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row" style="margin-bottom:5px">
+                                                    <div class="col-md-5">
+                                                        <label for="">Protocolo de autorizacao: </label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <input type="text" class="form-control" ng-model="nota.protocolo"></input>
+                                                    </div>
+                                                </div>
+                                            </div>			
                                         </div>
                                     </div>
                                     <hr>
                                     <div class="form-row">
-
                                         <div class="col-9">
                                             <div class="form-group">
                                                 <label for="">Observações</label>
                                                 <div class="form-row">
                                                     <div class="col">
-                                                        <textarea class="form-control" rows="2" id="comment" ng-model="pedido.observacao" ng-disabled="!pedido.status.altera"></textarea>
+                                                        <textarea class="form-control" rows="2" id="comment" ng-model="nota.observacao"></textarea>
                                                     </div>
                                                 </div>
 
                                             </div>			
                                         </div>
-                                        <div class="col">
-                                            <div class="form-group">
-
-                                            </div>
+                                    </div>
+                                    <div class="form-row" style="height:50px">
+                                        <div class="col-4" style="position:relative">
+                                            <input class="custom-control-input" id="chk1" style="display: inline-block;position:absolute;top:0px;left:5px" type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="nota.emitida" ng-disabled="nota.ficha>0">
+                                            <label class="custom-control-label" style="cursor:pointer;" for="chk1"><strong style="position:absolute;top:0px;left:27px">Nota emitida</strong></label>
                                         </div>
+                                        <div class="col-4" style="position:relative" ng-if="nota.emitida">
+                                            <input class="custom-control-input" id="chkr" style="display: inline-block;position:absolute;top:0px;left:5px" type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="nota.cancelada">
+                                            <label class="custom-control-label" style="cursor:pointer;" for="chkr"><strong style="position:absolute;top:0px;left:27px">Nota cancelada</strong></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-row" ng-if="nota.emitida">
+                                        <button type="button" class="btn btn-success" style="margin-left:5px" ng-if="nota.xml !== ''" ng-download="{{nota.xml}}"><i class="fas fa-save"></i>&nbspBaixar XML</button>
+                                        <button type="button" class="btn btn-success" style="margin-left:5px" ng-if="nota.danfe !== ''" ng-download="{{nota.xml}}"><i class="fas fa-save"></i>&nbspBaixar DANFE</button>
+
+                                        <button class="btn btn-light" type="button" style="margin-left:5px" ng-if="nota.xml === ''" ng-click="uploadXML('uploaderXML')"><i class="fas fa-upload"></i>&nbspFazer upload do XML</button>
+                                        <button class="btn btn-light" type="button" style="margin-left:5px" ng-if="nota.danfe === ''" ng-click="uploadDANFE('uploaderDANFE')"><i class="fas fa-upload"></i>&nbspFazer upload da DANFE</button>
+
+                                        <input type="file" style="visibility:hidden" id="uploaderXML">
+                                        <input type="file" style="visibility:hidden" id="uploaderDANFE">
+                                    </div>
+                                    <hr>
+                                    <div class="form-group" style="position:relative;height:40px">
+                                        <input class="custom-control-input" id="chkq" style="display: inline-block;position:absolute;top:0px;left:5px" type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="nota.calcular_valores" ng-change="calcular()">
+                                        <label class="custom-control-label" style="cursor:pointer;" for="chkq"><strong style="position:absolute;top:0px;left:27px">Calcular impostos automaticamente</strong></label>
                                     </div>
                                     <hr>
                                     <br>
@@ -256,36 +340,32 @@
                                                 <th>Cod</th>
                                                 <th>Nome</th>
                                                 <th>Qtd.</th>
-                                                <th class="text-center">Val</th>
-                                                <th class="text-center">Vl.base</th>
-                                                <th class="text-center">Juros</th>
-                                                <th class="text-center">Frete</th>
+                                                <th class="text-center">Vl Unit.</th>
+                                                <th class="text-center">Vl Tot.</th>
+                                                <th class="text-center">Bas. Calc.</th>
                                                 <th class="text-center">Icms</th>
                                                 <th class="text-center">Ipi</th>
-                                                <th class="text-center">Valor</th>
-                                                <th>Ação</th>
+                                                <th class="text-center">Cfop</th>
+                                                <th class="text-center">Info.</th>
+                                                <th>Excluir</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr ng-repeat="prod in pedido.produtos">
-                                                <td>{{prod.produto.id}}</td>
-                                                <td>{{prod.produto.nome}}</td>
-                                                <td class="text-center" width="100px">{{prod.quantidade}}</td>
-                                                <td class="text-center">{{prod.validade_minima | data}}</td>
-                                                <td class="text-center"><input ng-disabled="!pedido.status.altera" type=text ng-confirm="atualizaCustos()" class="form-control" ng-model="prod.valor_base"></td>
-                                                <td class="text-center">{{prod.juros}}</td>
-                                                <td class="text-center">{{prod.frete}}</td>
-                                                <td class="text-center">{{prod.icms}}</td>
-                                                <td class="text-center">{{prod.ipi}}</td>
-                                                <td class="text-center">{{(prod.icms + prod.valor_base + prod.ipi + prod.frete + prod.juros).toFixed(2)}}</td>
-                                                <td >
-                                                    <div class="product-btn">
-                                                        <a href="#" ng-disabled="!pedido.status.altera" class="btn btn-outline-light btndel" ng-click="removerProduto(prod)"><i class="fas fa-trash-alt"></i></a>
-                                                    </div>
-                                                </td>
-
+                                            <tr ng-repeat="prod in nota.produtos">
+                                                <th>{{prod.produto.id}}</th>
+                                                <th>{{prod.produto.nome}}</th>
+                                                <th><input type="number" class="form-control" ng-model="prod.quantidade" ng-confirm="calcular()"></th>
+                                                <th><input type="number" class="form-control" ng-model="prod.valor_unitario" ng-confirm="calcular()"></th>
+                                                <th class="text-center">{{prod.valor_total}}</th>
+                                                <th class="text-center"><input type="number" step="0.001" class="form-control" ng-model="prod.base_calculo" ng-confirm="calcular()"></th>
+                                                <th class="text-center"><input type="number" step="0.001"  class="form-control" ng-model="prod.icms" ng-confirm="calcular()"></th>
+                                                <th class="text-center"><input type="number" step="0.001"  class="form-control" ng-model="prod.ipi" ng-confirm="calcular()"></th>
+                                                <th class="text-center"><input type="text" class="form-control" ng-model="prod.cfop" ng-confirm="calcular()"></th>
+                                                <th class="text-center"><input type="text" class="form-control" ng-model="prod.informacao_adicional"></th>
+                                                <th><button type="button" class="btn btn-light" ng-click="removerProduto(prod)"><i class="fas fa-trash"></i></button></th>
                                             </tr>
                                             <tr>
+                                                <td></td>
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
@@ -297,7 +377,7 @@
                                                 <td></td>
                                                 <td>
                                                     <div class="product-btn">
-                                                        <a href="#" class="btn btn-outline-light btnaddprod" ng-disabled="!pedido.status.altera" ng-click="produtos.attList()" data-title="addproduto" data-toggle="modal" data-target="#produtos"><i class="fas fa-plus-circle"></i></a>
+                                                        <a href="#" class="btn btn-outline-light btnaddprod" ng-click="produtos.attList()" data-title="addproduto" data-toggle="modal" data-target="#produtos"><i class="fas fa-plus-circle"></i></a>
                                                     </div>
                                                 </td>
 
@@ -307,58 +387,71 @@
                                         <tfoot>
                                             <tr>
                                                 <th colspan="7" style="text-align:right;">VALOR TOTAL</th>
-                                                <th colspan="3">R$ {{getTotalPedido().toFixed(2)}}</th>
+                                                <th colspan="3">R$ {{getTotalNota().toFixed(2)}}</th>
                                             </tr>
                                         </tfoot>		
                                     </table>
                                     <hr>
                                     <div class="form-group">
+                                        <strong style="font-size:15px">Vencimentos:</strong>
+                                        <hr>
                                         <div class="form-row">
-                                            <div class="form-inline col-1">
-                                                <label for="">Frete</label>
-                                            </div>
-                                            <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
-                                                <input ng-disabled="!pedido.status.altera" type="radio" id="customRadioInline1" name="customRadioInline1" ng-value="true" ng-change="atualizaCustos()" ng-model="pedido.incluir_frete" class="custom-control-input" checked>
-                                                <label class="custom-control-label" for="customRadioInline1">CIF</label>
-                                            </div>
-                                            <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
-                                                <input ng-disabled="!pedido.status.altera" type="radio" id="customRadioInline2" name="customRadioInline1" ng-value="false" ng-change="atualizaCustos()" ng-model="pedido.incluir_frete" class="custom-control-input">
-                                                <label class="custom-control-label" for="customRadioInline2">FOB</label>
-                                            </div>
-                                            <div class="form-inline col-3" style="margin-left: 40px;">
-                                                <a href="#" ng-disabled="!pedido.status.altera" class="btn btn-primary" data-title="calcFrete" data-toggle="modal" ng-click="getFretes()" data-target="#calcFrete" ng-if="calculoPronto()">Calcular Frete</a>
-                                            </div>
+                                            <div class="form-inline col-12">
+                                                <div class="row" style="margin-bottom:20px">
+                                                    <div class="col-md-5">
+                                                        Data:
+                                                        <input type="text" class="form-control" ng-model="vencimento.data_texto">
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        Valor:
+                                                        <input type="number" step="0.01" class="form-control" ng-model="vencimento.valor">
+                                                    </div>
+                                                    <div class="col-md-2" style="padding-top: 20px">
+                                                        <button class="btn btn-success" type="button" ng-click="addVencimento()">
+                                                            <i class="fa fa-plus-circle"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <table id="" class="table table-striped" width="90%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Cod</th>
+                                                            <th>Valor</th>
+                                                            <th>Data</th>
+                                                            <th>Movimento</th>
+                                                            <th>Excluir</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr style="{{venc.movimento==null?'color:Red':'color:Green'}}" ng-repeat="venc in nota.vencimentos">
+                                                            <td>{{venc.id}}</td>
+                                                            <td>{{venc.valor}} R$</td>
+                                                            <td><input type="text" class="form-control" ng-model="venc.data_texto"></td>
+                                                            <td>{{venc.movimento==null?'Sem movimento':'Baixado Movimento '+venc.movimento.id+', '+venc.movimento.banco.nome}}</td>
+                                                            <td>
+                                                                <div class="product-btn">
+                                                                    <button type="button" class="btn btn-light" ng-click="removeVencimento(venc)"><i class="fas fa-trash"></i></button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tfoot>
+
+                                                    </tfoot>		
+                                                </table>
+
+                                            </div>    
                                         </div>
                                     </div>
                                     <hr>
-                                    <div class="form-group">
-                                        <div class="form-row">
-                                            <div class="form-inline" style="margin-right: 20px;">
-                                                <label for="">Forma de pagamento</label>
-                                            </div>
-                                            <div class="form-inline">
-                                                <label for="" style="margin-left: 25px;margin-right: 10px;">Prazo:</label>
-                                                <input ng-disabled="!pedido.status.altera" type="number" class="form-control col-5" ng-model="pedido.prazo" ng-confirm="atualizaCustos()" placeholder="5" min="0" max="90" value="0">
-                                            </div>
-                                            <div class="form-inline">
-                                                <label for="" style="margin-left: 25px;margin-right: 10px;">Parcelas:</label>
-                                                <input ng-disabled="!pedido.status.altera" type="number" class="form-control col-5" ng-model="pedido.parcelas" ng-confirm="atualizaCustos()" placeholder="1" min="0" max="90" value="1">
-                                            </div>
-                                        </div>
-                                    </div>
                                     <hr>
                                     <div class="form-group">
                                         <div class="form-row">
-                                            <div class="form-inline col-7">
-                                                <label for="" style="margin-right: 20px;">Status</label>
-                                                <select class="form-control col-7" id="status" ng-model="pedido.status" ng-disabled="pedido.status.parado">    
-                                                    <option ng-value="status" ng-repeat="status in status_pedido" ng-disabled="!pedido.status.volta_status && status.id<pedido.status.id">{{status.nome}}</option>
-                                                </select>
-                                            </div>
                                             <div class="form-inline col-5">
-                                                <label for="" style="margin-right: 20px;">Forma pagamento</label>
-                                                <select class="form-control col-7" id="status" ng-model="pedido.forma_pagamento">    
-                                                    <option ng-disabled="!pedido.status.altera" ng-value="forma_pagamento" ng-repeat="forma_pagamento in formas_pagamento">{{forma_pagamento.nome}}</option>
+                                                <label for="" style="margin-right: 20px;">Forma de cobranca: </label>
+                                                <select class="form-control col-7" id="status" ng-model="nota.forma_pagamento">    
+                                                    <option ng-value="forma_pagamento" ng-repeat="forma_pagamento in formas_pagamento">{{forma_pagamento.nome}}</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -368,7 +461,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                                <button class="btn btn-primary" ng-click="mergePedido()" ng-disabled="pedido.status.parado">
+                                <button class="btn btn-primary" ng-click="mergeNota()">
                                     <i class="fas fa-save"></i> &nbsp; Salvar
                                 </button>
                             </div>
@@ -384,39 +477,60 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de seu Pedido</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de sua Nota</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
-                                <p class="text-center"> Tem certeza de que deseja excluir este Pedido?</p>
+                                <p class="text-center"> Tem certeza de que deseja excluir esta Nota?</p>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary" ng-click="deletePedido()">Sim</button>
+                                <button class="btn btn-primary" ng-click="deleteNota()">Sim</button>
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Não</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- /.modal-content --> 
-
-                <!-- /.modal-content VISUALIZAR PEDIDO --> 
-                <div class="modal fade" id="vizPedido" tabindex="-1" role="dialog" aria-labelledby="vizPedido" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
+                <!-- /.modal-content --> 
+                <div class="modal fade" id="fornecedores" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-eye fa-3x"></i>&nbsp;&nbsp;&nbsp;Vizualizando Pedido</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Seleção de Fornecedores</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
-                            <div class="modal-body text-center">
-                                <iframe id="myIframe" name="myIframe" frameborder="1" width="100%" height="300px" ng-src="visualizar-pedido-print.php"></iframe>
+                            <div class="modal-body">
+                                <input type="text" class="form-control" id="filtroFornecedores" placeholder="Filtro">
+                                <hr>
+                                <table class="table table-striped table-bordered first">
+                                    <thead>
+                                    <th data-ordem="fornecedor.id">Cod.</th>
+                                    <th data-ordem="fornecedor.nome">Nome</th>
+                                    <th>Selecionar</th>
+                                    </thead>
+                                    <tr ng-repeat="fo in fornecedores.elementos">
+                                        <th>{{fo[0].id}}</th>
+                                        <th>{{fo[0].nome}}</th>
+                                        <th><button class="btn btn-success" ng-click="setFornecedor(fo[0])"><i class="fa fa-info"></i></button></th>
+                                    </tr> 
+                                </table>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-end">
+                                            <li class="page-item" ng-click="fornecedores.prev()"><a class="page-link" href="">Anterior</a></li>
+                                            <li class="page-item" ng-repeat="pg in fornecedores.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                            <li class="page-item" ng-click="fornecedores.next()"><a class="page-link" href="">Próximo</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
+
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- /.modal-content --> 
                 <!-- /.modal-content CLIENTE --> 
                 <div class="modal fade" id="clientes" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
@@ -507,8 +621,6 @@
                             </div>
                             <div class="modal-body">
                                 <input type="text" class="form-control col-md-8" id="filtroProdutos" placeholder="Filtro">
-                                <br>
-                                Qtd: <input type="number" class="form-control" class="col-md-4" ng-model="qtd" placeholder="Quantidade" style="width:40%;margin-top:5px">
                                 <hr>
                                 <table class="table table-striped table-bordered first">
                                     <thead>
@@ -518,36 +630,12 @@
                                     <th data-ordem="produto.valor_base">Valor</th>
                                     <th>Selecionar</th>
                                     </thead>
-                                    <tr ng-repeat-start="produt in produtos.elementos">
+                                    <tr ng-repeat="produt in produtos.elementos">
                                         <th>{{produt[0].id}}</th>
                                         <th>{{produt[0].nome}}</th>
                                         <th>{{produt[0].disponivel}}</th>
                                         <th>{{produt[0].valor_base}}</th>
                                         <th><button class="btn btn-success" ng-click="setProduto(produt[0])" data-target="#demo{{produt[0].id}}" data-toggle="collapse" class="accordion-toggle"><i class="fa fa-info"></i></button></th>
-                                    </tr>
-                                    <tr ng-repeat-end>
-                                        <td colspan="6" class="hiddenRow">
-                                            <div class="accordian-body collapse" id="demo{{produt[0].id}}">
-                                                <div class="row mx-auto m-b-30">
-                                                    <div class="col">
-                                                        <table class="table table-striped table-bordered first">
-                                                            <thead>
-                                                            <th>Validade</th>
-                                                            <th>Quantidade</th>
-                                                            <th>Valor</th>
-                                                            <th>Selecionar</th>
-                                                            </thead>
-                                                            <tr ng-repeat="validade in produt[0].validades">
-                                                                <th>{{validade.validade| data}} <i class="fas fa-arrow-up" ng-if="validade.alem" ></i> </th>
-                                                                <th>{{validade.quantidade}} <strong>{{validade.limite<0?'Sem limite':'Limite de '+validade.limite}}</strong></th>
-                                                                <th>{{validade.valor}}</th>
-                                                                <th><button class="btn btn-success" ng-click="addProduto(produt[0], validade)"><i class="fas fa-plus-circle"></i></button></th>
-                                                            </tr>
-                                                        </table>
-                                                    </div>																	
-                                                </div>	
-                                            </div> 
-                                        </td>
                                     </tr>
                                 </table>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
@@ -653,108 +741,89 @@
                         </div>
                     </div>
                 </div>
-                <!-- /.modal-content --> 
+            </div>
+            <!-- /.modal-content --> 
 
-                <!-- /.modal-content CALCFRETE --> 
-                <div class="modal fade" id="calcFrete" tcalculoProntoabindex="-1" role="dialog" aria-labelledby="calcFrete" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fa fa-fw fa-truck fa-3x"></i>&nbsp;&nbsp;&nbsp;Escolha o Frete</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <div class="form-row">
-                                        <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;" ng-repeat="frete in fretes">
-                                            <input type="radio" id="customRadioInline3" ng-click="setFrete(frete)" name="customRadioInline1" class="custom-control-input">
-                                            <label class="custom-control-label" for="customRadioInline3">R$ {{frete.valor.toFixed(2)}} + ({{frete.transportadora.despacho}}) - {{frete.transportadora.razao_social}}</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- /.modal-content CALCFRETE --> 
+        </div>
+        <div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <div class="modal-body text-center">
+
+                        <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
+                        <br>
+                        <h3 style="margin-top:20px;">Carregando as informações...</h3>
+
+                    </div>
+                    <div class="modal-footer">
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                            </div>
-                            <div class="modal-body text-center">
-                                
-                                <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                                <br>
-                                <h3 style="margin-top:20px;">Carregando as informações...</h3>
-
-                            </div>
-                            <div class="modal-footer">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        </div>
 
 
-                <!-- jquery 3.3.1 -->
-                <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-                <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
-                <script src="assets/libs/js/form-mask.js"></script>
-                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+        <!-- jquery 3.3.1 -->
+        <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+        <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
+        <script src="assets/libs/js/form-mask.js"></script>
+        <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
-                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-                <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-                <!-- slimscroll js -->
-                <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-                <!-- main js -->
-                <script src="assets/libs/js/main-js.js"></script>
-                <!-- chart chartist js -->
-                <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
-                <!-- sparkline js -->
-                <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
-                <!-- morris js -->
-                <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
-                <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
-                <!-- chart c3 js -->
-                <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
-                <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
-                <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
-                <script src="assets/libs/js/dashboard-ecommerce.js"></script>
-                <!-- parsley js -->
-                <script src="assets/vendor/parsley/parsley.js"></script>
+        <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+        <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+        <!-- slimscroll js -->
+        <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+        <!-- main js -->
+        <script src="assets/libs/js/main-js.js"></script>
+        <!-- chart chartist js -->
+        <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
+        <!-- sparkline js -->
+        <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+        <!-- morris js -->
+        <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
+        <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
+        <!-- chart c3 js -->
+        <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
+        <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+        <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
+        <script src="assets/libs/js/dashboard-ecommerce.js"></script>
+        <!-- parsley js -->
+        <script src="assets/vendor/parsley/parsley.js"></script>
 
-                <!-- Optional JavaScript -->
-                <script>
-                    
-                    var sh = false;
-                    var it = null;
-                    
-                    loading.show = function(){
-                        if(it != null){
-                            clearInterval(it);
-                        }
-                        if(!sh){
-                            
-                            sh = true;
-                            $("#loading").modal("show");
-                        
-                        }
-                        
-                    }
-                    
-                    loading.close = function(){
-                        
-                        it = setTimeout(function(){
-                                if(sh){
-                                    sh = false;
-                                    $("#loading").modal("hide");
-                                }
-                        },2000);
-                        
-                        
-                    }
+        <!-- Optional JavaScript -->
+        <script>
+
+                                                        var sh = false;
+                                                        var it = null;
+
+                                                        loading.show = function () {
+                                                            if (it != null) {
+                                                                clearInterval(it);
+                                                            }
+                                                            if (!sh) {
+
+                                                                sh = true;
+                                                                $("#loading").modal("show");
+
+                                                            }
+
+                                                        }
+
+                                                        loading.close = function () {
+
+                                                            it = setTimeout(function () {
+                                                                if (sh) {
+                                                                    sh = false;
+                                                                    $("#loading").modal("hide");
+                                                                }
+                                                            }, 2000);
+
+
+                                                        }
 
                                                         $(document).ready(function () {
                                                             $('.btnvis').tooltip({title: "Visualizar", placement: "top"});
@@ -764,7 +833,7 @@
                                                         });
 
 
-            </script>
+        </script>
 
     </body>
 

@@ -64,12 +64,9 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         
         // criando categorias de produto
         
-        $categoria = new stdClass();
-        $categoria->id = 1;
-        $categoria->ipi = 0;
-        $categoria->base_calculo = 40;
-        $categoria->icms = 0;
-        $categoria->icms_normal = true;
+        $categoria = new CategoriaProduto();
+        $categoria->nome = "Renan";
+        $categoria->merge(new ConnectionFactory());
         
         // criando produtos
         
@@ -78,7 +75,6 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         $produto->nome = "teste";
         $produto->id_universal = 12;
         $produto->categoria = $categoria;
-        $produto->categoria->id=2;
         $produto->liquido = false;
         $produto->unidade = "Galao";
         $produto->quantidade_unidade = 0.25;
@@ -235,6 +231,8 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         $nota->frete = 10;
         $nota->prazo = 20;
         $nota->empresa = $empresa;
+        $nota->forma_pagamento = Sistema::getFormasPagamento();
+        $nota->forma_pagamento = $nota->forma_pagamento[0];
         
         $nota->produtos = array();
         
@@ -324,7 +322,7 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
             $nota->merge(new ConnectionFactory());
         
         }catch(Exception $ex){
-            
+
             $erro = true;
             
         }
@@ -338,9 +336,9 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         $nota_json = Utilidades::toJson($nota);
         
         $nota = Utilidades::fromJson($nota_json);
-        
-        $nota->delete(new ConnectionFactory());
 
+        $nota->delete(new ConnectionFactory());
+    
         //produto1 85 --> 45 e 40 | 65 + 21(3), produto2 80 --> 50 e 30 | 20, produto3 80 --> 80 | 56
         
         $produto->atualizarEstoque(new ConnectionFactory());

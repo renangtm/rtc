@@ -268,9 +268,17 @@ if (!isset($filtro)) {
                     <li class="nav-item">
                         <a class="nav-link" href="fornecedores.php" ><i class="fas fa-industry"></i>Fornecedores</a>
                     </li>
-
+                    <li class="nav-item">
+                        <a class="nav-link" href="bancos.php" ><i class="fas fa-calculator"></i>Bancos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="movimentos_banco.php" ><i class="fas fa-money-bill-alt"></i>Movimentos Financeiro</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="cadastro-de-produtos.php"><i class="fas fa-cube"></i>Cadastro de Produtos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="notas.php"><i class="fas fa-book"></i>Notas</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#"><i class="fas fa-exchange-alt"></i>Movimentação</a>

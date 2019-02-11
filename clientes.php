@@ -94,8 +94,9 @@
                                                         <th data-ordem="cliente.razao_social">Raz Soc.</th>
                                                         <th data-ordem="cliente.nome_fantasia">Nom Fant</th>
                                                         <th data-ordem="cliente.inscricao_estadual">IE</th>
+                                                        <th data-ordem="cliente.cnpj">CNPJ</th>
+                                                        <th data-ordem="cliente.cpf">CPF</th>
                                                         <th data-ordem="cliente.limite_credito">Lim Cre</th>
-                                                        <th data-ordem="cliente.inicio_limite">Ini Lim</th>
                                                         <th data-ordem="cliente.termino_limite">Fim Lim</th>
                                                         <th width="150px">Ação</th>
                                                     </tr>
@@ -106,8 +107,9 @@
                                                         <td>{{cliente[0].razao_social}}</td>
                                                         <td>{{cliente[0].nome_fantasia}}</td>
                                                         <td>{{cliente[0].inscricao_estadual}}</td>
+                                                        <td>{{cliente[0].pessoa_fisica?'------':cliente[0].cnpj.valor}}</td>
+                                                        <td>{{cliente[0].pessoa_fisica?cliente[0].cpf.valor:'------'}}</td>
                                                         <td>{{cliente[0].limite_credito}}</td>
-                                                        <td style="{{(cliente[0].inicio_limite>data_atual || cliente[0].termino_limite<data_atual)?'background-color:#FA8072;color:#FFFFFF':'' }}">{{cliente[0].inicio_limite| data }}</td>
                                                         <td style="{{(cliente[0].inicio_limite>data_atual || cliente[0].termino_limite<data_atual)?'background-color:#FA8072;color:#FFFFFF':'' }}">{{cliente[0].termino_limite| data}}<button class="btn btn-default" style="float:right" ng-if="cliente[0].inicio_limite>data_atual || cliente[0].termino_limite<data_atual"><i class="fa fa-address-card"></i></button></td>
                                                         <th>
                                                             <div class="product-btn">
@@ -134,6 +136,10 @@
                                                                             <tr>
                                                                                 <td>suframa:</td>
                                                                                 <td>{{cliente[0].inscricao_suframa}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Email:</td>
+                                                                                <td><email entidade="Cliente" atributo="cliente[0].email" senha="false" alterar="false"></email></td>
                                                                             </tr>
                                                                         </table>
                                                                     </div>	
@@ -176,8 +182,9 @@
                                                         <th>Raz Soc.</th>
                                                         <th>Nom Fant</th>
                                                         <th>IE</th>
+                                                        <th>CNPJ</th>
+                                                        <th>CPF</th>
                                                         <th>Lim Cre</th>
-                                                        <th>Ini Lim</th>
                                                         <th>Fim Lim</th>
                                                         <th width="180px">Ação</th>
                                                     </tr>
@@ -257,12 +264,8 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtemail" class="col-3 col-lg-2 col-form-label text-left">Email</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtemail" ng-model="cliente.email.endereco" type="email" required data-parsley-type="email" placeholder="" class="form-control">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
+                                            <email entidade="Cliente" atributo="cliente.email" senha="false" alterar="true"></email>
                                         </div>
                                     </div>
                                     <div class="col" style="padding-top: 5px;">

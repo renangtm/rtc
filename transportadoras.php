@@ -123,7 +123,7 @@
                                                                         <table class="table table-bordered w-100">
                                                                             <tr>
                                                                                 <td>Email:</td>
-                                                                                <td>{{transportadora[0].email.endereco}}</td>
+                                                                                <td><email entidade="Transportadora" atributo="transportadora[0].email" senha="false" alterar="false"></email></td>
                                                                             </tr>
                                                                             <tr ng-if="transportadora[0].tabela == null">
                                                                                 <td style="color:SteelBlue">Criar tabela:</td>
@@ -258,12 +258,8 @@
                                     </div>
 
                                     <div class="form-group row">
-                                        <label for="txtemail" class="col-3 col-lg-2 col-form-label text-left">Email</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtemail" ng-model="transportadora.email.endereco" type="email" required data-parsley-type="email" placeholder="" class="form-control">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
+                                            <email entidade="Transportadora" atributo="transportadora.email" senha="false" alterar="true"></email>
                                         </div>
                                     </div>
                                     <div class="col-4 col-lg-4" style="padding-top: 5px;">

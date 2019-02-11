@@ -17,6 +17,7 @@ class Banco {
     public $codigo;
     public $nome;
     public $conta;
+    public $agencia;
     public $saldo;
     public $excluido;
     public $empresa;
@@ -45,13 +46,13 @@ class Banco {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO banco(nome,conta,saldo,excluido,id_empresa,codigo) VALUES('$this->nome','$this->conta',$this->saldo,false," . $this->empresa->id . ",$this->codigo)");
+            $ps = $con->getConexao()->prepare("INSERT INTO banco(nome,conta,saldo,excluido,id_empresa,codigo,agencia) VALUES('$this->nome','$this->conta',$this->saldo,false," . $this->empresa->id . ",$this->codigo,'". addslashes($this->agencia)."')");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
-
-            $ps = $con->getConexao()->prepare("UPDATE banco SET nome='$this->nome',conta='$this->conta',saldo=$this->saldo,excluido = false,codigo=$this->codigo, id_empresa=" . $this->empresa->id . " WHERE id=$this->id");
+            
+            $ps = $con->getConexao()->prepare("UPDATE banco SET nome='$this->nome',conta='$this->conta',saldo=$this->saldo,excluido = false,codigo=$this->codigo, id_empresa=" . $this->empresa->id . ",agencia='". addslashes($this->agencia)."' WHERE id=$this->id");
             $ps->execute();
             $ps->close();
         }

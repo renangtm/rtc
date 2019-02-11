@@ -13,26 +13,24 @@
  */
 class Sistema {
 
-    public static function getHtml($nom, $p=null) {
+    public static function getHtml($nom, $p = null) {
 
         global $obj;
         $obj = $p;
-        
+
         $servico = realpath('../../html_email');
         $servico .= "/$nom.php";
-        
+
         ob_start();
         include($servico);
         $html = ob_get_clean();
-        
+
         return utf8_decode($html);
-        
     }
-    
-    public static function getMesesValidadeCurta(){
-        
+
+    public static function getMesesValidadeCurta() {
+
         return 4;
-        
     }
 
     public static function mergeArquivo($nome, $conteudo) {
@@ -43,19 +41,18 @@ class Sistema {
         fclose($handle);
     }
 
-    private static function getMicroServicoJava($nome, $parametros=null) {
-        
+    private static function getMicroServicoJava($nome, $parametros = null) {
+
         $servico = realpath('../micro_servicos_java');
         $servico .= "/$nome.jar";
         $comando = "java -jar \"$servico\"";
-        if($parametros != null){     
-            $comando .= " \"$parametros\" 2>&1";     
-        }else{   
-            $comando .= " 200 2>&1";   
+        if ($parametros != null) {
+            $comando .= " \"$parametros\" 2>&1";
+        } else {
+            $comando .= " 200 2>&1";
         }
-        exec($comando, $output); 
+        exec($comando, $output);
         return $output[0];
-        
     }
 
     public static function getEtiquetas($etiquetas) {
@@ -72,17 +69,14 @@ class Sistema {
         $final_request = addslashes($final_request);
 
         $resp = Utilidades::fromJson(self::getMicroServicoJava('GeradorEtiqueta', $final_request));
-        
-        if(!$resp->sucesso){
-            
+
+        if (!$resp->sucesso) {
+
             throw new Exception('falha');
-            
         } else {
 
             return $arquivo;
-            
         }
-        
     }
 
     public static function getHistorico($con) {
@@ -134,7 +128,6 @@ class Sistema {
 
         $st = Sistema::getStatusPedidoEntrada();
         return $st[3];
-        
     }
 
     public static function relacionarFilial($empresa1, $empresa2) {
@@ -216,10 +209,10 @@ class Sistema {
 
         $status = array();
 
-        $status[] = new StatusPedidoEntrada(1, "Confirmacao de pedido", false, false,true);
-        $status[] = new StatusPedidoEntrada(2, "Em transito", false, true,false);
-        $status[] = new StatusPedidoEntrada(3, "Finalizado", true, false,false);
-        $status[] = new StatusPedidoEntrada(4, "Cancelado", false, false,true);
+        $status[] = new StatusPedidoEntrada(1, "Confirmacao de pedido", false, false, true);
+        $status[] = new StatusPedidoEntrada(2, "Em transito", false, true, false);
+        $status[] = new StatusPedidoEntrada(3, "Finalizado", true, false, false);
+        $status[] = new StatusPedidoEntrada(4, "Cancelado", false, false, true);
 
         return $status;
     }
@@ -306,29 +299,29 @@ class Sistema {
 
         $status = array();
 
-        $status[] = new StatusPedidoSaida(1, "Confirmacao de pedido", false, true, true, true);
-        $status[] = new StatusPedidoSaida(2, "Limite de credito", false, true, false, false);
-        $status[] = new StatusPedidoSaida(3, "Autorizacao de pedido", false, true, false, false);
-        $status[] = new StatusPedidoSaida(4, "Confirmacao de pagamento", false, true, true, false);
-        $status[] = new StatusPedidoSaida(5, "Separacao", false, true, true, false);
-        $status[] = new StatusPedidoSaida(6, "Faturamento", true, true, true, false);
-        $status[] = new StatusPedidoSaida(7, "Coleta", true, true, true, true);
-        $status[] = new StatusPedidoSaida(8, "Rastreio", true, true, true, false);
-        $status[] = new StatusPedidoSaida(9, "Finalizado", true, true, true, false);
-        $status[] = new StatusPedidoSaida(10, "Cancelado", false, false, true, true);
-        $status[] = new StatusPedidoSaida(30, "Excluido", false, false, false, true);
-        
+        $status[] = new StatusPedidoSaida(1, "Confirmacao de pedido", false, true, true, true, true, true, false, false);
+        $status[] = new StatusPedidoSaida(2, "Limite de credito", false, true, false, false, true, true, false, false);
+        $status[] = new StatusPedidoSaida(3, "Autorizacao de pedido", false, true, false, false, true, true, false, false);
+        $status[] = new StatusPedidoSaida(4, "Confirmacao de pagamento", false, true, true, false, true, true, false, false);
+        $status[] = new StatusPedidoSaida(5, "Separacao", false, true, true, false, false, false, false, false);
+        $status[] = new StatusPedidoSaida(6, "Faturamento", true, true, true, false, false, false, false, true);
+        $status[] = new StatusPedidoSaida(7, "Coleta", true, true, true, true, false, false, false, true);
+        $status[] = new StatusPedidoSaida(8, "Rastreio", true, true, true, false, false, false, false, true);
+        $status[] = new StatusPedidoSaida(9, "Finalizado", true, true, true, false, false, false, true, true);
+        $status[] = new StatusPedidoSaida(10, "Cancelado", false, false, true, true, false, false, true, false);
+        $status[] = new StatusPedidoSaida(30, "Excluido", false, false, false, true, false, false, true, false);
+
         return $status;
     }
-    
+
     public static function getStatusCotacaoEntrada() {
 
         $sts = array();
 
-        $sts[] = new StatusCotacaoEntrada(1, "Aguardando resposta",true);
-        $sts[] = new StatusCotacaoEntrada(2, "Respondida",false);
-        $sts[] = new StatusCotacaoEntrada(3, "Pedido fechado",false);
-        $sts[] = new StatusCotacaoEntrada(4, "Cancelada",true);
+        $sts[] = new StatusCotacaoEntrada(1, "Aguardando resposta", true);
+        $sts[] = new StatusCotacaoEntrada(2, "Respondida", false);
+        $sts[] = new StatusCotacaoEntrada(3, "Pedido fechado", false);
+        $sts[] = new StatusCotacaoEntrada(4, "Cancelada", true);
 
         return $sts;
     }
@@ -615,6 +608,141 @@ class Sistema {
         return null;
     }
 
+    public static function getLogisticaById($con, $id) {
+
+        $logs = Sistema::getLogisticas($con, true);
+
+        if (isset($logs[$id])) {
+            return $logs[$id];
+        }
+        
+        return null;
+    }
+
+    public static function getLogisticas($con, $id_array = false) {
+        
+        $ses = new SessionManager();
+
+        if ($ses->get("logisticas") != null) {
+
+            if ($id_array) {
+
+                return $ses->get("logisticas_id");
+            } else {
+
+                return $ses->get("logisticas");
+            }
+        }
+        
+        $ps = $con->getConexao()->prepare("SELECT "
+                . "empresa.id,"
+                . "empresa.is_logistica,"
+                . "empresa.nome,"
+                . "empresa.inscricao_estadual,"
+                . "empresa.consigna,"
+                . "empresa.aceitou_contrato,"
+                . "empresa.juros_mensal,"
+                . "empresa.cnpj,"
+                . "endereco.numero,"
+                . "endereco.id,"
+                . "endereco.rua,"
+                . "endereco.bairro,"
+                . "endereco.cep,"
+                . "cidade.id,"
+                . "cidade.nome,"
+                . "estado.id,"
+                . "estado.sigla,"
+                . "email.id,"
+                . "email.endereco,"
+                . "email.senha,"
+                . "telefone.id,"
+                . "telefone.numero "
+                . "FROM empresa "
+                . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
+                . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
+                . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
+                . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
+                . "INNER JOIN estado ON cidade.id_estado = estado.id "
+                . "WHERE empresa.is_logistica=true");
+        $ps->execute();
+        
+        $empresas = array();
+        $empresas_id = array();
+        $ps->bind_result($id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+
+        while ($ps->fetch()) {
+
+            $empresa = new Empresa();
+
+            if ($is_logistica == 1) {
+
+                $empresa = new Logistica();
+            }
+
+            $empresa->id = $id_empresa;
+            $empresa->cnpj = new CNPJ($cnpj);
+            $empresa->inscricao_estadual = $inscricao_empresa;
+            $empresa->nome = $nome_empresa;
+            $empresa->aceitou_contrato = $aceitou_contrato;
+            $empresa->juros_mensal = $juros_mensal;
+            $empresa->consigna = $consigna;
+
+            $endereco = new Endereco();
+            $endereco->id = $id_endereco;
+            $endereco->rua = $rua;
+            $endereco->bairro = $bairro;
+            $endereco->cep = new CEP($cep);
+            $endereco->numero = $numero_endereco;
+
+            $cidade = new Cidade();
+            $cidade->id = $id_cidade;
+            $cidade->nome = $nome_cidade;
+
+            $estado = new Estado();
+            $estado->id = $id_estado;
+            $estado->sigla = $nome_estado;
+
+            $cidade->estado = $estado;
+
+            $endereco->cidade = $cidade;
+
+            $empresa->endereco = $endereco;
+
+            $email = new Email($endereco_email);
+            $email->id = $id_email;
+            $email->senha = $senha_email;
+
+            $empresa->email = $email;
+
+            $telefone = new Telefone($numero_telefone);
+            $telefone->id = $id_telefone;
+
+            $empresa->telefone = $telefone;
+
+
+            $empresas[] = $empresa;
+
+            $empresas_id[$id_empresa] = $empresa;
+        }
+
+        $ps->close();
+
+        $ses->set("logisticas_id", $empresas_id);
+        $ses->set("logisticas", $empresas);
+
+        if($id_array){
+            
+            return $empresas_id;
+            
+        }else{
+        
+            return $empresas;
+            
+        }
+        
+        
+    }
+
     public static function logar($login, $senha) {
 
         $con = new ConnectionFactory();
@@ -640,6 +768,7 @@ class Sistema {
                 . "email_usu.endereco,"
                 . "email_usu.senha,"
                 . "empresa.id,"
+                . "empresa.is_logistica,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -676,7 +805,7 @@ class Sistema {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $usuarios = array();
 
@@ -712,6 +841,12 @@ class Sistema {
 
 
             $empresa = new Empresa();
+
+            if ($is_logistica == 1) {
+
+                $empresa = new Logistica();
+            }
+
             $empresa->id = $id_empresa;
             $empresa->cnpj = new CNPJ($cnpj);
             $empresa->inscricao_estadual = $inscricao_empresa;

@@ -24,6 +24,7 @@ class ProdutoNota {
     public $icms;
     public $ipi;
     public $influencia_estoque;
+    public $informacao_adicional;
 
     function __construct() {
 
@@ -50,8 +51,7 @@ class ProdutoNota {
         }
         $ps->close();
 
-
-        $x_res = ($this->nota->interferir_estoque) ? ($this->nota->saida ? $this->quantidade * -1 : $this->quantidade) : 0;
+        $x_res = ($this->nota->interferir_estoque && !$this->nota->cancelada && $this->nota->emitida) ? ($this->nota->saida ? $this->quantidade * -1 : $this->quantidade) : 0;
         $dif_res = $x_res - $this->influencia_estoque;
 
         if ($this->produto->disponivel + $dif_res < 0) {
@@ -74,13 +74,13 @@ class ProdutoNota {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO produto_nota(id_produto,id_nota,quantidade,valor_unitario,valor_total,influencia_estoque,ipi,icms,base_calculo,cfop) VALUES(" . $this->produto->id . "," . $this->nota->id . ",$this->quantidade,$this->valor_unitario,$this->valor_total,$this->influencia_estoque,$this->ipi,$this->icms,$this->base_calculo,'$this->cfop')");
+            $ps = $con->getConexao()->prepare("INSERT INTO produto_nota(id_produto,id_nota,quantidade,valor_unitario,valor_total,influencia_estoque,ipi,icms,base_calculo,cfop,informacao_adicional) VALUES(" . $this->produto->id . "," . $this->nota->id . ",$this->quantidade,$this->valor_unitario,$this->valor_total,$this->influencia_estoque,$this->ipi,$this->icms,$this->base_calculo,'$this->cfop','$this->informacao_adicional')");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE produto_nota SET id_produto=" . $this->produto->id . ",id_nota=" . $this->nota->id . ",quantidade=$this->quantidade,valor_unitario=$this->valor_unitario,valor_total=$this->valor_total,influencia_estoque=$this->influencia_estoque,ipi=$this->ipi,icms=$this->icms,base_calculo=$this->base_calculo,cfop='$this->cfop' WHERE id=$this->id");
+            $ps = $con->getConexao()->prepare("UPDATE produto_nota SET id_produto=" . $this->produto->id . ",id_nota=" . $this->nota->id . ",quantidade=$this->quantidade,valor_unitario=$this->valor_unitario,valor_total=$this->valor_total,influencia_estoque=$this->influencia_estoque,ipi=$this->ipi,icms=$this->icms,base_calculo=$this->base_calculo,cfop='$this->cfop', informacao_adicional='$this->informacao_adicional' WHERE id=$this->id");
             $ps->execute();
             $ps->close();
         }

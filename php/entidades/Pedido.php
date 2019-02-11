@@ -23,12 +23,13 @@ class Pedido {
     public $data;
     public $excluido;
     public $usuario;
-    public $ficha;
+    public $id_nota;
     public $prazo;
     public $parcelas;
     public $status;
     public $produtos;
     public $forma_pagamento;
+    public $logistica;
 
     function __construct() {
 
@@ -39,16 +40,17 @@ class Pedido {
         $this->observacoes = "";
         $this->frete_incluso = "";
         $this->empresa = null;
-        $this->data = round(microtime(true));
+        $this->data = round(microtime(true)*1000);
         $this->excluido = false;
         $this->usuario = null;
-        $this->ficha = 0;
+        $this->id_nota = 0;
         $this->prazo = 0;
         $this->parcelas = 1;
         $this->status = null;
         $this->produtos = null;
         $this->forma_pagamento = null;
         $this->incluir_frete = true;
+        $this->logistica = null;
     }
 
     public function getProdutos($con) {
@@ -70,6 +72,7 @@ class Pedido {
                 . "produto_campanha.limite,"
                 . "produto_campanha.valor, "
                 . "empresa.id,"
+                . "empresa.is_logistica,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -101,7 +104,7 @@ class Pedido {
                 . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
 
         $ps->execute();
-        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
@@ -117,6 +120,12 @@ class Pedido {
                 $campanhas[$id]->cliente_expression = $cliente;
 
                 $empresa = new Empresa();
+
+                if ($is_logistica == 1) {
+
+                    $empresa = new Logistica();
+                }
+
                 $empresa->id = $id_empresa;
                 $empresa->cnpj = new CNPJ($cnpj);
                 $empresa->inscricao_estadual = $inscricao_empresa;
@@ -193,6 +202,7 @@ class Pedido {
                 . "produto_pedido_saida.influencia_reserva,"
                 . "produto_pedido_saida.ipi,"
                 . "produto.id,"
+                . "produto.id_logistica,"
                 . "produto.classe_risco,"
                 . "produto.fabricante,"
                 . "produto.imagem,"
@@ -221,6 +231,7 @@ class Pedido {
                 . "categoria_produto.icms_normal,"
                 . "categoria_produto.icms,"
                 . "empresa.id,"
+                . "empresa.is_logistica,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -253,7 +264,7 @@ class Pedido {
                 . " WHERE produto_pedido_saida.id_pedido=$this->id");
 
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
@@ -262,6 +273,8 @@ class Pedido {
         while ($ps->fetch()) {
 
             $p = new Produto();
+
+            $p->logistica = $id_log;
             $p->id = $id_pro;
             $p->nome = $nome;
             $p->classe_risco = $classe_risco;
@@ -302,6 +315,12 @@ class Pedido {
             $p->categoria->ipi = $cat_ipi;
 
             $empresa = new Empresa();
+
+            if ($is_logistica == 1) {
+
+                $empresa = new Logistica();
+            }
+
             $empresa->id = $id_empresa;
             $empresa->cnpj = new CNPJ($cnpj);
             $empresa->inscricao_estadual = $inscricao_empresa;
@@ -365,8 +384,13 @@ class Pedido {
 
             $ids .= "," . $pp->id;
         }
-
         $ps->close();
+
+        foreach ($retorno as $key => $value) {
+
+            $value->produto->logistica = Sistema::getLogisticaById($con, $value->produto->logistica);
+        }
+
         $ps = $con->getConexao()->prepare("SELECT id_lote,quantidade,retirada,id_produto_pedido FROM retirada WHERE id_produto_pedido IN ($ids)");
         $ps->execute();
         $ps->bind_result($id_lote, $qtd, $ret, $idp);
@@ -403,23 +427,39 @@ class Pedido {
 
     public function merge($con) {
 
+        $prods = $this->getProdutos($con);
+
+        if ($this->produtos == null) {
+            $this->produtos = $prods;
+        }
+
+        foreach ($this->produtos as $key => $value) {
+            if ($this->logistica === null) {
+                if ($value->produto->logistica !== null) {
+                    throw new Exception('Esse produto nao esta armazenado na logistica do pedido');
+                }
+            } else {
+                if ($value->produto->logistica === null) {
+                    throw new Exception('Esse produto nao esta armazenado na logistica do pedido');
+                } else {
+                    if ($value->produto->logistica->id !== $this->logistica->id) {
+                        throw new Exception('Esse produto nao esta armazenado na logistica do pedido');
+                    }
+                }
+            }
+        }
+
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO pedido(id_cliente,id_transportadora,frete,observacoes,frete_inclusao,id_empresa,data,excluido,id_usuario,id_nota,prazo,parcelas,id_status,id_forma_pagamento) VALUES(" . $this->cliente->id . "," . $this->transportadora->id . ",$this->frete,'$this->observacoes'," . ($this->frete_incluso ? "true" : "false") . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data/1000),false," . $this->usuario->id . ",$this->ficha,$this->prazo,$this->parcelas," . $this->status->id . "," . $this->forma_pagamento->id . ")");
+            $ps = $con->getConexao()->prepare("INSERT INTO pedido(id_cliente,id_transportadora,frete,observacoes,frete_inclusao,id_empresa,data,excluido,id_usuario,id_nota,prazo,parcelas,id_status,id_forma_pagamento,id_logistica) VALUES(" . $this->cliente->id . "," . $this->transportadora->id . ",$this->frete,'$this->observacoes'," . ($this->frete_incluso ? "true" : "false") . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data/1000),false," . $this->usuario->id . ",$this->id_nota,$this->prazo,$this->parcelas," . $this->status->id . "," . $this->forma_pagamento->id . "," . ($this->logistica != null ? $this->logistica->id : 0) . ")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE pedido SET id_cliente=" . $this->cliente->id . ",id_transportadora=" . $this->transportadora->id . ",frete=$this->frete,observacoes='$this->observacoes',frete_inclusao=" . ($this->frete_incluso ? "true" : "false") . ",id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data/1000),excluido=false,id_usuario=" . $this->usuario->id . ",id_nota=$this->ficha,prazo=$this->prazo,parcelas=$this->parcelas,id_status=" . $this->status->id . ",id_forma_pagamento=" . $this->forma_pagamento->id . " WHERE id=$this->id");
+            $ps = $con->getConexao()->prepare("UPDATE pedido SET id_cliente=" . $this->cliente->id . ",id_transportadora=" . $this->transportadora->id . ",frete=$this->frete,observacoes='$this->observacoes',frete_inclusao=" . ($this->frete_incluso ? "true" : "false") . ",id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data/1000),excluido=false,id_usuario=" . $this->usuario->id . ",id_nota=$this->id_nota,prazo=$this->prazo,parcelas=$this->parcelas,id_status=" . $this->status->id . ",id_forma_pagamento=" . $this->forma_pagamento->id . ", id_logistica=" . ($this->logistica != null ? $this->logistica->id : 0) . " WHERE id=$this->id");
             $ps->execute();
             $ps->close();
-        }
-        $prods = $this->getProdutos($con);
-
-        if ($this->produtos == null) {
-
-            $this->produtos = $prods;
         }
 
         $erro = null;
@@ -454,10 +494,18 @@ class Pedido {
             }
         }
         $this->produtos = $np;
-        
-        $html = Sistema::getHtml('visualizar-pedido-print', $this);
 
-        $this->usuario->email->enviarEmail($this->cliente->email, "Pedido numero " . $this->id, $html);
+        if ($this->status->emailCliente) {
+
+            $html = Sistema::getHtml('visualizar-pedido-print', $this);
+
+            $this->usuario->email->enviarEmail($this->cliente->email->filtro(Email::$COMPRAS), "Pedido numero " . $this->id, $html);
+        } else if ($this->status->emailInterno) {
+
+            $html = Sistema::getHtml('visualizar-pedido-print', $this);
+
+            $this->usuario->email->enviarEmail($this->empresa->email->filtro(Email::$LOGISTICA), "Pedido numero " . $this->id, $html);
+        }
 
         if ($erro !== null) {
 
