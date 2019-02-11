@@ -274,6 +274,11 @@ if (!isset($filtro)) {
                     <li class="nav-item">
                         <a class="nav-link" href="movimentos_banco.php" ><i class="fas fa-money-bill-alt"></i>Movimentos Financeiro</a>
                     </li>
+                    <?php if($empresa->is_logistica){ ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="produto-cliente-logistic.php"><i class="fas fa-camera"></i>Produtos cliente Logistic</a>
+                        </li>
+                    <?php } ?>
                     <li class="nav-item">
                         <a class="nav-link" href="cadastro-de-produtos.php"><i class="fas fa-cube"></i>Cadastro de Produtos</a>
                     </li>

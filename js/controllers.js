@@ -1,3 +1,22 @@
+rtc.controller("crtProdutoClienteLogistic", function ($scope, produtoClienteLogisticService) {
+
+    $scope.produtos = createAssinc(produtoClienteLogisticService, 1, 3, 10);
+    $scope.produtos.attList();
+    assincFuncs(
+            $scope.produtos,
+            "produto",
+            ["id_universal", "nome", "categoria.nome", "empresa.nome"]);
+
+    $scope.to = function (num) {
+        var k = [];
+        for(var i=0;i<num;i++){
+            k[i]=i;
+        }
+        return k;
+    }
+
+
+})
 rtc.controller("crtMovimentos", function ($scope, movimentoService, sistemaService, notaService, bancoService, baseService) {
 
     $scope.movimentos = createAssinc(movimentoService, 1, 3, 10);
@@ -3434,6 +3453,10 @@ rtc.controller("crtProdutos", function ($scope, culturaService, sistemaService, 
                 $scope.getReceituario($scope.produto);
                 equalize($scope.produto, "categoria", $scope.categorias);
                 $scope.produtos.attList();
+
+                if ($scope.produto.logistica !== null) {
+                    equalize($scope.produto, "logistica", $scope.logisticas);
+                }
 
             } else {
 

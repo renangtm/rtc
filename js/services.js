@@ -1,7 +1,24 @@
 var debuger = function (l) {
     alert(paraJson(l));
 }
-
+rtc.service('produtoClienteLogisticService', function ($http, $q) {
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountProdutoClienteLogistic($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getProdutoClienteLogistic($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('movimentoService', function ($http, $q) {
     this.getMovimento = function (fn) {
         baseService($http, $q, {
