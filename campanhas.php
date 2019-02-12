@@ -642,14 +642,14 @@
                                     <th>Produto</th>
                                     <th>Disponivel</th>
                                     <th>Valor</th>
-                                    <th>Selecionar</th>
+                                    <th>Ver Validades</th>
                                     </thead>
                                     <tr ng-repeat-start="produto in produtos.elementos">
                                         <th>{{produto[0].id}}</th>
                                         <th>{{produto[0].nome}}</th>
-                                        <th>{{produto[0].disponivel}}</th>
-                                        <th>{{produto[0].valor_base}}</th>
-                                        <th><button class="btn btn-success" ng-click="getValidades(produto[0])" data-target="#demo{{produto[0].id}}" data-toggle="collapse" class="accordion-toggle"><i class="fa fa-info"></i></button></th>
+                                        <th class="text-center">{{produto[0].disponivel}}</th>
+                                        <th class="text-center">{{produto[0].valor_base}}</th>
+                                        <th class="text-center"><button class="btn btn-outline-light" ng-click="getValidades(produto[0])" data-target="#demo{{produto[0].id}}" data-toggle="collapse" class="accordion-toggle"><i class="fas fa-pencil-alt"></i></button></th>
                                     </tr>
                                     <tr ng-repeat-end>
                                         <td colspan="6" class="hiddenRow">
@@ -664,8 +664,8 @@
                                                             </thead>
                                                             <tr ng-repeat="validade in produto[0].validades">
                                                                 <th>{{validade.validade| data}} <i class="fas fa-arrow-up" ng-if="validade.alem" ></i> </th>
-                                                                <th>{{validade.quantidade}}</th>
-                                                                <th><button class="btn btn-success" ng-click="addProdutoCampanha(produto[0], validade)"><i class="fas fa-plus-circle"></i></button></th>
+                                                                <th class="text-center">{{validade.quantidade}}</th>
+                                                                <th class="text-center"><button class="btn btn-success" ng-click="addProdutoCampanha(produto[0], validade)"><i class="fas fa-plus-circle"></i></button></th>
                                                             </tr>
                                                         </table>
                                                     </div>																	
