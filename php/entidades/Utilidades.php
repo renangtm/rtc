@@ -13,15 +13,14 @@
  */
 class Utilidades {
 
-    public static function copyId0($entidade){
-        
+    public static function copyId0($entidade) {
+
         $ne = unserialize(serialize($entidade));
         $ne->id = 0;
-        
+
         return $ne;
-        
     }
-    
+
     public static function toJson($object, $pilha = null) {
 
         if ($object === null) {
@@ -44,9 +43,12 @@ class Utilidades {
             $str .= "]";
 
             return $str;
-        }else if (is_numeric($object)) {
+        }else if (is_int($object)) {
 
-            return $object;
+            return intval($object . "");
+        } else if (is_double($object)) {
+
+            return doubleval($object . "");
         } else if (is_bool($object)) {
 
             return ($object ? "true" : "false");
@@ -98,17 +100,15 @@ class Utilidades {
 
             $pilha = array();
         }
-        
-        if(is_array($obj)){
-            
-            foreach($obj as $key=>$value){
-                
-                $obj[$key] = self::getObject($value,$pilha);
-                
+
+        if (is_array($obj)) {
+
+            foreach ($obj as $key => $value) {
+
+                $obj[$key] = self::getObject($value, $pilha);
             }
-            
+
             return $obj;
-            
         }
 
         if (!is_object($obj)) {
@@ -162,60 +162,60 @@ class Utilidades {
 
         return self::getObject($js);
     }
-    
-    public static function getCotacaoEntradaTeste($empresa){
-        
+
+    public static function getCotacaoEntradaTeste($empresa) {
+
         $e1 = new Endereco();
-        
+
         $e1->rua = "Rua Teste";
         $e1->bairro = "Bairro Teste";
         $e1->numero = 0;
         $e1->cep = new CEP("07195201");
         $e1->cidade = Sistema::getCidades(new ConnectionFactory());
         $e1->cidade = $e1->cidade[0];
-        
-        
+
+
         $e2 = new Endereco();
-        
+
         $e2->rua = "Rua Teste";
         $e2->bairro = "Bairro Teste";
         $e2->numero = 0;
         $e2->cep = new CEP("07195201");
         $e2->cidade = Sistema::getCidades(new ConnectionFactory());
         $e2->cidade = $e2->cidade[400];
-        
-        
+
+
         $e3 = new Endereco();
-        
+
         $e3->rua = "Rua Teste";
         $e3->bairro = "Bairro Teste";
         $e3->numero = 0;
         $e3->cep = new CEP("07195201");
         $e3->cidade = Sistema::getCidades(new ConnectionFactory());
         $e3->cidade = $e3->cidade[100];
-        
+
         $e4 = new Endereco();
-        
+
         $e4->rua = "Rua Teste";
         $e4->bairro = "Bairro Teste";
         $e4->numero = 0;
         $e4->cep = new CEP("07195201");
         $e4->cidade = Sistema::getCidades(new ConnectionFactory());
         $e4->cidade = $e4->cidade[51];
-        
+
         // criando categorias de produto
-        
+
         $categoria = new CategoriaProduto();
         $categoria->ipi = 0;
         $categoria->base_calculo = 40;
         $categoria->icms = 0;
         $categoria->icms_normal = true;
         $categoria->merge(new ConnectionFactory());
-        
+
         // criando produtos
-        
+
         $produto = new Produto();
-   
+
         $produto->nome = "teste";
         $produto->id_universal = 12;
         $produto->categoria = $categoria;
@@ -232,53 +232,53 @@ class Utilidades {
         $produto->disponivel = 85;
         $produto->transito = 14;
         $produto->grade = new Grade("15,2,1");
-        
+
         $produto->merge(new ConnectionFactory());
         $produto->merge(new ConnectionFactory());
 
         $lote = new Lote();
-        
+
         $lote->quantidade_inicial = 40;
         $lote->quantidade_real = 40;
         $lote->grade = $produto->grade;
         $lote->produto = $produto;
         $lote->codigo_fabricante = "1234";
-        
+
         $lote->merge(new ConnectionFactory());
-        
+
         $lote2 = new Lote();
-        
+
         $lote2->quantidade_inicial = 45;
         $lote2->quantidade_real = 45;
         $lote2->grade = $produto->grade;
         $lote2->produto = $produto;
         $lote2->codigo_fabricante = "1234";
-        
+
         $lote2->merge(new ConnectionFactory());
-        
+
         $lote3 = new Lote();
-        
+
         $lote3->quantidade_inicial = 0;
         $lote3->quantidade_real = 0;
         $lote3->grade = $produto->grade;
         $lote3->produto = $produto;
         $lote3->codigo_fabricante = "1234";
-        
+
         $lote3->merge(new ConnectionFactory());
-        
+
         $lote4 = new Lote();
-        
+
         $lote4->quantidade_inicial = 100;
         $lote4->quantidade_real = 100;
-        $lote4->validade = round(microtime(true)*1000)+(60*24*60*60*1000);
+        $lote4->validade = round(microtime(true) * 1000) + (60 * 24 * 60 * 60 * 1000);
         $lote4->grade = $produto->grade;
         $lote4->produto = $produto;
         $lote4->codigo_fabricante = "1234";
-        
+
         $lote4->merge(new ConnectionFactory());
-        
+
         $produto2 = new Produto();
-   
+
         $produto2->nome = "teste";
         $produto2->id_universal = 12;
         $produto2->categoria = $categoria;
@@ -295,32 +295,32 @@ class Utilidades {
         $produto2->disponivel = 80;
         $produto2->transito = 14;
         $produto2->grade = new Grade("15,2,1");
-        
+
         $produto2->merge(new ConnectionFactory());
         $produto2->merge(new ConnectionFactory());
-        
+
         $lote = new Lote();
-        
+
         $lote->quantidade_inicial = 30;
         $lote->quantidade_real = 30;
         $lote->grade = $produto2->grade;
         $lote->produto = $produto2;
         $lote->codigo_fabricante = "1234";
-        
+
         $lote->merge(new ConnectionFactory());
-        
+
         $lote2 = new Lote();
-        
+
         $lote2->quantidade_inicial = 50;
         $lote2->quantidade_real = 50;
         $lote2->grade = $produto2->grade;
         $lote2->produto = $produto2;
         $lote2->codigo_fabricante = "1234";
-        
+
         $lote2->merge(new ConnectionFactory());
-        
+
         $produto3 = new Produto();
-   
+
         $produto3->nome = "teste";
         $produto3->id_universal = 12;
         $produto3->categoria = $categoria;
@@ -337,30 +337,30 @@ class Utilidades {
         $produto3->disponivel = 80;
         $produto3->transito = 80;
         $produto3->grade = new Grade("40,10,2");
-        
+
         $produto3->merge(new ConnectionFactory());
         $produto3->merge(new ConnectionFactory());
-        
+
         $lote = new Lote();
-        
+
         $lote->quantidade_inicial = 80;
         $lote->quantidade_real = 80;
         $lote->grade = $produto3->grade;
         $lote->produto = $produto3;
         $lote->codigo_fabricante = "1234";
-        
+
         $lote->merge(new ConnectionFactory());
-        
+
         // criando transportadora
-        
+
         $tra = Utilidades::getTransportadoraTeste($empresa);
-        
+
         //criando cliente
-       
+
         $fornecedor = Utilidades::getFornecedorTeste($empresa);
-        
+
         //------ criando pedido;
-        
+
         $cot = new CotacaoEntrada();
         $cot->fornecedor = $fornecedor;
         $cot->transportadora = $tra;
@@ -371,47 +371,46 @@ class Utilidades {
         $cot->tratar_em_litros = false;
         $cot->usuario = Utilidades::getUsuarioTeste($empresa);
 
-        
+
         $cot->produtos = array();
-        
+
         $pp1 = new ProdutoCotacaoEntrada();
         $pp1->produto = $produto;
         $pp1->quantidade = 65;
         $pp1->valor = 10;
-        $pp1->cotacao=$cot;
-        
+        $pp1->cotacao = $cot;
+
         $cot->produtos[] = $pp1;
-        
-        
+
+
         $pp2 = new ProdutoCotacaoEntrada();
         $pp2->produto = $produto2;
         $pp2->quantidade = 20;
         $pp2->valor = 100;
-        $pp2->cotacao=$cot;
-        
+        $pp2->cotacao = $cot;
+
         $cot->produtos[] = $pp2;
-        
+
         $pp3 = new ProdutoCotacaoEntrada();
         $pp3->produto = $produto;
         $pp3->quantidade = 21;
         $pp3->valor = 150;
-        $pp3->cotacao=$cot;
-        
+        $pp3->cotacao = $cot;
+
         $cot->produtos[] = $pp3;
-        
+
         $pp4 = new ProdutoCotacaoEntrada();
         $pp4->produto = $produto3;
         $pp4->quantidade = 56;
         $pp4->valor = 11;
-        $pp4->cotacao=$cot;
-        
+        $pp4->cotacao = $cot;
+
         $cot->produtos[] = $pp4;
-        
-        
+
+
         $cot->merge(new ConnectionFactory());
-        
+
         return $cot;
-        
     }
 
     public static function getVencimentoTeste($nota) {
@@ -422,13 +421,12 @@ class Utilidades {
         $ven->nota->saida = true;
 
         $ven->merge(new ConnectionFactory());
-        
+
         return $ven;
-        
     }
 
     public static function getMovimentoTeste($ven) {
-        
+
         $con = new ConnectionFactory();
 
         $historico = new Historico();
@@ -458,14 +456,12 @@ class Utilidades {
         $m1->historico = $historico;
 
         $m1->insert($con);
-        
+
         return $m1;
-        
     }
-    
 
     public static function getNotaTeste($empresa) {
-        
+
         $con = new ConnectionFactory();
 
         $e1 = new Endereco();
@@ -718,12 +714,11 @@ class Utilidades {
         $nota->produtos[] = $pp4;
 
         $nota->interferir_estoque = false;
-        
+
 
         $nota->merge(new ConnectionFactory());
-        
+
         return $nota;
-        
     }
 
     public static function getProdutoTeste($empresa) {
@@ -759,38 +754,37 @@ class Utilidades {
 
         return $produto;
     }
-    
-    public static function getReceituarioTeste($empresa){
-        
+
+    public static function getReceituarioTeste($empresa) {
+
         $con = new ConnectionFactory();
-        
+
         $r = new Receituario();
-        
+
         $produto = Utilidades::getProdutoTeste($empresa);
-        
+
         $cult = new Cultura();
         $cult->nome = "Teste";
         $cult->merge($con);
-        
+
         $prag = new Praga();
         $prag->nome = "Teste";
         $prag->merge($con);
-        
+
         $r->produto = $produto;
         $r->cultura = $cult;
         $r->praga = $prag;
-        
+
         $r->merge($con);
-        
+
         return $r;
-        
     }
 
-    public static function getCampanhaTeste($empresa,$produto = null) {
+    public static function getCampanhaTeste($empresa, $produto = null) {
 
         $cat = new Campanha();
 
-        $cat->nome="Campanha teste";
+        $cat->nome = "Campanha teste";
         $cat->prazo = 12;
         $cat->inicio -= 100000;
         $cat->fim += 100000;
@@ -800,7 +794,7 @@ class Utilidades {
 
         $p = new ProdutoCampanha();
 
-        $p->produto = ($produto==null)?Utilidades::getProdutoTeste($empresa):$produto;
+        $p->produto = ($produto == null) ? Utilidades::getProdutoTeste($empresa) : $produto;
 
         $p->campanha = $cat;
 
@@ -946,38 +940,36 @@ class Utilidades {
 
         return $usuario;
     }
-    
-    public static function getLogoTeste($empresa){
-        
+
+    public static function getLogoTeste($empresa) {
+
         $con = new ConnectionFactory();
-        
+
         $p = new Logo();
-        $p->empresa =$empresa;
+        $p->empresa = $empresa;
         $p->cor_predominante = "255,255,255";
         $p->logo = Utilidades::base64encode("LOGO INVALIDO");
-        
+
         $p->merge($con);
-        
+
         return $p;
-        
     }
-    
-    public static function getParametrosEmissaoTeste($empresa){
-        
+
+    public static function getParametrosEmissaoTeste($empresa) {
+
         $con = new ConnectionFactory();
-        
+
         $p = new ParametrosEmissao();
-        $p->empresa =$empresa;
+        $p->empresa = $empresa;
         $p->lote = 0;
         $p->senha_certificado = "1234";
         $p->serie = 0;
         $p->nota = 0;
         $p->certificado = Utilidades::base64encode("1234124rewrfw421412");
-        
+
         $p->merge($con);
-        
+
         return $p;
-        
     }
 
     public static function getPedidoTeste($empresa) {
@@ -1244,48 +1236,48 @@ class Utilidades {
         return $pedido;
     }
 
-    public static function getPedidoEntradaTeste($empresa){
-        
+    public static function getPedidoEntradaTeste($empresa) {
+
         $e1 = new Endereco();
-        
+
         $e1->rua = "Rua Teste";
         $e1->bairro = "Bairro Teste";
         $e1->numero = 0;
         $e1->cep = new CEP("07195201");
         $e1->cidade = Sistema::getCidades(new ConnectionFactory());
         $e1->cidade = $e1->cidade[0];
-        
-        
+
+
         $e2 = new Endereco();
-        
+
         $e2->rua = "Rua Teste";
         $e2->bairro = "Bairro Teste";
         $e2->numero = 0;
         $e2->cep = new CEP("07195201");
         $e2->cidade = Sistema::getCidades(new ConnectionFactory());
         $e2->cidade = $e2->cidade[400];
-        
-        
+
+
         $e3 = new Endereco();
-        
+
         $e3->rua = "Rua Teste";
         $e3->bairro = "Bairro Teste";
         $e3->numero = 0;
         $e3->cep = new CEP("07195201");
         $e3->cidade = Sistema::getCidades(new ConnectionFactory());
         $e3->cidade = $e3->cidade[100];
-        
+
         $e4 = new Endereco();
-        
+
         $e4->rua = "Rua Teste";
         $e4->bairro = "Bairro Teste";
         $e4->numero = 0;
         $e4->cep = new CEP("07195201");
         $e4->cidade = Sistema::getCidades(new ConnectionFactory());
         $e4->cidade = $e4->cidade[51];
-        
+
         // criando categorias de produto
-        
+
         $categoria = new CategoriaProduto();
         $categoria->id = 0;
         $categoria->ipi = 0;
@@ -1293,11 +1285,11 @@ class Utilidades {
         $categoria->icms = 0;
         $categoria->icms_normal = true;
         $categoria->merge(new ConnectionFactory());
-        
+
         // criando produtos
-        
+
         $produto = new Produto();
-   
+
         $produto->nome = "teste";
         $produto->id_universal = 12;
         $produto->categoria = $categoria;
@@ -1314,53 +1306,53 @@ class Utilidades {
         $produto->disponivel = 85;
         $produto->transito = 0;
         $produto->grade = new Grade("15,2,1");
-        
+
         $produto->merge(new ConnectionFactory());
         $produto->merge(new ConnectionFactory());
 
         $lote = new Lote();
-        
+
         $lote->quantidade_inicial = 40;
         $lote->quantidade_real = 40;
         $lote->grade = $produto->grade;
         $lote->produto = $produto;
         $lote->codigo_fabricante = "1234";
-        
+
         $lote->merge(new ConnectionFactory());
-        
+
         $lote2 = new Lote();
-        
+
         $lote2->quantidade_inicial = 45;
         $lote2->quantidade_real = 45;
         $lote2->grade = $produto->grade;
         $lote2->produto = $produto;
         $lote2->codigo_fabricante = "1234";
-        
+
         $lote2->merge(new ConnectionFactory());
-        
+
         $lote3 = new Lote();
-        
+
         $lote3->quantidade_inicial = 0;
         $lote3->quantidade_real = 0;
         $lote3->grade = $produto->grade;
         $lote3->produto = $produto;
         $lote3->codigo_fabricante = "1234";
-        
+
         $lote3->merge(new ConnectionFactory());
-        
+
         $lote4 = new Lote();
-        
+
         $lote4->quantidade_inicial = 100;
         $lote4->quantidade_real = 100;
-        $lote4->validade = round(microtime(true)*1000)+(60*24*60*60*1000);
+        $lote4->validade = round(microtime(true) * 1000) + (60 * 24 * 60 * 60 * 1000);
         $lote4->grade = $produto->grade;
         $lote4->produto = $produto;
         $lote4->codigo_fabricante = "1234";
-        
+
         $lote4->merge(new ConnectionFactory());
-        
+
         $produto2 = new Produto();
-   
+
         $produto2->nome = "teste";
         $produto2->id_universal = 12;
         $produto2->categoria = $categoria;
@@ -1377,31 +1369,31 @@ class Utilidades {
         $produto2->disponivel = 80;
         $produto2->transito = 0;
         $produto2->grade = new Grade("15,2,1");
-        
+
         $produto2->merge(new ConnectionFactory());
-        
+
         $lote = new Lote();
-        
+
         $lote->quantidade_inicial = 30;
         $lote->quantidade_real = 30;
         $lote->grade = $produto2->grade;
         $lote->produto = $produto2;
         $lote->codigo_fabricante = "1234";
-        
+
         $lote->merge(new ConnectionFactory());
-        
+
         $lote2 = new Lote();
-        
+
         $lote2->quantidade_inicial = 50;
         $lote2->quantidade_real = 50;
         $lote2->grade = $produto2->grade;
         $lote2->produto = $produto2;
         $lote2->codigo_fabricante = "1234";
-        
+
         $lote2->merge(new ConnectionFactory());
-        
+
         $produto3 = new Produto();
-   
+
         $produto3->nome = "teste";
         $produto3->id_universal = 12;
         $produto3->categoria = $categoria;
@@ -1418,23 +1410,23 @@ class Utilidades {
         $produto3->disponivel = 80;
         $produto3->transito = 0;
         $produto3->grade = new Grade("40,10,2");
-        
+
         $produto3->merge(new ConnectionFactory());
-        
+
         $lote = new Lote();
-        
+
         $lote->quantidade_inicial = 80;
         $lote->quantidade_real = 80;
         $lote->grade = $produto3->grade;
         $lote->produto = $produto3;
         $lote->codigo_fabricante = "1234";
-        
+
         $lote->merge(new ConnectionFactory());
-        
+
         //criando cliente
-        
-         $fornecedor = new Fornecedor();
-        
+
+        $fornecedor = new Fornecedor();
+
         $fornecedor->nome = "Teste";
         $fornecedor->telefone = "111111";
         $fornecedor->cnpj = new CNPJ("11122233344455");
@@ -1442,13 +1434,13 @@ class Utilidades {
         $fornecedor->email = new Email("renan.miranda@agrofauna.com.br");
         $fornecedor->endereco = $e4;
         $fornecedor->merge(new ConnectionFactory());
-        
+
         //-----------------------
-        
+
         $tra = Utilidades::getTransportadoraTeste($empresa);
-        
+
         //------ criando cotacao;
-        
+
         $pedido = new PedidoEntrada();
         $pedido->fornecedor = $fornecedor;
         $pedido->incluir_frete = true;
@@ -1459,54 +1451,53 @@ class Utilidades {
         $pedido->status = Sistema::getStatusPedidoEntrada();
         $pedido->transportadora = $tra;
         $cancelado = $pedido->status[3];
-        
+
         $finalizado = $pedido->status[2];
-        
+
         $pedido->status = $pedido->status[1];
-        
+
         $pedido->produtos = array();
-        
+
         $pp1 = new ProdutoPedidoEntrada();
         $pp1->produto = $produto;
         $pp1->quantidade = 65;
         $pp1->valor = 10;
-        $pp1->pedido=$pedido;
-        
+        $pp1->pedido = $pedido;
+
         $pedido->produtos[] = $pp1;
-        
-        
+
+
         $pp2 = new ProdutoPedidoEntrada();
         $pp2->produto = $produto2;
         $pp2->quantidade = 20;
         $pp2->valor = 100;
-        $pp2->pedido=$pedido;
-        
+        $pp2->pedido = $pedido;
+
         $pedido->produtos[] = $pp2;
-        
+
         $pp3 = new ProdutoPedidoEntrada();
         $pp3->produto = $produto;
         $pp3->quantidade = 21;
         $pp3->valor = 150;
-        $pp3->pedido=$pedido;
-        
+        $pp3->pedido = $pedido;
+
         $pedido->produtos[] = $pp3;
-        
+
         $pp4 = new ProdutoPedidoEntrada();
         $pp4->produto = $produto3;
         $pp4->quantidade = 56;
         $pp4->valor = 11;
-        $pp4->pedido=$pedido;
-        
+        $pp4->pedido = $pedido;
+
         $pedido->produtos[] = $pp4;
 
         //produto1 85 --> 45 e 40 | 65 + 21(3), produto2 80 --> 50 e 30 | 20, produto3 80 --> 80 | 56
-        
+
         $pedido->merge(new ConnectionFactory());
-        
+
         return $pedido;
-        
     }
-    
+
     public static function getClienteTeste($empresa) {
 
         $doc = new Documento();
@@ -1531,7 +1522,7 @@ class Utilidades {
         $cat = new CategoriaCliente();
 
         $cat->nome = "Teste";
-        
+
         $cat->merge(new ConnectionFactory());
 
         $cliente = new Cliente();
@@ -1602,7 +1593,7 @@ class Utilidades {
 
         return $empresa;
     }
-    
+
     public static function getEmpresaTeste() {
 
         $empresa = new Empresa();
@@ -1633,37 +1624,36 @@ class Utilidades {
         return $empresa;
     }
 
-    public static function getFornecedorTeste($empresa){
-        
+    public static function getFornecedorTeste($empresa) {
+
         $con = new ConnectionFactory();
-        
+
         $fornecedor = new Fornecedor();
-        
+
         $fornecedor->nome = "Teste";
         $fornecedor->telefones[] = new Telefone("111111");
         $fornecedor->cnpj = new CNPJ("11122233344455");
         $fornecedor->empresa = $empresa;
-        
+
         $e = new Endereco();
-        
+
         $e->rua = "Rua Teste";
         $e->bairro = "Bairro Teste";
         $e->numero = 0;
         $e->cep = new CEP("07195201");
         $e->cidade = Sistema::getCidades($con);
         $e->cidade = $e->cidade[0];
-        
+
         $fornecedor->endereco = $e;
-        
+
         $fornecedor->email = new Email("teserewfdwefd");
-        
-        
+
+
         $fornecedor->merge(new ConnectionFactory());
-        
+
         return $fornecedor;
-        
     }
-    
+
     public static function base64encode($val) {
 
         $chrArr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";

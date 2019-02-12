@@ -10,7 +10,6 @@ function resolverRecursao(obj, pilha) {
 
     }
 
-
     if (Array.isArray(obj)) {
 
         for (var i = 0; i < obj.length; i++) {
@@ -101,9 +100,7 @@ function recParaJson(objeto, pilha) {
 
     } else if (typeof objeto == 'string') {
 
-
-
-        r = '"' + objeto + '"';
+        r = '"' + objeto.split('"').join('').split("'").join('') + '"';
 
     } else if (typeof objeto == 'number') {
 
@@ -624,20 +621,19 @@ function privateXmlToJson(r, e) {
         } else
             3 == h && (e--, n = "")
     }
-    
+
     return[a, e];
 }
 
-
 function xmlToJson(xxx) {
-    
+
     var xml = xxx;
-    
+
     if (xml.indexOf('<?xml version="1.0" encoding="UTF-8"?>') < 0) {
         xml = '<?xml version="1.0" encoding="UTF-8"?>' + xml;
     }
-    xml = xml.split("\n").join("").split("\t").join("").split("\r").join("");
-
+    xml = xml.split("\n").join("").split("\t").join("").split("\r").join("").replace(/ +(?= )/g, '').split('> <').join('><');
+    
     return privateXmlToJson(xml, 0)[0];
 
 }

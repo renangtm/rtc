@@ -1057,6 +1057,14 @@ rtc.service('sistemaService', function ($http, $q) {
             falha: fn
         });
     }
+    this.getPedidoEntradaSemelhante = function(xml,fn){
+        baseService($http, $q, {
+            o:{xml:xml},
+            query: "$r->pedidos=Sistema::getPedidoEntradaSemelhante($c,$empresa,$o->xml)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getIcmsEstado = function (estado, fn) {
         baseService($http, $q, {
             o: estado,

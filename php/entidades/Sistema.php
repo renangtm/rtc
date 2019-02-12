@@ -28,6 +28,157 @@ class Sistema {
         return utf8_decode($html);
     }
 
+    public static function getPedidoEntradaSemelhante($con, $empresa, $xml) {
+
+        if (!isset($xml->nfeProc->NFe)) {
+
+            throw new Exception('XML em formato incorreto');
+        }
+
+        $nfe = $xml->nfeProc->NFe;
+
+        $inf = $nfe->infNFe;
+
+        if ($inf->ide->tpNF != "1") {
+
+            throw new Exception('A Nota nao e de saida');
+        }
+
+        $cnpj_empresa = new CNPJ($inf->dest->CNPJ);
+        $id_empresa = $empresa->id;
+
+        if ($empresa->cnpj->valor !== $cnpj_empresa->valor) {
+
+            if ($empresa->is_logistica) {
+
+                $ps = $con->getConexao()->prepare("SELECT empresa.id FROM empresa INNER JOIN produto ON produto.id_empresa=empresa.id WHERE produto.id_logistica=$empresa->id AND empresa.cnpj='" . $cnpj_empresa->valor . "'");
+                $ps->execute();
+                $ps->bind_result($ide);
+                if ($ps->fetch()) {
+                    $id_empresa = $ide;
+                } else {
+                    $ps->close();
+                    throw new Exception('A Nota nao e dessa empresa, e nem de uma afiliada');
+                }
+                $ps->close();
+            } else {
+
+                throw new Exception('A Nota nao e dessa empresa');
+            }
+        }
+
+        $escolhido = -1;
+
+        $possiveis = array();
+
+        $cnpj_transportadora = new CNPJ($inf->transp->transporta->CNPJ);
+
+        $ps = $con->getConexao()->prepare("SELECT pedido_entrada.id FROM pedido_entrada INNER JOIN transportadora ON pedido_entrada.id_transportadora=transportadora.id WHERE transportadora.cnpj='" . $cnpj_transportadora->valor . "' AND pedido_entrada.id_empresa=$id_empresa AND id_status<=2");
+        $ps->execute();
+        $ps->bind_result($idt);
+        while ($ps->fetch()) {
+            $possiveis[] = $idt;
+        }
+        $ps->close();
+
+        if (count($possiveis) == 0) {
+
+            throw new Exception('Nao foi encontrado nenhum pedido de compra equivalente, com o CNPJ dessa transportadora');
+        } else if (count($possiveis) == 1) {
+
+            $escolhido = $possiveis[0];
+        } else {
+
+            $in = "(-1";
+            foreach ($possiveis as $key => $value) {
+                $in .= ",$value";
+            }
+            $in .= ")";
+
+            $cnpj_fornecedor = new CNPJ($inf->emit->CNPJ);
+
+            $possiveis = array();
+            $ps = $con->getConexao()->prepare("SELECT pedido_entrada.id FROM pedido_entrada INNER JOIN fornecedor ON fornecedor.id=pedido_entrada.id_fornecedor WHERE pedido_entrada.id IN $in AND fornecedor.cnpj='" . $cnpj_fornecedor->valor . "'");
+            $ps->execute();
+            $ps->bind_result($idp);
+            while ($ps->fetch()) {
+                $possiveis[] = $idp;
+            }
+            $ps->close();
+
+            if (count($possiveis) == 0) {
+
+                throw new Exception('Nao foi encontrado nenhum pedido de compra equivalente, com o CNPJ desse fornecedor');
+            } else if (count($possiveis) == 1) {
+
+                $escolhido = $possiveis[0];
+            } else {
+
+                $in = "(-1";
+                foreach ($possiveis as $key => $value) {
+                    $in .= ",$value";
+                }
+                $in .= ")";
+
+                $produtos = array();
+
+                if (!is_array($inf->det)) {
+                    $inf->det = array($inf->det);
+                }
+
+                $total = 0;
+                foreach ($inf->det as $key => $value) {
+
+                    $value = $value->prod;
+
+                    if (!isset($produtos[$value->cProd])) {
+
+                        $p = new stdClass();
+                        $p->id = $value->cProd;
+                        $p->nome = $value->xProd;
+                        $p->valor = doubleval($value->vUnCom . "");
+                        $p->quantidade = 0;
+                        $p->total = 0;
+
+                        $produtos[$p->id] = $p;
+                    }
+
+                    $produtos[$value->cProd]->quantidade += doubleval($value->qCom . "");
+                    $produtos[$value->cProd]->total += doubleval($value->qCom . "") * $produtos[$value->cProd]->valor;
+                    $total += doubleval($value->qCom . "") * $produtos[$value->cProd]->valor;
+                }
+     
+                $ps = $con->getConexao()->prepare("SELECT k.id FROM (SELECT produto_pedido_entrada.id_pedido as 'id',SUM(produto_pedido_entrada.valor*produto_pedido_entrada.quantidade) as 'soma' FROM produto_pedido_entrada WHERE produto_pedido_entrada.id_pedido IN $in GROUP BY produto_pedido_entrada.id_pedido) k WHERE (k.soma-0.5)<$total AND (k.soma+0.5)>$total");
+                $ps->execute();
+                $ps->bind_result($idp);
+                if ($ps->fetch()) {
+                    $escolhido = $idp;
+                    $ps->close();
+                } else {
+                    $ps->close();
+                    throw new Exception('Nao foi possivel selecionar o pedido de compra devido ao valor nao estar batendo');
+                }
+            }
+        }
+
+        $e = new Empresa($id_empresa);
+        
+        $pedido =  $e->getPedidosEntrada($con, 0, 1,"pedido_entrada.id=$escolhido");
+        $pedido = $pedido[0];
+
+        $nota = new Nota();
+        $nota->saida = false;
+        $nota->chave = explode('e', $inf->id);
+        $nota->chave = $nota->chave[1];
+        $nota->fornecedor = $pedido->fornecedor;
+        $nota->emitida = true;
+        $nota->interferir_estoque = false;
+        $nota->empresa = $e;
+        $nota->frete_destinatario_remetente = $pedido->incluir_frete;
+        
+        
+    }
+
     public static function getMesesValidadeCurta() {
 
         return 4;
@@ -615,12 +766,12 @@ class Sistema {
         if (isset($logs[$id])) {
             return $logs[$id];
         }
-        
+
         return null;
     }
 
     public static function getLogisticas($con, $id_array = false) {
-        
+
         $ses = new SessionManager();
 
         if ($ses->get("logisticas") != null) {
@@ -633,7 +784,7 @@ class Sistema {
                 return $ses->get("logisticas");
             }
         }
-        
+
         $ps = $con->getConexao()->prepare("SELECT "
                 . "empresa.id,"
                 . "empresa.is_logistica,"
@@ -665,7 +816,7 @@ class Sistema {
                 . "INNER JOIN estado ON cidade.id_estado = estado.id "
                 . "WHERE empresa.is_logistica=true");
         $ps->execute();
-        
+
         $empresas = array();
         $empresas_id = array();
         $ps->bind_result($id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
@@ -730,17 +881,13 @@ class Sistema {
         $ses->set("logisticas_id", $empresas_id);
         $ses->set("logisticas", $empresas);
 
-        if($id_array){
-            
+        if ($id_array) {
+
             return $empresas_id;
-            
-        }else{
-        
+        } else {
+
             return $empresas;
-            
         }
-        
-        
     }
 
     public static function logar($login, $senha) {

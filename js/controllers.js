@@ -1,11 +1,34 @@
-rtc.controller("crtEntrada", function ($scope) {
-    
+rtc.controller("crtEntrada", function ($scope, sistemaService) {
+
     $scope.xmls = [];
 
-    var buscarPedido = function(xml){
-        
-        alert(paraJson(xml));
-        
+    $scope.pedidos = [];
+
+    var buscarPedido = function (xml) {
+
+        sistemaService.getPedidoEntradaSemelhante(xml, function (p) {
+            if (p.sucesso) {
+                
+                var pedidos = p.pedidos;
+
+                if (pedidos.length == 0) {
+
+                    msg.erro("Nao foi encontrado nenhum pedido de compra referente a essa Nota");
+
+                }else{
+                    
+                    msg.alerta("ok");
+                    
+                }
+                
+            } else {
+
+                msg.erro(p.mensagem);
+
+            }
+
+        })
+
     }
 
     $("#flXML").change(function () {
@@ -20,10 +43,11 @@ rtc.controller("crtEntrada", function ($scope) {
                 return;
             }
         }
-        
+
         for (var i = 0; i < arquivos.length; i++) {
             var reader = new FileReader();
-            reader.onload = function (arquivo) {    
+            reader.onload = function (arquivo) {
+              
                 buscarPedido(xmlToJson(arquivo.target.result));
             };
             reader.readAsText(arquivos[i]);
