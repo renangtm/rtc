@@ -110,7 +110,7 @@
                                                         <td>{{cliente[0].pessoa_fisica?'------':cliente[0].cnpj.valor}}</td>
                                                         <td>{{cliente[0].pessoa_fisica?cliente[0].cpf.valor:'------'}}</td>
                                                         <td>{{cliente[0].limite_credito}}</td>
-                                                        <td style="{{(cliente[0].inicio_limite>data_atual || cliente[0].termino_limite<data_atual)?'background-color:#FA8072;color:#FFFFFF':'' }}">{{cliente[0].termino_limite| data}}<button class="btn btn-default" style="float:right" ng-if="cliente[0].inicio_limite>data_atual || cliente[0].termino_limite<data_atual"><i class="fa fa-address-card"></i></button></td>
+                                                        <td style="{{(cliente[0].inicio_limite>data_atual || cliente[0].termino_limite<data_atual)?'background-color:#71748d;color:#FFFFFF':'' }}">{{cliente[0].termino_limite| data}}<button class="btn btn-default" style="float:right" ng-if="cliente[0].inicio_limite>data_atual || cliente[0].termino_limite<data_atual"><i class="fa fa-address-card"></i></button></td>
                                                         <th>
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setCliente(cliente[0])" data-target="#demo{{cliente[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
@@ -120,7 +120,7 @@
                                                         </th>
                                                     </tr>
                                                     <tr ng-repeat-end>
-                                                        <td colspan="8" class="hiddenRow">
+                                                        <td colspan="9" class="hiddenRow">
                                                             <div class="accordian-body collapse" id="demo{{cliente[0].id}}">
                                                                 <div class="row mx-auto m-b-30">
                                                                     <div class="col">
@@ -441,7 +441,7 @@
                                             </thead>
                                             <tr ng-repeat="t in cliente.telefones">
                                                 <td>{{t.numero}}</td>
-                                                <td><button type="button" class="btn btn-danger" ng-click="removeTelefone(t)"><i class="fa fa-times"></i></button></td>
+                                                <td class="product"><button type="button" class="btn remove-product" ng-click="removeTelefone(t)"><i class="fa fa-times"></i></button></td>
                                             </tr>
                                         </table>
                                     </div>
@@ -476,7 +476,7 @@
                                             <tr ng-repeat="doc in cliente.documentos">
                                                 <td>{{doc.categoria.nome}}</td>
                                                 <td><a class="btn btn-primary" target="_blank" ng-href="{{doc.link}}"><i class="fas fa-folder-open"></i></a></td>
-                                                <td><button type="button" class="btn btn-danger" ng-click="removeDocumento(doc)"><i class="fa fa-times"></i></button></td>
+                                                <td class="product"><button type="button" class="btn remove-product" ng-click="removeDocumento(doc)"><i class="fa fa-times"></i></button></td>
                                             </tr>
                                         </table>
                                     </div>

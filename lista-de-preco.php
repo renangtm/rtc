@@ -205,7 +205,7 @@
                                                         </td>
                                                     </tr>
                                                     <tr ng-repeat-end>
-                                                        <td colspan="6" class="hiddenRow">
+                                                        <td colspan="7" class="hiddenRow">
                                                             <div class="accordian-body collapse" id="demo{{produt[0].id}}">
                                                                 <div class="row mx-auto m-b-30">
                                                                     <div class="col">

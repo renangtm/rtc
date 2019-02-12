@@ -239,8 +239,8 @@
                             <div class="modal-body">
                                 <form id="add-form" ng-submit="mergeTransportadora()" parsley-validate>
                                     <div class="form-group row">
-                                        <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Razao Social</label>
-                                        <div class="col-9 col-lg-10">
+                                        <label for="txtname" class="col-3 col-lg-3 col-form-label text-left">Razão Social</label>
+                                        <div class="col-9 col-lg-9">
                                             <input id="txtname" type="text" ng-model="transportadora.razao_social" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
@@ -248,8 +248,8 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtnamef" class="col-3 col-lg-2 col-form-label text-left">Nome Fantasia</label>
-                                        <div class="col-9 col-lg-10">
+                                        <label for="txtnamef" class="col-3 col-lg-3 col-form-label text-left">Nome Fantasia</label>
+                                        <div class="col-9 col-lg-9">
                                             <input id="txtnamef" type="text" ng-model="transportadora.nome_fantasia" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
@@ -262,14 +262,14 @@
                                             <email entidade="Transportadora" atributo="transportadora.email" senha="false" alterar="true"></email>
                                         </div>
                                     </div>
-                                    <div class="col-4 col-lg-4" style="padding-top: 5px;">
+                                    <div class="col" style="padding-top: 5px;">
                                         <div class="row">
-                                            <div class="col-md-6" style="text-align:center">
+                                            <div class="col-md-3" style="text-align:center">
                                                 <label class="custom-control custom-radio custom-control-inline">
                                                     <input type="radio" name="radio-inline" data-ng-value="true" data-ng-model="transportadora.habilitada" class="custom-control-input"><span class="custom-control-label">Habilitada</span>
                                                 </label>
                                             </div>
-                                            <div class="col-md-6" style="text-align:center">
+                                            <div class="col-md-3" style="text-align:center">
                                                 <label class="custom-control custom-radio custom-control-inline">
                                                     <input type="radio" name="radio-inline" data-ng-value="false" data-ng-model="transportadora.habilitada" checked="" class="custom-control-input"><span class="custom-control-label">Desabilitada</span>
                                                 </label>
@@ -280,8 +280,8 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtdesp" class="col-3 col-lg-2 col-form-label text-left">Taxa despacho</label>
-                                        <div class="col-9 col-lg-10">
+                                        <label for="txtdesp" class="col-3 col-lg-3 col-form-label text-left">Taxa despacho</label>
+                                        <div class="col-9 col-lg-9">
                                             <input id="txtdesp" type="number" ng-model="transportadora.despacho" required class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
@@ -291,7 +291,7 @@
                                     <div class="form-group row">
                                         <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">CNPJ</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="transportadora.cnpj.valor" required placeholder="00.000.000/0000-00" class="form-control">
+                                            <input id="txtcnpj" type="text" ng-model="transportadora.cnpj.valor" required placeholder="00.000.000/0000-00" class="form-control cnpj">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -300,7 +300,7 @@
                                     <div class="form-group row">
                                         <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">Insc. Est</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="transportadora.inscricao_estadual" required placeholder="00.000.000/0000-00" class="form-control cpf">
+                                            <input id="txtcnpj" type="text" ng-model="transportadora.inscricao_estadual" required placeholder="00.000.000/0000-00" class="form-control ie">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -930,6 +930,21 @@
                         
                         
                     }
+                    $(document).on('keyup', '.txtsuf', function() {
+                        $(this).mask('000000000');
+                    });
+                    $(document).on('keyup', '.cnpj', function() {
+                        $(this).mask('00.000.000/0000-00', {reverse: true});
+                    });
+                    $(document).on('keyup', '.cpf', function() {
+                        $(this).mask('000.000.000-00', {reverse: true});
+                    });
+                    $(document).on('keyup', '.rg', function() {
+                        $(this).mask('99.999.999-A', {reverse: true});
+                    });
+                    $(document).on('keyup', '.ie_', function() {
+                        $(this).mask('000000000000000', {reverse: true});
+                    });
                                             $(document).ready(function () {
                                                 $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
                                                 $('.btnedit').tooltip({title: "Editar", placement: "top"});
