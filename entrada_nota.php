@@ -77,11 +77,79 @@
                             <!-- ============================================================== -->
                             <!-- basic table  -->
                             <!-- ============================================================== -->
-                            
-                            <button style='margin-left:auto;margin-right:auto;margin-top:20px;margin-bottom:50px' onclick='$("#flXML").click()' class="btn btn-outline-dark"><i class="fa fa-code"></i>&nbsp Selecionar XML da(s) nota(s)</button>
-                            <input type="file" style="display:none" id="flXML">
+
+                            <button ng-if="pedidos.length == 0" style='margin-left:auto;margin-right:auto;margin-top:20px;margin-bottom:50px' onclick='$("#flXML").click()' class="btn btn-outline-dark"><i class="fa fa-code"></i>&nbsp Selecionar XML da(s) nota(s)</button>
+                            <input type="file" style="display:none" id="flXML" multiple>
+
+
 
                         </div>	
+                        <hr ng-if="pedidos.length > 0">
+                        <div class="row" ng-repeat-start="pedido in pedidos">
+                            <div class="col-md-4" style="padding:30px">
+
+                                Pedido de Compra: <strong>{{pedido.id}}</strong> da <strong>{{pedido.empresa.nome}}</strong>
+                                <br>
+                                <i class="fas fa-code"></i>&nbsp Nota:<strong>{{pedido.nota.numero}}</strong>
+                                <br>
+                                <i class="fas fa-industry"></i>&nbsp Fornecedor: <strong>{{pedido.fornecedor.nome}}</strong>
+                                <br>
+                                CNPJ: <strong>{{pedido.fornecedor.cnpj.valor}}</strong>
+                                <br>
+
+                            </div>
+                            <div class="col-md-4" style="padding:30px">
+
+                                <i class="fas fa-truck"></i>&nbsp Transportadora: <strong>{{pedido.transportadora.razao_social}}</strong>
+                                <br>
+                                CNPJ: <strong>{{pedido.transportadora.cnpj.valor}}</strong>
+                                <br>
+
+                            </div>
+                            <div class="col-md-4" style="padding:30px">
+
+                                <i class="fa fa-exchange-alt"></i>&nbsp Operacoes geradas
+                                <hr>
+                                <table class="table table-striped table-bordered first">
+                                    <thead>
+                                    <th>Tipo</th>
+                                    <th>Remetente</th>
+                                    <th>Destinatario</th>
+                                    </thead>
+                                    <tr ng-repeat="nota in pedido.notas_logisticas">
+                                        <th>{{nota.saida?'Saida':'Entrada'}}</th>
+                                        <th>{{nota.saida?nota.empresa.nome:nota.fornecedor.nome}}</th>
+                                        <th>{{nota.saida?nota.cliente.razao_social:nota.empresa.nome}}</th>
+                                    </tr> 
+                                </table>
+
+                            </div>
+                        </div>
+                        <div ng-repeat-end class="row">
+                            <div class="col-md-8">
+                                <i class="fas fa-cube"></i>&nbsp<strong>Produtos</strong>
+                                <hr>
+                                <table class="table table-striped table-bordered first">
+                                    <thead>
+                                    <th>Cod</th>
+                                    <th>Nome</th>
+                                    <th>Quantidade</th>
+                                    <th>Valor</th>
+                                    <th>Logistica</th>
+                                    </thead>
+                                    <tr ng-repeat="produto in pedido.produtos">
+                                        <th>{{produto.produto.id}}</th>
+                                        <th>{{produto.produto.nome}}</th>
+                                        <th>{{produto.quantidade}}</th>
+                                        <th>{{produto.valor}} R$</th>
+                                        <th>{{produto.produto.logistica !== null?produto.produto.logistica.nome:'-------'}}</th>
+                                    </tr> 
+                                </table>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-outline-success" type="button" ng-click="finalizarNotas(pedido.notas_logisticas)" style="width:100%;height:50px"><i class="fas fa-check"></i>&nbsp Dar entrada</button>
+                            </div>
+                        </div>
                         <!-- ============================================================== -->
                         <!-- footer -->
                         <!-- ============================================================== -->
@@ -102,7 +170,7 @@
                     <!-- end wrapper  -->
                     <!-- ============================================================== -->
                 </div>
-               
+
 
                 <!-- jquery 3.3.1 -->
                 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
@@ -133,77 +201,77 @@
 
                 <!-- Optional JavaScript -->
                 <script>
-                    
-                    var sh = false;
-                    var it = null;
-                    
-                    loading.show = function(){
-                        if(it != null){
-                            clearInterval(it);
-                        }
-                        if(!sh){
-                            
-                            sh = true;
-                            $("#loading").modal("show");
-                        
-                        }
-                        
-                    }
-                    
-                    loading.close = function(){
-                        
-                        it = setTimeout(function(){
-                                if(sh){
-                                    sh = false;
-                                    $("#loading").modal("hide");
-                                }
-                        },2000);
-                        
-                        
-                    }
-                    
-                                            $(document).ready(function () {
-                                                $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
-                                                $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                                                $('.btndel').tooltip({title: "Deletar", placement: "top"});
-                                            });
-                                            $(document).ready(function () {
-                                                $('#clientes').DataTable({
-                                                    "language": {//Altera o idioma do DataTable para o português do Brasil
-                                                        "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
-                                                    },
-                                                });
 
-                                                $.getJSON('estados_cidades.json', function (data) {
-                                                    var items = [];
-                                                    var options = '<option value="">escolha um estado</option>';
-                                                    $.each(data, function (key, val) {
-                                                        options += '<option value="' + val.nome + '">' + val.nome + '</option>';
-                                                    });
-                                                    $("#estados").html(options);
+                                                    var sh = false;
+                                                    var it = null;
 
-                                                    $("#estados").change(function () {
+                                                    loading.show = function () {
+                                                        if (it != null) {
+                                                            clearInterval(it);
+                                                        }
+                                                        if (!sh) {
 
-                                                        var options_cidades = '';
-                                                        var str = "";
+                                                            sh = true;
+                                                            $("#loading").modal("show");
 
-                                                        $("#estados option:selected").each(function () {
-                                                            str += $(this).text();
-                                                        });
+                                                        }
 
-                                                        $.each(data, function (key, val) {
-                                                            if (val.nome == str) {
-                                                                $.each(val.cidades, function (key_city, val_city) {
-                                                                    options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
-                                                                });
+                                                    }
+
+                                                    loading.close = function () {
+
+                                                        it = setTimeout(function () {
+                                                            if (sh) {
+                                                                sh = false;
+                                                                $("#loading").modal("hide");
                                                             }
+                                                        }, 2000);
+
+
+                                                    }
+
+                                                    $(document).ready(function () {
+                                                        $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                                                        $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                                                        $('.btndel').tooltip({title: "Deletar", placement: "top"});
+                                                    });
+                                                    $(document).ready(function () {
+                                                        $('#clientes').DataTable({
+                                                            "language": {//Altera o idioma do DataTable para o português do Brasil
+                                                                "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
+                                                            },
                                                         });
-                                                        $("#cidades").html(options_cidades);
 
-                                                    }).change();
+                                                        $.getJSON('estados_cidades.json', function (data) {
+                                                            var items = [];
+                                                            var options = '<option value="">escolha um estado</option>';
+                                                            $.each(data, function (key, val) {
+                                                                options += '<option value="' + val.nome + '">' + val.nome + '</option>';
+                                                            });
+                                                            $("#estados").html(options);
 
-                                                });
-                                            });
+                                                            $("#estados").change(function () {
+
+                                                                var options_cidades = '';
+                                                                var str = "";
+
+                                                                $("#estados option:selected").each(function () {
+                                                                    str += $(this).text();
+                                                                });
+
+                                                                $.each(data, function (key, val) {
+                                                                    if (val.nome == str) {
+                                                                        $.each(val.cidades, function (key_city, val_city) {
+                                                                            options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
+                                                                        });
+                                                                    }
+                                                                });
+                                                                $("#cidades").html(options_cidades);
+
+                                                            }).change();
+
+                                                        });
+                                                    });
 
                 </script>
 

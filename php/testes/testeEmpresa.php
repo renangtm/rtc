@@ -453,12 +453,9 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
           echo Utilidades::toJson($pendentes);
 */
 
-        $empresa = new Logistica();
-        $empresa->id = 54;
+        $teste = Utilidades::fromJson('{"filtro":"(produto.nome like \'%80%\')","_classe":"stdClass"}');
         
-        $pedidos = $empresa->getProdutoClienteLogistic($con,0,100);
-        
-        echo Utilidades::toJson($pedidos);
+        echo $teste->filtro;
        
     }
 

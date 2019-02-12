@@ -106,7 +106,7 @@
                                                         <td ng-if="!notaa[0].emitida">---------</td>
                                                         <td>{{notaa[0].cliente == null ? '--------' : notaa[0].cliente.razao_social}}</td>
                                                         <td>{{notaa[0].fornecedor == null ? '--------' : notaa[0].fornecedor.nome}}</td>
-                                                        <td>{{notaa[0].cancelada ? 'Cancelada' :( notaa[0].emitida ? 'Emitida' : 'Aguardando Emissao...')}}</td>
+                                                        <td>{{notaa[0].cancelada ? 'Cancelada' :( notaa[0].emitida ? (notaa[0].saida?'Emitida':'Manifestada') : (notaa[0].saida?'Aguardando emissao...':'Aguardando manifestacao...'))}}</td>
                                                         <th>
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setNota(notaa[0])" data-target="#demo{{notaa[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>

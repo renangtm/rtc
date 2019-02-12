@@ -26,7 +26,7 @@ class Empresa {
     public $inscricao_estadual;
     public $is_logistica;
 
-    function __construct($id = 0) {
+    function __construct($id = 0,$cf = null) {
 
         $this->id = $id;
         $this->email = null;
@@ -42,6 +42,21 @@ class Empresa {
         $this->email = new Email();
         $this->endereco = new Endereco();
         $this->is_logistica = false;
+        
+        
+        if($id>0 & $cf!==null){
+            
+            $ps = $cf->getConexao()->prepare("SELECT nome,cnpj FROM empresa WHERE id=$id");
+            $ps->execute();
+            $ps->bind_result($nome,$cnpj);
+            if($ps->fetch()){
+                $this->nome = $nome;
+                $this->cnpj = new CNPJ($cnpj);
+            }
+            $ps->close();
+            
+        }
+        
     }
 
     public function merge($con) {
@@ -3297,6 +3312,7 @@ class Empresa {
                 . "INNER JOIN categoria_produto ON categoria_produto.id=produto.id_categoria "
                 . "WHERE produto.id_empresa = $this->id AND produto.excluido = false ";
 
+        
         if ($filtro != "") {
 
             $sql .= "AND $filtro ";
@@ -3310,6 +3326,7 @@ class Empresa {
         $produtos = array();
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
+        
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
@@ -3377,13 +3394,13 @@ class Empresa {
 
     public function getCountProdutos($con, $filtro = "") {
 
-        $sql = "SELECT COUNT(*) FROM produto WHERE id_empresa=$this->id AND excluido=false ";
+        $sql = "SELECT COUNT(*) FROM produto INNER JOIN categoria_produto ON categoria_produto.id=produto.id_categoria WHERE produto.id_empresa=$this->id AND produto.excluido=false ";
 
         if ($filtro != "") {
 
             $sql .= "AND $filtro";
         }
-
+        
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
         $ps->bind_result($qtd);

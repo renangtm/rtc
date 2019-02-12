@@ -1065,6 +1065,14 @@ rtc.service('sistemaService', function ($http, $q) {
             falha: fn
         });
     }
+    this.finalizarNotas = function(notas,fn){
+        baseService($http, $q, {
+            o:{notas:notas},
+            query: "Sistema::finalizarNotas($c,$o->notas)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getIcmsEstado = function (estado, fn) {
         baseService($http, $q, {
             o: estado,

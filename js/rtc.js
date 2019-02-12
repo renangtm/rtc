@@ -100,7 +100,7 @@ function recParaJson(objeto, pilha) {
 
     } else if (typeof objeto == 'string') {
 
-        r = '"' + objeto.split('"').join('').split("'").join('') + '"';
+        r = '"' + objeto.split('"').join('') + '"';
 
     } else if (typeof objeto == 'number') {
 
@@ -173,11 +173,10 @@ function createAssinc(lista, cols, rows, maxPage) {
                 //----------------------------
                 var np = Math.ceil(r.qtd / (este.por_pagina * este.por_coluna));
                 este.pagina = Math.max(Math.min(este.pagina, np - 1), 0);
-
+                
                 lista.getElementos(este.pagina * (este.por_pagina * este.por_coluna),
                         Math.min((este.pagina + 1) * (este.por_pagina * este.por_coluna), r.qtd),
                         este.filtro, este.ordem, function (e) {
-
                             este.elementos = [];
 
                             var els = e.elementos;
@@ -245,7 +244,6 @@ function assincFuncs(lista, base, campos, filtro) {
         }
 
         lista.filtro = "(" + f + ") ";
-
         lista.attList();
 
     })

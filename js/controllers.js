@@ -7,20 +7,25 @@ rtc.controller("crtEntrada", function ($scope, sistemaService) {
     var buscarPedido = function (xml) {
 
         sistemaService.getPedidoEntradaSemelhante(xml, function (p) {
+           
             if (p.sucesso) {
-                
-                var pedidos = p.pedidos;
 
+                var pedidos = p.pedidos;
+        
                 if (pedidos.length == 0) {
 
                     msg.erro("Nao foi encontrado nenhum pedido de compra referente a essa Nota");
 
-                }else{
-                    
-                    msg.alerta("ok");
-                    
+                } else {
+
+                    var p = pedidos[0];
+
+                    p.notas_logisticas[p.notas_logisticas.length] = p.nota;
+
+                    $scope.pedidos = [p];
+
                 }
-                
+
             } else {
 
                 msg.erro(p.mensagem);
@@ -29,6 +34,25 @@ rtc.controller("crtEntrada", function ($scope, sistemaService) {
 
         })
 
+    }
+    
+    $scope.finalizarNotas = function(notas){
+      
+        sistemaService.finalizarNotas(notas,function(r){
+            
+            if(r.sucesso){
+                
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.pedidos = [];
+                
+            }else{
+               
+                msg.erro("Problema ao efetuar operacao "+r.mensagem);
+                
+            }
+            
+        })
+        
     }
 
     $("#flXML").change(function () {
@@ -47,7 +71,7 @@ rtc.controller("crtEntrada", function ($scope, sistemaService) {
         for (var i = 0; i < arquivos.length; i++) {
             var reader = new FileReader();
             reader.onload = function (arquivo) {
-              
+
                 buscarPedido(xmlToJson(arquivo.target.result));
             };
             reader.readAsText(arquivos[i]);

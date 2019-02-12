@@ -28,6 +28,41 @@ class Sistema {
         return utf8_decode($html);
     }
 
+    public static function finalizarNotas($con, $notas) {
+
+                    
+        
+        for ($i=0;$i<count($notas);$i++) {
+
+            $value = $notas[$i];
+            
+            if ($value->emitida || $value->cancelada)
+                continue;
+
+
+            
+            $value->merge($con);
+ 
+            if ($value->saida) {
+
+                $value->emitir($con);
+                
+            } else {
+
+                $value->manifestar($con);
+            }
+
+            if (isset($value->inverter)) {
+
+                $emp = new Empresa($value->inverter);
+                $nota = $value->inverteOperacao($con, $emp);
+                $nota->merge($con);
+                $notas[] = $nota;
+                
+            }
+        }
+    }
+
     public static function getPedidoEntradaSemelhante($con, $empresa, $xml) {
 
         if (!isset($xml->nfeProc->NFe)) {
@@ -147,36 +182,126 @@ class Sistema {
                     $produtos[$value->cProd]->total += doubleval($value->qCom . "") * $produtos[$value->cProd]->valor;
                     $total += doubleval($value->qCom . "") * $produtos[$value->cProd]->valor;
                 }
-     
+
                 $ps = $con->getConexao()->prepare("SELECT k.id FROM (SELECT produto_pedido_entrada.id_pedido as 'id',SUM(produto_pedido_entrada.valor*produto_pedido_entrada.quantidade) as 'soma' FROM produto_pedido_entrada WHERE produto_pedido_entrada.id_pedido IN $in GROUP BY produto_pedido_entrada.id_pedido) k WHERE (k.soma-0.5)<$total AND (k.soma+0.5)>$total");
                 $ps->execute();
+
                 $ps->bind_result($idp);
                 if ($ps->fetch()) {
                     $escolhido = $idp;
                     $ps->close();
                 } else {
                     $ps->close();
-                    throw new Exception('Nao foi possivel selecionar o pedido de compra devido ao valor nao estar batendo');
+                    throw new Exception('Nao foi possivel selecionar o pedido de compra devido ao valor nao estar batendo ');
                 }
             }
         }
 
-        $e = new Empresa($id_empresa);
-        
-        $pedido =  $e->getPedidosEntrada($con, 0, 1,"pedido_entrada.id=$escolhido");
+        $e = new Empresa($id_empresa, new ConnectionFactory());
+
+        $pedido = $e->getPedidosEntrada($con, 0, 1, "pedido_entrada.id=$escolhido");
         $pedido = $pedido[0];
 
         $nota = new Nota();
+        $nota->numero = $inf->ide->nNF;
+        $nota->transportadora = $pedido->transportadora;
+        $nota->protocolo = $nfe->protNFe->infProt->nProt;
         $nota->saida = false;
-        $nota->chave = explode('e', $inf->id);
+        $nota->chave = explode('e', $inf->Id);
         $nota->chave = $nota->chave[1];
+
+        $ps = $con->getConexao()->prepare("SELECT id FROM nota WHERE chave='$nota->chave'");
+        $ps->execute();
+        $ps->bind_result($t);
+        if ($ps->fetch()) {
+            $ps->close();
+            throw new Exception('Ja existem operacoes realizadas referentes a essa NFe');
+        }
+        $ps->close();
+
         $nota->fornecedor = $pedido->fornecedor;
-        $nota->emitida = true;
+        $nota->emitida = false;
+        $nota->forma_pagamento = Sistema::getFormasPagamento();
+        $nota->forma_pagamento = $nota->forma_pagamento[0];
         $nota->interferir_estoque = false;
         $nota->empresa = $e;
         $nota->frete_destinatario_remetente = $pedido->incluir_frete;
-        
-        
+
+        $vencimentos = array();
+        $cobr = $inf->cobr->dup;
+        if (!is_array($cobr)) {
+            $cobr = array($cobr);
+        }
+
+        foreach ($cobr as $key => $value) {
+            $v = new Vencimento();
+            $v->nota = $nota;
+            $v->valor = doubleval($value->vDup . "");
+            $v->data = strtotime($value->dVenc);
+            $vencimentos[] = $v;
+        }
+
+        $nota->vencimentos = $vencimentos;
+
+        $pp = $pedido->getProdutos($con);
+        $pedido->produtos = $pp;
+        $produtos = array();
+
+        $logisticas = array();
+        $logs = array();
+
+        foreach ($pp as $key => $value) {
+
+            $pn = new ProdutoNota();
+            $pn->cfop = "5152"; //verificar esse ponto aqui
+            $pn->valor = doubleval($value->valor . "");
+            $pn->quantidade = doubleval($value->quantidade . "");
+            $pn->nota = $nota;
+            $pn->valor_total = $pn->valor * $pn->quantidade;
+            $pn->produto = $value->produto;
+            $produtos[] = $pn;
+
+            if ($value->produto->logistica !== null) {
+                if (!isset($logisticas[$value->produto->logistica->id])) {
+                    $nl = Utilidades::copyId0($nota);
+                    $nl->emitida = false;
+                    $nl->chave = "";
+                    $nl->protocolo = "";
+                    $nl->saida = true;
+                    $nl->empresa = $e;
+                    $nl->fornecedor = null;
+                    $gt = new Getter($nl->empresa);
+                    $nl->cliente = $gt->getClienteViaEmpresa($con, $value->produto->logistica);
+                    $nl->observacao = "Nota referente a remessa da empresa " . $id_empresa;
+                    $nl->produtos = array();
+                    $logisticas[$value->produto->logistica->id] = $nl;
+                    $logs[$value->produto->logistica->id] = $value->produto->logistica;
+                }
+                $n = $logisticas[$value->produto->logistica->id];
+                $p = Utilidades::copyId0($pn);
+                $p->nota = $logisticas[$value->produto->logistica->id];
+                $n->produtos[] = $p;
+            }
+        }
+
+        $rl = array();
+
+        foreach ($logisticas as $key => $value) {
+            $value->igualaVencimento();
+            $value->inverter = $logs[$key]->id;
+            $rl[] = $value;
+            $inv = $value->inverteOperacao($con,$logs[$key]);
+            $inv->cancelada = true;
+            $rl[] = $inv;
+        }
+
+        $nota->produtos = $produtos;
+
+        $pedido->nota = $nota;
+        $pedido->notas_logisticas = $rl;
+
+
+        return array($pedido);
     }
 
     public static function getMesesValidadeCurta() {

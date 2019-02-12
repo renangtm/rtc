@@ -57,6 +57,55 @@ class Nota {
         $this->cancelada = false;
     }
 
+    public function igualaVencimento(){
+        
+        $totp = 0;
+        
+        foreach($this->produtos as $key=>$value){
+            $totp += $value->valor_total;
+        }
+        
+        $vencimento = new Vencimento();
+        $vencimento->nota = $this;
+        $vencimento->valor = $totp;
+        
+        $this->vencimentos = array($vencimento);
+        
+    }
+    
+    public function inverteOperacao($con, $empresa) {
+
+        $gt = new Getter($empresa);
+        $nota = Utilidades::copyId0($this);
+        unset($nota->inverter);
+        
+        if ($nota->saida) {
+
+            $fornecedor = $gt->getFornecedorViaEmpresa($con, $nota->empresa);
+            $nota->empresa = $empresa;
+            $nota->cliente = null;
+            $nota->fornecedor = $fornecedor;
+        } else {
+
+            $cliente = $gt->getClienteViaEmpresa($con, $nota->empresa);
+            $nota->empresa = $empresa;
+            $nota->fornecedor = null;
+            $nota->cliente = $cliente;
+        }
+
+        $nota->saida = !$nota->saida;
+        
+        foreach($nota->produtos as $key=>$value){
+            $value->nota = $nota;
+        }
+        
+        foreach($nota->vencimentos as $key=>$value){
+            $value->nota = $nota;
+        }
+
+        return $nota;
+    }
+
     public function getProdutos($con) {
 
         $campanhas = array();
@@ -108,7 +157,7 @@ class Nota {
                 . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
 
         $ps->execute();
-        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa,$is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
@@ -124,13 +173,12 @@ class Nota {
                 $campanhas[$id]->cliente_expression = $cliente;
 
                 $empresa = new Empresa();
-                
-                if($is_logistica==1){
-                    
+
+                if ($is_logistica == 1) {
+
                     $empresa = new Logistica();
-                    
                 }
-                
+
                 $empresa->id = $id_empresa;
                 $empresa->cnpj = new CNPJ($cnpj);
                 $empresa->inscricao_estadual = $inscricao_empresa;
@@ -266,9 +314,9 @@ class Nota {
                 . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
                 . "INNER JOIN estado ON cidade.id_estado = estado.id "
                 . " WHERE produto_nota.id_nota=$this->id");
-        
+
         $ps->execute();
-        $ps->bind_result($id, $info_adic, $quantidade, $valor_unitario, $valor_total, $base_calculo, $cfop, $icms, $ipi, $influencia_estoque, $id_pro,$id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa,$is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $info_adic, $quantidade, $valor_unitario, $valor_total, $base_calculo, $cfop, $icms, $ipi, $influencia_estoque, $id_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
@@ -276,7 +324,7 @@ class Nota {
         while ($ps->fetch()) {
 
             $p = new Produto();
-            $p->logistica =  $id_log;
+            $p->logistica = $id_log;
             $p->id = $id_pro;
             $p->nome = $nome;
             $p->classe_risco = $classe_risco;
@@ -318,13 +366,12 @@ class Nota {
             $p->categoria->ipi = $cat_ipi;
 
             $empresa = new Empresa();
-            
-            if($is_logistica==1){
-                
+
+            if ($is_logistica == 1) {
+
                 $empresa = new Logistica();
-                
             }
-            
+
             $empresa->id = $id_empresa;
             $empresa->cnpj = new CNPJ($cnpj);
             $empresa->inscricao_estadual = $inscricao_empresa;
@@ -386,9 +433,9 @@ class Nota {
         }
 
         $ps->close();
-        
-        foreach($retorno as $key=>$value){
-            $value->produto->logistica = Sistema::getLogisticaById($con,$value->produto->logistica);
+
+        foreach ($retorno as $key => $value) {
+            $value->produto->logistica = Sistema::getLogisticaById($con, $value->produto->logistica);
         }
 
         $real_ret = array();
@@ -401,13 +448,22 @@ class Nota {
         return $real_ret;
     }
 
-    public function manifestar($con){
-        
-        
+    public function manifestar($con) {
+
+        $this->emitida = true;
+
+        $ps = $con->getConexao()->prepare("UPDATE nota SET emitida=true WHERE id=$this->id");
+        $ps->execute();
+        $ps->close();
     }
-    
+
     public function emitir($con) {
-        
+
+        $this->emitida = true;
+
+        $ps = $con->getConexao()->prepare("UPDATE nota SET emitida=true WHERE id=$this->id");
+        $ps->execute();
+        $ps->close();
     }
 
     public function cancelar($con, $motivo) {
@@ -461,11 +517,12 @@ class Nota {
 
         if ($totv != $totp) {
 
-            throw new Exception('Somatorio das parcelas difere do valor da nota ');
+            throw new Exception('Somatorio das parcelas difere do valor da nota Total:'.$totp.', Somatorio: '.$totv);
+        
             
         }
-        
-        
+
+
 
         if ($this->emitida && $this->ficha == 0) {
 
@@ -480,8 +537,8 @@ class Nota {
                 $this->ficha = 1;
             }
         }
-        
-       
+
+
 
         if ($this->id == 0) {
             
