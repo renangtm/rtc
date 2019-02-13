@@ -1,6 +1,38 @@
 var debuger = function (l) {
     alert(paraJson(l));
 }
+rtc.service('usuarioService', function ($http, $q) {
+    this.getRtc = function(fn){
+        baseService($http, $q, {
+            query: "$r->rtc=$empresa->getRTC($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getUsuario = function (fn) {
+        baseService($http, $q, {
+            query: "$r->usuario=new Usuario();$r->fornecedor->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountUsuarios($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getUsuarios($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('produtoClienteLogisticService', function ($http, $q) {
     this.getCount = function (filtro, fn) {
         baseService($http, $q, {

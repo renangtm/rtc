@@ -30,23 +30,21 @@ class Sistema {
 
     public static function finalizarNotas($con, $notas) {
 
-                    
-        
-        for ($i=0;$i<count($notas);$i++) {
+
+
+        for ($i = 0; $i < count($notas); $i++) {
 
             $value = $notas[$i];
-            
+
             if ($value->emitida || $value->cancelada)
                 continue;
 
 
-            
             $value->merge($con);
- 
+
             if ($value->saida) {
 
                 $value->emitir($con);
-                
             } else {
 
                 $value->manifestar($con);
@@ -56,9 +54,10 @@ class Sistema {
 
                 $emp = new Empresa($value->inverter);
                 $nota = $value->inverteOperacao($con, $emp);
-                $nota->merge($con);
+                $nota->calcularImpostosAutomaticamente();
+                $nota->emitida = false;
+                $nota->cancelada = false;
                 $notas[] = $nota;
-                
             }
         }
     }
@@ -237,7 +236,7 @@ class Sistema {
             $v = new Vencimento();
             $v->nota = $nota;
             $v->valor = doubleval($value->vDup . "");
-            $v->data = strtotime($value->dVenc)*1000;
+            $v->data = strtotime($value->dVenc) * 1000;
             $vencimentos[] = $v;
         }
 
@@ -250,15 +249,45 @@ class Sistema {
         $logisticas = array();
         $logs = array();
 
+        $dets = array();
+        $dets_n = array();
+
+        if (!is_array($inf->det)) {
+            $inf->det = array($inf->det);
+        }
+
+        foreach ($inf->det as $key => $value) {
+
+            $value = $value->prod;
+
+            if (!isset($produtos[$value->cProd])) {
+
+                $p = new stdClass();
+                $p->id = $value->cProd;
+                $p->nome = $value->xProd;
+                $p->cfop = $value->CFOP;
+                $p->valor = doubleval($value->vUnCom . "");
+                $p->quantidade = 0;
+                $p->total = 0;
+
+                $dets[$p->id] = $p;
+                $dets_n[] = $p;
+            }
+
+            $dets[$value->cProd]->quantidade += doubleval($value->qCom . "");
+            $dets[$value->cProd]->total += doubleval($value->qCom . "") * $produtos[$value->cProd]->valor;
+        }
+
         foreach ($pp as $key => $value) {
 
             $pn = new ProdutoNota();
-            $pn->cfop = "5152"; //verificar esse ponto aqui
+            $pn->cfop = (isset($dets_n[$key]) ? $dets_n[$key]->cfop : "5152"); //verificar esse ponto aqui
             $pn->valor_unitario = doubleval($value->valor . "");
             $pn->quantidade = doubleval($value->quantidade . "");
             $pn->nota = $nota;
             $pn->valor_total = $pn->valor_unitario * $pn->quantidade;
             $pn->produto = $value->produto;
+
             $produtos[] = $pn;
 
             if ($value->produto->logistica !== null) {
@@ -288,15 +317,17 @@ class Sistema {
 
         foreach ($logisticas as $key => $value) {
             $value->igualaVencimento();
+            $value->calcularImpostosAutomaticamente();
             $value->inverter = $logs[$key]->id;
             $rl[] = $value;
-            $inv = $value->inverteOperacao($con,$logs[$key]);
+            $inv = $value->inverteOperacao($con, $logs[$key]);
+            $inv->calcularImpostosAutomaticamente();
             $inv->cancelada = true;
             $rl[] = $inv;
         }
 
         $nota->produtos = $produtos;
-
+        $nota->calcularImpostosAutomaticamente();
         $pedido->nota = $nota;
         $pedido->notas_logisticas = $rl;
 
@@ -535,6 +566,27 @@ class Sistema {
         return $email;
     }
 
+    public static function getRTCS() {
+
+        return array(new RTC(1, array(
+                new Permissao(5, "cliente"),
+                new Permissao(17, "fonecedor"),
+                new Permissao(4, "transportadora"),
+                new Permissao(3, "cotacao"),
+                new Permissao(13, "pedido_saida"),
+                new Permissao(25, "pedido_entrada"),
+                new Permissao(27, "logo"),
+                new Permissao(2, "produto"))
+            ), new RTC(2, array(
+                new Permissao(23, "lista_preco"),
+                new Permissao(9, "campanha"))
+            ), new RTC(3, array(
+                new Permissao(8, "tabela"),
+                new Permissao(10, "grupo_cidades"))
+            ), new RTC(4, "ALL")
+        );
+    }
+
     public static function getPermissoes() {
 
         $perms = array();
@@ -560,8 +612,11 @@ class Sistema {
         $perms[] = new Permissao(19, "configuracao_empresa");
         $perms[] = new Permissao(20, "cultura");
         $perms[] = new Permissao(21, "praga");
-        $perms[] = new Permissao(22, "receita");
-
+        $perms[] = new Permissao(23, "lista_preco");
+        $perms[] = new Permissao(24, "configuracao_empresa");
+        $perms[] = new Permissao(25, "separacao");
+        $perms[] = new Permissao(26, "pedido_entrada");
+        $perms[] = new Permissao(27, "logo");
 
         return $perms;
     }
@@ -585,7 +640,9 @@ class Sistema {
         $status[] = new StatusPedidoSaida(8, "Rastreio", true, true, true, false, false, false, false, true);
         $status[] = new StatusPedidoSaida(9, "Finalizado", true, true, true, false, false, false, true, true);
         $status[] = new StatusPedidoSaida(10, "Cancelado", false, false, true, true, false, false, true, false);
+        $status[] = new StatusPedidoSaida(11, "Orcamento", false, false, true, true, true, true, false, false);
         $status[] = new StatusPedidoSaida(30, "Excluido", false, false, false, true, false, false, true, false);
+
 
         return $status;
     }
