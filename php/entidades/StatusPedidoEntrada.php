@@ -19,7 +19,7 @@ class StatusPedidoEntrada {
     public $transito;
     public $envia_email;
     
-    function __construct($id,$nome,$estoque,$reserva,$envia_email) {
+    function __construct($id=0,$nome="",$estoque=false,$reserva=false,$envia_email=false) {
         
         $this->id = $id;
         $this->nome = $nome;

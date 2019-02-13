@@ -678,8 +678,8 @@
                 </div>
                 <!-- /.modal-content --> 
 <!-- /.modal-content LOADING --> 
-                <div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                    <div class="modal-dialog">
+                <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
@@ -736,25 +736,27 @@
                         if(it != null){
                             clearInterval(it);
                         }
-                        if(!sh){
-                            
-                            sh = true;
+                        it = setInterval(function(){
                             $("#loading").modal("show");
-                        
-                        }
+                            if($("#loading").hasClass('in')){
+                                clearInterval(it);
+                            }
+                        },300)
                         
                     }
                     
                     loading.close = function(){
                         
-                        it = setTimeout(function(){
-                                if(sh){
-                                    sh = false;
-                                    $("#loading").modal("hide");
-                                }
-                        },2000);
-                        
-                        
+                        if(it != null){
+                            clearInterval(it);
+                        }
+                        it = setInterval(function(){
+                            $("#loading").modal("hide");
+                            if(!$("#loading").hasClass('in')){
+                                clearInterval(it);
+                            }
+                        },300)
+                                
                     }
                     
                                             $(document).ready(function () {

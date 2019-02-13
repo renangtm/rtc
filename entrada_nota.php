@@ -115,11 +115,13 @@
                                     <th>Tipo</th>
                                     <th>Remetente</th>
                                     <th>Destinatario</th>
+                                    <th>Remover</th>
                                     </thead>
                                     <tr ng-repeat="nota in pedido.notas_logisticas">
                                         <th>{{nota.saida?'Saida':'Entrada'}}</th>
                                         <th>{{nota.saida?nota.empresa.nome:nota.fornecedor.nome}}</th>
                                         <th>{{nota.saida?nota.cliente.razao_social:nota.empresa.nome}}</th>
+                                        <th><button class="btn btn-outline-danger" ng-click="removeOperacao(nota)"><i class="fa fa-trash"></i></button></th>
                                     </tr> 
                                 </table>
 

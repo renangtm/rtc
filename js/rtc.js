@@ -173,7 +173,7 @@ function createAssinc(lista, cols, rows, maxPage) {
                 //----------------------------
                 var np = Math.ceil(r.qtd / (este.por_pagina * este.por_coluna));
                 este.pagina = Math.max(Math.min(este.pagina, np - 1), 0);
-                
+
                 lista.getElementos(este.pagina * (este.por_pagina * este.por_coluna),
                         Math.min((este.pagina + 1) * (este.por_pagina * este.por_coluna), r.qtd),
                         este.filtro, este.ordem, function (e) {
@@ -424,7 +424,7 @@ function toDate(lo) {
 
 function toTime(lo) {
 
-    var d = new Date(lo);
+    var d = new Date(parseFloat(lo+""));
 
     var dia = d.getDate();
     var mes = (d.getMonth() + 1);
@@ -518,14 +518,14 @@ function baseService(http, q, obj, get, cancel) {
     http({
         url: 'php/controler/crt.php',
         method: ((get == null) ? "POST" : "GET"),
-        data: "c=" + obj.query.split("&").join("<e>").split("+").join("<m>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("<e>").split("+").join("<m>")) : ""),
+        data: "c=" + obj.query.split("&").join("<e>").split("+").join("<m>").split("%").join("<p>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("<e>").split("+").join("<m>").split("%").join("<p>")) : ""),
         timeout: p.promise,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (exx) {
 
         loading.close();
 
         if (typeof obj["sucesso"] !== 'undefined') {
-            obj.sucesso(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&")));
+            obj.sucesso(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&").split("<m>").join("+").split("<p>").join("%")));
         }
 
 
@@ -535,7 +535,7 @@ function baseService(http, q, obj, get, cancel) {
         loading.close();
 
         if (typeof obj["falha"] !== 'undefined') {
-            obj.falha(paraObjeto(JSON.stringify(exx.data).split("<m>").join("&")));
+            obj.falha(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&").split("<m>").join("+").split("<p>").join("%")));
         }
 
     })
@@ -631,7 +631,7 @@ function xmlToJson(xxx) {
         xml = '<?xml version="1.0" encoding="UTF-8"?>' + xml;
     }
     xml = xml.split("\n").join("").split("\t").join("").split("\r").join("").replace(/ +(?= )/g, '').split('> <').join('><');
-    
+
     return privateXmlToJson(xml, 0)[0];
 
 }
@@ -792,6 +792,141 @@ rtc.directive('ngDownload', function () {
 });
 
 var idsUnicos = 1;
+
+rtc.directive('inteiro', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            model: '='
+        },
+        templateUrl: 'txtInteiro.html',
+        link: function (scope, element, attrs) {
+            var c = "0 1 2 3 4 5 6 7 8 9".split(" ");
+            var rep = function (str) {
+                var s = "";
+                for (var i = 0; i < str.length; i++) {
+                    for (var j = 0; j < c.length; j++) {
+                        if (c[j] === str[i]) {
+                            s += str[i];
+                            break;
+                        }
+                    }
+                }
+                return s;
+            }
+            scope.adjust = function () {
+                scope.model = parseInt(rep(scope.model) + "");
+            }
+        }
+    };
+})
+
+rtc.directive('decimal', function ($parse) {
+    return {
+        restrict: 'E',
+        scope: {
+            model: '='
+        },
+        templateUrl: 'txtDecimal.html',
+        link: function (scope, element, attrs) {
+
+            var c = "0 1 2 3 4 5 6 7 8 9 ,".split(" ");
+            var rep = function (str) {
+                var s = "";
+                for (var i = 0; i < str.length; i++) {
+                    for (var j = 0; j < c.length; j++) {
+                        if (c[j] === str[i]) {
+                            s += str[i];
+                            break;
+                        }
+                    }
+                }
+                return s;
+            }
+            
+         
+
+            var ultm =
+                    scope.ini = function () {
+
+                        var ant = scope.model2;
+
+                        scope.model2 = (scope.model + "").split(".").join(",");
+
+                        scope.adjust();
+
+                        if (ant.length - 1 === scope.model2.length) {
+                            var a = true;
+
+                            for (var i = 0; i < scope.model2.length; i++) {
+
+                                if (scope.model2.charAt(i) !== ant.charAt(i)) {
+                                    a = false;
+                                    break;
+                                }
+
+                            }
+
+                            if (a && ant[ant.length - 1] === ',') {
+                                scope.model2 = ant;
+                            }
+                        }
+
+
+
+                        scope.$apply();
+
+
+                    }
+
+            setInterval(scope.ini, 500);
+
+            scope.adjust = function () {
+
+
+                var k = rep(scope.model2);
+                var s = k.split(",");
+
+                if (s.length > 2) {
+                    s = [s[0], s[1]];
+                }
+
+                var p1 = s[0];
+                var pp1 = "";
+
+                for (var i = 0; i < p1.length; i++) {
+                    if ((p1.length - i) % 3 == 0 && i > 0)
+                        pp1 += ".";
+                    pp1 += p1[i];
+                }
+                var k = pp1.split(".").join("");
+                if (s.length == 2) {
+
+                    if (s[1].length > 2) {
+                        s[1] = s[1].substr(0, 2);
+                    }
+
+                    pp1 += "," + s[1];
+                    if (s[1].length > 0) {
+                        k += "." + s[1];
+                    }
+                }
+
+                scope.model = parseFloat(k);
+                scope.model2 = pp1;
+
+                if (isNaN(scope.model)) {
+                    scope.model = 0;
+                    scope.model2 = "0";
+                }
+
+            }
+
+
+        }
+    };
+})
+
 rtc.directive('email', function () {
     return{
         restrict: 'E',

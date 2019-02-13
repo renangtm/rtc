@@ -210,7 +210,7 @@ class Sistema {
         $nota->chave = explode('e', $inf->Id);
         $nota->chave = $nota->chave[1];
 
-        $ps = $con->getConexao()->prepare("SELECT id FROM nota WHERE chave='$nota->chave'");
+        $ps = $con->getConexao()->prepare("SELECT id FROM nota WHERE chave='$nota->chave' AND nota.excluida = false");
         $ps->execute();
         $ps->bind_result($t);
         if ($ps->fetch()) {
@@ -237,7 +237,7 @@ class Sistema {
             $v = new Vencimento();
             $v->nota = $nota;
             $v->valor = doubleval($value->vDup . "");
-            $v->data = strtotime($value->dVenc);
+            $v->data = strtotime($value->dVenc)*1000;
             $vencimentos[] = $v;
         }
 
@@ -254,10 +254,10 @@ class Sistema {
 
             $pn = new ProdutoNota();
             $pn->cfop = "5152"; //verificar esse ponto aqui
-            $pn->valor = doubleval($value->valor . "");
+            $pn->valor_unitario = doubleval($value->valor . "");
             $pn->quantidade = doubleval($value->quantidade . "");
             $pn->nota = $nota;
-            $pn->valor_total = $pn->valor * $pn->quantidade;
+            $pn->valor_total = $pn->valor_unitario * $pn->quantidade;
             $pn->produto = $value->produto;
             $produtos[] = $pn;
 

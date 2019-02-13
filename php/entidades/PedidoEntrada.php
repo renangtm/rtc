@@ -359,7 +359,7 @@ class PedidoEntrada {
             $pp->influencia_transito = $it;
             $pp->quantidade = $quantidade;
             $pp->valor = $valor;
-            $pp->cotacao = $this;
+            $pp->pedido = $this;
             $pp->produto = $p;
 
 

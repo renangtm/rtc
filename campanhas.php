@@ -247,7 +247,7 @@
                                     <div class="form-group row">
                                         <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">Prazo</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="campanha.prazo" class="form-control">
+                                            <inteiro model="campanha.prazo"></inteiro>
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -256,7 +256,7 @@
                                     <div class="form-group row">
                                         <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">Parcelas</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="campanha.parcelas" class="form-control">
+                                            <inteiro model="campanha.parcelas"></inteiro>
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>

@@ -802,6 +802,7 @@
                                 <div class="form-group row">
                                     <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Valor</label>
                                     <div class="col-9 col-lg-10">
+                                        <decimal model="valor_teste"></decimal>
                                         <input id="txtendnum" type="text" step="0.01" placeholder="00" ng-confirm="attResultadoIndividual()" ng-model="valor_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
                                         <div class="invalid-feedback">
                                             Please provide a valid text.

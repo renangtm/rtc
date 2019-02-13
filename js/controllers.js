@@ -17,7 +17,7 @@ rtc.controller("crtEntrada", function ($scope, sistemaService) {
                     msg.erro("Nao foi encontrado nenhum pedido de compra referente a essa Nota");
 
                 } else {
-
+                  
                     var p = pedidos[0];
 
                     p.notas_logisticas[p.notas_logisticas.length] = p.nota;
@@ -34,6 +34,12 @@ rtc.controller("crtEntrada", function ($scope, sistemaService) {
 
         })
 
+    }
+    
+    $scope.removeOperacao = function(op){
+        
+        remove($scope.pedidos[0].notas_logisticas,op);
+        
     }
     
     $scope.finalizarNotas = function(notas){
@@ -263,8 +269,6 @@ rtc.controller("crtMovimentos", function ($scope, movimentoService, sistemaServi
     }
 
 })
-
-
 rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoService, produtoNotaService, vencimentoService, sistemaService, formaPagamentoService, transportadoraService, clienteService, fornecedorService, uploadService) {
 
     $scope.notas = createAssinc(notaService, 1, 10, 10);
@@ -644,6 +648,7 @@ rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoSe
     }
 
     $scope.deleteNota = function () {
+
         baseService.delete($scope.nota, function (r) {
             if (r.sucesso) {
                 msg.alerta("Operacao efetuada com sucesso");
@@ -657,7 +662,6 @@ rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoSe
     }
 
 })
-
 rtc.controller("crtBancos", function ($scope, bancoService, baseService) {
 
     $scope.bancos = createAssinc(bancoService, 1, 3, 10);
@@ -722,7 +726,6 @@ rtc.controller("crtBancos", function ($scope, bancoService, baseService) {
     }
 
 })
-
 rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, transportadoraService, tabelaService, baseService, produtoService, sistemaService, statusCotacaoEntradaService, fornecedorService, produtoCotacaoEntradaService) {
 
     $scope.cotacoes = createAssinc(cotacaoEntradaService, 1, 10, 10);
@@ -1099,7 +1102,6 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tr
 
 
 })
-
 rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabelaService, baseService, produtoService, sistemaService, statusPedidoEntradaService, transportadoraService, fornecedorService, produtoPedidoEntradaService) {
 
     $scope.pedidos = createAssinc(pedidoEntradaService, 1, 10, 10);
@@ -1446,7 +1448,6 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
 
 
 })
-
 rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, baseService, produtoService, sistemaService, statusPedidoSaidaService, formaPagamentoService, transportadoraService, clienteService, produtoPedidoService) {
 
     $scope.pedidos = createAssinc(pedidoService, 1, 10, 10);
@@ -1942,7 +1943,6 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
 
 
 })
-
 rtc.controller("crtListaPreco", function ($scope, listaPrecoProdutoService, listaPrecoPragaService, listaPrecoCulturaService) {
 
     $scope.produtos = createAssinc(listaPrecoProdutoService, 1, 3, 10);
@@ -2009,7 +2009,6 @@ rtc.controller("crtListaPreco", function ($scope, listaPrecoProdutoService, list
     }
 
 })
-
 rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, produtoService, sistemaService) {
 
     $scope.campanhas = createAssinc(campanhaService, 1, 3, 10);
@@ -2332,7 +2331,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
 
         if (campanha.produtos.length === 0) {
 
-            campanhaService.getProdutosDia(new Date(campanha.inicio).getDay(), function (prods) {
+            campanhaService.getProdutosDia(new Date(fromTime(campanha.inicio)).getDay(), function (prods) {
 
                 for (var i = 0; i < prods.produtos.length; i++) {
 
@@ -2375,12 +2374,15 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     $scope.setCampanha = function (campanha) {
 
         $scope.campanha = campanha;
+        
         $scope.campanha.inicio_texto = toTime(campanha.inicio);
+        
         $scope.campanha.fim_texto = toTime(campanha.fim);
 
     }
 
     $scope.mergeCampanha = function () {
+        
         $scope.campanha.inicio = fromTime($scope.campanha.inicio_texto);
         $scope.campanha.fim = fromTime($scope.campanha.fim_texto);
 
@@ -2455,7 +2457,6 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     }
 
 })
-
 rtc.controller("crtLotes", function ($scope, loteService, baseService) {
 
 
@@ -2743,7 +2744,6 @@ rtc.controller("crtLotes", function ($scope, loteService, baseService) {
 
 
 })
-
 rtc.controller("crtFornecedores", function ($scope, fornecedorService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
 
     $scope.fornecedores = createAssinc(fornecedorService, 1, 3, 10);
@@ -2933,7 +2933,6 @@ rtc.controller("crtFornecedores", function ($scope, fornecedorService, categoria
     }
 
 })
-
 rtc.controller("crtTransportadoras", function ($scope, transportadoraService, regraTabelaService, tabelaService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
 
     $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 10);
@@ -3237,7 +3236,6 @@ rtc.controller("crtTransportadoras", function ($scope, transportadoraService, re
     }
 
 })
-
 rtc.controller("crtClientes", function ($scope, clienteService, categoriaClienteService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
 
     $scope.clientes = createAssinc(clienteService, 1, 3, 10);
@@ -3438,7 +3436,6 @@ rtc.controller("crtClientes", function ($scope, clienteService, categoriaCliente
     }
 
 })
-
 rtc.controller("crtProdutos", function ($scope, culturaService, sistemaService, uploadService, pragaService, produtoService, baseService, categoriaProdutoService, receituarioService) {
 
     $scope.produtos = createAssinc(produtoService, 1, 3, 10);
@@ -3659,7 +3656,6 @@ rtc.controller("crtProdutos", function ($scope, culturaService, sistemaService, 
     })
 
 })
-
 rtc.controller("crtLogin", function ($scope, loginService) {
     $scope.usuario = "";
     $scope.senha = "";
@@ -3669,6 +3665,7 @@ rtc.controller("crtLogin", function ($scope, loginService) {
             if (r.usuario === null || !r.sucesso) {
                 msg.erro("Esse usuário não existe");
             } else {
+                
                 window.location = "index_em_branco.php";
             }
         });

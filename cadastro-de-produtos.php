@@ -311,7 +311,7 @@
                                             <div class="form-group row">
                                                 <label for="txtcl" class="col-3 col-lg-2 col-form-label text-left">Cl:</label>
                                                 <div class="col-9 col-lg-10">
-                                                    <input id="txtcl" type="number" ng-model="produto.classe_risco" required data-parsley-type="email" placeholder="" class="form-control">
+                                                    <inteiro model="produto.classe_risco"></inteiro>
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
@@ -320,7 +320,7 @@
                                             <div class="form-group row">
                                                 <label for="txtqtd" class="col-3 col-lg-2 col-form-label text-left">QTd.</label>
                                                 <div class="col-9 col-lg-10">
-                                                    <input ng-model="produto.estoque" id="txtqtd" type="number" required placeholder="" class="form-control">
+                                                    <inteiro model="produto.estoque"></inteiro>
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
@@ -339,7 +339,7 @@
                                             <div class="form-group row">
                                                 <label for="txtdisp" class="col-3 col-lg-2 col-form-label text-left">Disp.</label>
                                                 <div class="col-9 col-lg-10">
-                                                    <input id="txtdisp" ng-model="produto.disponivel" type="number" required data-parsley-type="email" placeholder="" class="form-control">
+                                                    <inteiro model="produto.disponivel"></inteiro>
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
@@ -349,7 +349,7 @@
                                             <div class="form-group row">
                                                 <label for="txtval" class="col-3 col-lg-2 col-form-label text-left">Valor (R$)</label>
                                                 <div class="col-9 col-lg-10">
-                                                    <input id="txtval" ng-model="produto.transito" type="number" required placeholder="00.00" class="form-control">
+                                                    <inteiro model="produto.transito"></inteiro>
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
@@ -383,7 +383,7 @@
                                             <div class="form-group row">
                                                 <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Peso Liquido</label>
                                                 <div class="col-9 col-lg-9 text-left">
-                                                    <input id="txtpativo" ng-model="produto.peso_liquido" type="text" required placeholder="" class="form-control">
+                                                    <decimal model="banco.codigo"></decimal>
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
@@ -393,7 +393,7 @@
                                             <div class="form-group row">
                                                 <label for="txtpeso" class="col-3 col-lg-2 col-form-label text-left">Peso Bruto</label>
                                                 <div class="col-6 col-lg-6">
-                                                    <input id="txtpeso" type="number" ng-model="produto.peso_bruto" required placeholder="" class="form-control" style="padding:.377rem .75rem;">
+                                                    <decimal model="produto.peso_bruto" style="padding:.377rem .75rem;"></decimal>               
                                                 </div>
                                                 <div class="col-4 col-lg-4" style="padding-top: 5px;">
                                                     <label class="custom-control custom-radio custom-control-inline">
@@ -835,8 +835,8 @@
                 </div>
                 <!-- /.modal-content --> 
 <!-- /.modal-content LOADING --> 
-                <div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                    <div class="modal-dialog">
+                <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
@@ -893,25 +893,27 @@
                         if(it != null){
                             clearInterval(it);
                         }
-                        if(!sh){
-                            
-                            sh = true;
+                        it = setInterval(function(){
                             $("#loading").modal("show");
-                        
-                        }
+                            if($("#loading").hasClass('in')){
+                                clearInterval(it);
+                            }
+                        },300)
                         
                     }
                     
                     loading.close = function(){
                         
-                        it = setTimeout(function(){
-                                if(sh){
-                                    sh = false;
-                                    $("#loading").modal("hide");
-                                }
-                        },2000);
-                        
-                        
+                        if(it != null){
+                            clearInterval(it);
+                        }
+                        it = setInterval(function(){
+                            $("#loading").modal("hide");
+                            if(!$("#loading").hasClass('in')){
+                                clearInterval(it);
+                            }
+                        },300)
+                                
                     }
                 
 

@@ -79,7 +79,7 @@ class ProdutoNota {
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
-
+           
             $ps = $con->getConexao()->prepare("UPDATE produto_nota SET id_produto=" . $this->produto->id . ",id_nota=" . $this->nota->id . ",quantidade=$this->quantidade,valor_unitario=$this->valor_unitario,valor_total=$this->valor_total,influencia_estoque=$this->influencia_estoque,ipi=$this->ipi,icms=$this->icms,base_calculo=$this->base_calculo,cfop='$this->cfop', informacao_adicional='$this->informacao_adicional' WHERE id=$this->id");
             $ps->execute();
             $ps->close();
