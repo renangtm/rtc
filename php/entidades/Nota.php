@@ -57,28 +57,27 @@ class Nota {
         $this->cancelada = false;
     }
 
-    public function igualaVencimento(){
-        
+    public function igualaVencimento() {
+
         $totp = 0;
-        
-        foreach($this->produtos as $key=>$value){
+
+        foreach ($this->produtos as $key => $value) {
             $totp += $value->valor_total;
         }
-        
+
         $vencimento = new Vencimento();
         $vencimento->nota = $this;
         $vencimento->valor = $totp;
-        
+
         $this->vencimentos = array($vencimento);
-        
     }
-    
+
     public function inverteOperacao($con, $empresa) {
 
         $gt = new Getter($empresa);
         $nota = Utilidades::copyId0($this);
         unset($nota->inverter);
-        
+
         if ($nota->saida) {
 
             $fornecedor = $gt->getFornecedorViaEmpresa($con, $nota->empresa);
@@ -94,16 +93,39 @@ class Nota {
         }
 
         $nota->saida = !$nota->saida;
-        
-        foreach($nota->produtos as $key=>$value){
-            $value->nota = $nota;
+
+        foreach ($nota->produtos as $key => $value) {
+            $prod = Utilidades::copyId0($value);
+            $prod->nota = $nota;
+            $nota->produtos[$key] = $prod;
         }
-        
-        foreach($nota->vencimentos as $key=>$value){
-            $value->nota = $nota;
+
+        foreach ($nota->vencimentos as $key => $value) {
+            $venc = Utilidades::copyId0($value);
+            $venc->nota = $nota;
+            $nota->vencimentos[$key] = $venc;
         }
 
         return $nota;
+    }
+
+    public function calcularImpostosAutomaticamente() {
+
+        $cat = $this->produto->categoria;
+        $est = ($this->saida) ? $this->cliente->endereco->cidade->estado : $this->fornecedor->endereco->cidade->estado;
+
+        foreach ($this->produtos as $key => $value) {
+
+            $value->base_calculo = ($cat->base_calculo / 100) * $value->valor_unitario;
+            
+            if ($cat->icms_normal) {
+                $icm = Sistema::getIcmsEstado($est);
+                $value->icms = $value->base_calculo * ($icm / 100);
+            } else {
+                $value->icms = $value->base_calculo * ($cat->icms / 100);
+            }
+            
+        }
     }
 
     public function getProdutos($con) {
@@ -423,6 +445,7 @@ class Nota {
             $pp->valor_unitario = $valor_unitario;
             $pp->icms = $icms;
             $pp->ipi = $ipi;
+            $pp->base_calculo = $base_calculo;
             $pp->influencia_estoque = $influencia_estoque;
             $pp->produto = $p;
             $pp->cfop = $cfop;
@@ -517,9 +540,7 @@ class Nota {
 
         if ($totv != $totp) {
 
-            throw new Exception('Somatorio das parcelas difere do valor da nota Total:'.$totp.', Somatorio: '.$totv);
-        
-            
+            throw new Exception('Somatorio das parcelas difere do valor da nota Total:' . $totp . ', Somatorio: ' . $totv);
         }
 
 
@@ -541,7 +562,7 @@ class Nota {
 
 
         if ($this->id == 0) {
-            
+
             $ps = $con->getConexao()->prepare("INSERT INTO nota(saida,chave,id_cliente,id_fornecedor,observacao,id_empresa,data_emissao,excluida,influenciar_estoque,id_transportadora,id_forma_pagamento,frete_destinatario_remetente,emitida,numero,ficha,cancelada,danfe,xml,protocolo) VALUES(" . ($this->saida ? "true" : "false") . ",'$this->chave'," . ($this->cliente != null ? $this->cliente->id : 0) . "," . ($this->fornecedor != null ? $this->fornecedor->id : 0) . ",'$this->observacao'," . $this->empresa->id . ",FROM_UNIXTIME($this->data_emissao/1000),false," . ($this->interferir_estoque ? "true" : "false") . "," . $this->transportadora->id . "," . $this->forma_pagamento->id . "," . ($this->frete_destinatario_remetente ? "true" : "false") . "," . ($this->emitida ? "true" : "false") . ",$this->numero,$this->ficha," . ($this->cancelada ? "true" : "false") . ",'$this->danfe','$this->xml','$this->protocolo')");
             $ps->execute();
             $this->id = $ps->insert_id;

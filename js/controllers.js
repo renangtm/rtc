@@ -1,25 +1,149 @@
-rtc.controller("crtEntrada", function ($scope, sistemaService) {
+rtc.controller("crtUsuarios", function ($scope, usuarioService, cidadeService, baseService, telefoneService) {
+
+    $scope.usuarios = createAssinc(usuarioService, 1, 3, 10);
+    $scope.usuarios.attList();
+    assincFuncs(
+            $scope.usuarios,
+            "usuario",
+            ["id", "nome", "cpf", "login", "empresa.nome"]);
+
+    $scope.usuario_novo = {};
+    $scope.usuario = {};
+    $scope.estado = {};
+
+    $scope.email = {};
+
+    $scope.data_atual = new Date().getTime();
+
+    $scope.telefone_novo = {};
+    $scope.telefone = {};
+
+    $scope.rtc = null;
+   
+    $scope.estados = [];
+    $scope.cidades = [];
+    
+    usuarioService.getRTC(function(r){
+        $scope.rtc = r.rtc;
+    })
+
+    usuarioService.getFornecedor(function (p) {
+        $scope.usuario_novo = p.usuario;
+    })
+    telefoneService.getTelefone(function (p) {
+        $scope.telefone_novo = p.telefone;
+        $scope.telefone = angular.copy($scope.telefone_novo);
+    })
+
+    cidadeService.getElementos(function (p) {
+        var estados = [];
+        var cidades = p.elementos;
+        $scope.cidades = cidades;
+
+        lbl:
+                for (var i = 0; i < cidades.length; i++) {
+            var c = cidades[i];
+            for (var j = 0; j < estados.length; j++) {
+                if (estados[j].id === c.estado.id) {
+                    estados[j].cidades[estados[j].cidades.length] = c;
+                    c.estado = estados[j];
+                    continue lbl;
+                }
+            }
+            c.estado["cidades"] = [c];
+            estados[estados.length] = c.estado;
+        }
+
+        $scope.estados = estados;
+    })
+
+    $scope.novoUsuario = function () {
+
+        $scope.usuario = angular.copy($scope.usuario_novo);
+
+    }
+
+    $scope.setUsuario = function (usuario) {
+
+        $scope.usuario = usuario;
+
+        equalize(usuario.endereco, "cidade", $scope.cidades);
+        if (typeof usuario.endereco.cidade !== 'undefined') {
+            $scope.estado = usuario.endereco.cidade.estado;
+        } else {
+            usuario.endereco.cidade = $scope.cidades[0];
+            $scope.estado = usuario.endereco.cidade.estado;
+        }
+
+    }
+
+    $scope.mergeUsuario = function () {
+
+        if ($scope.usuario.endereco.cidade == null) {
+            msg.erro("Usuario sem cidade.");
+            return;
+        }
+
+        baseService.merge($scope.usuario, function (r) {
+            if (r.sucesso) {
+                $scope.usuario = r.o;
+
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.setUsuario($scope.usuario);
+                $scope.usuarios.attList();
+
+            } else {
+                msg.erro("Problema ao efetuar operacao. ");
+            }
+        });
+
+    }
+    $scope.deleteUsuario = function () {
+        baseService.delete($scope.usuario, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.fornecedores.attList();
+            } else {
+                msg.erro("Problema ao efetuar operacao");
+            }
+        });
+    }
+
+    $scope.removeUsuario = function (tel) {
+
+        remove($scope.usuario.telefones, tel);
+
+    }
+    $scope.addUsuario = function () {
+        $scope.usuario.telefones[$scope.usuario.telefones.length] = $scope.telefone;
+        $scope.telefone = angular.copy($scope.telefone_novo);
+    }
+
+})
+rtc.controller("crtEntrada", function ($scope, sistemaService, uploadService) {
 
     $scope.xmls = [];
 
     $scope.pedidos = [];
 
-    var buscarPedido = function (xml) {
+    $scope.arquivos = [];
+
+    var buscarPedido = function (xml, i) {
 
         sistemaService.getPedidoEntradaSemelhante(xml, function (p) {
-           
+
             if (p.sucesso) {
 
                 var pedidos = p.pedidos;
-        
+
                 if (pedidos.length == 0) {
 
                     msg.erro("Nao foi encontrado nenhum pedido de compra referente a essa Nota");
 
                 } else {
-                  
-                    var p = pedidos[0];
 
+                    var p = pedidos[0];
+                    p.nota.xml = $scope.arquivos[i];
                     p.notas_logisticas[p.notas_logisticas.length] = p.nota;
 
                     $scope.pedidos = [p];
@@ -35,30 +159,30 @@ rtc.controller("crtEntrada", function ($scope, sistemaService) {
         })
 
     }
-    
-    $scope.removeOperacao = function(op){
-        
-        remove($scope.pedidos[0].notas_logisticas,op);
-        
+
+    $scope.removeOperacao = function (op) {
+
+        remove($scope.pedidos[0].notas_logisticas, op);
+
     }
-    
-    $scope.finalizarNotas = function(notas){
-      
-        sistemaService.finalizarNotas(notas,function(r){
-            
-            if(r.sucesso){
-                
+
+    $scope.finalizarNotas = function (notas, pedido) {
+
+        sistemaService.finalizarNotas(notas, function (r) {
+
+            if (r.sucesso) {
+
                 msg.alerta("Operacao efetuada com sucesso");
                 $scope.pedidos = [];
-                
-            }else{
-               
-                msg.erro("Problema ao efetuar operacao "+r.mensagem);
-                
+
+            } else {
+
+                msg.erro("Problema ao efetuar operacao " + r.mensagem);
+
             }
-            
+
         })
-        
+
     }
 
     $("#flXML").change(function () {
@@ -74,14 +198,31 @@ rtc.controller("crtEntrada", function ($scope, sistemaService) {
             }
         }
 
-        for (var i = 0; i < arquivos.length; i++) {
-            var reader = new FileReader();
-            reader.onload = function (arquivo) {
 
-                buscarPedido(xmlToJson(arquivo.target.result));
-            };
-            reader.readAsText(arquivos[i]);
-        }
+        uploadService.upload(arquivos, function (arqs, sucesso) {
+
+            if (!sucesso) {
+
+                msg.erro("Falha ao subir arquivo");
+
+            } else {
+
+                $scope.arquivos = arqs;
+
+                for (var i = 0; i < arquivos.length; i++) {
+                    var reader = new FileReader();
+                    reader["ii"] = i;
+                    reader.onload = function (arquivo) {
+
+                        buscarPedido(xmlToJson(arquivo.target.result), this.ii);
+
+                    };
+                    reader.readAsText(arquivos[i]);
+                }
+
+            }
+
+        })
 
     });
 
@@ -2374,15 +2515,15 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     $scope.setCampanha = function (campanha) {
 
         $scope.campanha = campanha;
-        
+
         $scope.campanha.inicio_texto = toTime(campanha.inicio);
-        
+
         $scope.campanha.fim_texto = toTime(campanha.fim);
 
     }
 
     $scope.mergeCampanha = function () {
-        
+
         $scope.campanha.inicio = fromTime($scope.campanha.inicio_texto);
         $scope.campanha.fim = fromTime($scope.campanha.fim_texto);
 
@@ -3665,7 +3806,7 @@ rtc.controller("crtLogin", function ($scope, loginService) {
             if (r.usuario === null || !r.sucesso) {
                 msg.erro("Esse usuário não existe");
             } else {
-                
+
                 window.location = "index_em_branco.php";
             }
         });

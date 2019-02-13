@@ -412,7 +412,7 @@ var msg = {
 
 function toDate(lo) {
 
-    var d = new Date(lo);
+    var d = new Date(parseFloat(lo+""));
 
     var dia = d.getDate();
     var mes = (d.getMonth() + 1);

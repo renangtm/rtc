@@ -58,6 +58,37 @@ class Empresa {
         }
         
     }
+    
+    public function setRTC($con,$rtc){
+        
+        $ps = $con->getConexao()->prepare("UPDATE empresa SET rtc=$rtc->numero WHERE id=$this->id");
+        $ps->execute();
+        $ps->close();
+        
+    }
+    
+    public function getRTC($con){
+        
+        $r = 1;
+        $ps = $con->getConexao()->prepare("SELECT rtc FROM empresa WHERE id=$this->id");
+        $ps->execute();
+        $ps->bind_result($rtc);
+        if($ps->fetch()){
+            $r = $rtc;
+        }
+        $ps->close();
+        
+        $rtcs = Sistema::getRTCS();
+        
+        foreach(Sistema::getRTCS() as $key=>$rtc){
+            if($rtc->numero === $r){
+                return $rtc;
+            }
+        }
+        
+        return null;
+        
+    }
 
     public function merge($con) {
 
