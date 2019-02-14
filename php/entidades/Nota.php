@@ -298,6 +298,8 @@ class Nota {
                 . "produto.lucro_consignado,"
                 . "produto.ativo,"
                 . "produto.concentracao,"
+                . "produto.sistema_lotes,"
+                . "produto.nota_usuario,"
                 . "categoria_produto.id,"
                 . "categoria_produto.nome,"
                 . "categoria_produto.base_calculo,"
@@ -338,7 +340,7 @@ class Nota {
                 . " WHERE produto_nota.id_nota=$this->id");
 
         $ps->execute();
-        $ps->bind_result($id, $info_adic, $quantidade, $valor_unitario, $valor_total, $base_calculo, $cfop, $icms, $ipi, $influencia_estoque, $id_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $info_adic, $quantidade, $valor_unitario, $valor_total, $base_calculo, $cfop, $icms, $ipi, $influencia_estoque, $id_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc,$sistema_lotes,$nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
@@ -348,6 +350,8 @@ class Nota {
             $p = new Produto();
             $p->logistica = $id_log;
             $p->id = $id_pro;
+            $p->sistema_lotes = $sistema_lotes==1;
+            $p->nota_usuario = $nota_usuario;
             $p->nome = $nome;
             $p->classe_risco = $classe_risco;
             $p->fabricante = $fabricante;

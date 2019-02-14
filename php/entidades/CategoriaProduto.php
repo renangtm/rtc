@@ -20,7 +20,6 @@ class CategoriaProduto {
     public $ipi;
     public $icms_normal;
     public $icms;
-
     function __construct() {
 
         $this->id = 0;

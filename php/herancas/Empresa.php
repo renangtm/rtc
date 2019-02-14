@@ -582,6 +582,8 @@ class Empresa {
                 . "produto.lucro_consignado,"
                 . "produto.ativo,"
                 . "produto.concentracao,"
+                . "produto.sistema_lotes,"
+                . "produto.nota_usuario,"
                 . "categoria_produto.id,"
                 . "categoria_produto.nome,"
                 . "categoria_produto.base_calculo,"
@@ -611,7 +613,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $numero, $rua, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
+        $ps->bind_result($id, $numero, $rua, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc,$sistema_lotes,$nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
 
         $lotes = array();
 
@@ -629,6 +631,8 @@ class Empresa {
                 $p->imagem = $imagem;
                 $p->nome = $nome;
                 $p->id_universal = $id_uni;
+                $p->sistema_lotes = $sistema_lotes==1;
+                $p->nota_usuario = $nota_usuario;
                 $p->liquido = $liq == 1;
                 $p->quantidade_unidade = $qtd_un;
                 $p->habilitado = $hab;
@@ -3326,6 +3330,8 @@ class Empresa {
                 . "produto.lucro_consignado,"
                 . "produto.ativo,"
                 . "produto.concentracao,"
+                . "produto.sistema_lotes,"
+                . "produto.nota_usuario,"
                 . "categoria_produto.id,"
                 . "categoria_produto.nome,"
                 . "categoria_produto.base_calculo,"
@@ -3354,7 +3360,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
+        $ps->bind_result($id_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc,$sistema_lotes,$nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
 
         while ($ps->fetch()) {
 
@@ -3368,6 +3374,8 @@ class Empresa {
             $p->imagem = $imagem;
             $p->nome = $nome;
             $p->id_universal = $id_uni;
+            $p->sistema_lotes = $sistema_lotes==1;
+            $p->nota_usuario = $nota_usuario;
             $p->liquido = $liq == 1;
             $p->quantidade_unidade = $qtd_un;
             $p->habilitado = $hab;
@@ -3597,6 +3605,8 @@ class Empresa {
                 . "produto.lucro_consignado,"
                 . "produto.ativo,"
                 . "produto.concentracao,"
+                . "produto.sistema_lotes,"
+                . "produto.nota_usuario,"
                 . "categoria_produto.id,"
                 . "categoria_produto.nome,"
                 . "categoria_produto.base_calculo,"
@@ -3637,7 +3647,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pro, $id_log, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $rec_id, $rec_ins, $cul_id, $cul_nom, $prag_id, $prag_nom);
+        $ps->bind_result($id_pro, $id_log, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc,$sistema_lotes,$nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $rec_id, $rec_ins, $cul_id, $cul_nom, $prag_id, $prag_nom);
 
         while ($ps->fetch()) {
 
@@ -3655,6 +3665,8 @@ class Empresa {
             $p->peso_liquido = $pl;
             $p->estoque = $est;
             $p->disponivel = $disp;
+            $p->sistema_lotes = $sistema_lotes==1;
+            $p->nota_usuario = $nota_usuario;
             $p->ativo = $ativo;
             $p->concentracao = $conc;
             $p->transito = $tr;
