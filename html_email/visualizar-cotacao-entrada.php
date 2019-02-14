@@ -53,7 +53,7 @@
             <br>
             <table style="width:100%; border: 1px solid black;">
                 <tr style="background-color:#ccc;">
-                    <th style="padding:10px; border: 1px solid black;">Cotacao de compra - nº <strong id="idPedido"><?php echo $p->id; ?></strong>&nbsp&nbsp&nbsp&nbsp<a href="http://10.0.0.107/novo_rtc_web/resposta_cotacao.php?cotacao=<?php echo $p->id; ?>&empresa=<?php echo $p->empresa->id; ?>" style="font-weight:bold;font-size:20px;color:#ffc108;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black">CLIQUE AQUI PARA RESPONDER</a></th>
+                    <th style="padding:10px; border: 1px solid black;">Cotação de compra - nº <strong id="idPedido"><?php echo $p->id; ?></strong>&nbsp&nbsp&nbsp&nbsp<a href="http://10.0.0.107/novo_rtc_web/resposta_cotacao.php?cotacao=<?php echo $p->id; ?>&empresa=<?php echo $p->empresa->id; ?>" style="font-weight:bold;font-size:20px;color:#ffc108;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black">CLIQUE AQUI PARA RESPONDER</a></th>
                 </tr>
                 <tr>
                     <td style="padding:10px;">
