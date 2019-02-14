@@ -12,6 +12,13 @@
  * @author Renan
  */
 class Utilidades {
+    
+    public static function copy($entidade) {
+
+        $ne = unserialize(serialize($entidade));
+
+        return $ne;
+    }
 
     public static function copyId0($entidade) {
 

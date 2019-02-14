@@ -453,7 +453,6 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
           echo Utilidades::toJson($pendentes);
 */
 
-        
     }
 
 }

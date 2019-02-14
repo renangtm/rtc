@@ -567,7 +567,7 @@ class Sistema {
     }
 
     public static function getRTCS() {
-
+        RTC::$RTCS = array();
         return array(new RTC(1, array(
                 new Permissao(5, "cliente"),
                 new Permissao(17, "fonecedor"),

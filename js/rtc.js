@@ -198,6 +198,10 @@ function createAssinc(lista, cols, rows, maxPage) {
                                     }, isAtual: este.pagina == i}
                                 este.paginas[este.paginas.length] = p;
                             }
+                            
+                            if(typeof este["posload"] !== 'undefined'){
+                                este["posload"](els);
+                            }
 
                         });
 

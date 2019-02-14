@@ -2,7 +2,7 @@ var debuger = function (l) {
     alert(paraJson(l));
 }
 rtc.service('usuarioService', function ($http, $q) {
-    this.getRtc = function(fn){
+    this.getRTC = function(fn){
         baseService($http, $q, {
             query: "$r->rtc=$empresa->getRTC($c)",
             sucesso: fn,
@@ -11,7 +11,7 @@ rtc.service('usuarioService', function ($http, $q) {
     }
     this.getUsuario = function (fn) {
         baseService($http, $q, {
-            query: "$r->usuario=new Usuario();$r->fornecedor->empresa=$empresa",
+            query: "$r->usuario=new Usuario();$r->usuario->empresa=$empresa",
             sucesso: fn,
             falha: fn
         });

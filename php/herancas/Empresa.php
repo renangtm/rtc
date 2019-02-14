@@ -26,7 +26,7 @@ class Empresa {
     public $inscricao_estadual;
     public $is_logistica;
 
-    function __construct($id = 0,$cf = null) {
+    function __construct($id = 0, $cf = null) {
 
         $this->id = $id;
         $this->email = null;
@@ -42,52 +42,48 @@ class Empresa {
         $this->email = new Email();
         $this->endereco = new Endereco();
         $this->is_logistica = false;
-        
-        
-        if($id>0 & $cf!==null){
-            
+
+
+        if ($id > 0 & $cf !== null) {
+
             $ps = $cf->getConexao()->prepare("SELECT nome,cnpj FROM empresa WHERE id=$id");
             $ps->execute();
-            $ps->bind_result($nome,$cnpj);
-            if($ps->fetch()){
+            $ps->bind_result($nome, $cnpj);
+            if ($ps->fetch()) {
                 $this->nome = $nome;
                 $this->cnpj = new CNPJ($cnpj);
             }
             $ps->close();
-            
         }
-        
     }
-    
-    public function setRTC($con,$rtc){
-        
+
+    public function setRTC($con, $rtc) {
+
         $ps = $con->getConexao()->prepare("UPDATE empresa SET rtc=$rtc->numero WHERE id=$this->id");
         $ps->execute();
         $ps->close();
-        
     }
-    
-    public function getRTC($con){
-        
+
+    public function getRTC($con) {
+
         $r = 1;
         $ps = $con->getConexao()->prepare("SELECT rtc FROM empresa WHERE id=$this->id");
         $ps->execute();
         $ps->bind_result($rtc);
-        if($ps->fetch()){
+        if ($ps->fetch()) {
             $r = $rtc;
         }
         $ps->close();
-        
+
         $rtcs = Sistema::getRTCS();
-        
-        foreach(Sistema::getRTCS() as $key=>$rtc){
-            if($rtc->numero === $r){
+
+        foreach (Sistema::getRTCS() as $key => $rtc) {
+            if ($rtc->numero === $r) {
                 return $rtc;
             }
         }
-        
+
         return null;
-        
     }
 
     public function merge($con) {
@@ -467,7 +463,7 @@ class Empresa {
                 . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
 
         $ps->execute();
-        $ps->bind_result($id, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa,$is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
@@ -482,13 +478,12 @@ class Empresa {
                 $campanhas[$id]->cliente_expression = $cliente;
 
                 $empresa = new Empresa();
-                
-                if($is_logistica==1){
-                    
+
+                if ($is_logistica == 1) {
+
                     $empresa = new Logistica();
-                    
                 }
-                
+
                 $empresa->id = $id_empresa;
                 $empresa->cnpj = new CNPJ($cnpj);
                 $empresa->inscricao_estadual = $inscricao_empresa;
@@ -616,7 +611,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $numero, $rua, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro,$id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
+        $ps->bind_result($id, $numero, $rua, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
 
         $lotes = array();
 
@@ -706,8 +701,8 @@ class Empresa {
         }
 
         $ps->close();
-        
-        foreach($produtos as $key=>$value){
+
+        foreach ($produtos as $key => $value) {
             $value->logistica = Sistema::getLogisticaById($con, $value->logistica);
         }
 
@@ -997,9 +992,9 @@ class Empresa {
         }
 
         $ps->close();
-        
-        foreach($pedidos as $key=>$value){
-            $value->logistica = Sistema::getLogisticaById($con,$value->logistica);
+
+        foreach ($pedidos as $key => $value) {
+            $value->logistica = Sistema::getLogisticaById($con, $value->logistica);
         }
 
         $in_tra = "-1";
@@ -1093,10 +1088,10 @@ class Empresa {
                 continue;
             }
 
-            $p->alt = $alterar;
-            $p->in = $incluir;
-            $p->del = $deletar;
-            $p->cons = $consultar;
+            $p->alt = $alterar == 1;
+            $p->in = $incluir == 1;
+            $p->del = $deletar == 1;
+            $p->cons = $consultar == 1;
 
             foreach ($usuarios[$id_usuario] as $key => $usu) {
 
@@ -1252,7 +1247,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto,$id_log, $validade, $limite, $valor, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa,$is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $id_log, $validade, $limite, $valor, $id_pro, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
 
 
@@ -1321,13 +1316,12 @@ class Empresa {
                 $pro->categoria->ipi = $cat_ipi;
 
                 $empresa = new Empresa();
-                
-                if($is_logistica == 1){
-                    
+
+                if ($is_logistica == 1) {
+
                     $empresa = new Logistica();
-                    
                 }
-                
+
                 $empresa->id = $id_empresa;
                 $empresa->cnpj = new CNPJ($cnpj);
                 $empresa->inscricao_estadual = $inscricao_empresa;
@@ -1385,8 +1379,8 @@ class Empresa {
         }
 
         $ps->close();
-        
-        foreach($prods as $key=>$value){
+
+        foreach ($prods as $key => $value) {
             $value->logistica = Sistema::getLogisticaById($con, $value->logistica);
         }
 
@@ -2731,10 +2725,10 @@ class Empresa {
                 continue;
             }
 
-            $p->alt = $alterar;
-            $p->in = $incluir;
-            $p->del = $deletar;
-            $p->cons = $consultar;
+            $p->alt = $alterar == 1;
+            $p->in = $incluir == 1;
+            $p->del = $deletar == 1;
+            $p->cons = $consultar == 1;
 
             foreach ($usuarios[$id_usuario] as $key => $usu) {
 
@@ -3131,10 +3125,10 @@ class Empresa {
                 continue;
             }
 
-            $p->alt = $alterar;
-            $p->in = $incluir;
-            $p->del = $deletar;
-            $p->cons = $consultar;
+            $p->alt = $alterar == 1;
+            $p->in = $incluir == 1;
+            $p->del = $deletar == 1;
+            $p->cons = $consultar == 1;
 
             foreach ($usuarios[$id_usuario] as $key => $usu) {
 
@@ -3222,7 +3216,7 @@ class Empresa {
                 . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
 
         $ps->execute();
-        $ps->bind_result($id, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa,$is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
@@ -3237,13 +3231,12 @@ class Empresa {
                 $campanhas[$id]->cliente_expression = $cliente;
 
                 $empresa = new Empresa();
-                
-                if($is_logistica==1){
-                    
+
+                if ($is_logistica == 1) {
+
                     $empresa = new Logistica();
-                    
                 }
-                
+
                 $empresa->id = $id_empresa;
                 $empresa->cnpj = new CNPJ($cnpj);
                 $empresa->inscricao_estadual = $inscricao_empresa;
@@ -3343,7 +3336,7 @@ class Empresa {
                 . "INNER JOIN categoria_produto ON categoria_produto.id=produto.id_categoria "
                 . "WHERE produto.id_empresa = $this->id AND produto.excluido = false ";
 
-        
+
         if ($filtro != "") {
 
             $sql .= "AND $filtro ";
@@ -3357,18 +3350,18 @@ class Empresa {
         $produtos = array();
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
-        
+
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pro,$id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
+        $ps->bind_result($id_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
 
         while ($ps->fetch()) {
 
             $p = new Produto();
-            
+
             $p->logistica = $id_log;
-            
+
             $p->id = $id_pro;
             $p->classe_risco = $classe_risco;
             $p->fabricante = $fabricante;
@@ -3413,11 +3406,10 @@ class Empresa {
         }
 
         $ps->close();
-        
-        foreach($produtos as $key=>$value){
-            
+
+        foreach ($produtos as $key => $value) {
+
             $value->logistica = Sistema::getLogisticaById($con, $value->logistica);
-            
         }
 
         return $produtos;
@@ -3431,7 +3423,7 @@ class Empresa {
 
             $sql .= "AND $filtro";
         }
-        
+
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
         $ps->bind_result($qtd);
@@ -3497,7 +3489,7 @@ class Empresa {
                 . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
 
         $ps->execute();
-        $ps->bind_result($id, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa,$is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
@@ -3512,13 +3504,12 @@ class Empresa {
                 $campanhas[$id]->cliente_expression = $cliente;
 
                 $empresa = new Empresa();
-                
-                if($is_logistica==1){
-                    
+
+                if ($is_logistica == 1) {
+
                     $empresa = new Logistica();
-                    
                 }
-                
+
                 $empresa->id = $id_empresa;
                 $empresa->cnpj = new CNPJ($cnpj);
                 $empresa->inscricao_estadual = $inscricao_empresa;
@@ -3646,7 +3637,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pro,$id_log, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $rec_id, $rec_ins, $cul_id, $cul_nom, $prag_id, $prag_nom);
+        $ps->bind_result($id_pro, $id_log, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $rec_id, $rec_ins, $cul_id, $cul_nom, $prag_id, $prag_nom);
 
         while ($ps->fetch()) {
 
@@ -3709,8 +3700,8 @@ class Empresa {
         }
 
         $ps->close();
-        
-        foreach($receituarios as $key=>$value){
+
+        foreach ($receituarios as $key => $value) {
             $value->produto->logistica = Sistema::getLogisticaById($con, $value->produto->logistica);
         }
 
@@ -4194,7 +4185,7 @@ class Empresa {
 
             foreach ($permissoes as $key => $perm) {
                 if ($perm->id == $id_permissao) {
-                    $p = $perm;
+                    $p = Utilidades::copy($perm);
                     break;
                 }
             }
@@ -4204,10 +4195,10 @@ class Empresa {
                 continue;
             }
 
-            $p->alt = $alterar;
-            $p->in = $incluir;
-            $p->del = $deletar;
-            $p->cons = $consultar;
+            $p->alt = $alterar == 1;
+            $p->in = $incluir == 1;
+            $p->del = $deletar == 1;
+            $p->cons = $consultar == 1;
 
             $usuarios[$id_usuario]->permissoes[] = $p;
         }
@@ -4226,7 +4217,11 @@ class Empresa {
 
     public function getCountUsuarios($con, $filtro = "") {
 
-        $sql = "SELECT COUNT(*) FROM usuario WHERE id_empresa=$this->id AND excluido=false ";
+        $sql = "SELECT "
+                . "COUNT(*) "
+                . "FROM usuario "
+                . "INNER JOIN email email_usu ON email_usu.id_entidade=usuario.id AND email_usu.tipo_entidade='USU' "
+                . "WHERE usuario.id_empresa=$this->id AND usuario.excluido=false ";
 
         if ($filtro != "") {
 

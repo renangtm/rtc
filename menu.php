@@ -221,7 +221,7 @@ if (!isset($filtro)) {
                                 <span class="status"></span><span class="ml-2"><?php echo $empresa->nome; ?></span>
                             </div>	
                         </div>
-                        <a class="dropdown-item" href="colaboradores.html"><i class="fas fa-user mr-2"></i>Colaboradores</a>
+                        <a class="dropdown-item" href="cfg.php"><i class="fas fa-user mr-2"></i>Colaboradores</a>
                         <a class="dropdown-item" href="alteracao-do-logo.html"><i class="fas fa-font mr-2"></i>Alterar Logo</a>
                         <a class="dropdown-item" href="cadastro-empresas-filiais.html"><i class="fas fa-file-alt mr-2"></i>Empresas / Filiais</a>
                         <a class="dropdown-item" href="configuracao-da-empresa.html"><i class="fas fa-cog mr-2"></i>Configuração da empresa</a>
@@ -242,7 +242,13 @@ if (!isset($filtro)) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav flex-column">
                     <li class="nav-divider">
-                        Compras
+                        <?php
+                        
+                            $rtc = $empresa->getRTC(new ConnectionFactory());
+                            
+                            echo $rtc->nome;
+                            
+                        ?>
                     </li>
                     <li class="nav-item ">
                         <a class="nav-link" href="comprar.php" ><i class="fa fa-fw fa-shopping-basket"></i>Comprar</a>
@@ -258,6 +264,9 @@ if (!isset($filtro)) {
                     </li>
                     <li class="nav-divider">
                         <?php echo $empresa->nome; ?>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cfg.php" ><i class="fas fa-user mr-2"></i>Colaboradores</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="lista-de-preco.php" ><i class="fas fa-clipboard-list"></i>Lista de Preço</a>

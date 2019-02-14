@@ -1,11 +1,20 @@
-rtc.controller("crtUsuarios", function ($scope, usuarioService, cidadeService, baseService, telefoneService) {
+rtc.controller("crtUsuarios", function ($scope,$timeout, usuarioService, cidadeService, baseService, telefoneService) {
 
     $scope.usuarios = createAssinc(usuarioService, 1, 3, 10);
+    $scope.usuarios.posload = function(e){
+        if(e.length>0){
+            $timeout(function(){
+                
+                $scope.setUsuario(e[0]);
+                
+            },500)   
+        }
+    }
     $scope.usuarios.attList();
     assincFuncs(
             $scope.usuarios,
             "usuario",
-            ["id", "nome", "cpf", "login", "empresa.nome"]);
+            ["id","email_usu.endereco","nome", "cpf","rg", "login"]);
 
     $scope.usuario_novo = {};
     $scope.usuario = {};
@@ -27,13 +36,15 @@ rtc.controller("crtUsuarios", function ($scope, usuarioService, cidadeService, b
         $scope.rtc = r.rtc;
     })
 
-    usuarioService.getFornecedor(function (p) {
+    usuarioService.getUsuario(function (p) {
         $scope.usuario_novo = p.usuario;
     })
     telefoneService.getTelefone(function (p) {
         $scope.telefone_novo = p.telefone;
         $scope.telefone = angular.copy($scope.telefone_novo);
     })
+    
+ 
 
     cidadeService.getElementos(function (p) {
         var estados = [];
@@ -56,16 +67,32 @@ rtc.controller("crtUsuarios", function ($scope, usuarioService, cidadeService, b
 
         $scope.estados = estados;
     })
-
     $scope.novoUsuario = function () {
 
         $scope.usuario = angular.copy($scope.usuario_novo);
 
     }
+    
+    $scope.removeTelefone = function (tel) {
 
+        remove($scope.usuario.telefones, tel);
+
+    }
+    $scope.addTelefone = function () {
+        $scope.usuario.telefones[$scope.usuario.telefones.length] = $scope.telefone;
+        $scope.telefone = angular.copy($scope.telefone_novo);
+    }
+   
+    $scope.marginTop = 0;
     $scope.setUsuario = function (usuario) {
 
         $scope.usuario = usuario;
+        
+        var dv = $("#dvUsuarios");
+        var tr = $("#tr_"+$scope.usuario.id);
+        
+        $scope.marginTop = tr.offset().top-dv.offset().top;
+        
 
         equalize(usuario.endereco, "cidade", $scope.cidades);
         if (typeof usuario.endereco.cidade !== 'undefined') {
@@ -74,6 +101,32 @@ rtc.controller("crtUsuarios", function ($scope, usuarioService, cidadeService, b
             usuario.endereco.cidade = $scope.cidades[0];
             $scope.estado = usuario.endereco.cidade.estado;
         }
+
+        var pf = [];
+        for(var i=0;i<$scope.rtc.permissoes.length;i++){
+            
+            var p = $scope.rtc.permissoes[i];
+         
+            var a = false;
+            for(var j=0;j<$scope.usuario.permissoes.length;j++){
+                
+                if($scope.usuario.permissoes[j].id === p.id){
+                    a=true;
+                    pf[pf.length] = $scope.usuario.permissoes[j];
+                    break;
+                }
+                
+            }
+            
+            if(!a){
+                
+                pf[pf.length] = angular.copy(p);
+                
+            }
+            
+        }
+        
+        $scope.usuario.permissoes = pf;
 
     }
 

@@ -23,6 +23,7 @@ class Usuario {
     public $empresa;
     public $login;
     public $senha;
+    public $rg;
     public $permissoes;
 
     function __construct() {
@@ -30,23 +31,25 @@ class Usuario {
         $this->id = 0;
         $this->email = null;
         $this->telefones = array();
-        $this->endereco = null;
+        $this->endereco = new Endereco();
         $this->excluido = false;
         $this->cpf = new CPF("");
+        $this->rg = new RG("");
+        $this->email = new Email("");
         $this->empresa = null;
+        $this->permissoes = array();
     }
 
     public function merge($con) {
 
         if ($this->id == 0) {
-
-            $ps = $con->getConexao()->prepare("INSERT INTO usuario(login,senha,nome,cpf,excluido,id_empresa) VALUES('" . addslashes($this->login) . "','" . addslashes($this->senha) . "','" . addslashes($this->nome) . "','" . $this->cpf->valor . "',false," . $this->empresa->id . ")");
+            $ps = $con->getConexao()->prepare("INSERT INTO usuario(login,senha,nome,cpf,excluido,id_empresa,rg) VALUES('" . addslashes($this->login) . "','" . addslashes($this->senha) . "','" . addslashes($this->nome) . "','" . $this->cpf->valor . "',false," . $this->empresa->id . ",'".addslashes($this->rg->valor)."')");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE usuario SET login='" . addslashes($this->login) . "',senha='" . addslashes($this->senha) . "', nome = '" . addslashes($this->nome) . "', cpf='" . $this->cpf->valor . "',excluido=false, id_empresa=" . $this->empresa->id . " WHERE id = " . $this->id);
+            $ps = $con->getConexao()->prepare("UPDATE usuario SET login='" . addslashes($this->login) . "',senha='" . addslashes($this->senha) . "', nome = '" . addslashes($this->nome) . "', cpf='" . $this->cpf->valor . "',excluido=false, id_empresa=" . $this->empresa->id . ",rg='".addslashes($this->rg->valor)."' WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
         }
