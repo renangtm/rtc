@@ -96,7 +96,7 @@
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="card">
                                     <div class="card-body row">
-                                        <div class="table-responsive col-md-9" id="dvUsuarios">
+                                        <div class="table-responsive col-md-7" id="dvUsuarios">
                                             <div class="product-btn m-b-20">
                                                 <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ng-click="novoUsuario()"><i class="fas fa-plus-circle m-r-10"></i>Adicionar Colaborador</a>
                                             </div>
@@ -106,9 +106,6 @@
                                                         <th data-ordem="usuario.id">Cod.</th>
                                                         <th data-ordem="usuario.nome">Nome</th>
                                                         <th data-ordem="usuario.email_usu.endereco">Email</th>
-                                                        <th data-ordem="usuario.cpf">CPF</th>
-                                                        <th data-ordem="usuario.rg">RG</th>
-                                                        <th data-ordem="usuario.login">Login</th>
                                                         <th width="150px">Ação</th>
                                                     </tr>
                                                 </thead>
@@ -117,9 +114,6 @@
                                                         <td>{{usuari[0].id}}</td>
                                                         <td>{{usuari[0].nome}}</td>
                                                         <td><email entidade="Usuario" atributo="usuari[0].email" senha="true" alterar="false"></email></td>
-                                                        <td>{{usuari[0].cpf.valor}}</td>
-                                                        <td>{{usuari[0].rg.valor}}</td>
-                                                        <td>{{usuari[0].login}}</td>
                                                        <th style="{{usuari[0].id===usuario.id?'border-right:2px solid #5F5F5F':''}}">
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setUsuario(usuari[0])" data-target="#demo{{usuari[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
@@ -170,9 +164,6 @@
                                                         <th>Cod.</th>
                                                         <th>Nome</th>
                                                         <th>Email</th>
-                                                        <th>CPF</th>
-                                                        <th>RG</th>
-                                                        <th>Login</th>
                                                         <th>Ação</th>
                                                     </tr>
                                                 </tfoot>
@@ -190,7 +181,7 @@
                                             </div>
 
                                         </div>
-                                        <div class="col-md-3" id="dvPermissoes" style="margin-top:{{marginTop}}px;border:2px solid #5F5F5F;padding:10px;margin-left:-15px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-top-left-radius: 2px; border-bottom-left-radius: 10px">
+                                        <div class="col-md-5" id="dvPermissoes" style="margin-top:{{marginTop}}px;border:2px solid #5F5F5F;padding:10px;margin-left:0px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-top-left-radius: 2px; border-bottom-left-radius: 10px">
                                             Permissoes do usuario: <strong>{{usuario.id}} - {{usuario.nome}}</strong>
                                             <hr>
                                             <button class="btn btn-outline-light" ng-click="mergeUsuario()"><i class="fas fa-check"></i>&nbspConfirmar alterações</button>

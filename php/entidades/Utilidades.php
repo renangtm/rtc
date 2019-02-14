@@ -12,7 +12,7 @@
  * @author Renan
  */
 class Utilidades {
-    
+
     public static function copy($entidade) {
 
         $ne = unserialize(serialize($entidade));
@@ -1721,6 +1721,50 @@ class Utilidades {
         }
 
         return $res;
+    }
+
+    public static function hexToDecimal($k) {
+
+        $dec = 0;
+
+        $n = array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f");
+        $a = array();
+        foreach($n as $key=>$value){
+            $a[$value] = $key;
+        }
+        
+        for($i=0;$i<strlen($k);$i++){
+            
+            $dec *= count($n);
+            $dec += $n[$k{$i}];
+           
+        }
+ 
+        return $dec;
+    }
+
+    public static function decimalToHex($k, $s = 2) {
+
+        $hex = "";
+
+        $n = array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f");
+
+
+        $hi = "";
+
+        while ($k > 0 || $s > 0) {
+
+            $hi = $n[$k % 16] . $hi;
+
+            $k = ($k - $k % 16) / 16;
+
+            $s--;
+        }
+
+        $hex .= $hi;
+
+
+        return $hex;
     }
 
     public static function toHex($str) {
