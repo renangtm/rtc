@@ -24,6 +24,9 @@
         <!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">-->
         <title>RTC (Reltrab Cliente) - WEB</title>
         <style>
+            .page-link:hover {
+                color:#fff !important;
+            }
         </style>
     </head>
 
@@ -135,7 +138,7 @@
                                                             <nav aria-label="Page navigation example">
                                                                 <ul class="pagination justify-content-end">
                                                                     <li class="page-item" ng-click="culturas.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                                    <li class="page-item" ng-repeat="pg in culturas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                                    <li class="page-item" ng-repeat="pg in culturas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
                                                                     <li class="page-item" ng-click="culturas.next()"><a class="page-link" href="">Próximo</a></li>
                                                                 </ul>
                                                             </nav>
@@ -168,7 +171,7 @@
                                                             <nav aria-label="Page navigation example">
                                                                 <ul class="pagination justify-content-end">
                                                                     <li class="page-item" ng-click="pragas.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                                    <li class="page-item" ng-repeat="pg in pragas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                                    <li class="page-item" ng-repeat="pg in pragas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
                                                                     <li class="page-item" ng-click="pragas.next()"><a class="page-link" href="">Próximo</a></li>
                                                                 </ul>
                                                             </nav>
@@ -209,6 +212,7 @@
                                                             <div class="accordian-body collapse" id="demo{{produt[0].id}}">
                                                                 <div class="row mx-auto m-b-30">
                                                                     <div class="col">
+                                                                        <br>
                                                                         <strong>Ofertas:</strong>
                                                                         <hr>
                                                                         <table id="clientes" class="table table-striped table-bordered first selectable">
@@ -254,7 +258,7 @@
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
                                                         <li class="page-item" ng-click="produtos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                        <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
                                                         <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Próximo</a></li>
                                                     </ul>
                                                 </nav>

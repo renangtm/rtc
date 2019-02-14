@@ -1,20 +1,20 @@
-rtc.controller("crtUsuarios", function ($scope,$timeout, usuarioService, cidadeService, baseService, telefoneService) {
+rtc.controller("crtUsuarios", function ($scope, $timeout, usuarioService, cidadeService, baseService, telefoneService) {
 
     $scope.usuarios = createAssinc(usuarioService, 1, 3, 10);
-    $scope.usuarios.posload = function(e){
-        if(e.length>0){
-            $timeout(function(){
-                
+    $scope.usuarios.posload = function (e) {
+        if (e.length > 0) {
+            $timeout(function () {
+
                 $scope.setUsuario(e[0]);
-                
-            },500)   
+
+            }, 500)
         }
     }
     $scope.usuarios.attList();
     assincFuncs(
             $scope.usuarios,
             "usuario",
-            ["id","email_usu.endereco","nome", "cpf","rg", "login"]);
+            ["id", "email_usu.endereco", "nome", "cpf", "rg", "login"]);
 
     $scope.usuario_novo = {};
     $scope.usuario = {};
@@ -28,11 +28,11 @@ rtc.controller("crtUsuarios", function ($scope,$timeout, usuarioService, cidadeS
     $scope.telefone = {};
 
     $scope.rtc = null;
-   
+
     $scope.estados = [];
     $scope.cidades = [];
-    
-    usuarioService.getRTC(function(r){
+
+    usuarioService.getRTC(function (r) {
         $scope.rtc = r.rtc;
     })
 
@@ -43,8 +43,8 @@ rtc.controller("crtUsuarios", function ($scope,$timeout, usuarioService, cidadeS
         $scope.telefone_novo = p.telefone;
         $scope.telefone = angular.copy($scope.telefone_novo);
     })
-    
- 
+
+
 
     cidadeService.getElementos(function (p) {
         var estados = [];
@@ -72,7 +72,7 @@ rtc.controller("crtUsuarios", function ($scope,$timeout, usuarioService, cidadeS
         $scope.usuario = angular.copy($scope.usuario_novo);
 
     }
-    
+
     $scope.removeTelefone = function (tel) {
 
         remove($scope.usuario.telefones, tel);
@@ -82,17 +82,17 @@ rtc.controller("crtUsuarios", function ($scope,$timeout, usuarioService, cidadeS
         $scope.usuario.telefones[$scope.usuario.telefones.length] = $scope.telefone;
         $scope.telefone = angular.copy($scope.telefone_novo);
     }
-   
+
     $scope.marginTop = 0;
     $scope.setUsuario = function (usuario) {
 
         $scope.usuario = usuario;
-        
+
         var dv = $("#dvUsuarios");
-        var tr = $("#tr_"+$scope.usuario.id);
-        
-        $scope.marginTop = tr.offset().top-dv.offset().top;
-        
+        var tr = $("#tr_" + $scope.usuario.id);
+
+        $scope.marginTop = tr.offset().top - dv.offset().top;
+
 
         equalize(usuario.endereco, "cidade", $scope.cidades);
         if (typeof usuario.endereco.cidade !== 'undefined') {
@@ -103,29 +103,29 @@ rtc.controller("crtUsuarios", function ($scope,$timeout, usuarioService, cidadeS
         }
 
         var pf = [];
-        for(var i=0;i<$scope.rtc.permissoes.length;i++){
-            
+        for (var i = 0; i < $scope.rtc.permissoes.length; i++) {
+
             var p = $scope.rtc.permissoes[i];
-         
+
             var a = false;
-            for(var j=0;j<$scope.usuario.permissoes.length;j++){
-                
-                if($scope.usuario.permissoes[j].id === p.id){
-                    a=true;
+            for (var j = 0; j < $scope.usuario.permissoes.length; j++) {
+
+                if ($scope.usuario.permissoes[j].id === p.id) {
+                    a = true;
                     pf[pf.length] = $scope.usuario.permissoes[j];
                     break;
                 }
-                
+
             }
-            
-            if(!a){
-                
+
+            if (!a) {
+
                 pf[pf.length] = angular.copy(p);
-                
+
             }
-            
+
         }
-        
+
         $scope.usuario.permissoes = pf;
 
     }
@@ -3881,5 +3881,67 @@ rtc.controller("crtLogin", function ($scope, loginService) {
         });
 
     }
+
+})
+rtc.controller("crtLogo", function ($scope, empresaService, uploadService) {
+
+    $("#pic").change(function () {
+
+        var ext = ['png','jpg'];
+        var pre_arquivos = $(this).prop("files");
+        var arquivos = [];
+        var e = [];
+
+        var total_size = 0;
+
+        for (var i = 0; i < pre_arquivos.length; i++) {
+            for (var j = 0; j < ext.length; j++) {
+                if (ext[j] === pre_arquivos[i].name.split('.')[pre_arquivos[i].name.split('.').length - 1]) {
+                    arquivos[arquivos.length] = pre_arquivos[i];
+                    e[e.length] = pre_arquivos[i].name.split('.')[pre_arquivos[i].name.split('.').length - 1];
+                    total_size += pre_arquivos[i].size;
+                    break;
+                }
+            }
+        }
+        
+        if(arquivos.length===0){
+            msg.alerta("A Imagem deve ser do tipo PNG");
+            return;
+        }
+        
+
+        uploadService.upload(arquivos, function (arquivos, sucesso) {
+
+
+
+            if (!sucesso) {
+
+                msg.erro("Falha ao subir arquivo");
+
+            } else {
+
+                empresaService.setLogo(arquivos[0], function (t) {
+
+                    if (t.sucesso) {
+
+                        msg.alerta("Upload feito com sucesso");
+                        location.reload();
+
+                    } else {
+
+                        msg.erro("Falha ao trocar logo");
+
+                    }
+
+
+                })
+
+
+            }
+
+        })
+
+    })
 
 })

@@ -20,6 +20,12 @@ class SessionManager{
 		$_SESSION[$nome] = serialize($dado);
 
 	}
+        
+        public function deset($nome){
+            
+            unset($_SESSION[$nome]);
+            
+        }
 
 
 }

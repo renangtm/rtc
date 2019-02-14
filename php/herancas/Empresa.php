@@ -324,6 +324,93 @@ class Empresa {
         return null;
     }
 
+    public function setLogo($con, $logo) {
+
+        $colors = array();
+        $frequencia = array();
+        
+        $path = file_get_contents($logo);
+        $logo = Utilidades::base64encode($path);
+        $img = imagecreatefromstring($path);
+
+        $x = imagesx($img);
+        $y = imagesy($img);
+
+        $tolerancia = 10;
+        $mais_frequente = "";
+        
+        for ($i = 0; $i < $y; $i++) {
+            for ($j = 0; $j < $x; $j++) {
+
+                $rgb = imagecolorat($img, $j, $i);
+                
+                
+                $rgb = array(($rgb >> 16) & 0xFF, ($rgb >> 8) & 0xFF, ($rgb) & 0xFF);
+                if($rgb[0]===0&&$rgb[1]===0&&$rgb[2]===0)continue;
+                
+                $hash = "";
+               
+                foreach($rgb as $key=>$p){
+                    $hash .= ($p-($p%$tolerancia)).".";
+                }
+                
+                if($mais_frequente === ""){
+                    
+                    $mais_frequente = $hash;
+                    
+                }
+                
+                if(isset($colors[$hash])){
+                    $frequencia[$hash]++;
+                    foreach($rgb as $key=>$p){
+                        $colors[$hash][$key] += $p;
+                        $colors[$hash][$key] = floor($colors[$hash][$key]/2);
+                    }
+                }else{
+                    $frequencia[$hash] = 1;
+                    $colors[$hash] = $rgb;
+                }
+               
+                if($frequencia[$hash]>$frequencia[$mais_frequente]){
+                    $mais_frequente = $hash;
+                }
+                
+            }
+        }
+        
+        $cor_predominante = $colors[$mais_frequente];
+        $cor = "#";
+
+        foreach($cor_predominante as $key=>$value){
+            $cor .= Utilidades::decimalToHex($value);
+        }
+        
+        $cor_predominante = $cor;
+        
+        $tem_logo = false;
+        $ps = $con->getConexao()->prepare("SELECT id FROM logo WHERE id_empresa = $this->id");
+        $ps->execute();
+        $ps->bind_result($id);
+        if($ps->fetch()){
+            $tem_logo = true;
+        }
+        $ps->close();
+
+        if($tem_logo){
+            $ps = $con->getConexao()->prepare("UPDATE logo SET logo='$logo',cor_predominante='$cor' WHERE id_empresa=$this->id");
+            $ps->execute();
+            $ps->close();
+        }else{
+            $ps = $con->getConexao()->prepare("INSERT INTO logo(id_empresa,logo,cor_predominante) VALUES($this->id,'$logo','$cor')");
+            $ps->execute();
+            $ps->close();
+        }
+        
+        $ses = new SessionManager();
+        $ses->deset("logo_$this->id");
+        
+    }
+
     public function getLogo($com) {
 
         $ses = new SessionManager();

@@ -73,7 +73,7 @@
                         <!-- ============================================================== -->
                         <!-- end pageheader  -->
                         <!-- ============================================================== -->
-                        
+
                         <style>
                             .selecionavel{
                                 cursor:pointer;
@@ -81,13 +81,13 @@
                             .selecionavel:hover{
                                 background-color:#E3E3E3 !important;
                             }
-                            
+
                             .selecionado{
                                 border-right:7px solid #5f5f5f;
                                 border-bottom: 2px solid #5f5f5f;
                                 cursor:pointer;
                             }
-                            
+
                         </style>
                         <div class="row">
                             <!-- ============================================================== -->
@@ -96,7 +96,7 @@
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="card">
                                     <div class="card-body row">
-                                        <div class="table-responsive col-md-9" id="dvUsuarios">
+                                        <div class="table-responsive col-md-7" id="dvUsuarios">
                                             <div class="product-btn m-b-20">
                                                 <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ng-click="novoUsuario()"><i class="fas fa-plus-circle m-r-10"></i>Adicionar Colaborador</a>
                                             </div>
@@ -106,9 +106,6 @@
                                                         <th data-ordem="usuario.id">Cod.</th>
                                                         <th data-ordem="usuario.nome">Nome</th>
                                                         <th data-ordem="usuario.email_usu.endereco">Email</th>
-                                                        <th data-ordem="usuario.cpf">CPF</th>
-                                                        <th data-ordem="usuario.rg">RG</th>
-                                                        <th data-ordem="usuario.login">Login</th>
                                                         <th width="150px">Ação</th>
                                                     </tr>
                                                 </thead>
@@ -117,62 +114,76 @@
                                                         <td>{{usuari[0].id}}</td>
                                                         <td>{{usuari[0].nome}}</td>
                                                         <td><email entidade="Usuario" atributo="usuari[0].email" senha="true" alterar="false"></email></td>
-                                                        <td>{{usuari[0].cpf.valor}}</td>
-                                                        <td>{{usuari[0].rg.valor}}</td>
-                                                        <td>{{usuari[0].login}}</td>
-                                                       <th style="{{usuari[0].id===usuario.id?'border-right:2px solid #5F5F5F':''}}">
-                                                            <div class="product-btn">
-                                                                <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setUsuario(usuari[0])" data-target="#demo{{usuari[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setUsuario(usuari[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setUsuario(usuari[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
-                                                            </div>
-                                                        </th>
-                                                    </tr>
-                                                    <tr ng-repeat-end>
-                                                        <td colspan="6" class="hiddenRow">
-                                                            <div class="accordian-body collapse" id="demo{{usuari[0].id}}">
-                                                                <div class="row mx-auto m-b-30">	
-                                                                    <div class="col">
-                                                                        <table class="table-bordered w-100">
-                                                                            <tr>
-                                                                                <td>Endereço:</td>
-                                                                                <td>{{usuari[0].endereco.rua}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Número:</td>
-                                                                                <td>{{usuari[0].endereco.numero}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Bairro</td>
-                                                                                <td>{{usuari[0].endereco.bairro}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Cidade</td>
-                                                                                <td>{{usuari[0].endereco.cidade.nome}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Estado</td>
-                                                                                <td>{{usuari[0].endereco.cidade.estado.sigla}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>CEP</td>
-                                                                                <td>{{usuari[0].endereco.cep.valor}}</td>
-                                                                            </tr>
-                                                                        </table>
-                                                                    </div>																
-                                                                </div>	
-                                                            </div> 
-                                                        </td>
-                                                    </tr>
+                                                <th style="{{usuari[0].id===usuario.id?'border-right:2px solid #5F5F5F':''}}">
+                                                    <div class="product-btn">
+                                                        <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setUsuario(usuari[0])" data-target="#demo{{usuari[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
+                                                        <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setUsuario(usuari[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
+                                                        <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setUsuario(usuari[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
+                                                    </div>
+                                                </th>
+                                                </tr>
+                                                <tr ng-repeat-end>
+                                                    <td colspan="6" class="hiddenRow">
+                                                        <div class="accordian-body collapse" id="demo{{usuari[0].id}}">
+                                                            <div class="row mx-auto m-b-30">	
+                                                                <div class="col">
+                                                                    <table class="table-bordered w-100">
+                                                                        <tr>
+                                                                            <td>Login:</td>
+                                                                            <td>{{usuari[0].login}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Senha:</td>
+                                                                            <td>{{usuari[0].senha}}</td>
+                                                                        </tr>
+                                                                         <tr>
+                                                                            <td>CPF:</td>
+                                                                            <td>{{usuari[0].cpf.valor}}</td>
+                                                                        </tr>
+                                                                         <tr>
+                                                                            <td>RG:</td>
+                                                                            <td>{{usuari[0].rg.valor}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Telefone:</td>
+                                                                            <td>{{usuari[0].telefones}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Endereço:</td>
+                                                                            <td>{{usuari[0].endereco.rua}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Número:</td>
+                                                                            <td>{{usuari[0].endereco.numero}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Bairro</td>
+                                                                            <td>{{usuari[0].endereco.bairro}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Cidade</td>
+                                                                            <td>{{usuari[0].endereco.cidade.nome}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Estado</td>
+                                                                            <td>{{usuari[0].endereco.cidade.estado.sigla}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>CEP</td>
+                                                                            <td>{{usuari[0].endereco.cep.valor}}</td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </div>																
+                                                            </div>	
+                                                        </div> 
+                                                    </td>
+                                                </tr>
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
                                                         <th>Cod.</th>
                                                         <th>Nome</th>
                                                         <th>Email</th>
-                                                        <th>CPF</th>
-                                                        <th>RG</th>
-                                                        <th>Login</th>
                                                         <th>Ação</th>
                                                     </tr>
                                                 </tfoot>
@@ -183,14 +194,14 @@
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
                                                         <li class="page-item" ng-click="usuarios.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in usuarios.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                        <li class="page-item" ng-repeat="pg in usuarios.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
                                                         <li class="page-item" ng-click="usuarios.next()"><a class="page-link" href="">Próximo</a></li>
                                                     </ul>
                                                 </nav>
                                             </div>
 
                                         </div>
-                                        <div class="col-md-3" id="dvPermissoes" style="margin-top:{{marginTop}}px;border:2px solid #5F5F5F;padding:10px;margin-left:-15px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-top-left-radius: 2px; border-bottom-left-radius: 10px">
+                                        <div class="col-md-5" id="dvPermissoes" style="margin-top:{{marginTop}}px;border:2px solid #5F5F5F;padding:10px;margin-left:0px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-top-left-radius: 2px; border-bottom-left-radius: 10px">
                                             Permissoes do usuario: <strong>{{usuario.id}} - {{usuario.nome}}</strong>
                                             <hr>
                                             <button class="btn btn-outline-light" ng-click="mergeUsuario()"><i class="fas fa-check"></i>&nbspConfirmar alterações</button>
@@ -256,7 +267,7 @@
                                     <span aria-hidden="true">×</span>
                                 </button>
                             </div>
-                            
+
                             <div class="modal-body">
                                 <form id="add-form" ng-submit="mergeUsuario()" parsley-validate>
                                     <div class="form-group row">
@@ -294,7 +305,7 @@
                                     <div class="form-group row">
                                         <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">CPF</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="usuario.cpf.valor" required class="form-control">
+                                            <input id="txtcnpj" type="text" ng-model="usuario.cpf.valor" required class="form-control cpf">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -303,7 +314,7 @@
                                     <div class="form-group row">
                                         <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">RG</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="usuario.rg.valor" required class="form-control">
+                                            <input id="txtcnpj" type="text" ng-model="usuario.rg.valor" required class="form-control rg">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -372,7 +383,7 @@
                                         <div class="col-md-10">
                                             Telefone
                                             <hr>
-                                            <input id="txttel" type="text" ng-model="telefone.numero" placeholder="" class="form-control cep" maxlength="9">
+                                            <input id="txttel" type="text" ng-model="telefone.numero" placeholder="" class="form-control sp_celphones" maxlength="9">
                                         </div>
 
                                         <div class="col-md-2">
@@ -411,7 +422,7 @@
                 <!-- /.modal-content -->
 
                 <!-- /.modal-content EDIT --> 
-                
+
                 <!-- /.modal-content --> 				
 
 
@@ -436,7 +447,7 @@
                 </div>
                 <!-- /.modal-content --> 
 
-<!-- /.modal-content LOADING --> 
+                <!-- /.modal-content LOADING --> 
                 <div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -445,7 +456,7 @@
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body text-center">
-                                
+
                                 <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
                                 <br>
                                 <h3 style="margin-top:20px;">Carregando as informações...</h3>
@@ -487,77 +498,50 @@
 
                 <!-- Optional JavaScript -->
                 <script>
-                    
-                    var sh = false;
-                    var it = null;
-                    
-                    loading.show = function(){
-                        if(it != null){
-                            clearInterval(it);
-                        }
-                        if(!sh){
-                            
-                            sh = true;
-                            $("#loading").modal("show");
-                        
-                        }
-                        
-                    }
-                    
-                    loading.close = function(){
-                        
-                        it = setTimeout(function(){
-                                if(sh){
-                                    sh = false;
-                                    $("#loading").modal("hide");
-                                }
-                        },2000);
-                        
-                        
-                    }
-                    
+
+                                            var sh = false;
+                                            var it = null;
+
+                                            loading.show = function () {
+                                                if (it != null) {
+                                                    clearInterval(it);
+                                                }
+                                                if (!sh) {
+
+                                                    sh = true;
+                                                    $("#loading").modal("show");
+
+                                                }
+
+                                            }
+
+                                            loading.close = function () {
+
+                                                it = setTimeout(function () {
+                                                    if (sh) {
+                                                        sh = false;
+                                                        $("#loading").modal("hide");
+                                                    }
+                                                }, 2000);
+
+
+                                            }
+
                                             $(document).ready(function () {
                                                 $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
                                                 $('.btnedit').tooltip({title: "Editar", placement: "top"});
                                                 $('.btndel').tooltip({title: "Deletar", placement: "top"});
                                             });
-                                            $(document).ready(function () {
-                                                $('#clientes').DataTable({
-                                                    "language": {//Altera o idioma do DataTable para o português do Brasil
-                                                        "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
-                                                    },
-                                                });
 
-                                                $.getJSON('estados_cidades.json', function (data) {
-                                                    var items = [];
-                                                    var options = '<option value="">escolha um estado</option>';
-                                                    $.each(data, function (key, val) {
-                                                        options += '<option value="' + val.nome + '">' + val.nome + '</option>';
-                                                    });
-                                                    $("#estados").html(options);
 
-                                                    $("#estados").change(function () {
-
-                                                        var options_cidades = '';
-                                                        var str = "";
-
-                                                        $("#estados option:selected").each(function () {
-                                                            str += $(this).text();
-                                                        });
-
-                                                        $.each(data, function (key, val) {
-                                                            if (val.nome == str) {
-                                                                $.each(val.cidades, function (key_city, val_city) {
-                                                                    options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
-                                                                });
-                                                            }
-                                                        });
-                                                        $("#cidades").html(options_cidades);
-
-                                                    }).change();
-
-                                                });
+                                            $(document).on('keyup', '.cpf', function () {
+                                                $(this).mask('000.000.000-00', {reverse: true});
                                             });
+                                            $(document).on('keyup', '.rg', function () {
+                                                $(this).mask('99.999.999-A', {reverse: true});
+                                            });
+
+
 
                 </script>
 

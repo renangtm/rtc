@@ -12,15 +12,44 @@ if ($usuario == null || $empresa == null) {
 }
 
 $logo = $empresa->getLogo(new ConnectionFactory());
-
+$fonte = $logo->getCorFonteAdequada();
 if (!isset($filtro)) {
     $filtro = "";
 }
 ?>
 
+<style type="text/css">
+    
+    .btn-primary{
+        background-color:<?php echo $logo->cor_predominante; ?> !important;
+        color: <?php echo $fonte; ?> !important;
+        border-color: <?php echo $logo->cor_predominante; ?> !important;
+    }
+    
+    .navbar-light{
+         background-color:<?php echo $logo->cor_predominante; ?> !important;
+    }
+
+    #men .nav-link{
+        color: <?php echo $fonte; ?> !important;
+    }
+    
+    #men i{
+        color: <?php echo $fonte; ?> !important;
+    }
+    
+    #men .nav-link:hover{
+         background-color:<?php echo $logo->cor_predominante; ?> !important;
+        filter: brightness(85%);
+        color: <?php echo $fonte; ?> !important;
+    }
+  
+    
+</style>
+
 <div class="dashboard-header">
     <nav class="navbar navbar-expand-lg bg-white fixed-top">
-        <a class="navbar-brand" href="index.html"><img id="logo" style="" src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" title=""></a>
+        <a class="navbar-brand" href="index.html"><img id="logo" src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" title="" style="max-height:50px"></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -212,17 +241,17 @@ if (!isset($filtro)) {
                         <span class=" fa fa-angle-down"></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
-                        <div class="nav-user-info clearfix align-middle">
+                        <div class="nav-user-info clearfix align-middle" style="background-color:<?php echo $logo->cor_predominante; ?>">
                             <div class="float-left m-r-10 m-t-5">
                                 <img src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" class="user-avatar-md rounded-circle ">
                             </div>
                             <div class="float-left">									
-                                <h5 class="mb-0 text-white nav-user-name"><?php echo $usuario->nome; ?></h5>
+                                <h5 class="mb-0 nav-user-name" style="color:<?php echo $fonte; ?>"><?php echo $usuario->nome; ?></h5>
                                 <span class="status"></span><span class="ml-2"><?php echo $empresa->nome; ?></span>
                             </div>	
                         </div>
                         <a class="dropdown-item" href="cfg.php"><i class="fas fa-user mr-2"></i>Colaboradores</a>
-                        <a class="dropdown-item" href="alteracao-do-logo.html"><i class="fas fa-font mr-2"></i>Alterar Logo</a>
+                        <a class="dropdown-item" href="alteracao-do-logo.php"><i class="fas fa-font mr-2"></i>Alterar Logo</a>
                         <a class="dropdown-item" href="cadastro-empresas-filiais.html"><i class="fas fa-file-alt mr-2"></i>Empresas / Filiais</a>
                         <a class="dropdown-item" href="configuracao-da-empresa.html"><i class="fas fa-cog mr-2"></i>Configuração da empresa</a>
                         <a class="dropdown-item" href="#"><i class="fas fa-power-off mr-2"></i>Sair</a>
@@ -240,8 +269,8 @@ if (!isset($filtro)) {
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav flex-column">
-                    <li class="nav-divider">
+                <ul class="navbar-nav flex-column" id="men">
+                    <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         <?php
                         
                             $rtc = $empresa->getRTC(new ConnectionFactory());
@@ -262,7 +291,7 @@ if (!isset($filtro)) {
                     <li class="nav-item">
                         <a class="nav-link" href="carrinho-de-encomenda.php" ><i class="fa fa-fw fa-shopping-cart"></i>Carrinho Encomenda</a>
                     </li>
-                    <li class="nav-divider">
+                    <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         <?php echo $empresa->nome; ?>
                     </li>
                     <li class="nav-item">
@@ -319,7 +348,7 @@ if (!isset($filtro)) {
                         <a class="nav-link" href="visualizar-pedidos-venda.php"><i class="fas fa-tasks"></i>Pedidos de Venda</a>
                     </li>
 
-                    <li class="nav-divider">
+                    <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         Administrativo RTC
                     </li>
                     <li class="nav-item ">

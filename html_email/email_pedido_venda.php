@@ -85,7 +85,7 @@
                                                             <span style="float:right; margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);padding:10px;">Data: 13/02/2019 15:32</span>
                                                             <table width="100%" style="border: 1px solid #333;" cellspacing="0" cellpadding="0">
                                                                 <tr style="background-color:#f0f0f0;">
-                                                                    <th style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);padding:10px;" >Dados do pedido de compra - nº <strong id="idPedido"><?php echo $p->id; ?></strong></th>
+                                                                    <th style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);padding:10px;" >Dados do pedido de venda - nº <strong id="idPedido"><?php echo $p->id; ?></strong></th>
                                                                 </tr>
                                                                 <tr>
                                                                     <td style="padding:10px;">
@@ -95,7 +95,7 @@
                                                                                 <td style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);" id="nomeUsuario"><?php echo $p->usuario->nome; ?></td>
                                                                             </tr>
                                                                             <tr>
-                                                                                <td style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);">Razao Social:</td>
+                                                                                <td style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);">Cliente:</td>
                                                                                 <td style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);" id="nomeCliente"><?php echo $p->fornecedor->razao_social; ?></td>
                                                                             </tr>
                                                                             <tr>
@@ -124,38 +124,49 @@
                                                                     <th colspan="5" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); background-color:#f0f0f0;padding:10px; border: 1px solid black;">Produtos</th>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;width: 280px;">Produto</th>
-                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">Qtd. de unidades</th>
+                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;width: 180px;">Produto</th>
+                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">Validade</th>
+                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">Qtd.</th>
                                                                     <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;width: 100px;">Preço (R$)</th>
-                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;width: 100px;">Subtotal (R$)</th>
+                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;width: 100px;">Subtotal (R$)</td>
                                                                 </tr>
                                                                 <?php
+                                                                $valor_icms = 0;
+                                                                $valor_total = 0;
+                                                                $base_calculo = 0;
                                                                 foreach ($p->produtos as $key => $value) {
                                                                     ?>
                                                                     <tr id="produto">
-                                                                        <td data-tipo="nome" class="text-center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;"><?php echo $value->produto->nome; ?></td>
-                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;"><?php echo $value->quantidade; ?></td>
-                                                                        <td align="center" data-tipo="valor" class="text-center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;"><?php echo ($value->valor); ?> R$</td>
-                                                                        <td align="center" data-tipo="total" class="text-center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;"><?php echo $value->quantidade * ($value->valor); ?></td>
+                                                                        <td data-tipo="nome" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $value->produto->nome; ?></td>
+                                                                        <td align="center" data-tipo="validade" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo date('d/m/Y', $value->validade_minima); ?></td>
+                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $value->quantidade; ?></td>
+                                                                        <td align="center" data-tipo="valor" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete); ?></td>
+                                                                        <td align="center" data-tipo="total" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $value->quantidade * ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete); ?></td>
                                                                     </tr>
 
                                                                     <?php
+                                                                    $valor_icms += $value->icms;
+                                                                    $valor_total += $value->quantidade * ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete);
+                                                                    $base_calculo += $value->base_calculo;
+
+                                                                    $alicota = round($valor_icms * 100 / $base_calculo, 2);
                                                                 }
-                                                                ?>  
+                                                                ?> 
                                                                 <tfoot style=""> 
                                                                     <tr style=""> 
-                                                                        <th align="left" colspan="3" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">VALOR TOTAL</th>
+                                                                        <th align="left" colspan="4" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">VALOR TOTAL</th>
                                                                         <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">40 093,30</th>
                                                                     </tr>
                                                                 </tfoot>   
 
                                                             </table>
                                                             <br><br><br><br>
+
                                                             <table style="width:100%;">
                                                                 <tr>
-                                                                    <td width="33,3%" class="text-center" style="padding:10px;">Prazo: <strong id="prazo"><?php echo $p->prazo; ?></strong></td>
-                                                                    <td width="33,3%" class="text-center" style="padding:10px;">Alicota ICMS: <strong id="alicota">--------</strong></td>
-                                                                    <td width="33,3%" class="text-center" style="padding:10px;">Valor ICMS: <strong id="icms">---------</strong></td>
+                                                                    <td width="33,3%" class="text-center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px;">Prazo: <strong id="prazo"><?php echo $p->prazo; ?></strong></td>
+                                                                    <td width="33,3%" class="text-center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px;">Alicota ICMS: <strong id="alicota"><?php echo $alicota; ?></strong></td>
+                                                                    <td width="33,3%" class="text-center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px;">Valor ICMS: <strong id="icms"><?php echo $valor_icms; ?></strong></td>
                                                                 </tr>
                                                             </table>
                                                             <table style="width:100%;border: 1px solid black;" cellspacing="0" cellpadding="0">
@@ -167,16 +178,16 @@
                                                                         <table>
                                                                             <tr>
                                                                                 <td style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);">Antecipado, boleto</td>
-                                                                                
+
                                                                             </tr>
                                                                             <tr>
                                                                                 <td style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);"><a href="http://www.faunasystem.com.br:8080/boletos/boleto_itau_1824.pdf" target="_blank" style="">boleto numero 1</a></td>
-                                                                                
+
                                                                             </tr>
                                                                         </table>
-                                                                        
+
                                                                     </td>
-                                                                    
+
                                                                 </tr>  
                                                             </table>
                                                             <br>

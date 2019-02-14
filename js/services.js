@@ -1063,6 +1063,16 @@ rtc.service('acessoService', function ($http, $q) {
         });
     }
 })
+rtc.service('empresaService', function ($http, $q) {
+    this.setLogo = function (logo, fn) {
+        baseService($http, $q, {
+            o: {logo: logo},
+            query: "$empresa->setLogo($c,$o->logo)",
+            sucesso: fn,
+            falha: fn
+        }, null, true);
+    }
+})
 rtc.service('loginService', function ($http, $q) {
     this.login = function (usuario, senha, fn) {
         baseService($http, $q, {

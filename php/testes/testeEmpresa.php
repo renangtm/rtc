@@ -453,6 +453,11 @@ class testeEmpresa extends PHPUnit_Framework_TestCase {
           echo Utilidades::toJson($pendentes);
 */
 
+        $emp = new Empresa();
+        $emp->id = 58;
+        
+        $emp->setLogo($con, 'http://www.tratordecompras.com.br/renew/Status_3/assetsLogin/img/logo.png');
+        
     }
 
 }
