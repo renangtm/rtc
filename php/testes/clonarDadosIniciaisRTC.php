@@ -37,6 +37,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         //inserindo cidades e estados
 
         $estados = array();
+        $ids_cidades = array();
         $cidades = array();
 
         $con = new ConnectionFactory();
@@ -49,12 +50,12 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         $ps->execute();
         $ps->close();
 
-        $ps = $con->getConexao()->prepare("SELECT nome, estado FROM rtc.cidades");
+        $ps = $con->getConexao()->prepare("SELECT id,nome, estado FROM rtc.cidades");
         $ps->execute();
-        $ps->bind_result($nome, $sg_estado);
+        $ps->bind_result($id, $nome, $sg_estado);
 
         while ($ps->fetch()) {
-
+            $ids_cidades[] = $id;
             $cidades[] = $nome;
             $estados[] = $sg_estado;
         }
@@ -89,23 +90,31 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
                 $est[] = $k;
             }
 
+            $id_cidade = $ids_cidades[$key];
+            
             $cidade = new Cidade();
             $cidade->nome = $c;
             $cidade->estado = $k;
             $cidade->merge($con);
+            
+            $ps = $con->getConexao()->prepare("UPDATE cidade SET id=$id_cidade WHERE id=$cidade->id");
+            $ps->execute();
+            $ps->close();
+            
             $cids[] = $cidade;
+            
         }
         $cidades = $cids;
         // criando empresa
-        
+
         $ps = $con->getConexao()->prepare("DELETE FROM empresa");
         $ps->execute();
         $ps->close();
-        
+
         $ps = $con->getConexao()->prepare("DELETE FROM logo");
         $ps->execute();
         $ps->close();
-        
+
         $ps = $con->getConexao()->prepare("DELETE FROM parametros_emissao");
         $ps->execute();
         $ps->close();
@@ -161,7 +170,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         $c = new CategoriaCliente();
         $c->nome = "Medio Porte";
-       $c->merge($con);
+        $c->merge($con);
 
         $c = new CategoriaCliente();
         $c->nome = "Grande Porte";
@@ -172,7 +181,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         $c->merge($con);
 
         // ------------------------------
-
+        /*
         $ps = $con->getConexao()->prepare("DELETE FROM novo_rtc.cliente");
         $ps->execute();
         $ps->close();
@@ -247,9 +256,125 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             $ps->execute();
             $ps->close();
         }
+        */
+        // criando usuarios
+
+        $ps = $con->getConexao()->prepare("DELETE FROM usuario");
+        $ps->execute();
+        $ps->close();
+
+        $usuarios = array();
+        $ps = $con->getConexao()->prepare("SELECT nome, login, senha, email, senha_email FROM rtc.usuarios WHERE id_empresa=5");
+        $ps->execute();
+        $ps->bind_result($nome, $login, $senha, $email, $senha_email);
+        while($ps->fetch()){
+            
+            $u = new Usuario();
+            $u->empresa = $af;
+            $u->nome = $nome;
+            $u->login = $login;
+            $u->senha = $senha;
+            
+            if($email != null){
+                
+                $u->email = new Email($email);
+                $u->email->senha = $senha_email;
+                
+            }        
+                  
+            $usuarios[] = $u;
+            
+        }
+        $ps->close();
         
+        foreach($usuarios as $key=>$value){
+            
+            $value->merge($con);
+            
+        }
         
+        // passando grupos de cidades;
+        $ps = $con->getConexao()->prepare("DELETE FROM grupo_cidades");
+        $ps->execute();
+        $ps->close();
         
+        $ps = $con->getConexao()->prepare("DELETE FROM grupo_cidade");
+        $ps->execute();
+        $ps->close();
+        
+        $grupos = array();
+        $ps = $this->getConexao()->prepare("SELECT g.id,g.nome,gc.id_cidade FROM status_3.grupos_cidade g INNER JOIN status_3.grupo_cidade gc ON gc.id_grupo=g.id");
+        $ps->execute();
+        $ps->bind_result($id,$nome,$id_cidade);
+        while($ps->fetch()){
+            
+            if(!isset($grupos[$id])){
+                $g = new GrupoCidades();
+                $g->empresa = $af;
+                $g->nome = $nome;
+                $g->cidades = array();
+                $grupos[$id] = $g;
+            }
+            
+            $cid = new Cidade();
+            $cid->id = $id_cidade;
+            
+            $grupos[$id]->cidades[] = $cid;
+            
+        }
+        
+        $ps->close();
+        
+        foreach($grupos as $key=>$value){
+            
+            $value->merge($con);
+            
+            $ps = $con->getConexao()->prepare("UPDATE grupo_cidades SET id=$key WHERE id=$value->id");
+            $ps->execute();
+            $ps->close();
+            
+            $ps = $con->getConexao()->prepare("UPDATE grupo_cidade SET id_grupo=$key WHERE id_grupo=$value->id");
+            $ps->execute();
+            $ps->close();
+            
+        }
+        
+        $tabelas = array();
+        $ps = $this->getConexao()->prepare("SELECT t.id,t.id_transportadora,t.nome, r.condicional, r.expressao FROM status_3.tabelas t INNER JOIN status_3.regras r ON r.id_tabela=t.id");
+        $ps->execute();
+        $ps->bind_result($id,$id_transp,$nome,$conf,$exp);
+        
+        while($ps->fetch()){
+            
+            if(!isset($tabelas[$id])){
+                
+                $t = new Tabela();
+                $t->nome = $nome;
+                $t->regras = array();
+                $t->id_transp = $id_transp;
+                $tabelas[$id] = $t;
+                        
+            }
+            
+            $r = new RegraTabela();
+            $r->condicional = $conf;
+            $r->resultante = $exp;
+            
+            $tabelas[$id]->regras[] = $r;
+            
+        }
+        
+        $ps->close();
+        
+        foreach($tabelas as $key=>$value){
+            
+            $value->merge($con);
+            
+            $ps = $con->getConexao()->prepare("UPDATE tabela SET id_transportadora=$value->id_transp WHERE id=value->id");
+            $ps->execute();
+            $ps->close();
+            
+        }
         
     }
 
