@@ -51,21 +51,38 @@ class GrupoCidades {
             $ps->close();
         }
     }
+    
+    private static $CACHE;
+    private static $CONSULTAS = 0;
 
     public static function cidadeEstaNoGrupo($nome_cidade, $nome_grupo) {
-
-        $con = new ConnectionFactory();
-
-        $ps = $con->getConexao()->prepare("SELECT c.id FROM grupo_cidades g INNER JOIN grupo_cidade gc ON gc.id_grupo=g.id INNER JOIN cidade c ON c.id=gc.id_cidade WHERE g.excluido=false AND c.nome like '$nome_cidade' AND g.nome like '$nome_grupo'");
-        $ps->execute();
-        $ps->bind_result($id);
-        if ($ps->fetch()) {
+        
+        if(($g=self::$CACHE)!=null && self::$CONSULTAS < 1000){
+            
+            self::$CONSULTAS++;
+            return isset($g[$nome_grupo][$nome_cidade]);
+            
+        }else{
+            
+            $grupos = array();
+            $con = new ConnectionFactory();
+            $ps = $con->getConexao()->prepare("SELECT g.nome, c.nome FROM grupo_cidades g INNER JOIN grupo_cidade gc ON gc.id_grupo=g.id INNER JOIN cidade c ON c.id=gc.id_cidade");
+            $ps->execute();
+            $ps->bind_result($ng,$nc);
+            while($ps->fetch()){
+                if(!isset($grupos[$ng])){
+                    $grupos[$ng] = array();
+                }
+                $grupos[$ng][$nc] = true;
+            }
             $ps->close();
-
-            return true;
+            
+            self::$CACHE = $grupos;
+            self::$CONSULTAS=0;
+            
+            return isset(self::$CACHE[$nome_grupo][$nome_cidade]);
         }
-        $ps->close();
-        return false;
+        
     }
 
     public function delete($con) {

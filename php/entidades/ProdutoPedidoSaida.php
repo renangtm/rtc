@@ -287,6 +287,12 @@ class ProdutoPedidoSaida {
 
         $emp = $this->pedido->empresa;
 
+        if($this->pedido->logistica !== null){
+            
+            $emp = $this->pedido->logistica;
+            
+        }
+        
         $juros_mes = 1 + $emp->juros_mensal / 100;
 
         $juros_dia = pow($juros_mes, 1 / 30);
@@ -297,7 +303,7 @@ class ProdutoPedidoSaida {
 
             $icms = Sistema::getIcmsEstado($this->pedido->cliente->endereco->cidade->estado);
 
-            if ($this->pedido->empresa->endereco->cidade->estado->id == $this->pedido->cliente->endereco->cidade->estado->id || $this->pedido->cliente->suframado) {
+            if ($emp->endereco->cidade->estado->id == $this->pedido->cliente->endereco->cidade->estado->id || $this->pedido->cliente->suframado) {
 
                 $icms = 0;
             }

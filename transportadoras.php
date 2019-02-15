@@ -689,7 +689,7 @@
                 <!-- /.modal-content --> 
 
                 <!-- /.modal-content TABELA --> 
-                <div class="modal fade" id="simulacaoFrete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                <div class="modal fade" style="overflow-y:scroll" id="simulacaoFrete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -756,8 +756,8 @@
                                         <td>{{frete.transportadora.id}}</td>
                                         <td>{{frete.transportadora.razao_social}}</td>
                                         <td>{{frete.transportadora.despacho}} R$</td>
-                                        <td>{{frete.valor}} R$</td>
-                                        <td>{{frete.valor + frete.transportadora.despacho}} R$</td>
+                                        <td>{{frete.valor | decimal}} R$</td>
+                                        <td>{{(frete.valor + frete.transportadora.despacho) | decimal}} R$</td>
                                     </tr>
                                 </table>
 
@@ -802,7 +802,6 @@
                                 <div class="form-group row">
                                     <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Valor</label>
                                     <div class="col-9 col-lg-10">
-                                        <decimal model="valor_teste"></decimal>
                                         <input id="txtendnum" type="text" step="0.01" placeholder="00" ng-confirm="attResultadoIndividual()" ng-model="valor_teste" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
                                         <div class="invalid-feedback">
                                             Please provide a valid text.
