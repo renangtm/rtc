@@ -170,7 +170,7 @@ class Email {
             }
 
 
-            $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+            $mail = new PHPMailer\PHPMailer\PHPMailer();
 
             $mail->IsSMTP();
             $mail->SMTPAuth = true;

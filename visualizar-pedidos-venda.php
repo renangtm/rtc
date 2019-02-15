@@ -271,7 +271,8 @@
                                                 <td>{{prod.produto.id}}</td>
                                                 <td>{{prod.produto.nome}}</td>
                                                 <td class="text-center" width="100px">{{prod.quantidade}}</td>
-                                                <td class="text-center">{{prod.validade_minima | data}}</td>
+                                                <td ng-if="prod.validade_minima>0" class="text-center">{{prod.validade_minima | data}}</td>
+                                                <td ng-if="prod.validade_minima<0" class="text-center">-------</td>
                                                 <td class="text-center"><input ng-disabled="!pedido.status.altera" type=text ng-confirm="atualizaCustos()" class="form-control" ng-model="prod.valor_base"></td>
                                                 <td class="text-center">{{prod.juros}}</td>
                                                 <td class="text-center">{{prod.frete}}</td>
