@@ -1,4 +1,4 @@
-var projeto = "http://192.168.18.121:888/novo_rtc_web";
+var projeto = "http://10.0.0.107/novo_rtc_web";
 
 
 

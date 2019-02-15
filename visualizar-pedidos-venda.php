@@ -538,7 +538,8 @@
                                                             <th>Selecionar</th>
                                                             </thead>
                                                             <tr ng-repeat="validade in produt[0].validades">
-                                                                <th>{{validade.validade| data}} <i class="fas fa-arrow-up" ng-if="validade.alem" ></i> </th>
+                                                                <th ng-if="validade.validade>0">{{validade.validade| data}} <i class="fas fa-arrow-up" ng-if="validade.alem" ></i> </th>
+                                                                <th ng-if="validade.validade<0">-------</th>
                                                                 <th>{{validade.quantidade}} <strong>{{validade.limite<0?'Sem limite':'Limite de '+validade.limite}}</strong></th>
                                                                 <th>{{validade.valor}}</th>
                                                                 <th><button class="btn btn-success" ng-click="addProduto(produt[0], validade)"><i class="fas fa-plus-circle"></i></button></th>

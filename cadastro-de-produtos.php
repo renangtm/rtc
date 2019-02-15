@@ -389,7 +389,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="form-group row">
                                                 <label for="txtpeso" class="col-3 col-lg-2 col-form-label text-left">Peso Bruto</label>
                                                 <div class="col-6 col-lg-6">
@@ -408,14 +408,31 @@
                                                 </div>
                                             </div>
 
-                                        </div>
-                                        <hr>
-                                        <div class="form-group row">
-                                            <div class="col text-center">
-                                                <button class="btn btn-primary text-center" type="submit">
-                                                    <i class="fas fa-save"></i> &nbsp; Salvar
-                                                </button>
-                                            </div>	
+                                            <div class="form-group row">
+
+                                                <div class="col-6 col-lg-6" style="padding-top: 5px;">
+                                                    Trabalha com o modulo de Lotes ?
+                                                    <br>
+                                                    <label class="custom-control custom-radio custom-control-inline">
+                                                        <input type="radio" name="radio-inline" data-ng-value="true" data-ng-model="produto.sistema_lotes" class="custom-control-input"><span class="custom-control-label">Sim</span>
+                                                    </label>
+                                                    <label class="custom-control custom-radio custom-control-inline">
+                                                        <input type="radio" name="radio-inline" data-ng-value="false" data-ng-model="produto.sistema_lotes" checked="" class="custom-control-input"><span class="custom-control-label">Nao</span>
+                                                    </label>
+                                                    <div class="invalid-feedback">
+                                                        Please provide a valid text.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                    </div>
+                                    <hr>
+                                    <div class="form-group row">
+                                        <div class="col text-center">
+                                            <button class="btn btn-primary text-center" type="submit">
+                                                <i class="fas fa-save"></i> &nbsp; Salvar
+                                            </button>
+                                        </div>	
                                         </form>
                                         <!-- end form produto -->
 
@@ -441,510 +458,510 @@
                                         <hr>
                                         <div class="form-group row">
                                             <div class="col text-center">
-                                                
+
                                             </div>	
                                         </div>
                                         <!-- end fom imagem produto -->
 
                                     </div>
-                                        <div class="tab-pane fade" id="nav-uso" role="tabpanel" aria-labelledby="nav-uso-tab">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    Cultura:
-                                                    <hr>
-                                                    <select class="custom-select" ng-model="receituario.cultura" name="" size="10">
-                                                        <option ng-repeat="c in culturas" ng-value="c">{{c.nome}}</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-6">
-                                                     Praga
-                                                    <hr>
-                                                    <select class="custom-select" ng-model="receituario.praga" name="" size="10">
-                                                        <option ng-repeat="p in pragas" ng-value="p">{{p.nome}}</option>
-                                                    </select>
-                                                </div>
+                                    <div class="tab-pane fade" id="nav-uso" role="tabpanel" aria-labelledby="nav-uso-tab">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                Cultura:
+                                                <hr>
+                                                <select class="custom-select" ng-model="receituario.cultura" name="" size="10">
+                                                    <option ng-repeat="c in culturas" ng-value="c">{{c.nome}}</option>
+                                                </select>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-9">
-                                                    <br>
-                                                    Observacao:
-                                                    <hr>
-                                                    <textarea ng-model="receituario.instrucoes" class="form-control" style=""width:100%>
-
-                                                    </textarea>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <br>
-                                                    Adicionar
-                                                    <hr>
-                                                    <button class="btn btn-success" ng-click="mergeReceituario()"><i class="fa fa-plus"></i></button>
-                                                </div>
+                                            <div class="col-md-6">
+                                                Praga
+                                                <hr>
+                                                <select class="custom-select" ng-model="receituario.praga" name="" size="10">
+                                                    <option ng-repeat="p in pragas" ng-value="p">{{p.nome}}</option>
+                                                </select>
                                             </div>
-                                            <hr>
-                                            
-                                            <table class="table table-striped table-bordered first">
-                                                <thead>
-                                                    <td>
-                                                        Cod
-                                                    </td>
-                                                    <td>
-                                                        Cult
-                                                    </td>
-                                                    <td>
-                                                        Praga
-                                                    </td>
-                                                    <td>
-                                                        Obs
-                                                    </td>
-                                                    <td>
-                                                        Exc
-                                                    </td>
-                                                </thead>
-                                                <tr ng-repeat="rec in produto.receituario">
-                                                    <td>{{rec.id}}</td>
-                                                    <td>{{rec.cultura.nome}}</td>
-                                                    <td>{{rec.praga.nome}}</td>
-                                                    <td>{{rec.instrucoes}}</td>
-                                                    <td>
-                                                        <button class="btn btn-danger" ng-click="deleteReceituario(rec,produto)"><i class="fa fa-times"></i></button>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                            
                                         </div>
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                <br>
+                                                Observacao:
+                                                <hr>
+                                                <textarea ng-model="receituario.instrucoes" class="form-control" style=""width:100%>
 
-                                    <div class="tab-pane fade" id="nav-rest" role="tabpanel" aria-labelledby="nav-rest-tab">
-
-                                        <!--form restricao por estado-->
-
-                                        <form id="add-form" parsley-validate>
-                                            <table class="table m-t-30">
-                                                <tbody>
-                                                    <tr>
-                                                        <td width="45%" class="text-center">
-                                                            Produto
-                                                        </td>
-                                                        <td width="10%">
-                                                        </td>
-                                                        <td width="45%" class="text-center">
-                                                            Todos estados
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="45%">
-                                                            <select class="custom-select" name="" size="10" multiple>
-                                                                <option value="" > adicione os estados</option>
-                                                            </select>
-                                                        </td>
-                                                        <td width="10%">
-                                                            <a href="#" class="btn btn-outline-light m-b-20" data-toggle="tooltip" data-placement="top" title="" data-original-title="Adicionar"><i class="fas fa-chevron-circle-left"></i></a><br>
-                                                            <a href="#" class="btn btn-outline-light" data-toggle="tooltip" data-placement="top" title="" data-original-title="Remover"><i class="fas fa-chevron-circle-right"></i></a>
-
-                                                        </td>
-                                                        <td width="45%"><select class="custom-select" name="" size="10" multiple>
-                                                                <option value="AC">Acre</option>
-                                                                <option value="AL">Alagoas</option>
-                                                                <option value="AP">Amapá</option>
-                                                                <option value="AM">Amazonas</option>
-                                                                <option value="BA">Bahia</option>
-                                                                <option value="CE">Ceará</option>
-                                                                <option value="DF">Distrito Federal</option>
-                                                                <option value="ES">Espírito Santo</option>
-                                                                <option value="GO">Goiás</option>
-                                                                <option value="MA">Maranhão</option>
-                                                                <option value="MT">Mato Grosso</option>
-                                                                <option value="MS">Mato Grosso do Sul</option>
-                                                                <option value="MG">Minas Gerais</option>
-                                                                <option value="PA">Pará</option>
-                                                                <option value="PB">Paraíba</option>
-                                                                <option value="PR">Paraná</option>
-                                                                <option value="PE">Pernambuco</option>
-                                                                <option value="PI">Piauí</option>
-                                                                <option value="RJ">Rio de Janeiro</option>
-                                                                <option value="RN">Rio Grande do Norte</option>
-                                                                <option value="RS">Rio Grande do Sul</option>
-                                                                <option value="RO">Rondônia</option>
-                                                                <option value="RR">Roraima</option>
-                                                                <option value="SC">Santa Catarina</option>
-                                                                <option value="SP">São Paulo</option>
-                                                                <option value="SE">Sergipe</option>
-                                                                <option value="TO">Tocantins</option>
-                                                            </select>
-                                                        </td>
-
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                            </textarea>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <br>
+                                            Adicionar
                                             <hr>
-                                            <div class="form-group row">
-                                                <div class="col text-center">
-                                                    <button class="btn btn-primary text-center" type="submit">
-                                                        <i class="fas fa-save"></i> &nbsp; Salvar
-                                                    </button>
-                                                </div>	
-                                            </div>
-                                        </form>
-
-                                        <!-- endf form restricao por estado-->
-
+                                            <button class="btn btn-success" ng-click="mergeReceituario()"><i class="fa fa-plus"></i></button>
+                                        </div>
                                     </div>
+                                    <hr>
 
-                                    <div class="tab-pane fade" id="nav-fat" role="tabpanel" aria-labelledby="nav-fat-tab">
-                                        <!--form faturamento-->
-                                        <form id="add-form" parsley-validate>
-                                            <div class="form-group row m-t-20">
-                                                <label for="txtpeso" class="col-4 col-form-label text-left">Paramentros para<br> faturamento</label>
-                                                <div class="col-4 col-lg-4" style="padding-top: 5px;">
-                                                    <label class="custom-control custom-radio custom-control-inline">
-                                                        <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Sem Tributação</span>
-                                                    </label>
-                                                    <label class="custom-control custom-radio custom-control-inline">
-                                                        <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Tributação normal</span>
-                                                    </label>
-                                                    <label class="custom-control custom-radio custom-control-inline">
-                                                        <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Tributação especial 4%</span>
-                                                    </label>
-                                                    <div class="invalid-feedback">
-                                                        Please provide a valid text.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="form-group row">
-                                                <div class="col text-center">
-                                                    <button class="btn btn-primary text-center" type="submit">
-                                                        <i class="fas fa-save"></i> &nbsp; Salvar
-                                                    </button>
-                                                </div>	
-                                            </div>
+                                    <table class="table table-striped table-bordered first">
+                                        <thead>
+                                        <td>
+                                            Cod
+                                        </td>
+                                        <td>
+                                            Cult
+                                        </td>
+                                        <td>
+                                            Praga
+                                        </td>
+                                        <td>
+                                            Obs
+                                        </td>
+                                        <td>
+                                            Exc
+                                        </td>
+                                        </thead>
+                                        <tr ng-repeat="rec in produto.receituario">
+                                            <td>{{rec.id}}</td>
+                                            <td>{{rec.cultura.nome}}</td>
+                                            <td>{{rec.praga.nome}}</td>
+                                            <td>{{rec.instrucoes}}</td>
+                                            <td>
+                                                <button class="btn btn-danger" ng-click="deleteReceituario(rec, produto)"><i class="fa fa-times"></i></button>
+                                            </td>
+                                        </tr>
+                                    </table>
 
-                                        </form>
-
-
-                                        <!--end form faturamento-->
-                                    </div>
                                 </div>
 
+                                <div class="tab-pane fade" id="nav-rest" role="tabpanel" aria-labelledby="nav-rest-tab">
+
+                                    <!--form restricao por estado-->
+
+                                    <form id="add-form" parsley-validate>
+                                        <table class="table m-t-30">
+                                            <tbody>
+                                                <tr>
+                                                    <td width="45%" class="text-center">
+                                                        Produto
+                                                    </td>
+                                                    <td width="10%">
+                                                    </td>
+                                                    <td width="45%" class="text-center">
+                                                        Todos estados
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="45%">
+                                                        <select class="custom-select" name="" size="10" multiple>
+                                                            <option value="" > adicione os estados</option>
+                                                        </select>
+                                                    </td>
+                                                    <td width="10%">
+                                                        <a href="#" class="btn btn-outline-light m-b-20" data-toggle="tooltip" data-placement="top" title="" data-original-title="Adicionar"><i class="fas fa-chevron-circle-left"></i></a><br>
+                                                        <a href="#" class="btn btn-outline-light" data-toggle="tooltip" data-placement="top" title="" data-original-title="Remover"><i class="fas fa-chevron-circle-right"></i></a>
+
+                                                    </td>
+                                                    <td width="45%"><select class="custom-select" name="" size="10" multiple>
+                                                            <option value="AC">Acre</option>
+                                                            <option value="AL">Alagoas</option>
+                                                            <option value="AP">Amapá</option>
+                                                            <option value="AM">Amazonas</option>
+                                                            <option value="BA">Bahia</option>
+                                                            <option value="CE">Ceará</option>
+                                                            <option value="DF">Distrito Federal</option>
+                                                            <option value="ES">Espírito Santo</option>
+                                                            <option value="GO">Goiás</option>
+                                                            <option value="MA">Maranhão</option>
+                                                            <option value="MT">Mato Grosso</option>
+                                                            <option value="MS">Mato Grosso do Sul</option>
+                                                            <option value="MG">Minas Gerais</option>
+                                                            <option value="PA">Pará</option>
+                                                            <option value="PB">Paraíba</option>
+                                                            <option value="PR">Paraná</option>
+                                                            <option value="PE">Pernambuco</option>
+                                                            <option value="PI">Piauí</option>
+                                                            <option value="RJ">Rio de Janeiro</option>
+                                                            <option value="RN">Rio Grande do Norte</option>
+                                                            <option value="RS">Rio Grande do Sul</option>
+                                                            <option value="RO">Rondônia</option>
+                                                            <option value="RR">Roraima</option>
+                                                            <option value="SC">Santa Catarina</option>
+                                                            <option value="SP">São Paulo</option>
+                                                            <option value="SE">Sergipe</option>
+                                                            <option value="TO">Tocantins</option>
+                                                        </select>
+                                                    </td>
+
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <hr>
+                                        <div class="form-group row">
+                                            <div class="col text-center">
+                                                <button class="btn btn-primary text-center" type="submit">
+                                                    <i class="fas fa-save"></i> &nbsp; Salvar
+                                                </button>
+                                            </div>	
+                                        </div>
+                                    </form>
+
+                                    <!-- endf form restricao por estado-->
+
+                                </div>
+
+                                <div class="tab-pane fade" id="nav-fat" role="tabpanel" aria-labelledby="nav-fat-tab">
+                                    <!--form faturamento-->
+                                    <form id="add-form" parsley-validate>
+                                        <div class="form-group row m-t-20">
+                                            <label for="txtpeso" class="col-4 col-form-label text-left">Paramentros para<br> faturamento</label>
+                                            <div class="col-4 col-lg-4" style="padding-top: 5px;">
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Sem Tributação</span>
+                                                </label>
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Tributação normal</span>
+                                                </label>
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Tributação especial 4%</span>
+                                                </label>
+                                                <div class="invalid-feedback">
+                                                    Please provide a valid text.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="form-group row">
+                                            <div class="col text-center">
+                                                <button class="btn btn-primary text-center" type="submit">
+                                                    <i class="fas fa-save"></i> &nbsp; Salvar
+                                                </button>
+                                            </div>	
+                                        </div>
+
+                                    </form>
 
 
-
-
-
-
+                                    <!--end form faturamento-->
+                                </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
-                            </div>
+
+
+
+
+
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
                         </div>
                     </div>
                 </div>
-                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-content -->
 
-                <!-- /.modal-content EDIT --> 
-                <div class="modal fade in" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true" style="display: none;">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Edite os dados de seu Cliente</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">×</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <div class="form-group row">
-                                        <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Nome</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtname" type="text" required placeholder="Agro Fauna Comercio De Insumos Ltda" class="form-control is-invalid">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
+            <!-- /.modal-content EDIT --> 
+            <div class="modal fade in" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Edite os dados de seu Cliente</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="form-group row">
+                                    <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Nome</label>
+                                    <div class="col-9 col-lg-10">
+                                        <input id="txtname" type="text" required placeholder="Agro Fauna Comercio De Insumos Ltda" class="form-control is-invalid">
+                                        <div class="invalid-feedback">
+                                            Please provide a valid text.
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="txtemail" class="col-3 col-lg-2 col-form-label text-left">Email</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtemail" type="email" required data-parsley-type="email" placeholder="elias@agrofauna.com.br" class="form-control">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="txtemail" class="col-3 col-lg-2 col-form-label text-left">Email</label>
+                                    <div class="col-9 col-lg-10">
+                                        <input id="txtemail" type="email" required data-parsley-type="email" placeholder="elias@agrofauna.com.br" class="form-control">
+                                        <div class="invalid-feedback">
+                                            Please provide a valid text.
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">CPF/CNPJ</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" required data-parsley-type="email" placeholder="47.626.510/0001-32" class="form-control cnpj" >
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">CPF/CNPJ</label>
+                                    <div class="col-9 col-lg-10">
+                                        <input id="txtcnpj" type="text" required data-parsley-type="email" placeholder="47.626.510/0001-32" class="form-control cnpj" >
+                                        <div class="invalid-feedback">
+                                            Please provide a valid text.
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="txttel" class="col-3 col-lg-2 col-form-label text-left">Telefone</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txttel" type="text" required placeholder="(11)2324-2452" class="form-control sp_celphones">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="txttel" class="col-3 col-lg-2 col-form-label text-left">Telefone</label>
+                                    <div class="col-9 col-lg-10">
+                                        <input id="txttel" type="text" required placeholder="(11)2324-2452" class="form-control sp_celphones">
+                                        <div class="invalid-feedback">
+                                            Please provide a valid text.
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endereço</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtend" type="text" required data-parsley-type="email" placeholder="Rua: Coutinho Cavalcante" class="form-control">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endereço</label>
+                                    <div class="col-9 col-lg-10">
+                                        <input id="txtend" type="text" required data-parsley-type="email" placeholder="Rua: Coutinho Cavalcante" class="form-control">
+                                        <div class="invalid-feedback">
+                                            Please provide a valid text.
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Número</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtendnum" type="text" required data-parsley-type="email" placeholder="00" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Número</label>
+                                    <div class="col-9 col-lg-10">
+                                        <input id="txtendnum" type="text" required data-parsley-type="email" placeholder="00" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
+                                        <div class="invalid-feedback">
+                                            Please provide a valid text.
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="txtbairro" class="col-3 col-lg-2 col-form-label text-left">Bairro</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtbairro" type="text" required placeholder="Jardim Alto Alegnure" class="form-control">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="txtbairro" class="col-3 col-lg-2 col-form-label text-left">Bairro</label>
+                                    <div class="col-9 col-lg-10">
+                                        <input id="txtbairro" type="text" required placeholder="Jardim Alto Alegnure" class="form-control">
+                                        <div class="invalid-feedback">
+                                            Please provide a valid text.
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="cidades" class="col-3 col-lg-2 col-form-label text-left">Cidade</label>
-                                        <div class="col-9 col-lg-10">
-                                            <select name="cidades" class="form-control"> 
-                                                <option value="estado">Selecione a Cidade</option> 
-                                                <option value="ac">Acre</option> 
-                                                <option value="al">Alagoas</option> 
-                                                <option value="am">Amazonas</option> 
-                                                <option value="ap">Amapá</option> 
-                                                <option value="ba">Bahia</option> 
-                                                <option value="ce">Ceará</option> 
-                                                <option value="df">Distrito Federal</option> 
-                                                <option value="es">Espírito Santo</option> 
-                                                <option value="go">Goiás</option> 
-                                                <option value="ma">Maranhão</option> 
-                                                <option value="mt">Mato Grosso</option> 
-                                                <option value="ms">Mato Grosso do Sul</option> 
-                                                <option value="mg">Minas Gerais</option> 
-                                                <option value="pa">Pará</option> 
-                                                <option value="pb">Paraíba</option> 
-                                                <option value="pr">Paraná</option> 
-                                                <option value="pe">Pernambuco</option> 
-                                                <option value="pi">Piauí</option> 
-                                                <option value="rj">Rio de Janeiro</option> 
-                                                <option value="rn">Rio Grande do Norte</option> 
-                                                <option value="ro">Rondônia</option> 
-                                                <option value="rs">Rio Grande do Sul</option> 
-                                                <option value="rr">Roraima</option> 
-                                                <option value="sc">Santa Catarina</option> 
-                                                <option value="se">Sergipe</option> 
-                                                <option value="sp" selected>São Jose do Rio Preto</option> 
-                                                <option value="to">Tocantins</option> 
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="cidades" class="col-3 col-lg-2 col-form-label text-left">Cidade</label>
+                                    <div class="col-9 col-lg-10">
+                                        <select name="cidades" class="form-control"> 
+                                            <option value="estado">Selecione a Cidade</option> 
+                                            <option value="ac">Acre</option> 
+                                            <option value="al">Alagoas</option> 
+                                            <option value="am">Amazonas</option> 
+                                            <option value="ap">Amapá</option> 
+                                            <option value="ba">Bahia</option> 
+                                            <option value="ce">Ceará</option> 
+                                            <option value="df">Distrito Federal</option> 
+                                            <option value="es">Espírito Santo</option> 
+                                            <option value="go">Goiás</option> 
+                                            <option value="ma">Maranhão</option> 
+                                            <option value="mt">Mato Grosso</option> 
+                                            <option value="ms">Mato Grosso do Sul</option> 
+                                            <option value="mg">Minas Gerais</option> 
+                                            <option value="pa">Pará</option> 
+                                            <option value="pb">Paraíba</option> 
+                                            <option value="pr">Paraná</option> 
+                                            <option value="pe">Pernambuco</option> 
+                                            <option value="pi">Piauí</option> 
+                                            <option value="rj">Rio de Janeiro</option> 
+                                            <option value="rn">Rio Grande do Norte</option> 
+                                            <option value="ro">Rondônia</option> 
+                                            <option value="rs">Rio Grande do Sul</option> 
+                                            <option value="rr">Roraima</option> 
+                                            <option value="sc">Santa Catarina</option> 
+                                            <option value="se">Sergipe</option> 
+                                            <option value="sp" selected>São Jose do Rio Preto</option> 
+                                            <option value="to">Tocantins</option> 
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Please provide a valid text.
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="estados" class="col-3 col-lg-2 col-form-label text-left">Estado</label>
-                                        <div class="col-9 col-lg-10">
-                                            <select name="estados" class="form-control"> 
-                                                <option value="estado">Selecione o Estado</option> 
-                                                <option value="ac">Acre</option> 
-                                                <option value="al">Alagoas</option> 
-                                                <option value="am">Amazonas</option> 
-                                                <option value="ap">Amapá</option> 
-                                                <option value="ba">Bahia</option> 
-                                                <option value="ce">Ceará</option> 
-                                                <option value="df">Distrito Federal</option> 
-                                                <option value="es">Espírito Santo</option> 
-                                                <option value="go">Goiás</option> 
-                                                <option value="ma">Maranhão</option> 
-                                                <option value="mt">Mato Grosso</option> 
-                                                <option value="ms">Mato Grosso do Sul</option> 
-                                                <option value="mg">Minas Gerais</option> 
-                                                <option value="pa">Pará</option> 
-                                                <option value="pb">Paraíba</option> 
-                                                <option value="pr">Paraná</option> 
-                                                <option value="pe">Pernambuco</option> 
-                                                <option value="pi">Piauí</option> 
-                                                <option value="rj">Rio de Janeiro</option> 
-                                                <option value="rn">Rio Grande do Norte</option> 
-                                                <option value="ro">Rondônia</option> 
-                                                <option value="rs">Rio Grande do Sul</option> 
-                                                <option value="rr">Roraima</option> 
-                                                <option value="sc">Santa Catarina</option> 
-                                                <option value="se">Sergipe</option> 
-                                                <option value="sp" selected>São Paulo</option> 
-                                                <option value="to">Tocantins</option> 
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="estados" class="col-3 col-lg-2 col-form-label text-left">Estado</label>
+                                    <div class="col-9 col-lg-10">
+                                        <select name="estados" class="form-control"> 
+                                            <option value="estado">Selecione o Estado</option> 
+                                            <option value="ac">Acre</option> 
+                                            <option value="al">Alagoas</option> 
+                                            <option value="am">Amazonas</option> 
+                                            <option value="ap">Amapá</option> 
+                                            <option value="ba">Bahia</option> 
+                                            <option value="ce">Ceará</option> 
+                                            <option value="df">Distrito Federal</option> 
+                                            <option value="es">Espírito Santo</option> 
+                                            <option value="go">Goiás</option> 
+                                            <option value="ma">Maranhão</option> 
+                                            <option value="mt">Mato Grosso</option> 
+                                            <option value="ms">Mato Grosso do Sul</option> 
+                                            <option value="mg">Minas Gerais</option> 
+                                            <option value="pa">Pará</option> 
+                                            <option value="pb">Paraíba</option> 
+                                            <option value="pr">Paraná</option> 
+                                            <option value="pe">Pernambuco</option> 
+                                            <option value="pi">Piauí</option> 
+                                            <option value="rj">Rio de Janeiro</option> 
+                                            <option value="rn">Rio Grande do Norte</option> 
+                                            <option value="ro">Rondônia</option> 
+                                            <option value="rs">Rio Grande do Sul</option> 
+                                            <option value="rr">Roraima</option> 
+                                            <option value="sc">Santa Catarina</option> 
+                                            <option value="se">Sergipe</option> 
+                                            <option value="sp" selected>São Paulo</option> 
+                                            <option value="to">Tocantins</option> 
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Please provide a valid text.
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="txtcep" class="col-3 col-lg-2 col-form-label text-left">CEP</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtcep" type="text" required placeholder="15055-300" class="form-control cep" maxlength="9">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="txtcep" class="col-3 col-lg-2 col-form-label text-left">CEP</label>
+                                    <div class="col-9 col-lg-10">
+                                        <input id="txtcep" type="text" required placeholder="15055-300" class="form-control cep" maxlength="9">
+                                        <div class="invalid-feedback">
+                                            Please provide a valid text.
                                         </div>
                                     </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                                <button class="btn btn-primary">
-                                    <i class="fas fa-save"></i> &nbsp; Salvar
-                                </button>
-                            </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-save"></i> &nbsp; Salvar
+                            </button>
                         </div>
                     </div>
                 </div>
-                <!-- /.modal-content --> 				
+            </div>
+            <!-- /.modal-content --> 				
 
 
 
-                <!-- /.modal-content DELETE --> 
-                <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados do seu Produto</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                            </div>
-                            <div class="modal-body">
-                                <p class="text-center"> Tem certeza de que deseja excluir este Produto?</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn btn-primary" ng-click="deletarProduto()">Sim</button>
-                                <button type="button" class="btn btn-light" data-dismiss="modal">Não</button>
-                            </div>
+            <!-- /.modal-content DELETE --> 
+            <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados do seu Produto</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="text-center"> Tem certeza de que deseja excluir este Produto?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" ng-click="deletarProduto()">Sim</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Não</button>
                         </div>
                     </div>
                 </div>
-                <!-- /.modal-content --> 
-<!-- /.modal-content LOADING --> 
-                <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                    <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                            </div>
-                            <div class="modal-body text-center">
-                                
-                                <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                                <br>
-                                <h3 style="margin-top:20px;">Carregando as informações...</h3>
+            </div>
+            <!-- /.modal-content --> 
+            <!-- /.modal-content LOADING --> 
+            <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body text-center">
 
-                            </div>
-                            <div class="modal-footer">
-                            </div>
+                            <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
+                            <br>
+                            <h3 style="margin-top:20px;">Carregando as informações...</h3>
+
+                        </div>
+                        <div class="modal-footer">
                         </div>
                     </div>
                 </div>
+            </div>
 
 
-                <!-- jquery 3.3.1 -->
-                <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-                <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
-                <script src="assets/libs/js/form-mask.js"></script>
-                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+            <!-- jquery 3.3.1 -->
+            <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+            <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
+            <script src="assets/libs/js/form-mask.js"></script>
+            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
-                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-                <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-                <!-- slimscroll js -->
-                <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-                <!-- main js -->
-                <script src="assets/libs/js/main-js.js"></script>
-                <!-- chart chartist js -->
-                <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
-                <!-- sparkline js -->
-                <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
-                <!-- morris js -->
-                <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
-                <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
-                <!-- chart c3 js -->
-                <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
-                <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
-                <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
-                <script src="assets/libs/js/dashboard-ecommerce.js"></script>
-                <!-- parsley js -->
-                <script src="assets/vendor/parsley/parsley.js"></script>
+            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+            <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+            <!-- slimscroll js -->
+            <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+            <!-- main js -->
+            <script src="assets/libs/js/main-js.js"></script>
+            <!-- chart chartist js -->
+            <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
+            <!-- sparkline js -->
+            <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+            <!-- morris js -->
+            <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
+            <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
+            <!-- chart c3 js -->
+            <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
+            <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+            <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
+            <script src="assets/libs/js/dashboard-ecommerce.js"></script>
+            <!-- parsley js -->
+            <script src="assets/vendor/parsley/parsley.js"></script>
 
-                <!-- Optional JavaScript -->
-                <script>
-                    
-                    var sh = false;
-                    var it = null;
-                    
-                    loading.show = function(){
-                        if(it != null){
-                            clearInterval(it);
-                        }
-                        it = setInterval(function(){
-                            $("#loading").modal("show");
-                            if($("#loading").hasClass('in')){
-                                clearInterval(it);
-                            }
-                        },300)
-                        
-                    }
-                    
-                    loading.close = function(){
-                        
-                        if(it != null){
-                            clearInterval(it);
-                        }
-                        it = setInterval(function(){
-                            $("#loading").modal("hide");
-                            if(!$("#loading").hasClass('in')){
-                                clearInterval(it);
-                            }
-                        },300)
-                                
-                    }
-                
+            <!-- Optional JavaScript -->
+            <script>
 
+                                var sh = false;
+                                var it = null;
 
-                                            $('.newbtn').bind("click", function () {
-                                                $('#pic').click();
-                                            });
+                                loading.show = function () {
+                                    if (it != null) {
+                                        clearInterval(it);
+                                    }
+                                    it = setInterval(function () {
+                                        $("#loading").modal("show");
+                                        if ($("#loading").hasClass('in')) {
+                                            clearInterval(it);
+                                        }
+                                    }, 300)
 
-                                            function readURL(input) {
-                                                if (input.files && input.files[0]) {
-                                                    var reader = new FileReader();
+                                }
 
-                                                    reader.onload = function (e) {
-                                                        $('#blah')
-                                                                .attr('src', e.target.result);
-                                                    };
+                                loading.close = function () {
 
-                                                    reader.readAsDataURL(input.files[0]);
-                                                }
-                                            }
-                </script>
-                <script>
-                            $(document).ready(function () {
-                                $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
-                                $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                                $('.btndel').tooltip({title: "Deletar", placement: "top"});
-                            });
+                                    if (it != null) {
+                                        clearInterval(it);
+                                    }
+                                    it = setInterval(function () {
+                                        $("#loading").modal("hide");
+                                        if (!$("#loading").hasClass('in')) {
+                                            clearInterval(it);
+                                        }
+                                    }, 300)
+
+                                }
 
 
-                </script>
 
-                </body>
+                                $('.newbtn').bind("click", function () {
+                                    $('#pic').click();
+                                });
 
-                </html>
+                                function readURL(input) {
+                                    if (input.files && input.files[0]) {
+                                        var reader = new FileReader();
+
+                                        reader.onload = function (e) {
+                                            $('#blah')
+                                                    .attr('src', e.target.result);
+                                        };
+
+                                        reader.readAsDataURL(input.files[0]);
+                                    }
+                                }
+            </script>
+            <script>
+                $(document).ready(function () {
+                    $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                    $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                    $('.btndel').tooltip({title: "Deletar", placement: "top"});
+                });
+
+
+            </script>
+
+            </body>
+
+            </html>

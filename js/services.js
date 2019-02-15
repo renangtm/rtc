@@ -2,7 +2,7 @@ var debuger = function (l) {
     alert(paraJson(l));
 }
 rtc.service('usuarioService', function ($http, $q) {
-    this.getRTC = function(fn){
+    this.getRTC = function (fn) {
         baseService($http, $q, {
             query: "$r->rtc=$empresa->getRTC($c)",
             sucesso: fn,
@@ -601,7 +601,7 @@ rtc.service('transportadoraService', function ($http, $q) {
             });
         } else {
             baseService($http, $q, {
-                o: {filtro: filtro,empresa:this["empresa"]},
+                o: {filtro: filtro, empresa: this["empresa"]},
                 query: "$r->qtd=$o->empresa->getCountTransportadoras($c,$o->filtro)",
                 sucesso: fn,
                 falha: fn
@@ -902,6 +902,22 @@ rtc.service('produtoService', function ($http, $q) {
     }
     this.getValidades = function (meses_validade_curta, produto, fn) {
 
+        if (!produto.sistema_lotes) {
+
+            var validade = {validade: -1, quantidade: produto.disponivel, alem: false, limite: -1, valor: produto.valor_base, validades: []};
+
+            for (var j = 0; j < produto.ofertas.length; j++) {
+
+                validade.valor = produto.ofertas[j].valor;
+                validade.limite = produto.ofertas[j].limite;
+
+            }
+         
+            fn([validade]);
+            return;
+
+        }
+
         this.getLotes(produto, '', 'lote.validade', function (l) {
 
             var lotes = l.lotes;
@@ -1099,17 +1115,17 @@ rtc.service('sistemaService', function ($http, $q) {
             falha: fn
         });
     }
-    this.getPedidoEntradaSemelhante = function(xml,fn){
+    this.getPedidoEntradaSemelhante = function (xml, fn) {
         baseService($http, $q, {
-            o:{xml:xml},
+            o: {xml: xml},
             query: "$r->pedidos=Sistema::getPedidoEntradaSemelhante($c,$empresa,$o->xml)",
             sucesso: fn,
             falha: fn
         });
     }
-    this.finalizarNotas = function(notas,fn){
+    this.finalizarNotas = function (notas, fn) {
         baseService($http, $q, {
-            o:{notas:notas},
+            o: {notas: notas},
             query: "Sistema::finalizarNotas($c,$o->notas)",
             sucesso: fn,
             falha: fn

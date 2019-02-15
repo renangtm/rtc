@@ -95,7 +95,7 @@ class ProdutoPedidoSaida {
             $ps->close();
         }
 
-        if ($dif_res != 0 || $dif_est != 0) {
+        if (($dif_res != 0 || $dif_est != 0) && $this->produto->sistema_lotes) {
 
             foreach ($this->retiradas as $key => $value) {
 

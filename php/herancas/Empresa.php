@@ -452,7 +452,7 @@ class Empresa {
                 . "produto.grade "
                 . "FROM produto "
                 . "LEFT JOIN (SELECT lote.id_produto,SUM(lote.quantidade_real) as 'quantidade' FROM lote WHERE lote.excluido=false GROUP BY lote.id_produto) l ON l.id_produto=produto.id "
-                . "WHERE produto.id_empresa = $this->id AND produto.excluido = false AND (produto.disponivel-IFNULL(l.quantidade,0))>0 AND produto.id_logistica=0";
+                . "WHERE produto.id_empresa = $this->id AND produto.excluido = false AND (produto.disponivel-IFNULL(l.quantidade,0))>0 AND produto.id_logistica=0 AND produto.sistema_lotes=true";
 
 
         $ps = $con->getConexao()->prepare($sql);
@@ -4204,7 +4204,7 @@ class Empresa {
 
         if ($ordem != "") {
 
-            $sql .= "AND $ordem ";
+            $sql .= "ORDER BY $ordem ";
         }
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
