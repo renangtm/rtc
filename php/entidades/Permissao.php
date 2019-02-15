@@ -19,6 +19,7 @@ class Permissao {
     public $del;
     public $alt;
     public $cons;
+    public $clonada;
     
     function __construct($id=0,$nome="",$in=false,$del=false,$alt=false,$cons=false){
         
@@ -28,6 +29,7 @@ class Permissao {
         $this->del = $del;
         $this->alt = $alt;
         $this->cons = $cons;
+        $this->clonada = false;
         
     }
     
