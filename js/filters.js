@@ -5,3 +5,10 @@ rtc.filter('data', function () {
     }
 });
 
+rtc.filter('decimal', function () {
+    return function (v) {
+        var x = v.toFixed(2).split(".").join(",");
+        return x; 
+    }
+});
+

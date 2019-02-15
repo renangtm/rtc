@@ -38,6 +38,8 @@ class RegraTabela {
         
         $obj->valor = $valor;
         
+        $obj->icms = (100-Sistema::getIcmsEstado($cidade->estado))/100;
+        
         $this->interpretadorBooleano->setVariaveis($obj);
         
         return $this->interpretadorBooleano->interpretar($this->condicional);
@@ -55,6 +57,8 @@ class RegraTabela {
         $obj->peso = $peso;
         
         $obj->valor = $valor;
+        
+        $obj->icms = (100-Sistema::getIcmsEstado($cidade->estado))/100;
         
         $this->interpretadorNumerico->setVariaveis($obj);
         

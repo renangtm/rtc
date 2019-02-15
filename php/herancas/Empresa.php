@@ -328,7 +328,7 @@ class Empresa {
 
         $colors = array();
         $frequencia = array();
-        
+
         $path = file_get_contents($logo);
         $logo = Utilidades::base64encode($path);
         $img = imagecreatefromstring($path);
@@ -338,77 +338,78 @@ class Empresa {
 
         $tolerancia = 10;
         $mais_frequente = "";
-        
+
         for ($i = 0; $i < $y; $i++) {
             for ($j = 0; $j < $x; $j++) {
 
                 $rgb = imagecolorat($img, $j, $i);
-                
-                
+
+
                 $rgb = array(($rgb >> 16) & 0xFF, ($rgb >> 8) & 0xFF, ($rgb) & 0xFF);
-                if($rgb[0]===0&&$rgb[1]===0&&$rgb[2]===0)continue;
+                if ($rgb[0] === 0 && $rgb[1] === 0 && $rgb[2] === 0)
+                    continue;
+
+                if ($rgb[0] === 255 && $rgb[1] === 255 && $rgb[2] === 255)
+                    continue;
                 
                 $hash = "";
-               
-                foreach($rgb as $key=>$p){
-                    $hash .= ($p-($p%$tolerancia)).".";
+
+                foreach ($rgb as $key => $p) {
+                    $hash .= ($p - ($p % $tolerancia)) . ".";
                 }
-                
-                if($mais_frequente === ""){
-                    
+
+                if ($mais_frequente === "") {
+
                     $mais_frequente = $hash;
-                    
                 }
-                
-                if(isset($colors[$hash])){
-                    $frequencia[$hash]++;
-                    foreach($rgb as $key=>$p){
+
+                if (isset($colors[$hash])) {
+                    $frequencia[$hash] ++;
+                    foreach ($rgb as $key => $p) {
                         $colors[$hash][$key] += $p;
-                        $colors[$hash][$key] = floor($colors[$hash][$key]/2);
+                        $colors[$hash][$key] = floor($colors[$hash][$key] / 2);
                     }
-                }else{
+                } else {
                     $frequencia[$hash] = 1;
                     $colors[$hash] = $rgb;
                 }
-               
-                if($frequencia[$hash]>$frequencia[$mais_frequente]){
+
+                if ($frequencia[$hash] > $frequencia[$mais_frequente]) {
                     $mais_frequente = $hash;
                 }
-                
             }
         }
-        
+
         $cor_predominante = $colors[$mais_frequente];
         $cor = "#";
 
-        foreach($cor_predominante as $key=>$value){
+        foreach ($cor_predominante as $key => $value) {
             $cor .= Utilidades::decimalToHex($value);
         }
-        
+
         $cor_predominante = $cor;
-        
+
         $tem_logo = false;
         $ps = $con->getConexao()->prepare("SELECT id FROM logo WHERE id_empresa = $this->id");
         $ps->execute();
         $ps->bind_result($id);
-        if($ps->fetch()){
+        if ($ps->fetch()) {
             $tem_logo = true;
         }
         $ps->close();
 
-        if($tem_logo){
+        if ($tem_logo) {
             $ps = $con->getConexao()->prepare("UPDATE logo SET logo='$logo',cor_predominante='$cor' WHERE id_empresa=$this->id");
             $ps->execute();
             $ps->close();
-        }else{
+        } else {
             $ps = $con->getConexao()->prepare("INSERT INTO logo(id_empresa,logo,cor_predominante) VALUES($this->id,'$logo','$cor')");
             $ps->execute();
             $ps->close();
         }
-        
+
         $ses = new SessionManager();
         $ses->deset("logo_$this->id");
-        
     }
 
     public function getLogo($com) {
@@ -700,7 +701,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $numero, $rua, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc,$sistema_lotes,$nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
+        $ps->bind_result($id, $numero, $rua, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
 
         $lotes = array();
 
@@ -718,7 +719,7 @@ class Empresa {
                 $p->imagem = $imagem;
                 $p->nome = $nome;
                 $p->id_universal = $id_uni;
-                $p->sistema_lotes = $sistema_lotes==1;
+                $p->sistema_lotes = $sistema_lotes == 1;
                 $p->nota_usuario = $nota_usuario;
                 $p->liquido = $liq == 1;
                 $p->quantidade_unidade = $qtd_un;
@@ -2875,15 +2876,12 @@ class Empresa {
                 . "estado_fornecedor.sigla,"
                 . "email_fornecedor.id,"
                 . "email_fornecedor.endereco,"
-                . "email_fornecedor.senha, "
-                . "telefone.id,"
-                . "telefone.numero "
+                . "email_fornecedor.senha "
                 . "FROM fornecedor "
                 . "INNER JOIN endereco endereco_fornecedor ON endereco_fornecedor.id_entidade=fornecedor.id AND endereco_fornecedor.tipo_entidade='FOR' "
                 . "INNER JOIN cidade cidade_fornecedor ON endereco_fornecedor.id_cidade=cidade_fornecedor.id "
                 . "INNER JOIN estado estado_fornecedor ON estado_fornecedor.id=cidade_fornecedor.id_estado "
                 . "INNER JOIN email email_fornecedor ON email_fornecedor.id_entidade = fornecedor.id AND email_fornecedor.tipo_entidade='FOR' "
-                . "LEFT JOIN telefone ON telefone.tipo_entidade='FOR' AND telefone.id_entidade=fornecedor.id "
                 . "WHERE fornecedor.id_empresa=$this->id AND fornecedor.excluido = false ";
 
         if ($filtro != "") {
@@ -2900,52 +2898,70 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_for, $nom_for, $cnpj_for, $hab, $ie, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for, $id_tel, $num_tel);
+        $ps->bind_result($id_for, $nom_for, $cnpj_for, $hab, $ie, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for);
 
         $fornecedores = array();
 
         while ($ps->fetch()) {
 
-            if (!isset($fornecedores[$id_for])) {
+            $fornecedor = new Fornecedor();
+            $fornecedor->id = $id_for;
+            $fornecedor->habilitado = $hab == 1;
+            $fornecedor->inscricao_estadual = $ie;
+            $fornecedor->nome = $nom_for;
+            $fornecedor->cnpj = new CNPJ($cnpj_for);
+            $fornecedor->empresa = $this;
+            $fornecedor->email = new Email($end_email_for);
+            $fornecedor->email->id = $id_email_for;
+            $fornecedor->email->senha = $sen_email_for;
 
-                $fornecedor = new Fornecedor();
-                $fornecedor->id = $id_for;
-                $fornecedor->habilitado = $hab == 1;
-                $fornecedor->inscricao_estadual = $ie;
-                $fornecedor->nome = $nom_for;
-                $fornecedor->cnpj = new CNPJ($cnpj_for);
-                $fornecedor->empresa = $this;
-                $fornecedor->email = new Email($end_email_for);
-                $fornecedor->email->id = $id_email_for;
-                $fornecedor->email->senha = $sen_email_for;
+            $end = new Endereco();
+            $end->id = $end_for_id;
+            $end->bairro = $end_for_bairro;
+            $end->cep = new CEP($end_for_cep);
+            $end->numero = $end_for_numero;
+            $end->rua = $end_for_numero;
 
-                $end = new Endereco();
-                $end->id = $end_for_id;
-                $end->bairro = $end_for_bairro;
-                $end->cep = new CEP($end_for_cep);
-                $end->numero = $end_for_numero;
-                $end->rua = $end_for_numero;
+            $end->cidade = new Cidade();
+            $end->cidade->id = $cid_for_id;
+            $end->cidade->nome = $cid_for_nome;
 
-                $end->cidade = new Cidade();
-                $end->cidade->id = $cid_for_id;
-                $end->cidade->nome = $cid_for_nome;
+            $end->cidade->estado = new Estado();
+            $end->cidade->estado->id = $est_for_id;
+            $end->cidade->estado->sigla = $est_for_nome;
 
-                $end->cidade->estado = new Estado();
-                $end->cidade->estado->id = $est_for_id;
-                $end->cidade->estado->sigla = $est_for_nome;
+            $fornecedor->endereco = $end;
 
-                $fornecedor->endereco = $end;
-
-                $fornecedores[$id_for] = $fornecedor;
-            }
-
-            $t = new Telefone($num_tel);
-            $t->id = $id_tel;
-
-            $fornecedores[$id_for]->telefones[] = $t;
+            $fornecedores[$id_for] = $fornecedor;
         }
 
         $ps->close();
+
+        $in_for = "-1";
+
+        foreach ($fornecedores as $id => $fornecedor) {
+            $in_for .= ",";
+            $in_for .= $id;
+        }
+
+        $ps = $con->getConexao()->prepare("SELECT telefone.id_entidade, telefone.tipo_entidade, telefone.id, telefone.numero FROM telefone WHERE (telefone.id_entidade IN ($in_for) AND telefone.tipo_entidade='FOR') AND telefone.excluido = false");
+        $ps->execute();
+        $ps->bind_result($id_entidade, $tipo_entidade, $id, $numero);
+        while ($ps->fetch()) {
+
+            $v = $fornecedores;
+
+            $telefone = new Telefone();
+            $telefone->id = $id;
+            $telefone->numero = $numero;
+
+            foreach ($v[$id_entidade] as $key => $ent) {
+
+                $ent->telefones[] = $telefone;
+            }
+        }
+        $ps->close();
+
 
         $real = array();
 
@@ -3447,7 +3463,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc,$sistema_lotes,$nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
+        $ps->bind_result($id_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
 
         while ($ps->fetch()) {
 
@@ -3461,7 +3477,7 @@ class Empresa {
             $p->imagem = $imagem;
             $p->nome = $nome;
             $p->id_universal = $id_uni;
-            $p->sistema_lotes = $sistema_lotes==1;
+            $p->sistema_lotes = $sistema_lotes == 1;
             $p->nota_usuario = $nota_usuario;
             $p->liquido = $liq == 1;
             $p->quantidade_unidade = $qtd_un;
@@ -3734,7 +3750,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pro, $id_log, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc,$sistema_lotes,$nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $rec_id, $rec_ins, $cul_id, $cul_nom, $prag_id, $prag_nom);
+        $ps->bind_result($id_pro, $id_log, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $rec_id, $rec_ins, $cul_id, $cul_nom, $prag_id, $prag_nom);
 
         while ($ps->fetch()) {
 
@@ -3752,7 +3768,7 @@ class Empresa {
             $p->peso_liquido = $pl;
             $p->estoque = $est;
             $p->disponivel = $disp;
-            $p->sistema_lotes = $sistema_lotes==1;
+            $p->sistema_lotes = $sistema_lotes == 1;
             $p->nota_usuario = $nota_usuario;
             $p->ativo = $ativo;
             $p->concentracao = $conc;
