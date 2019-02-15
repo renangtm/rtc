@@ -166,8 +166,77 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         $af->setRTC($con, $melhor_rtc);
         $af->setLogo($con, 'http://www.tratordecompras.com.br/renew/Status_3/php/uploads/arquivo_15501989058192.png');
+        
+        $ma = new Empresa();
+        $ma->cnpj = new CNPJ("47626510000132");
+        $ma->inscricao_estadual = "647.097.432.115";
+        $ma->nome = "Agro Fauna Matriz";
+        $ma->consigna = true;
+        $ma->aceitou_contrato = true;
+        $ma->juros_mensal = 1.5;
+        $ma->telefone = new Telefone("1122552255");
 
+        $end = new Endereco();
 
+        foreach ($cidades as $key => $value) {
+            if (strtolower($value->nome) === strtolower('sao jose do rio preto')) {
+                $end->cidade = $value;
+                break;
+            }
+        }
+
+        $end->bairro = "jd a alegre";
+        $end->cep = new CEP("15055000");
+        $end->numero = "1171";
+        $end->rua = "RUA COUTINHO CAVALCANTI";
+
+        $ma->endereco = $end;
+
+        $ma->merge($con);
+
+        $melhor_rtc = Sistema::getRTCS();
+        $melhor_rtc = $melhor_rtc[count($melhor_rtc) - 1];
+
+        $ma->setRTC($con, $melhor_rtc);
+        $ma->setLogo($con, 'http://www.tratordecompras.com.br/renew/Status_3/php/uploads/arquivo_15501989058192.png');
+        
+        
+        $lo = new Empresa();
+        $lo->cnpj = new CNPJ("47626510001708");
+        $lo->inscricao_estadual = "796.512.644.111";
+        $lo->nome = "Agro Fauna Filial";
+        $lo->consigna = true;
+        $lo->aceitou_contrato = true;
+        $lo->juros_mensal = 1.5;
+        $lo->telefone = new Telefone("1122552255");
+
+        $end = new Endereco();
+
+        foreach ($cidades as $key => $value) {
+            if (strtolower($value->nome) === strtolower('guarulhos')) {
+                $end->cidade = $value;
+                break;
+            }
+        }
+
+        $end->bairro = "PARQUE DAS NACOES";
+        $end->cep = new CEP("07243580");
+        $end->numero = "1138";
+        $end->rua = "RUA PROFESSOR JOAO CAVALEIRO SALEM";
+
+        $lo->endereco = $end;
+
+        $lo->merge($con);
+
+        $melhor_rtc = Sistema::getRTCS();
+        $melhor_rtc = $melhor_rtc[count($melhor_rtc) - 1];
+
+        $lo->setRTC($con, $melhor_rtc);
+        $lo->setLogo($con, 'http://www.tratordecompras.com.br/renew/Status_3/php/uploads/arquivo_15502590195234.jpg');
+        
+        $getter = new Getter($lo);
+        $getter->getClienteViaEmpresa($con, $af);
+        
         // categorias de cliente;
 
         $ps = $con->getConexao()->prepare("DELETE FROM novo_rtc.categoria_cliente");
@@ -202,10 +271,10 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
           $ps->close();
 
           $ps = $this->getConexao()->prepare("SELECT c.CODCLI,"
-          . "c.NOMFAN,"
-          . "c.NOMCLI,"
+          . "fn_remove_accents(c.NOMFAN),"
+          . "fn_remove_accents(c.NOMCLI),"
           . "GROUP_CONCAT(IFNULL(t.TELEFONE,'00000000') separator ';'),"
-          . "c.ENDPRI,c.NUMRES,cid.NOMCID,cid.ESTCID,"
+          . "c.ENDPRI,c.NUMRES,fn_remove_accents(cid.NOMCID),cid.ESTCID,"
           . "c.CEPPRI,c.CGCCPF,INSEST,c.EMAIL,ia.INSCRICAO_SUFRAMA,(ia.REGULAR_SUFRAMA='S' AND ia.ISENCAO_SUFRAMA='S') FROM db_agrofauna.FATFCLIE c LEFT JOIN db_agrofauna.TELEFONE t ON t.CODCLI=c.CODCLI "
           . "INNER JOIN db_agrofauna.FATFCIDI cid ON cid.CODCID=c.CODCID INNER JOIN db_agrofauna.INFO_ADIC_CLIENTE ia ON ia.CODIGO_CLIENTE=c.CODCLI WHERE c.ativo=1 GROUP BY c.CODCLI");
           $ps->execute();
@@ -280,7 +349,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         $ps->close();
 
         $usuarios = array();
-        $ps = $con->getConexao()->prepare("SELECT nome, login, senha, IFNULL(email,''), senha_email FROM rtc.usuarios WHERE id_empresa=5");
+        $ps = $con->getConexao()->prepare("SELECT fn_remove_accents(nome), login, senha, IFNULL(email,''), senha_email FROM rtc.usuarios WHERE id_empresa=5");
         $ps->execute();
         $ps->bind_result($nome, $login, $senha, $email, $senha_email);
         while ($ps->fetch()) {
@@ -371,7 +440,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         $ps->close();
 
         $tabelas = array();
-        $ps = $this->getConexao()->prepare("SELECT t.id,t.id_transportadora,t.nome, r.condicional, r.expressao FROM status_3.tabelas t INNER JOIN status_3.regras r ON r.id_tabela=t.id");
+        $ps = $this->getConexao()->prepare("SELECT t.id,t.id_transportadora,fn_remove_accents(t.nome), r.condicional, r.expressao FROM status_3.tabelas t INNER JOIN status_3.regras r ON r.id_tabela=t.id");
         $ps->execute();
         $ps->bind_result($id, $id_transp, $nome, $conf, $exp);
         $tabela_transp = array();
@@ -408,7 +477,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         // passagem de transportadoras
 
         $transportadoras = array();
-        $ps = $this->getConexao()->prepare("SELECT t.CODTRA,t.NOMFAN,t.RAZSOC,t.ENDERE,t.BAIRRO,t.NUMERO,cid.NOMCID,cid.ESTCID,t.NUMCEP,IFNULL(t.TELEF1,'0000000'),IFNULL(t.TELEF2,'000000'),t.CNPJ,t.IE,t.EMAIL FROM db_agrofauna.FATFTRAN t INNER JOIN db_agrofauna.FATFCIDI cid ON cid.CODCID=t.CODCID WHERE t.RAZSOC <> '' AND t.RAZSOC IS NOT NULL");
+        $ps = $this->getConexao()->prepare("SELECT t.CODTRA,fn_remove_accents(t.NOMFAN),fn_remove_accents(t.RAZSOC),t.ENDERE,t.BAIRRO,t.NUMERO,fn_remove_accents(cid.NOMCID),cid.ESTCID,t.NUMCEP,IFNULL(t.TELEF1,'0000000'),IFNULL(t.TELEF2,'000000'),t.CNPJ,t.IE,t.EMAIL FROM db_agrofauna.FATFTRAN t INNER JOIN db_agrofauna.FATFCIDI cid ON cid.CODCID=t.CODCID WHERE t.RAZSOC <> '' AND t.RAZSOC IS NOT NULL");
         $ps->execute();
         $ps->bind_result($id, $nomfan, $nom, $endereco, $bairro, $numero, $cidade, $estado, $cep, $tel1, $tel2, $cnpj, $ie, $email);
 
@@ -464,9 +533,9 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         // passagem de fornecedores
 
         $fornecedores = array();
-        $ps = $this->getConexao()->prepare("SELECT DISTINCT fp.ID_CLIENTE, c.NOMCLI,c.NOMFAN,c.CGCCPF,"
+        $ps = $this->getConexao()->prepare("SELECT DISTINCT fp.ID_CLIENTE, fn_remove_accents(c.NOMCLI),fn_remove_accents(c.NOMFAN),c.CGCCPF,"
                 . "c.INSEST,GROUP_CONCAT(IFNULL(t.TELEFONE,'00000000') separator ';'),"
-                . "cid.NOMCID,cid.ESTCID,c.ENDPRI,c.NUMRES,c.BAIPRI,c.CEPPRI,c.EMAIL "
+                . "fn_remove_accents(cid.NOMCID),cid.ESTCID,c.ENDPRI,c.NUMRES,c.BAIPRI,c.CEPPRI,c.EMAIL "
                 . "FROM db_agrofauna.FATFCLIE c JOIN db_agrofauna.FORNECEDOR_PRODUTO fp ON c.CODCLI = fp.ID_CLIENTE"
                 . " LEFT JOIN db_agrofauna.TELEFONE t ON t.CODCLI=c.CODCLI"
                 . " INNER JOIN db_agrofauna.FATFCIDI cid ON cid.CODCID=c.CODCID GROUP BY c.CODCLI");

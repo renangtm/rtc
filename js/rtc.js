@@ -1,5 +1,4 @@
-var projeto = "http://10.0.0.107/novo_rtc_web";
-
+var projeto = "http://192.168.18.121:888/novo_rtc_web";
 
 
 function resolverRecursao(obj, pilha) {
@@ -951,8 +950,8 @@ rtc.directive('email', function () {
 
                 var emailEnvio = "";
 
-                //Nomes dos grupos devem condizer com a da classe Email.php, acoplado :(, por√©m infelizmente n√£o vai dar tempo de tomar uma abordagem mais correta;
-                //De qualquer forma, salvo este acoplamento nestes dois locais, essa abordagem nao tr√°z prejuizos maiores;
+                //Nomes dos grupos devem condizer com a da classe Email.php, acoplado :(, por?©m infelizmente n?£o vai dar tempo de tomar uma abordagem mais correta;
+                //De qualquer forma, salvo este acoplamento nestes dois locais, essa abordagem nao tr??z prejuizos maiores;
 
                 var grupos = [{nome: "Emails Principais", enderecos: [], principal: true},
                     {nome: "Logistica", enderecos: [], principal: false},

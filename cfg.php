@@ -106,7 +106,7 @@
                                                         <th data-ordem="usuario.id">Cod.</th>
                                                         <th data-ordem="usuario.nome">Nome</th>
                                                         <th data-ordem="usuario.email_usu.endereco">Email</th>
-                                                        <th width="150px">A√ß√£o</th>
+                                                        <th width="150px">A?ß?£o</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -149,11 +149,11 @@
                                                                             <td>{{usuari[0].telefones}}</td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <td>Endere√ßo:</td>
+                                                                            <td>Endere?ßo:</td>
                                                                             <td>{{usuari[0].endereco.rua}}</td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <td>N√∫mero:</td>
+                                                                            <td>N?∫mero:</td>
                                                                             <td>{{usuari[0].endereco.numero}}</td>
                                                                         </tr>
                                                                         <tr>
@@ -184,18 +184,18 @@
                                                         <th>Cod.</th>
                                                         <th>Nome</th>
                                                         <th>Email</th>
-                                                        <th>A√ß√£o</th>
+                                                        <th>A?ß?£o</th>
                                                     </tr>
                                                 </tfoot>
                                             </table>
 
-                                            <!-- pagina√ß√£o  -->
+                                            <!-- pagina?ß?£o  -->
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
                                                         <li class="page-item" ng-click="usuarios.prev()"><a class="page-link" href="">Anterior</a></li>
                                                         <li class="page-item" ng-repeat="pg in usuarios.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="usuarios.next()"><a class="page-link" href="">Pr√≥ximo</a></li>
+                                                        <li class="page-item" ng-click="usuarios.next()"><a class="page-link" href="">Pr?≥ximo</a></li>
                                                     </ul>
                                                 </nav>
                                             </div>
@@ -204,7 +204,7 @@
                                         <div class="col-md-5" id="dvPermissoes" style="margin-top:{{marginTop}}px;border:2px solid #5F5F5F;padding:10px;margin-left:0px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-top-left-radius: 2px; border-bottom-left-radius: 10px">
                                             Permissoes do usuario: <strong>{{usuario.id}} - {{usuario.nome}}</strong>
                                             <hr>
-                                            <button class="btn btn-outline-light" ng-click="mergeUsuario()"><i class="fas fa-check"></i>&nbspConfirmar altera√ß√µes</button>
+                                            <button class="btn btn-outline-light" ng-click="mergeUsuario()"><i class="fas fa-check"></i>&nbspConfirmar altera?ß?µes</button>
                                             <hr>
                                             <table id="clientes" class="table table-striped table-bordered first">
                                                 <thead>
@@ -240,7 +240,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="copyright">
-                                    <p>Copyright ¬© 2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
+                                    <p>Copyright ?© 2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
                                 </div>
                             </div>
                         </div>
@@ -264,7 +264,7 @@
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere os dados de seu Usuario</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">√ó</span>
+                                    <span aria-hidden="true">?ó</span>
                                 </button>
                             </div>
 
@@ -321,7 +321,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endere√ßo</label>
+                                        <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endere?ßo</label>
                                         <div class="col-9 col-lg-10">
                                             <input id="txtend" type="text" ng-model="usuario.endereco.rua" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
@@ -330,7 +330,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">N√∫mero</label>
+                                        <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">N?∫mero</label>
                                         <div class="col-9 col-lg-10">
                                             <input id="txtendnum" type="text" ng-model="usuario.endereco.numero" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
@@ -433,14 +433,14 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de seu Usuario</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">√ó</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">?ó</span></button>
                             </div>
                             <div class="modal-body">
                                 <p class="text-center"> Tem certeza de que deseja excluir este Usuario?</p>
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-primary" ng-click="deleteUsuario(usuario)">Sim</button>
-                                <button type="button" class="btn btn-light" data-dismiss="modal">N√£o</button>
+                                <button type="button" class="btn btn-light" data-dismiss="modal">N?£o</button>
                             </div>
                         </div>
                     </div>
@@ -453,13 +453,13 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">√ó</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">?ó</span></button>
                             </div>
                             <div class="modal-body text-center">
 
                                 <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
                                 <br>
-                                <h3 style="margin-top:20px;">Carregando as informa√ß√µes...</h3>
+                                <h3 style="margin-top:20px;">Carregando as informa?ß?µes...</h3>
 
                             </div>
                             <div class="modal-footer">
@@ -528,7 +528,7 @@
                                             }
 
                                             $(document).ready(function () {
-                                                $('.btninfo').tooltip({title: "Mais informa√ß√£o", placement: "top"});
+                                                $('.btninfo').tooltip({title: "Mais informa?ß?£o", placement: "top"});
                                                 $('.btnedit').tooltip({title: "Editar", placement: "top"});
                                                 $('.btndel').tooltip({title: "Deletar", placement: "top"});
                                             });

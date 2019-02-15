@@ -15,46 +15,8 @@ class Utilidades {
 
     public static function eq($string) {
 
-        $string = mb_strtolower($string);
-        // C?digo ASCII das vogais
-        $ascii['a'] = range(224, 230);
-        $ascii['e'] = range(232, 235);
-        $ascii['i'] = range(236, 239);
-        $ascii['o'] = array_merge(range(242, 246), array(240, 248));
-        $ascii['u'] = range(249, 252);
-        // C?digo ASCII dos outros caracteres
-        $ascii['b'] = array(223);
-        $ascii['c'] = array(231);
-        $ascii['d'] = array(208);
-        $ascii['n'] = array(241);
-        $ascii['y'] = array(253, 255);
-        foreach ($ascii as $key => $item) {
-            $acentos = '';
-            foreach ($item AS $codigo)
-                $acentos .= chr($codigo);
-            $troca[$key] = '/[' . $acentos . ']/i';
-        }
-        $string = preg_replace(array_values($troca), array_keys($troca), $string);
-
-
-        if (strlen($string) > 0) {
-            if ($string{0} == " ") {
-                $string = substr($string, 1, strlen($string) - 1);
-            }
-        }
-
-        if (strlen($string) > 0) {
-            if ($string{strlen($string) - 1} == " ") {
-                $string = substr($string, 0, strlen($string) - 1);
-            }
-        }
-
-        if (strlen($string) == 0) {
-
-            return "00000000";
-        }
-
         return strtoupper($string);
+        
     }
 
     public static function copy($entidade) {
