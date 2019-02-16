@@ -690,111 +690,87 @@
                 <!-- /.modal-content --> 
                 
                 
-                <!-- /.modal-content LOADING --> 
-                <div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                            </div>
-                            <div class="modal-body text-center">
-                                
-                                <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                                <br>
-                                <h3 style="margin-top:20px;">Carregando as informações...</h3>
+               <!-- /.modal-content LOADING --> 
+            <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body text-center">
 
-                            </div>
-                            <div class="modal-footer">
-                            </div>
+                            <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
+                            <br>
+                            <h3 style="margin-top:20px;">Carregando as informações...</h3>
+
+                        </div>
+                        <div class="modal-footer">
                         </div>
                     </div>
                 </div>
+            </div>
 
 
-                <!-- jquery 3.3.1 -->
-                <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-                <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
-                <script src="assets/libs/js/form-mask.js"></script>
+            <!-- jquery 3.3.1 -->
+            <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+            <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
+            <script src="assets/libs/js/form-mask.js"></script>
+            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
-                <!-- bootstap bundle js -->
-                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-                <!-- datatables js -->
+            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+            <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+            <!-- slimscroll js -->
+            <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+            <!-- main js -->
+            <script src="assets/libs/js/main-js.js"></script>
+            <!-- chart chartist js -->
+            <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
+            <!-- sparkline js -->
+            <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+            <!-- morris js -->
+            <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
+            <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
+            <!-- chart c3 js -->
+            <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
+            <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+            <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
+            <script src="assets/libs/js/dashboard-ecommerce.js"></script>
+            <!-- parsley js -->
+            <script src="assets/vendor/parsley/parsley.js"></script>
 
-                <!-- slimscroll js -->
-                <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-                <!-- main js -->
-                <script src="assets/libs/js/main-js.js"></script>
-                <!-- chart chartist js -->
-                <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
-                <!-- sparkline js -->
-                <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
-                <!-- morris js -->
-                <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
-                <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
-                <!-- chart c3 js -->
-                <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
-                <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
-                <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
-                <script src="assets/libs/js/dashboard-ecommerce.js"></script>
-                <!-- parsley js -->
-                <script src="assets/vendor/parsley/parsley.js"></script>
+            <!-- Optional JavaScript -->
+            <script>
 
-                <!-- Optional JavaScript -->
-                <script>
-                    $(document).ready(function () {
-                                        $(document).on({
-                                            'show.bs.modal': function () {
-                                                var zIndex = 1040 + (10 * $('.modal:visible').length);
-                                                $(this).css('z-index', zIndex);
-                                                setTimeout(function () {
-                                                    $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
-                                                }, 0);
-                                            },
-                                            'hidden.bs.modal': function () {
-                                                if ($('.modal:visible').length > 0) {
-                                                    // restore the modal-open class to the body element, so that scrolling works
-                                                    // properly after de-stacking a modal.
-                                                    setTimeout(function () {
-                                                        $(document.body).addClass('modal-open');
-                                                    }, 0);
-                                                }
-                                            }
-                                        }, '.modal');
-                                    });
-                                    
-                    $("#loading").modal({
-                        backdrop: 'static',
-                        keyboard: false
-                    })
-                    
-                    var sh = false;
-                    var it = null;
-                    
-                    loading.show = function(){
-                        if(it != null){
-                            clearInterval(it);
-                        }
-                        if(!sh){
-                            
-                            sh = true;
-                            $("#loading").modal("show");
-                        
-                        }
-                        
-                    }
-                    
-                    loading.close = function(){
-                        
-                        it = setTimeout(function(){
-                                if(sh){
-                                    sh = false;
-                                    $("#loading").modal("hide");
+                                var sh = false;
+                                var it = null;
+
+                                loading.show = function () {
+                                    if (it != null) {
+                                        clearInterval(it);
+                                    }
+                                    it = setInterval(function () {
+                                        $("#loading").modal("show");
+                                        if ($("#loading").hasClass('in')) {
+                                            clearInterval(it);
+                                        }
+                                    }, 300)
+
                                 }
-                        },2000);
-                        
-                        
-                    }
+
+                                loading.close = function () {
+
+                                    if (it != null) {
+                                        clearInterval(it);
+                                    }
+                                    it = setInterval(function () {
+                                        $("#loading").modal("hide");
+                                        if (!$("#loading").hasClass('in')) {
+                                            clearInterval(it);
+                                        }
+                                    }, 300)
+
+                                }
                     
                     $(document).on('keyup', '.txtsuf', function() {
                         $(this).mask('000000000');
