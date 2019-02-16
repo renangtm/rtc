@@ -1381,7 +1381,7 @@ class Empresa {
                 $pro->id = $id_pro;
                 $pro->nome = $nome;
                 $pro->id_universal = $id_uni;
-                $pro->liquido = $liq;
+                $pro->liquido = $liq == 1;
                 $pro->quantidade_unidade = $qtd_un;
                 $pro->habilitado = $hab;
                 $pro->valor_base = $vb;
@@ -3759,7 +3759,7 @@ class Empresa {
             $p->id = $id_pro;
             $p->nome = $nome;
             $p->id_universal = $id_uni;
-            $p->liquido = $liq;
+            $p->liquido = $liq == 1;
             $p->quantidade_unidade = $qtd_un;
             $p->habilitado = $hab;
             $p->valor_base = $vb;

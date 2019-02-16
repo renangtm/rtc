@@ -2277,24 +2277,27 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
 
             var c = angular.copy($scope.campanha_nova);
             c.campanhas = [{
-                    inicio: toTime(data.getTime() + dia * i),
-                    fim: toTime(data.getTime() + (dia + 1) * i),
+                    inicio: data.getTime() + dia * i,
+                    fim: data.getTime() + (dia + 1) * i,
                     nome: "Campanha A",
                     id: 0,
                     prazo: 0,
                     parcelas: 1
                 }]
-            c.inicio = toTime(data.getTime() + dia * i);
-            c.fim = toTime(data.getTime() + (dia + 1) * i);
+            c.inicio = data.getTime() + dia * i;
+            c.fim = data.getTime() + (dia * (i+1));
             c.nome = "Nova campanha";
 
+            
             c.numero = i;
-
             while (new Date(c.fim).getDay() == 0 || new Date(c.fim).getDay() == 6) {
-
                 c.fim += dia;
-
             }
+            c.inicio = toTime(c.inicio);
+            c.fim = toTime(c.fim);
+            
+            c.campanhas[0].inicio = c.inicio;
+            c.campanhas[0].fim = c.fim;
 
             $scope.criacao_campanhas[$scope.criacao_campanhas.length] = c;
 
@@ -2524,7 +2527,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     $scope.setCampanhaCriacao = function (campanha) {
 
         if (campanha.produtos.length === 0) {
-
+            
             campanhaService.getProdutosDia(new Date(fromTime(campanha.inicio)).getDay(), function (prods) {
 
                 for (var i = 0; i < prods.produtos.length; i++) {
@@ -3432,7 +3435,7 @@ rtc.controller("crtTransportadoras", function ($scope, transportadoraService, re
 })
 rtc.controller("crtClientes", function ($scope, clienteService, categoriaClienteService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
 
-    $scope.clientes = createAssinc(clienteService, 1, 3, 10);
+    $scope.clientes = createAssinc(clienteService, 1, 20, 10);
     $scope.clientes.attList();
     assincFuncs(
             $scope.clientes,
@@ -3775,6 +3778,24 @@ rtc.controller("crtProdutos", function ($scope, culturaService, sistemaService, 
 
         }
 
+        if ($scope.receituario.cultura === null) {
+
+
+            msg.erro("Selecione uma cultura");
+
+            return;
+
+        }
+
+        if ($scope.receituario.praga === null) {
+
+
+            msg.erro("Selecione uma praga");
+
+            return;
+
+        }
+
         baseService.merge($scope.receituario, function (r) {
 
 
@@ -3847,6 +3868,7 @@ rtc.controller("crtProdutos", function ($scope, culturaService, sistemaService, 
     pragaService.getElementos(function (f) {
 
         $scope.pragas = f.pragas;
+
     })
 
 })
@@ -3887,7 +3909,7 @@ rtc.controller("crtLogo", function ($scope, empresaService, uploadService) {
 
     $("#pic").change(function () {
 
-        var ext = ['png','jpg'];
+        var ext = ['png', 'jpg'];
         var pre_arquivos = $(this).prop("files");
         var arquivos = [];
         var e = [];
@@ -3904,12 +3926,12 @@ rtc.controller("crtLogo", function ($scope, empresaService, uploadService) {
                 }
             }
         }
-        
-        if(arquivos.length===0){
+
+        if (arquivos.length === 0) {
             msg.alerta("A Imagem deve ser do tipo PNG");
             return;
         }
-        
+
 
         uploadService.upload(arquivos, function (arquivos, sucesso) {
 

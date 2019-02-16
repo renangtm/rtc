@@ -349,7 +349,7 @@
                                             <div class="form-group row">
                                                 <label for="txtval" class="col-3 col-lg-2 col-form-label text-left">Valor (R$)</label>
                                                 <div class="col-9 col-lg-10">
-                                                    <inteiro model="produto.transito"></inteiro>
+                                                    <decimal model="produto.valor_base"></decimal>
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
@@ -383,7 +383,7 @@
                                             <div class="form-group row">
                                                 <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Peso Liquido</label>
                                                 <div class="col-9 col-lg-9 text-left">
-                                                    <decimal model="banco.codigo"></decimal>
+                                                    <decimal model="produto.peso_liquido"></decimal>
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>
@@ -397,10 +397,10 @@
                                                 </div>
                                                 <div class="col-4 col-lg-4" style="padding-top: 5px;">
                                                     <label class="custom-control custom-radio custom-control-inline">
-                                                        <input type="radio" name="radio-inline" data-ng-value="false" data-ng-model="produto.liquido" class="custom-control-input"><span class="custom-control-label">KG</span>
+                                                        <input type="radio" name="radio-inline22" data-ng-value="false" data-ng-model="produto.liquido" class="custom-control-input"><span class="custom-control-label">KG</span>
                                                     </label>
                                                     <label class="custom-control custom-radio custom-control-inline">
-                                                        <input type="radio" name="radio-inline" data-ng-value="true" data-ng-model="produto.liquido" checked="" class="custom-control-input"><span class="custom-control-label">LT</span>
+                                                        <input type="radio" name="radio-inline22" data-ng-value="true" data-ng-model="produto.liquido" checked="" class="custom-control-input"><span class="custom-control-label">LT</span>
                                                     </label>
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.

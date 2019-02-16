@@ -1,4 +1,4 @@
-var projeto = "http://192.168.18.121:888/novo_rtc_web";
+var projeto = "http://10.0.0.107/novo_rtc_web";
 
 
 function resolverRecursao(obj, pilha) {
@@ -197,8 +197,8 @@ function createAssinc(lista, cols, rows, maxPage) {
                                     }, isAtual: este.pagina == i}
                                 este.paginas[este.paginas.length] = p;
                             }
-                            
-                            if(typeof este["posload"] !== 'undefined'){
+
+                            if (typeof este["posload"] !== 'undefined') {
                                 este["posload"](els);
                             }
 
@@ -415,7 +415,7 @@ var msg = {
 
 function toDate(lo) {
 
-    var d = new Date(parseFloat(lo+""));
+    var d = new Date(parseFloat(lo + ""));
 
     var dia = d.getDate();
     var mes = (d.getMonth() + 1);
@@ -427,7 +427,7 @@ function toDate(lo) {
 
 function toTime(lo) {
 
-    var d = new Date(parseFloat(lo+""));
+    var d = new Date(parseFloat(lo + ""));
 
     var dia = d.getDate();
     var mes = (d.getMonth() + 1);
@@ -499,16 +499,13 @@ function fix(str, n) {
 
 }
 
+var ids = [];
+var id = 0;
+
 function baseService(http, q, obj, get, cancel) {
 
-    loading.show();
+    var idt = ++id;
 
-    for (var i = 0; i < requests.length; i++) {
-        if (cancel) {
-            requests[i].resolve();
-        }
-    }
-    requests = [];
 
     var p = q.defer();
 
@@ -525,17 +522,36 @@ function baseService(http, q, obj, get, cancel) {
         timeout: p.promise,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (exx) {
 
-        loading.close();
+        var m = 0;
+        for (var i = 0; i < ids.length; i++) {
+            if (ids[i] == idt) {
+                ids[i] = 0;
+            } else if (m < ids[i]) {
+                m = ids[i];
+            }
+        }
+        if (m == 0) {
+            loading.close();
+        }
 
         if (typeof obj["sucesso"] !== 'undefined') {
             obj.sucesso(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&").split("<m>").join("+").split("<p>").join("%")));
         }
 
 
-
     }, function (exx) {
 
-        loading.close();
+        var m = 0;
+        for (var i = 0; i < ids.length; i++) {
+            if (ids[i] == idt) {
+                ids[i] = 0;
+            } else if (m < ids[i]) {
+                m = ids[i];
+            }
+        }
+        if (m == 0) {
+            loading.close();
+        }
 
         if (typeof obj["falha"] !== 'undefined') {
             obj.falha(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&").split("<m>").join("+").split("<p>").join("%")));
@@ -543,6 +559,26 @@ function baseService(http, q, obj, get, cancel) {
 
     })
 
+    var m = 0;
+    for (var i = 0; i < ids.length; i++) {
+        if (ids[i] > m) {
+            m = ids[i];
+        }
+    }
+
+    if (m == 0) {
+        loading.show();
+    }
+
+    for (var i = 0; i < requests.length; i++) {
+        if (cancel) {
+            requests[i].resolve();
+            ids[i] = 0;
+        }
+    }
+    requests = [];
+
+    ids[ids.length] = idt;
     requests[requests.length] = p;
 
 }
@@ -846,8 +882,8 @@ rtc.directive('decimal', function ($parse) {
                 }
                 return s;
             }
-            
-         
+
+
 
             var ultm =
                     scope.ini = function () {
@@ -950,7 +986,7 @@ rtc.directive('email', function () {
 
                 var emailEnvio = "";
 
-                //Nomes dos grupos devem condizer com a da classe Email.php, acoplado :(, por?©m infelizmente n?£o vai dar tempo de tomar uma abordagem mais correta;
+                //Nomes dos grupos devem condizer com a da classe Email.php, acoplado :(, por?ï¿½m infelizmente n?ï¿½o vai dar tempo de tomar uma abordagem mais correta;
                 //De qualquer forma, salvo este acoplamento nestes dois locais, essa abordagem nao tr??z prejuizos maiores;
 
                 var grupos = [{nome: "Emails Principais", enderecos: [], principal: true},
