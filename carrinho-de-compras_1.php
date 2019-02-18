@@ -79,7 +79,9 @@
                         <!-- ============================================================== -->
                         <div class="">
                            
-                            <div ng-repeat="pedido in pedidos" ng-if="!finalizado(pedido)" style="display: inline-block; width:48%; min-width:500px;margin-left:10px;margin-bottom: 50px;">
+                            <div ng-repeat="pedido in pedidos" ng-if="!finalizado(pedido)" style="display: inline-block;margin-left:10px;margin-bottom: 50px;">
+                                 <div class="card">
+						<div class="card-body">
                                 <div class="table-responsive-sm">
                                     <strong style="color:SteelBlue"><i class="fas fa-road"></i>&nbsp{{pedido.empresa.nome}}</strong>
                                     <strong ng-if="pedido.logistica !== null" style="color:DarkBlue">&nbsp / &nbsp<i class="fas fa-box"></i>&nbsp{{pedido.logistica.nome}}</strong>
@@ -207,7 +209,8 @@
                                         </div>
                                     </div>
                                 </div>
-                       
+                            </div>
+                            </div>
                           </div>
                         </div>	
                         <!-- ============================================================== -->

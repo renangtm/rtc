@@ -342,7 +342,7 @@ $rtc->numero--;
                         Administrativo RTC
                     </li>
                     <li class="nav-item ">
-                        <a class="nav-link" href="http://www.tratordecompras.com.br/rtc_erp/downloads/apresentacao_rtc_v2.pdf" target="_blank"><i class="fa fa-fw fa-file-alt"></i>Projeto Novos Rumos</a>
+                        <a class="nav-link" href="http://agrofauna.com.br/apresentacao_rtc_v3.pdf" target="_blank"><i class="fa fa-fw fa-file-alt"></i>Projeto Novos Rumos</a>
                     </li>
                     <li class="nav-item ">
                         <a class="nav-link" href="contrato.php" ><i class="fa fa-fw fa-file-alt"></i>Contrato</a>
