@@ -1,6 +1,16 @@
 var debuger = function (l) {
     alert(paraJson(l));
 }
+rtc.service('compraParceiroService', function ($http, $q) {
+    this.getElementos = function (x1,x2,filtro,ordem,fn) {
+        baseService($http, $q, {
+            o:{x1:x1,x2:x2,ordem:ordem,filtro:filtro},
+            query: "$r->elementos=Sistema::getCompraParceiros($c);$op=new OpProdutos($r->elementos);$r->elementos=$op->filtrar($o->x1,$o->x2,$o->filtro,$o->ordem);$r->qtd=$op->getLastQtd();$r->filtros=$op->getFiltrosPossiveis();$r->ordens=$op->getOrdensPossiveis()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('usuarioService', function ($http, $q) {
     this.getRTC = function (fn) {
         baseService($http, $q, {
@@ -504,7 +514,7 @@ rtc.service('campanhaService', function ($http, $q) {
     this.getProdutosDia = function (dia, fn) {
         baseService($http, $q, {
             o: {dia: dia},
-            query: "$total=round($empresa->getCountProdutos($c,'produto.disponivel>0')/7);$x1=$o->dia*$total;$x2=($o->dia+1)*$total;$r->produtos=$empresa->getProdutos($c,$x1,$x2,'produto.disponivel>0','');",
+            query: "$total=ceil($empresa->getCountProdutos($c,'produto.disponivel>0')/7);$x1=$o->dia*$total;$x2=($o->dia+1)*$total;$r->produtos=$empresa->getProdutos($c,$x1,$x2,'produto.disponivel>0','');",
             sucesso: fn,
             falha: fn
         });
@@ -904,7 +914,7 @@ rtc.service('produtoService', function ($http, $q) {
 
         if (!produto.sistema_lotes) {
 
-            var validade = {validade: -1, quantidade: produto.disponivel, alem: false, limite: -1, valor: produto.valor_base, validades: []};
+            var validade = {validade: 1000, quantidade: produto.disponivel, alem: false, limite: -1, valor: produto.valor_base, validades: []};
 
             for (var j = 0; j < produto.ofertas.length; j++) {
 
@@ -970,7 +980,7 @@ rtc.service('produtoService', function ($http, $q) {
 
                         for (var m = 0; m < v.validades.length; m++) {
                             if (v.validades[m].validade === lote.validade) {
-                                v.validades[m].quantidade += lote.quantidade;
+                                v.validades[m].quantidade += lote.quantidade_real;
                                 continue lbl;
                             }
                         }
@@ -1101,13 +1111,21 @@ rtc.service('loginService', function ($http, $q) {
     this.recuperar = function (email, fn) {
         baseService($http, $q, {
             o: {email: email},
-            query: "$u=Sistema::getUsuario(\"email.endereco='$o->email'\");if($u==null)throw new Exception('');$s=Sistema::getEmailSistema();$s->enviarEmail($u->email,'Recuperacao de Senha',Sistema::getHtml('rec_sen',$u))",
+            query: "$u=Sistema::getUsuario(\"email_usu.endereco='\".$o->email.\"'\");if($u==null)throw new Exception('');$s=Sistema::getEmailSistema();$s->enviarEmail($u->email,'Recuperacao de Senha','Sua senha do RTC: '.$u->senha)",
             sucesso: fn,
             falha: fn
         });
     }
 })
 rtc.service('sistemaService', function ($http, $q) {
+    this.finalizarCompraParceiros = function(pedido,fn){
+        baseService($http, $q, {
+            o:pedido,
+            query: "$r->retorno=Sistema::finalizarCompraParceiros($c,$o,$empresa);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getMesesValidadeCurta = function (fn) {
         baseService($http, $q, {
             query: "$r->meses_validade_curta=Sistema::getMesesValidadeCurta()",
@@ -1139,6 +1157,13 @@ rtc.service('sistemaService', function ($http, $q) {
             falha: fn
         });
     }
+    this.getIcmsAndEmpresa = function (estado, fn) {
+        baseService($http, $q, {
+            query: "$r->icms=Sistema::getIcmsEstado($empresa->endereco->cidade->estado);$r->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getOperacoes = function (fn) {
         baseService($http, $q, {
             query: "$r->operacoes=Sistema::getOperacoes($c)",
@@ -1161,4 +1186,51 @@ rtc.service('sistemaService', function ($http, $q) {
         });
     }
 })
-
+rtc.service('empresaService', function ($http, $q) {
+    this.getFiliais = function (fn) {
+        baseService($http, $q, {
+            query: "$r->filiais=$empresa->getFiliais($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.setEmpresa = function(empresa,fn){
+        baseService($http, $q, {
+            o:empresa,
+            query: "$empresa=$o;$ses->set('empresa',$empresa)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getEmpresa = function(fn){
+        baseService($http, $q, {
+            query: "$r->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('carrinhoService', function ($http, $q) {
+    this.getCarrinho = function (fn) {
+        baseService($http, $q, {
+            query: "$car=$ses->get('carrinho');if($car===null){$car=array();$ses->set('carrinho',$car);};$r->carrinho=$car",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.setCarrinho = function (carrinho, fn) {
+        baseService($http, $q, {
+            o: {carrinho: carrinho},
+            query: "$ses->set('carrinho',$o->carrinho)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getPedidosResultantes = function(fn){
+        baseService($http, $q, {
+            query: "$car=$ses->get('carrinho');if($car===null){$car=array();$ses->set('carrinho',$car);};$r->pedidos=Sistema::getPedidosResultantes($c,$car,$empresa,$usuario)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})

@@ -13,6 +13,353 @@
  */
 class Sistema {
 
+    public static function finalizarCompraParceiros($con, $pedido, $empresa) {
+
+        $logistica = $pedido->empresa;
+
+        if ($pedido->logistica !== null) {
+
+            $logistica = $pedido->logistica;
+        }
+
+        $g = new Getter($logistica);
+        $ge = new Getter($empresa);
+
+        $transportadora = $g->getTransportadoraViaTransportadora($con, $pedido->transportadora);
+        $pedido->transportadora = $transportadora;
+
+        $pedido->merge($con);
+
+        $produtos = array();
+
+        foreach ($pedido->produtos as $key => $value) {
+
+            $produtos[] = $value->produto;
+        }
+
+        $produtos = $ge->getProdutoViaProduto($con, $produtos);
+        foreach ($produtos as $key => $value) {
+            $produtos[$value->id_universal] = $value;
+        }
+
+
+        $entrada = new PedidoEntrada();
+        $entrada->empresa = $empresa;
+        $entrada->fornecedor = $ge->getFornecedorViaEmpresa($con, $pedido->empresa);
+        $entrada->frete = $pedido->frete;
+        $entrada->incluir_frete = $pedido->incluir_frete;
+        $entrada->parcelas = $pedido->parcelas;
+        $entrada->prazo = $pedido->prazo;
+        $entrada->transportadora = $ge->getTransportadoraViaTransportadora($con, $pedido->transportadora);
+        $entrada->usuario = $pedido->usuario;
+        $entrada->status = Sistema::getStatusPedidoEntrada();
+        $entrada->status = $entrada->status[0];
+        $entrada->observacoes = "Pedido gerado referente a compra feita pelo RTC";
+        $entrada->produtos = array();
+
+        foreach ($pedido->produtos as $key => $value) {
+
+            $pp = new ProdutoPedidoEntrada();
+            $pp->pedido = $entrada;
+            $pp->produto = $produtos[$value->produto->id_universal];
+            $pp->valor = ($value->valor_base + $value->icms + $value->frete + $value->ipi);
+            $pp->quantidade = $value->quantidade;
+
+            $entrada->produtos[] = $pp;
+        }
+
+
+        $entrada->merge($con);
+
+        $ret = $pedido->forma_pagamento->aoFinalizarPedido($pedido);
+
+        return $ret;
+    }
+
+    public static function getPedidosResultantes($con, $carrinho, $empresa, $usuario) {
+
+        $grupos = array();
+        $campanhas = array();
+
+
+        foreach ($carrinho as $key => $item) {
+
+            $hash = "e" . $item->empresa->id;
+
+            if ($item->logistica !== null) {
+
+                $hash .= "l" . $item->logistica->id;
+            }
+
+            $campanha = null;
+
+            foreach ($item->ofertas as $key => $value) {
+                if ($value->validade == $item->validade->validade) {
+                    $campanha = $value->campanha;
+                    break;
+                }
+            }
+
+            if ($campanha !== null) {
+                $h = "c" . $campanha->prazo . "p" . $campanha->parcelas;
+
+                if ($campanha->prazo < 0 || $campanha->parcelas < 0 || true) { //retirar esse true, para mudar a abordagem, apra dividir tambem pedidos entre campanhas de prazos diferentes
+                    $hash .= "cp";
+                } else {
+                    $hash .= $h;
+                    $campanhas[$hash] = $campanha;
+                }
+            } else {
+                $hash .= "cp";
+            }
+
+            if (!isset($grupos[$hash])) {
+                $grupos[$hash] = array();
+            }
+
+            $grupos[$hash][] = $item;
+        }
+
+        $pedidos = array();
+
+        $formas = Sistema::getFormasPagamento();
+        $status_inicial = Sistema::getStatusPedidoSaida();
+        $status_inicial = $status_inicial[0];
+
+
+
+        foreach ($grupos as $key => $value) {
+
+            $base = $value[0];
+
+            $emp = $base->empresa;
+
+
+            $g = new Getter($emp);
+
+            $cliente = $g->getClienteViaEmpresa($con, $emp);
+
+            $pedido = new Pedido();
+            $pedido->empresa = $emp;
+            $pedido->cliente = $cliente;
+
+            if (isset($campanhas[$key])) {
+
+                $campanha = $campanhas[$key];
+            }
+
+            foreach ($formas as $k2 => $v2) {
+                if ($v2->habilitada($pedido)) {
+                    $pedido->forma_pagamento = $v2;
+                    break;
+                }
+            }
+
+            if ($base->logistica !== null) {
+
+                $pedido->logistica = $base->logistica;
+            }
+
+            $pedido->usuario = $usuario;
+            $pedido->status = $status_inicial;
+            $pedido->produtos = array();
+
+            foreach ($value as $key2 => $produto) {
+
+                if (!$produto->sistema_lotes) {
+
+                    $p = new ProdutoPedidoSaida();
+                    $p->produto = $produto;
+                    $p->validade_minima = $produto->validade->validade;
+                    $p->quantidade = $produto->quantidade_comprada;
+                    $p->valor_base = $produto->validade->valor;
+
+                    if ($p->quantidade > $produto->validade->limite && $produto->validade->limite > 0) {
+                        $p->quantidade = $produto->validade->limite;
+                    }
+
+                    $pedido->produtos[] = $p;
+                    $p->pedido = $pedido;
+                } else {
+
+                    $p = new ProdutoPedidoSaida();
+                    $p->produto = $produto;
+                    $p->validade_minima = $produto->validade->validade;
+                    $p->quantidade = $produto->quantidade_comprada;
+                    $p->valor_base = $produto->validade->valor;
+                    $p->pedido = $pedido;
+                    if ($p->quantidade > $produto->validade->limite && $produto->validade->limite > 0) {
+                        $p->quantidade = $produto->validade->limite;
+                    }
+
+                    $pds = array($p);
+
+                    if ($produto->validade->alem) {
+                        $lotes = $produto->getLotes($con, 'lote.quantidade_real>0 AND (UNIX_TIMESTAMP(lote.validade)*1000) >= ' . $produto->validade->validade, 'lote.validade ASC');
+                        for ($i = 0; $i < count($pds); $i++) {
+                            $pp = $pds[$i];
+                            $pp->aux = $pp->quantidade;
+                            $primeira_maior = 0;
+                            foreach ($lotes as $keyl => $lote) {
+                                if ($lote->validade === $pp->validade_minima) {
+                                    $pp->aux -= $lote->quantidade_real;
+                                } else if ($lote->validade > $pp->validade_minima && $primeira_maior === 0) {
+                                    $primeira_maior = $lote->validade;
+                                }
+                            }
+                            if ($pp->aux > 0 && $primeira_maior > 0) {
+                                $np = Utilidades::copyId0($pp);
+                                $np->quantidade = $pp->aux;
+                                $np->validade_minima = $primeira_maior;
+                                $np->pedido = $pedido;
+                                $pds[] = $np;
+                            }
+                            $pp->quantidade -= $pp->aux;
+                        }
+                    }
+
+                    foreach ($pds as $kp => $produto_pedido) {
+                        $pedido->produtos[] = $produto_pedido;
+                    }
+                }
+            }
+
+            $pedido->atualizarCustos();
+            $pedido->formas_pagamento = array();
+
+            foreach ($formas as $keyf => $f) {
+                if ($f->habilitada($pedido)) {
+                    $pedido->formas_pagamento[] = $f;
+                }
+            }
+
+            $pedido->forma_pagamento = $pedido->formas_pagamento[0];
+
+
+            $pedidos[] = $pedido;
+        }
+
+        return $pedidos;
+    }
+
+    public static function getCompraParceiros($con) {
+
+        $cm = new CacheManager();
+
+        $g = $cm->getCache('compra_parceiros');
+
+        if ($g !== null) {
+
+            return $g;
+        }
+
+        $empresas = array();
+
+        $ps = $con->getConexao()->prepare("SELECT "
+                . "empresa.id,"
+                . "empresa.is_logistica,"
+                . "empresa.nome,"
+                . "empresa.inscricao_estadual,"
+                . "empresa.consigna,"
+                . "empresa.aceitou_contrato,"
+                . "empresa.juros_mensal,"
+                . "empresa.cnpj,"
+                . "endereco.numero,"
+                . "endereco.id,"
+                . "endereco.rua,"
+                . "endereco.bairro,"
+                . "endereco.cep,"
+                . "cidade.id,"
+                . "cidade.nome,"
+                . "estado.id,"
+                . "estado.sigla,"
+                . "email.id,"
+                . "email.endereco,"
+                . "email.senha,"
+                . "telefone.id,"
+                . "telefone.numero "
+                . "FROM empresa "
+                . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
+                . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
+                . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
+                . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
+                . "INNER JOIN estado ON cidade.id_estado = estado.id "
+                . "WHERE empresa.vende_para_fora = true");
+        $ps->execute();
+        $ps->bind_result($id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+
+        while ($ps->fetch()) {
+
+            $empresa = new Empresa();
+
+            if ($is_logistica == 1) {
+
+                $empresa = new Logistica();
+            }
+
+            $empresa->id = $id_empresa;
+            $empresa->cnpj = new CNPJ($cnpj);
+            $empresa->inscricao_estadual = $inscricao_empresa;
+            $empresa->nome = $nome_empresa;
+            $empresa->aceitou_contrato = $aceitou_contrato;
+            $empresa->juros_mensal = $juros_mensal;
+            $empresa->consigna = $consigna;
+
+            $endereco = new Endereco();
+            $endereco->id = $id_endereco;
+            $endereco->rua = $rua;
+            $endereco->bairro = $bairro;
+            $endereco->cep = new CEP($cep);
+            $endereco->numero = $numero_endereco;
+
+            $cidade = new Cidade();
+            $cidade->id = $id_cidade;
+            $cidade->nome = $nome_cidade;
+
+            $estado = new Estado();
+            $estado->id = $id_estado;
+            $estado->sigla = $nome_estado;
+
+            $cidade->estado = $estado;
+
+            $endereco->cidade = $cidade;
+
+            $empresa->endereco = $endereco;
+
+            $email = new Email($endereco_email);
+            $email->id = $id_email;
+            $email->senha = $senha_email;
+
+            $empresa->email = $email;
+
+            $telefone = new Telefone($numero_telefone);
+            $telefone->id = $id_telefone;
+
+            $empresa->telefone = $telefone;
+
+            $empresas[] = $empresa;
+        }
+
+        $ps->close();
+
+        $produtos = array();
+
+        foreach ($empresas as $key => $value) {
+
+            $prods = $value->getProdutos($con, 0, 500000, '', '');
+
+            foreach ($prods as $key2 => $value2) {
+
+                $produtos[] = $value2;
+            }
+        }
+
+
+        $cm->setCache('compra_parceiros', $produtos);
+
+        return $produtos;
+    }
+
     public static function getHtml($nom, $p = null) {
 
         global $obj;
@@ -528,8 +875,8 @@ class Sistema {
 
         $formas = array();
 
-        $formas[] = new DepositoEmConta();
         $formas[] = new BoletoEspecialAgroFauna();
+        $formas[] = new DepositoEmConta();
 
         return $formas;
     }

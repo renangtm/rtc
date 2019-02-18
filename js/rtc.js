@@ -146,6 +146,124 @@ function paraJson(objeto) {
 
 }
 
+
+
+function createFilterList(service, cols, rows, maxPage) {
+
+    var listar = {
+        filtro: null,
+        ordem: null,
+        linhas: rows,
+        por_coluna: cols,
+        elementos: [],
+        pagina: 0,
+        next: function () {
+            this.pagina++;
+            this.attList();
+        },
+        prev: function () {
+            this.pagina--;
+            this.attList();
+        },
+        paginas: [],
+        attList: function () {
+
+            var este = this;
+
+
+            //----------------------------
+
+            loading.show();
+            service.getElementos(este.pagina * (este.linhas * este.por_coluna),
+                    (este.pagina + 1) * (este.linhas * este.por_coluna),
+                    este.filtro, este.ordem, function (e) {
+                       
+                        if (este.filtro == null) {
+                            este.filtro = e.filtros;
+                        }else{
+                            for(var i=0;i<este.filtro.length;i++){
+                                var f = este.filtro[i];
+                                if(typeof f.opcoes === 'undefined'){
+                                    continue;
+                                }
+                                for(var op=0;op<f.opcoes.length;op++){
+                                    f.opcoes[op].quantidade = 0;
+                                }
+                                for(var j=0;j<e.filtros.length;j++){
+                                    var ff = e.filtros[j];
+                                    if(ff.id === f.id){
+                                        for(var o=0;o<ff.opcoes.length;o++){
+                                            var op = ff.opcoes[o];
+                                            for(var oo=0;oo<f.opcoes.length;oo++){
+                                                var oop = f.opcoes[oo];
+                                                if(oop.id === op.id){
+                                                    oop.quantidade = op.quantidade;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                        }
+
+                        if (este.ordem == null) {
+      
+                            este.ordem = e.ordem;
+                        }
+                       
+                        var np = Math.ceil(e.qtd / (este.linhas * este.por_coluna));
+                        este.pagina = Math.max(Math.min(este.pagina, np - 1), 0);
+
+                        este.elementos = [];
+
+                        var els = e.elementos;
+
+                        for (var i = 0; i < este.linhas && (i * este.por_coluna) < els.length; i++) {
+                            este.elementos[i] = [];
+                            for (var j = 0; j < este.por_coluna && (i * este.por_coluna + j) < els.length; j++) {
+                                este.elementos[i][j] = els[i * este.por_coluna + j];
+                            }
+                        }
+
+                        este.paginas = [];
+                        
+                        var a = Math.max(este.pagina - maxPage + 1, 0);
+                        for (var i = a; i < a + maxPage && i < np; i++) {
+                            var p = {numero: i, ir: function () {
+                                    este.pagina = this.numero;
+                                    este.attList();
+                                }, isAtual: este.pagina == i}
+                            este.paginas[este.paginas.length] = p;
+                        }
+
+                        if (typeof este["posload"] !== 'undefined') {
+                            este["posload"](els);
+                        }
+                     
+                       loading.close();
+
+                    });
+
+
+            //-----------------------------
+
+
+
+
+
+        }
+    }
+
+    listar.attList();
+    
+
+    return listar;
+
+}
+
 function createAssinc(lista, cols, rows, maxPage) {
 
     var listar = {

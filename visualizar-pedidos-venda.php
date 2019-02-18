@@ -271,9 +271,9 @@
                                                 <td>{{prod.produto.id}}</td>
                                                 <td>{{prod.produto.nome}}</td>
                                                 <td class="text-center" width="100px">{{prod.quantidade}}</td>
-                                                <td ng-if="prod.validade_minima>0" class="text-center">{{prod.validade_minima | data}}</td>
-                                                <td ng-if="prod.validade_minima<0" class="text-center">-------</td>
-                                                <td class="text-center"><input ng-disabled="!pedido.status.altera" type=text ng-confirm="atualizaCustos()" class="form-control" ng-model="prod.valor_base"></td>
+                                                <td ng-if="prod.validade_minima>0 && prod.validade_minima !== 1000" class="text-center">{{prod.validade_minima | data}}</td>
+                                                <td ng-if="prod.validade_minima===1000" class="text-center">-------</td>
+                                                <td class="text-center"><input ng-disabled="!pedido.status.altera" type="number" steep="0.01" ng-confirm="atualizaCustos()" class="form-control" ng-model="prod.valor_base"></td>
                                                 <td class="text-center">{{prod.juros}}</td>
                                                 <td class="text-center">{{prod.frete}}</td>
                                                 <td class="text-center">{{prod.icms}}</td>
@@ -539,8 +539,8 @@
                                                             <th>Selecionar</th>
                                                             </thead>
                                                             <tr ng-repeat="validade in produt[0].validades">
-                                                                <th ng-if="validade.validade>0">{{validade.validade| data}} <i class="fas fa-arrow-up" ng-if="validade.alem" ></i> </th>
-                                                                <th ng-if="validade.validade<0">-------</th>
+                                                                <th ng-if="validade.validade>0 && validade.validade !== 1000">{{validade.validade| data}} <i class="fas fa-arrow-up" ng-if="validade.alem" ></i> </th>
+                                                                <th ng-if="validade.validade === 1000">-------</th>
                                                                 <th>{{validade.quantidade}} <strong>{{validade.limite<0?'Sem limite':'Limite de '+validade.limite}}</strong></th>
                                                                 <th>{{validade.valor}}</th>
                                                                 <th><button class="btn btn-success" ng-click="addProduto(produt[0], validade)"><i class="fas fa-plus-circle"></i></button></th>
@@ -669,8 +669,8 @@
                                 <div class="form-group">
                                     <div class="form-row">
                                         <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;" ng-repeat="frete in fretes">
-                                            <input type="radio" id="customRadioInline3" ng-click="setFrete(frete)" name="customRadioInline1" class="custom-control-input">
-                                            <label class="custom-control-label" for="customRadioInline3">R$ {{frete.valor.toFixed(2)}} + ({{frete.transportadora.despacho}}) - {{frete.transportadora.razao_social}}</label>
+                                            <input type="radio" id="rdd{{frete.transportadora.id}}" ng-click="setFrete(frete)" name="customRadioInline1" class="custom-control-input">
+                                            <label class="custom-control-label" for="rdd{{frete.transportadora.id}}">R$ {{frete.valor.toFixed(2)}} + ({{frete.transportadora.despacho}}) - {{frete.transportadora.razao_social}}</label>
                                         </div>
                                     </div>
                                 </div>

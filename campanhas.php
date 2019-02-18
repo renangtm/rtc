@@ -131,7 +131,8 @@
                                                                             <tr ng-repeat="prod in campanha[0].produtos">
                                                                                 <th class="text-center">{{prod.produto.id}}</th>
                                                                                 <th>{{prod.produto.nome}}</th>
-                                                                                <th>{{prod.validade| data}}</th>
+                                                                                <th ng-if="prod.validade !== 1000">{{prod.validade | data}}</th>
+                                                                                <th ng-if="prod.validade === 1000">------</th>
                                                                                 <th class="text-center">{{prod.limite}}</th>
                                                                                 <th class="text-center">R$ {{prod.valor}}</th>
                                                                             </tr>
@@ -280,7 +281,8 @@
                                             <tr ng-repeat="prod in campanha.produtos">
                                                 <th>{{prod.produto.id}}</th>
                                                 <th>{{prod.produto.nome}}</th>
-                                                <th>{{prod.validade| data}}</th>
+                                                <th ng-if="prod.validade !== 1000">{{prod.validade| data}}</th>
+                                                <th ng-if="prod.validade === 1000">------</th>
                                                 <th><input type="text" class="form-control" ng-model="prod.limite"></th>
                                                 <th><input type="text" class="form-control" ng-model="prod.valor"></th>
                                                 <th><button class="btn btn-danger" ng-click="deleteProdutoCampanha(campanha, prod)"><i class="fa fa-times"></i></button></th>
@@ -563,8 +565,9 @@
                                             <tr ng-repeat="prod in campanha.lista.elementos">
                                                 <th><button ng-click="addNumeracao(prod[0])" class="btn btn-default" style="width:23px;height:23px;padding:1px;display:inline;background-color:{{getNumeracaoCor(prod[0].numeracao)}};color:#FFFFFF">{{getNumeracaoAlfabetica(prod[0].numeracao)}}</button></th>
                                                 <th>{{prod[0].produto.id}} - {{prod[0].produto.nome}}</th>
-                                                <th><button ng-click="setProdutoValidade(prod[0])" class="btn btn-{{prod[0].validade<0?'danger':'success'}}" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button><strong style="display:inline">{{(prod[0].validade > 0) ? (prod[0].validade | data) : 'Selecione'}}</strong></th>
-                                                <th><input type="text" class="form-control" ng-model="prod[0].limite"></th>
+                                                <th ng-if="prod[0].validade !== 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-{{prod[0].validade<0?'danger':'success'}}" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">{{(prod[0].validade > 0) ? (prod[0].validade | data) : 'Selecione'}}</strong></th>
+                                                <th ng-if="prod[0].validade === 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-warning" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">------</strong></th>
+                                                <th><input type="text" style="max-width:60px" class="form-control" ng-model="prod[0].limite"></th>
                                                 <th>{{prod[0].produto.custo}}</th>
                                                 <th ng-click="selecionarValor(prod[0], v)" style="cursor:pointer;{{v.selecionado?'text-decoration:underline;color:Green':''}}" ng-repeat="v in prod[0].valores">{{v.valor}} R$</th>
                                                 <th ng-click="selecionarValor(prod[0], prod[0].valor_editavel)"><input type="text" class="form-control" style="width:50px;{{prod[0].valor_editavel.selecionado?'color:Green;text-decoration:underline':''}}" ng-model="prod[0].valor_editavel.valor"></th>
@@ -611,8 +614,8 @@
                                     </thead>
                                     <tr ng-repeat="v in produto.validades">
                                         <th>{{produto.nome}}</th>
-                                        <th ng-if="v.validade>0">{{v.validade | data}} <i class="fas fa-arrow-up" ng-if="v.alem" ></i></th>
-                                        <th ng-if="v.validade<0"> ---------- </th>
+                                        <th ng-if="v.validade !== 1000">{{v.validade | data}} <i class="fas fa-arrow-up" ng-if="v.alem" ></i></th>
+                                        <th ng-if="v.validade === 1000"> ------ </th>
                                         <th class="text-center">{{v.quantidade}}</th>
                                         <th><button class="btn btn-success" data-dismiss="modal" aria-label="Close" ng-click="setAutoValidade(v)"><i class="fas fa-plus-circle"></i></th>
                                     </tr>
@@ -664,7 +667,8 @@
                                                             <th>Selecionar</th>
                                                             </thead>
                                                             <tr ng-repeat="validade in produto[0].validades">
-                                                                <th>{{validade.validade| data}} <i class="fas fa-arrow-up" ng-if="validade.alem" ></i> </th>
+                                                                <th ng-if="validade.validade !== 1000">{{validade.validade| data}} <i class="fas fa-arrow-up" ng-if="validade.alem" ></i> </th>
+                                                                <th ng-if="validade.validade === 1000">------</th>
                                                                 <th class="text-center">{{validade.quantidade}}</th>
                                                                 <th class="text-center"><button class="btn btn-success" ng-click="addProdutoCampanha(produto[0], validade)"><i class="fas fa-plus-circle"></i></button></th>
                                                             </tr>

@@ -27,6 +27,7 @@ class PedidoEntrada {
     public $observacoes;
     public $prazo;
     public $parcelas;
+    public $empresa;
 
     function __construct() {
 
