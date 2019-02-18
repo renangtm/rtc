@@ -26,7 +26,7 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
     })
 
     $scope.finalizarPedido = function (pedido) {
-        
+
         sistemaService.finalizarCompraParceiros(pedido, function (r) {
 
             var novo_carrinho = [];
@@ -56,8 +56,8 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
 
             carrinhoService.setCarrinho($scope.carrinho, function (s) {
 
-                msg.alerta("Compra feita com sucesso, vocÃª sera redirecionado a cobranca do pedidido dependendo da forma de pagamento selecionada");
-                                
+                msg.alerta("Compra feita com sucesso, voc?ª sera redirecionado a cobranca do pedidido dependendo da forma de pagamento selecionada");
+
                 pedido.finalizado = true;
 
             })
@@ -67,17 +67,17 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
         })
 
     }
-    
-    $scope.finalizado = function(pedido){
-        
-        if(typeof pedido.finalizado === 'undefined'){
-            
+
+    $scope.finalizado = function (pedido) {
+
+        if (typeof pedido.finalizado === 'undefined') {
+
             return false;
-            
+
         }
-        
+
         return pedido.finalizado;
-        
+
     }
 
     $scope.getFormasPagamento = function (pedido) {
@@ -1199,7 +1199,7 @@ rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoSe
         for (var i = 0; i < $scope.nota.vencimentos.length; i++) {
             $scope.nota.vencimentos[i].data = fromDate($scope.nota.vencimentos[i].data_texto);
             if ($scope.nota.vencimentos[i].data < 0) {
-                msg.alerta("Data do " + (i + 1) + "Âº vencimento, incorreta");
+                msg.alerta("Data do " + (i + 1) + "?º vencimento, incorreta");
                 return;
             }
         }
@@ -2096,7 +2096,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
     }
 
     $scope.deletePedido = function () {
- 
+
         baseService.delete($scope.pedido, function (r) {
             if (r.sucesso) {
                 msg.alerta("Operacao efetuada com sucesso");
@@ -3087,7 +3087,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
                     msg.alerta("Operacao efetuada com sucesso");
                     $scope.campanhas.attList();
                 } else {
-                    msg.erro("Fornecedor alterado, porÃ©m ocorreu um problema ao subir os documentos");
+                    msg.erro("Fornecedor alterado, por?©m ocorreu um problema ao subir os documentos");
                 }
             } else {
                 msg.erro("Problema ao efetuar operacao. ");
@@ -3315,13 +3315,28 @@ rtc.controller("crtLotes", function ($scope, loteService, baseService) {
             etiquetas[etiquetas.length] = etiqueta;
         }
 
-        loteService.getEtiquetas(etiquetas, function (a) {
-            if (a.sucesso) {
-                window.open(projeto + "/php/uploads/" + a.arquivo);
-            } else {
-                msg.erro("Ocorreu um problema de servidor, tente mais tarde");
+        var buffer = 20;
+        var buff = [];
+
+        for (var i = 0; i < etiquetas.length; i++) {
+            var k = parseInt(i / buffer);
+            if (i % buffer === 0) {
+                buff[k] = [];
             }
-        });
+            buff[k][buff[k].length] = etiquetas[i];
+        }
+
+        for (var i = 0; i < buff.length; i++) {
+            loteService.getEtiquetas(buff[i], function (a) {
+                if (a.sucesso) {
+
+                    window.open(projeto + "/php/uploads/" + a.arquivo);
+                } else {
+
+                    msg.erro("Ocorreu um problema de servidor, tente mais tarde");
+                }
+            });
+        }
 
     }
 
@@ -3567,7 +3582,7 @@ rtc.controller("crtFornecedores", function ($scope, fornecedorService, categoria
                         $scope.fornecedores.attList();
 
                     } else {
-                        msg.erro("Fornecedor alterado, porÃ©m ocorreu um problema ao subir os documentos");
+                        msg.erro("Fornecedor alterado, por?©m ocorreu um problema ao subir os documentos");
 
                     }
 
@@ -3839,7 +3854,7 @@ rtc.controller("crtTransportadoras", function ($scope, transportadoraService, re
                 if (r.sucesso) {
                     msg.alerta("Operacao efetuada com sucesso");
                 } else {
-                    msg.erro("Transportadora alterada, porÃ©m ocorreu um problema ao subir os documentos");
+                    msg.erro("Transportadora alterada, por?©m ocorreu um problema ao subir os documentos");
 
                 }
             } else {
@@ -3869,7 +3884,7 @@ rtc.controller("crtTransportadoras", function ($scope, transportadoraService, re
                         $scope.transportadoras.attList();
 
                     } else {
-                        msg.erro("Transportadora alterada, porÃ©m ocorreu um problema ao subir os documentos");
+                        msg.erro("Transportadora alterada, por?©m ocorreu um problema ao subir os documentos");
 
                     }
 
@@ -4070,7 +4085,7 @@ rtc.controller("crtClientes", function ($scope, clienteService, categoriaCliente
                         $scope.clientes.attList();
 
                     } else {
-                        msg.erro("Cliente alterado, porÃ©m ocorreu um problema ao subir os documentos");
+                        msg.erro("Cliente alterado, por?©m ocorreu um problema ao subir os documentos");
 
                     }
 
@@ -4362,7 +4377,7 @@ rtc.controller("crtLogin", function ($scope, loginService) {
     $scope.logar = function () {
         loginService.login($scope.usuario, $scope.senha, function (r) {
             if (r.usuario === null || !r.sucesso) {
-                msg.erro("Esse usuÃ¡rio nÃ£o existe");
+                msg.erro("Esse usu??rio n?£o existe");
             } else {
 
                 window.location = "comprar.php";
@@ -4371,14 +4386,14 @@ rtc.controller("crtLogin", function ($scope, loginService) {
     };
 
     $scope.recuperar = function () {
-        
+
         loginService.recuperar($scope.email, function (r) {
             if (r.sucesso) {
 
                 msg.alerta("Senha enviada para o email");
 
             } else {
-                
+
                 msg.erro("Falha ao recuperar, provavelmente esse email nao esta cadastrado");
 
             }
@@ -4425,9 +4440,9 @@ rtc.controller("crtLogo", function ($scope, empresaService, uploadService) {
                 msg.erro("Falha ao subir arquivo");
 
             } else {
-            
+
                 empresaService.setLogo(arquivos[0], function (t) {
-                
+
                     if (t.sucesso) {
 
                         msg.alerta("Upload feito com sucesso");
