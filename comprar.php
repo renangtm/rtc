@@ -122,7 +122,7 @@
                                         <div class="product-thumbnail">
                                             <div class="product-img-head">
                                                 <div class="product-img">
-                                                    <img src="{{produto.imagem}}" id="img_{{produto.id}}" alt="" class="img-fluid" onload="fechaLoad(this)">
+                                                    <img src="{{produto.imagem}}" id="img_{{produto.id}}" alt="" class="img-fluid" onload="fechaLoad(this)" style="visibility: hidden">
                                                     <br>
                                                     <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm" style="width:250px;height:250px;margin-bottom:95px"></span>
                                                 </div>
@@ -218,7 +218,7 @@
                                         <div class="product-thumbnail">
                                             <div class="product-img-head">
                                                 <div class="product-img">
-                                                    <img src="{{produto.imagem}}" id="img_{{produto.id}}" onload="fechaLoad(this)" alt="" class="img-fluid"></div>
+                                                    <img src="{{produto.imagem}}" id="img_{{produto.id}}" onload="fechaLoad(this)" alt="" class="img-fluid" style="visibility: hidden"></div>
                                                     <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm " style="width:250px;height:250px;margin-left:calc(50% - 125px )"></span>
                                                 <div class="ribbons" ng-if="produto.ofertas.length > 0"></div>
                                                 <div class="ribbons-text m-l-10" ng-if="produto.ofertas.length > 0">Oferta</div>
@@ -487,6 +487,7 @@
                 var num = im.attr('id').split('_')[1];
                
                 $("#sp_"+num).hide();
+                im.css('visibility','initial');
                 
             }
 
