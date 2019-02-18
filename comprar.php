@@ -486,6 +486,7 @@
                 var im = $(img);
                 var num = im.attr('id').split('_')[1];
                
+               
                 $("#sp_"+num).hide();
                 im.css('display','initial');
                 

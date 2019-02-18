@@ -2,9 +2,9 @@ var debuger = function (l) {
     alert(paraJson(l));
 }
 rtc.service('compraParceiroService', function ($http, $q) {
-    this.getElementos = function (x1,x2,filtro,ordem,fn) {
+    this.getElementos = function (x1, x2, filtro, ordem, fn) {
         baseService($http, $q, {
-            o:{x1:x1,x2:x2,ordem:ordem,filtro:filtro},
+            o: {x1: x1, x2: x2, ordem: ordem, filtro: filtro},
             query: "$r->elementos=Sistema::getCompraParceiros($c);$op=new OpProdutos($r->elementos);$r->elementos=$op->filtrar($o->x1,$o->x2,$o->filtro,$o->ordem);$r->qtd=$op->getLastQtd();$r->filtros=$op->getFiltrosPossiveis();$r->ordens=$op->getOrdensPossiveis()",
             sucesso: fn,
             falha: fn
@@ -922,7 +922,7 @@ rtc.service('produtoService', function ($http, $q) {
                 validade.limite = produto.ofertas[j].limite;
 
             }
-         
+
             fn([validade]);
             return;
 
@@ -1089,16 +1089,6 @@ rtc.service('acessoService', function ($http, $q) {
         });
     }
 })
-rtc.service('empresaService', function ($http, $q) {
-    this.setLogo = function (logo, fn) {
-        baseService($http, $q, {
-            o: {logo: logo},
-            query: "$empresa->setLogo($c,$o->logo)",
-            sucesso: fn,
-            falha: fn
-        }, null, true);
-    }
-})
 rtc.service('loginService', function ($http, $q) {
     this.login = function (usuario, senha, fn) {
         baseService($http, $q, {
@@ -1118,9 +1108,9 @@ rtc.service('loginService', function ($http, $q) {
     }
 })
 rtc.service('sistemaService', function ($http, $q) {
-    this.finalizarCompraParceiros = function(pedido,fn){
+    this.finalizarCompraParceiros = function (pedido, fn) {
         baseService($http, $q, {
-            o:pedido,
+            o: pedido,
             query: "$r->retorno=Sistema::finalizarCompraParceiros($c,$o,$empresa);",
             sucesso: fn,
             falha: fn
@@ -1187,6 +1177,14 @@ rtc.service('sistemaService', function ($http, $q) {
     }
 })
 rtc.service('empresaService', function ($http, $q) {
+    this.setLogo = function (logo, fn) {
+        baseService($http, $q, {
+            o: {logo: logo},
+            query: "$empresa->setLogo($c,$o->logo)",
+            sucesso: fn,
+            falha: fn
+        }, null, true);
+    }
     this.getFiliais = function (fn) {
         baseService($http, $q, {
             query: "$r->filiais=$empresa->getFiliais($c)",
@@ -1194,15 +1192,15 @@ rtc.service('empresaService', function ($http, $q) {
             falha: fn
         });
     }
-    this.setEmpresa = function(empresa,fn){
+    this.setEmpresa = function (empresa, fn) {
         baseService($http, $q, {
-            o:empresa,
+            o: empresa,
             query: "$empresa=$o;$ses->set('empresa',$empresa)",
             sucesso: fn,
             falha: fn
         });
     }
-    this.getEmpresa = function(fn){
+    this.getEmpresa = function (fn) {
         baseService($http, $q, {
             query: "$r->empresa=$empresa",
             sucesso: fn,
@@ -1226,7 +1224,7 @@ rtc.service('carrinhoService', function ($http, $q) {
             falha: fn
         });
     }
-    this.getPedidosResultantes = function(fn){
+    this.getPedidosResultantes = function (fn) {
         baseService($http, $q, {
             query: "$car=$ses->get('carrinho');if($car===null){$car=array();$ses->set('carrinho',$car);};$r->pedidos=Sistema::getPedidosResultantes($c,$car,$empresa,$usuario)",
             sucesso: fn,

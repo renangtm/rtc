@@ -4425,9 +4425,9 @@ rtc.controller("crtLogo", function ($scope, empresaService, uploadService) {
                 msg.erro("Falha ao subir arquivo");
 
             } else {
-
+            
                 empresaService.setLogo(arquivos[0], function (t) {
-
+                
                     if (t.sucesso) {
 
                         msg.alerta("Upload feito com sucesso");
