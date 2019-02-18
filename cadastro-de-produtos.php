@@ -97,8 +97,8 @@
                                                         <th data-ordem="produto.disponivel">Disp</th>
                                                         <th data-ordem="produto.transito">Trans</th>
                                                         <th data-ordem="produto.valor_base">Valor (R$)</th>
-                                                        <th data-ordem="produto.ativo">Princ√≠pio ativo</th>
-                                                        <th width="150px">A√ß√£o</th>
+                                                        <th data-ordem="produto.ativo">Princ?≠pio ativo</th>
+                                                        <th width="150px">A?ß?£o</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -164,7 +164,7 @@
                                                                             <tr>
                                                                                 <td colspan="2">
 
-                                                                                    Indica√ß√£o de Uso:
+                                                                                    Indica?ß?£o de Uso:
                                                                                     <hr>
                                                                                     <div ng-repeat="rec in produto[0].receituario">
                                                                                         Cultura: <strong>{{rec.cultura.nome}}</strong>
@@ -220,19 +220,19 @@
                                                         <th>Disp</th>
                                                         <th>Trans</th>
                                                         <th>Valor (R$)</th>
-                                                        <th>Princ√≠pio ativo</th>
-                                                        <th width="150px">A√ß√£o</th>
+                                                        <th>Princ?≠pio ativo</th>
+                                                        <th width="150px">A?ß?£o</th>
                                                     </tr>
                                                 </tfoot>
                                             </table>
 
-                                            <!-- pagina√ß√£o  -->
+                                            <!-- pagina?ß?£o  -->
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
                                                         <li class="page-item" ng-click="produtos.prev()"><a class="page-link" href="">Anterior</a></li>
                                                         <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Pr√≥ximo</a></li>
+                                                        <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Pr?≥ximo</a></li>
                                                     </ul>
                                                 </nav>
                                             </div>
@@ -249,7 +249,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="copyright">
-                                    <p>Copyright ¬© 2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
+                                    <p>Copyright ?© 2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
                                 </div>
                             </div>
                         </div>
@@ -273,7 +273,7 @@
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Adicione os dados de seu Produto</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">√ó</span>
+                                    <span aria-hidden="true">?ó</span>
                                 </button>
                             </div>
                             <div class="modal-body">
@@ -282,7 +282,7 @@
                                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                         <a class="nav-item nav-link active" id="nav-prod-tab" data-toggle="tab" href="#nav-prod" role="tab" aria-controls="nav-prod" aria-selected="true">Produto</a>
                                         <a class="nav-item nav-link" id="nav-img-tab" data-toggle="tab" href="#nav-img" role="tab" aria-controls="nav-img" aria-selected="false">Imagem</a>
-                                        <a class="nav-item nav-link text-center" id="nav-uso-tab" data-toggle="tab" href="#nav-uso" role="tab" aria-controls="nav-uso" aria-selected="false">Indica√ß√µes<br> de uso</a>
+                                        <a class="nav-item nav-link text-center" id="nav-uso-tab" data-toggle="tab" href="#nav-uso" role="tab" aria-controls="nav-uso" aria-selected="false">Indica?ß?µes<br> de uso</a>
                                     </div>
                                 </nav>
                                 <div class="tab-content" id="nav-tabContent">
@@ -356,7 +356,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Princ√≠pio ativo</label>
+                                                <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Princ?≠pio ativo</label>
                                                 <div class="col-9 col-lg-9 text-left">
                                                     <input id="txtpativo" ng-model="produto.ativo" type="text" required placeholder="" class="form-control">
                                                     <div class="invalid-feedback">
@@ -486,7 +486,7 @@
                                                 <br>
                                                 Observacao:
                                                 <hr>
-                                                <textarea ng-model="receituario.instrucoes" class="form-control" style=""width:100%>
+                                                <textarea ng-model="receituario.instrucoes" class="form-control" style="width:100%">
 
                                             </textarea>
                                         </div>
@@ -561,29 +561,29 @@
                                                     <td width="45%"><select class="custom-select" name="" size="10" multiple>
                                                             <option value="AC">Acre</option>
                                                             <option value="AL">Alagoas</option>
-                                                            <option value="AP">Amap√°</option>
+                                                            <option value="AP">Amap??</option>
                                                             <option value="AM">Amazonas</option>
                                                             <option value="BA">Bahia</option>
-                                                            <option value="CE">Cear√°</option>
+                                                            <option value="CE">Cear??</option>
                                                             <option value="DF">Distrito Federal</option>
-                                                            <option value="ES">Esp√≠rito Santo</option>
-                                                            <option value="GO">Goi√°s</option>
-                                                            <option value="MA">Maranh√£o</option>
+                                                            <option value="ES">Esp?≠rito Santo</option>
+                                                            <option value="GO">Goi??s</option>
+                                                            <option value="MA">Maranh?£o</option>
                                                             <option value="MT">Mato Grosso</option>
                                                             <option value="MS">Mato Grosso do Sul</option>
                                                             <option value="MG">Minas Gerais</option>
-                                                            <option value="PA">Par√°</option>
-                                                            <option value="PB">Para√≠ba</option>
-                                                            <option value="PR">Paran√°</option>
+                                                            <option value="PA">Par??</option>
+                                                            <option value="PB">Para?≠ba</option>
+                                                            <option value="PR">Paran??</option>
                                                             <option value="PE">Pernambuco</option>
-                                                            <option value="PI">Piau√≠</option>
+                                                            <option value="PI">Piau?≠</option>
                                                             <option value="RJ">Rio de Janeiro</option>
                                                             <option value="RN">Rio Grande do Norte</option>
                                                             <option value="RS">Rio Grande do Sul</option>
-                                                            <option value="RO">Rond√¥nia</option>
+                                                            <option value="RO">Rond?¥nia</option>
                                                             <option value="RR">Roraima</option>
                                                             <option value="SC">Santa Catarina</option>
-                                                            <option value="SP">S√£o Paulo</option>
+                                                            <option value="SP">S?£o Paulo</option>
                                                             <option value="SE">Sergipe</option>
                                                             <option value="TO">Tocantins</option>
                                                         </select>
@@ -613,13 +613,13 @@
                                             <label for="txtpeso" class="col-4 col-form-label text-left">Paramentros para<br> faturamento</label>
                                             <div class="col-4 col-lg-4" style="padding-top: 5px;">
                                                 <label class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Sem Tributa√ß√£o</span>
+                                                    <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Sem Tributa?ß?£o</span>
                                                 </label>
                                                 <label class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Tributa√ß√£o normal</span>
+                                                    <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Tributa?ß?£o normal</span>
                                                 </label>
                                                 <label class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Tributa√ß√£o especial 4%</span>
+                                                    <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Tributa?ß?£o especial 4%</span>
                                                 </label>
                                                 <div class="invalid-feedback">
                                                     Please provide a valid text.
@@ -664,7 +664,7 @@
                         <div class="modal-header">
                             <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Edite os dados de seu Cliente</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">√ó</span>
+                                <span aria-hidden="true">?ó</span>
                             </button>
                         </div>
                         <div class="modal-body">
@@ -706,7 +706,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endere√ßo</label>
+                                    <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endere?ßo</label>
                                     <div class="col-9 col-lg-10">
                                         <input id="txtend" type="text" required data-parsley-type="email" placeholder="Rua: Coutinho Cavalcante" class="form-control">
                                         <div class="invalid-feedback">
@@ -715,7 +715,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">N√∫mero</label>
+                                    <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">N?∫mero</label>
                                     <div class="col-9 col-lg-10">
                                         <input id="txtendnum" type="text" required data-parsley-type="email" placeholder="00" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
                                         <div class="invalid-feedback">
@@ -740,29 +740,29 @@
                                             <option value="ac">Acre</option> 
                                             <option value="al">Alagoas</option> 
                                             <option value="am">Amazonas</option> 
-                                            <option value="ap">Amap√°</option> 
+                                            <option value="ap">Amap??</option> 
                                             <option value="ba">Bahia</option> 
-                                            <option value="ce">Cear√°</option> 
+                                            <option value="ce">Cear??</option> 
                                             <option value="df">Distrito Federal</option> 
-                                            <option value="es">Esp√≠rito Santo</option> 
-                                            <option value="go">Goi√°s</option> 
-                                            <option value="ma">Maranh√£o</option> 
+                                            <option value="es">Esp?≠rito Santo</option> 
+                                            <option value="go">Goi??s</option> 
+                                            <option value="ma">Maranh?£o</option> 
                                             <option value="mt">Mato Grosso</option> 
                                             <option value="ms">Mato Grosso do Sul</option> 
                                             <option value="mg">Minas Gerais</option> 
-                                            <option value="pa">Par√°</option> 
-                                            <option value="pb">Para√≠ba</option> 
-                                            <option value="pr">Paran√°</option> 
+                                            <option value="pa">Par??</option> 
+                                            <option value="pb">Para?≠ba</option> 
+                                            <option value="pr">Paran??</option> 
                                             <option value="pe">Pernambuco</option> 
-                                            <option value="pi">Piau√≠</option> 
+                                            <option value="pi">Piau?≠</option> 
                                             <option value="rj">Rio de Janeiro</option> 
                                             <option value="rn">Rio Grande do Norte</option> 
-                                            <option value="ro">Rond√¥nia</option> 
+                                            <option value="ro">Rond?¥nia</option> 
                                             <option value="rs">Rio Grande do Sul</option> 
                                             <option value="rr">Roraima</option> 
                                             <option value="sc">Santa Catarina</option> 
                                             <option value="se">Sergipe</option> 
-                                            <option value="sp" selected>S√£o Jose do Rio Preto</option> 
+                                            <option value="sp" selected>S?£o Jose do Rio Preto</option> 
                                             <option value="to">Tocantins</option> 
                                         </select>
                                         <div class="invalid-feedback">
@@ -778,29 +778,29 @@
                                             <option value="ac">Acre</option> 
                                             <option value="al">Alagoas</option> 
                                             <option value="am">Amazonas</option> 
-                                            <option value="ap">Amap√°</option> 
+                                            <option value="ap">Amap??</option> 
                                             <option value="ba">Bahia</option> 
-                                            <option value="ce">Cear√°</option> 
+                                            <option value="ce">Cear??</option> 
                                             <option value="df">Distrito Federal</option> 
-                                            <option value="es">Esp√≠rito Santo</option> 
-                                            <option value="go">Goi√°s</option> 
-                                            <option value="ma">Maranh√£o</option> 
+                                            <option value="es">Esp?≠rito Santo</option> 
+                                            <option value="go">Goi??s</option> 
+                                            <option value="ma">Maranh?£o</option> 
                                             <option value="mt">Mato Grosso</option> 
                                             <option value="ms">Mato Grosso do Sul</option> 
                                             <option value="mg">Minas Gerais</option> 
-                                            <option value="pa">Par√°</option> 
-                                            <option value="pb">Para√≠ba</option> 
-                                            <option value="pr">Paran√°</option> 
+                                            <option value="pa">Par??</option> 
+                                            <option value="pb">Para?≠ba</option> 
+                                            <option value="pr">Paran??</option> 
                                             <option value="pe">Pernambuco</option> 
-                                            <option value="pi">Piau√≠</option> 
+                                            <option value="pi">Piau?≠</option> 
                                             <option value="rj">Rio de Janeiro</option> 
                                             <option value="rn">Rio Grande do Norte</option> 
-                                            <option value="ro">Rond√¥nia</option> 
+                                            <option value="ro">Rond?¥nia</option> 
                                             <option value="rs">Rio Grande do Sul</option> 
                                             <option value="rr">Roraima</option> 
                                             <option value="sc">Santa Catarina</option> 
                                             <option value="se">Sergipe</option> 
-                                            <option value="sp" selected>S√£o Paulo</option> 
+                                            <option value="sp" selected>S?£o Paulo</option> 
                                             <option value="to">Tocantins</option> 
                                         </select>
                                         <div class="invalid-feedback">
@@ -838,14 +838,14 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados do seu Produto</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">√ó</span></button>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">?ó</span></button>
                         </div>
                         <div class="modal-body">
                             <p class="text-center"> Tem certeza de que deseja excluir este Produto?</p>
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-primary" ng-click="deletarProduto()">Sim</button>
-                            <button type="button" class="btn btn-light" data-dismiss="modal">N√£o</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">N?£o</button>
                         </div>
                     </div>
                 </div>
@@ -857,13 +857,13 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">√ó</span></button>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">?ó</span></button>
                         </div>
                         <div class="modal-body text-center">
 
                             <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
                             <br>
-                            <h3 style="margin-top:20px;">Carregando as informa√ß√µes...</h3>
+                            <h3 style="margin-top:20px;">Carregando as informa?ß?µes...</h3>
 
                         </div>
                         <div class="modal-footer">
@@ -954,7 +954,7 @@
             </script>
             <script>
                 $(document).ready(function () {
-                    $('.btninfo').tooltip({title: "Mais informa√ß√£o", placement: "top"});
+                    $('.btninfo').tooltip({title: "Mais informa?ß?£o", placement: "top"});
                     $('.btnedit').tooltip({title: "Editar", placement: "top"});
                     $('.btndel').tooltip({title: "Deletar", placement: "top"});
                 });

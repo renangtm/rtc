@@ -89,7 +89,7 @@ class Empresa {
     public function merge($con) {
 
         if ($this->id == 0) {
-
+            
             $ps = $con->getConexao()->prepare("INSERT INTO empresa(nome,excluida,inscricao_estadual,consigna,aceitou_contrato,juros_mensal,cnpj,is_logistica) VALUES('" . addslashes($this->nome) . "',false,'" . $this->inscricao_estadual . "'," . ($this->consigna ? "true" : "false") . "," . ($this->aceitou_contrato ? "true" : "false") . ",$this->juros_mensal,'" . $this->cnpj->valor . "'," . ($this->is_logistica ? "true" : "false") . ")");
             $ps->execute();
             $this->id = $ps->insert_id;
@@ -125,6 +125,14 @@ class Empresa {
         $ps = $con->getConexao()->prepare("UPDATE empresa SET excluida = true WHERE id = " . $this->id);
         $ps->execute();
         $ps->close();
+    }
+    
+    public function setFilial($con,$empresa){
+        
+        $ps = $con->getConexao()->prepare("INSERT INTO filial(id_empresa1,id_empresa2) VALUES($this->id,$empresa->id)");
+        $ps->execute();
+        $ps->close();
+        
     }
 
     public function getFiliais($con) {
@@ -1381,7 +1389,7 @@ class Empresa {
                 $pro->id = $id_pro;
                 $pro->nome = $nome;
                 $pro->id_universal = $id_uni;
-                $pro->liquido = $liq;
+                $pro->liquido = $liq == 1;
                 $pro->quantidade_unidade = $qtd_un;
                 $pro->habilitado = $hab;
                 $pro->valor_base = $vb;
@@ -3759,7 +3767,7 @@ class Empresa {
             $p->id = $id_pro;
             $p->nome = $nome;
             $p->id_universal = $id_uni;
-            $p->liquido = $liq;
+            $p->liquido = $liq == 1;
             $p->quantidade_unidade = $qtd_un;
             $p->habilitado = $hab;
             $p->valor_base = $vb;
