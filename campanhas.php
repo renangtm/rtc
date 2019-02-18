@@ -131,7 +131,8 @@
                                                                             <tr ng-repeat="prod in campanha[0].produtos">
                                                                                 <th class="text-center">{{prod.produto.id}}</th>
                                                                                 <th>{{prod.produto.nome}}</th>
-                                                                                <th>{{prod.validade| data}}</th>
+                                                                                <th ng-if="prod.validade !== 1000">{{prod.validade | data}}</th>
+                                                                                <th ng-if="prod.validade === 1000">------</th>
                                                                                 <th class="text-center">{{prod.limite}}</th>
                                                                                 <th class="text-center">R$ {{prod.valor}}</th>
                                                                             </tr>
@@ -280,7 +281,8 @@
                                             <tr ng-repeat="prod in campanha.produtos">
                                                 <th>{{prod.produto.id}}</th>
                                                 <th>{{prod.produto.nome}}</th>
-                                                <th>{{prod.validade| data}}</th>
+                                                <th ng-if="prod.validade !== 1000">{{prod.validade| data}}</th>
+                                                <th ng-if="prod.validade === 1000">------</th>
                                                 <th><input type="text" class="form-control" ng-model="prod.limite"></th>
                                                 <th><input type="text" class="form-control" ng-model="prod.valor"></th>
                                                 <th><button class="btn btn-danger" ng-click="deleteProdutoCampanha(campanha, prod)"><i class="fa fa-times"></i></button></th>
@@ -563,8 +565,9 @@
                                             <tr ng-repeat="prod in campanha.lista.elementos">
                                                 <th><button ng-click="addNumeracao(prod[0])" class="btn btn-default" style="width:23px;height:23px;padding:1px;display:inline;background-color:{{getNumeracaoCor(prod[0].numeracao)}};color:#FFFFFF">{{getNumeracaoAlfabetica(prod[0].numeracao)}}</button></th>
                                                 <th>{{prod[0].produto.id}} - {{prod[0].produto.nome}}</th>
-                                                <th><button ng-click="setProdutoValidade(prod[0])" class="btn btn-{{prod[0].validade<0?'danger':'success'}}" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button><strong style="display:inline">{{(prod[0].validade > 0) ? (prod[0].validade | data) : 'Selecione'}}</strong></th>
-                                                <th><input type="text" class="form-control" ng-model="prod[0].limite"></th>
+                                                <th ng-if="prod[0].validade !== 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-{{prod[0].validade<0?'danger':'success'}}" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">{{(prod[0].validade > 0) ? (prod[0].validade | data) : 'Selecione'}}</strong></th>
+                                                <th ng-if="prod[0].validade === 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-warning" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">------</strong></th>
+                                                <th><input type="text" style="max-width:60px" class="form-control" ng-model="prod[0].limite"></th>
                                                 <th>{{prod[0].produto.custo}}</th>
                                                 <th ng-click="selecionarValor(prod[0], v)" style="cursor:pointer;{{v.selecionado?'text-decoration:underline;color:Green':''}}" ng-repeat="v in prod[0].valores">{{v.valor}} R$</th>
                                                 <th ng-click="selecionarValor(prod[0], prod[0].valor_editavel)"><input type="text" class="form-control" style="width:50px;{{prod[0].valor_editavel.selecionado?'color:Green;text-decoration:underline':''}}" ng-model="prod[0].valor_editavel.valor"></th>
@@ -611,8 +614,8 @@
                                     </thead>
                                     <tr ng-repeat="v in produto.validades">
                                         <th>{{produto.nome}}</th>
-                                        <th ng-if="v.validade>0">{{v.validade | data}} <i class="fas fa-arrow-up" ng-if="v.alem" ></i></th>
-                                        <th ng-if="v.validade<0"> ---------- </th>
+                                        <th ng-if="v.validade !== 1000">{{v.validade | data}} <i class="fas fa-arrow-up" ng-if="v.alem" ></i></th>
+                                        <th ng-if="v.validade === 1000"> ------ </th>
                                         <th class="text-center">{{v.quantidade}}</th>
                                         <th><button class="btn btn-success" data-dismiss="modal" aria-label="Close" ng-click="setAutoValidade(v)"><i class="fas fa-plus-circle"></i></th>
                                     </tr>
@@ -664,7 +667,8 @@
                                                             <th>Selecionar</th>
                                                             </thead>
                                                             <tr ng-repeat="validade in produto[0].validades">
-                                                                <th>{{validade.validade| data}} <i class="fas fa-arrow-up" ng-if="validade.alem" ></i> </th>
+                                                                <th ng-if="validade.validade !== 1000">{{validade.validade| data}} <i class="fas fa-arrow-up" ng-if="validade.alem" ></i> </th>
+                                                                <th ng-if="validade.validade === 1000">------</th>
                                                                 <th class="text-center">{{validade.quantidade}}</th>
                                                                 <th class="text-center"><button class="btn btn-success" ng-click="addProdutoCampanha(produto[0], validade)"><i class="fas fa-plus-circle"></i></button></th>
                                                             </tr>
@@ -694,85 +698,87 @@
                 </div>
                 <!-- /.modal-content --> 
                 
-                 <!-- /.modal-content LOADING --> 
-                <div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                            </div>
-                            <div class="modal-body text-center">
-                                
-                                <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                                <br>
-                                <h3 style="margin-top:20px;">Carregando as informações...</h3>
+                <!-- /.modal-content LOADING --> 
+            <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body text-center">
 
-                            </div>
-                            <div class="modal-footer">
-                            </div>
+                            <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
+                            <br>
+                            <h3 style="margin-top:20px;">Carregando as informações...</h3>
+
+                        </div>
+                        <div class="modal-footer">
                         </div>
                     </div>
                 </div>
+            </div>
 
 
-                <!-- jquery 3.3.1 -->
-                <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-                <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
-                <script src="assets/libs/js/form-mask.js"></script>
-                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+            <!-- jquery 3.3.1 -->
+            <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+            <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
+            <script src="assets/libs/js/form-mask.js"></script>
+            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
-                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-                <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-                <!-- slimscroll js -->
-                <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-                <!-- main js -->
-                <script src="assets/libs/js/main-js.js"></script>
-                <!-- chart chartist js -->
-                <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
-                <!-- sparkline js -->
-                <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
-                <!-- morris js -->
-                <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
-                <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
-                <!-- chart c3 js -->
-                <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
-                <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
-                <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
-                <script src="assets/libs/js/dashboard-ecommerce.js"></script>
-                <!-- parsley js -->
-                <script src="assets/vendor/parsley/parsley.js"></script>
+            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+            <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+            <!-- slimscroll js -->
+            <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+            <!-- main js -->
+            <script src="assets/libs/js/main-js.js"></script>
+            <!-- chart chartist js -->
+            <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
+            <!-- sparkline js -->
+            <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+            <!-- morris js -->
+            <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
+            <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
+            <!-- chart c3 js -->
+            <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
+            <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+            <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
+            <script src="assets/libs/js/dashboard-ecommerce.js"></script>
+            <!-- parsley js -->
+            <script src="assets/vendor/parsley/parsley.js"></script>
 
-                <!-- Optional JavaScript -->
-                <script>
-                    
-                    var sh = false;
-                    var it = null;
-                    
-                    loading.show = function(){
-                        if(it != null){
-                            clearInterval(it);
-                        }
-                        if(!sh){
-                            
-                            sh = true;
-                            $("#loading").modal("show");
-                        
-                        }
-                        
-                    }
-                    
-                    loading.close = function(){
-                        
-                        it = setTimeout(function(){
-                                if(sh){
-                                    sh = false;
-                                    $("#loading").modal("hide");
+            <!-- Optional JavaScript -->
+            <script>
+
+                                var sh = false;
+                                var it = null;
+
+                                loading.show = function () {
+                                    if (it != null) {
+                                        clearInterval(it);
+                                    }
+                                    it = setInterval(function () {
+                                        $("#loading").modal("show");
+                                        if ($("#loading").hasClass('in')) {
+                                            clearInterval(it);
+                                        }
+                                    }, 300)
+
                                 }
-                        },2000);
-                        
-                        
-                    }
+
+                                loading.close = function () {
+
+                                    if (it != null) {
+                                        clearInterval(it);
+                                    }
+                                    it = setInterval(function () {
+                                        $("#loading").modal("hide");
+                                        if (!$("#loading").hasClass('in')) {
+                                            clearInterval(it);
+                                        }
+                                    }, 300)
+
+                                }
                     
                     
                     $(document).ready(function () {

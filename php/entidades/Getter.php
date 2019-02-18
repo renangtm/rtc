@@ -18,6 +18,63 @@ class Getter {
     function __construct($emp) {
         $this->empresa = $emp;
     }
+    
+    public function getTransportadoraViaTransportadora($con,$transportadora){
+        
+        $transportadora_existente = $this->empresa->getTransportadoras($con,0,1,"transportadora.cnpj = '".$transportadora->cnpj->valor."'");
+        
+        if(count($transportadora_existente)>0){
+            
+            return $transportadora_existente[0];
+            
+        }
+        
+        $nova = Utilidades::copyId0($transportadora);
+        $nova->empresa = $this->empresa;
+        $nova->tabela = null;
+        $nova->merge($con);
+        
+        return $nova;
+        
+    }
+    
+    public function getProdutoViaProduto($con,$produtos){
+        
+        $in = "(-1";
+        
+        foreach($produtos as $key=>$value){
+            
+            $in .= ",$value->id_universal";
+            
+        }
+        
+        $in .= ")";
+        
+        $produtos_existentes = $this->empresa->getProdutos($con,0,count($produtos),"produto.id_universal IN $in","");
+        
+        foreach($produtos as $key=>$value){
+            
+            foreach($produtos_existentes as $key2=>$value2){                
+                if($value->id_universal === $value2->id_universal){                    
+                    continue 2;   
+                }
+            }
+            
+            $novo = Utilidades::copyId0($value);
+            $novo->empresa = $this->empresa;
+            $novo->logistica = null;
+            $novo->estoque = 0;
+            $novo->disponivel = 0;
+            $novo->transito = 0;
+            $novo->merge($con);
+            
+            $produtos_existentes[$key] = $novo;
+            
+        }
+
+        return $produtos_existentes;
+        
+    }
 
     public function getFornecedorViaEmpresa($con, $empresa) {
 

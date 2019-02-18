@@ -1,876 +1,533 @@
 <!doctype html>
-<html lang="en">
- 
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-    <link href="assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/libs/css/style.css">
-    <link rel="stylesheet" href="assets/vendor/fonts/fontawesome/css/fontawesome-all.css">
-    <link rel="stylesheet" href="assets/vendor/charts/chartist-bundle/chartist.css">
-    <link rel="stylesheet" href="assets/vendor/charts/morris-bundle/morris.css">
-    <link rel="stylesheet" href="assets/vendor/fonts/material-design-iconic-font/css/materialdesignicons.min.css">
-    <link rel="stylesheet" href="assets/vendor/charts/c3charts/c3.css">
-    <link rel="stylesheet" href="assets/vendor/fonts/flag-icon-css/flag-icon.min.css">
-    <title>RTC (Reltrab Cliente) - WEB</title>
-</head>
+<html lang="en" ng-app="appRtc">
 
-<body>
-    <!-- ============================================================== -->
-    <!-- main wrapper -->
-    <!-- ============================================================== -->
-    <div class="dashboard-main-wrapper">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <script src="js/angular.min.js"></script>
+        <script src="js/rtc.js"></script>
+        <script src="js/filters.js"></script>
+        <script src="js/services.js"></script>
+        <script src="js/controllers.js"></script>   
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
+        <link href="assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
+        <link rel="stylesheet" href="assets/libs/css/style.css">
+        <link rel="stylesheet" href="assets/vendor/fonts/fontawesome/css/fontawesome-all.css">
+        <link rel="stylesheet" href="assets/vendor/charts/chartist-bundle/chartist.css">
+        <link rel="stylesheet" href="assets/vendor/charts/morris-bundle/morris.css">
+        <link rel="stylesheet" href="assets/vendor/fonts/material-design-iconic-font/css/materialdesignicons.min.css">
+        <link rel="stylesheet" href="assets/vendor/charts/c3charts/c3.css">
+        <link rel="stylesheet" href="assets/vendor/fonts/flag-icon-css/flag-icon.min.css">
+        <title>RTC (Reltrab Cliente) - WEB</title>
+    </head>
+
+    <body ng-controller="crtCompraParceiros">
         <!-- ============================================================== -->
-        <!-- navbar -->
+        <!-- main wrapper -->
         <!-- ============================================================== -->
-        <div class="dashboard-header">
-            <nav class="navbar navbar-expand-lg bg-white fixed-top">
-                <a class="navbar-brand" href="index.html"><img style="" src="assets/images/logo.png" alt="" title=""></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse " id="navbarSupportedContent">
-                    <ul class="navbar-nav ml-auto navbar-right-top">
-                        <li class="nav-item">
-                            <div id="custom-search" class="top-search-bar">
-								<div class="form-group">
-											<div class="icon-addon addon-sm">
-												<input class="form-control" type="search" placeholder="Digite o que procura" aria-label="Search" size="80%">
-												<label for="email" class="fa fa-search" rel="tooltip" title="email"></label>
-											</div>
-								</div>
-                            </div>
-                        </li>
-						<li class="nav-item dropdown notification">
-                            <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-fw fa-shopping-cart fa-bell"></i></a>
-                            <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
-                                <li>
-                                    <div class="notification-title">Carrinho de Compras<span class="badge badge-primary badge-pill m-l-20">3</span></div>
-                                    <div class="notification-list">
-                                        <div class="list-group">
-											
-											  <a href="#" class="list-group-item list-group-item-action active">
-													<div class="notification-info">
-														<div class="notification-list-user-img"><img src="http://www.faunasystem.com.br:8080/rtc/SUPPORT-GL-5L.png" alt="" class="user-avatar-xl"></div>
-														<div class="notification-list-user-img m-l-20"><span class="notification-list-user-name">Support (Gl 5L)</span>.
-															<div class="notification-date">Qtd p/ caixa: 4</div>
-															<div class="notification-date">Valor: R$ 79.93</div>
-															<div class="notification-date">Qtd:&nbsp;<input id="inputText4" type="number" class="form-control form-control-xs" placeholder="5" min="1" max="5"></div>
-															<div class="notification-date">SubTotal: R$ 319.72</div>
-														</div>	
-														<div class="notification-list-user-img m-l-25 product"><button class="btn btn-outline-light btn-sm"><i class="fa fa-times"></i></button></div>	
-														
-													</div>
-												</a>
-												<a href="#" class="list-group-item list-group-item-action active">
-													<div class="notification-info">
-														<div class="notification-list-user-img"><img src="http://www.faunasystem.com.br:8080/rtc/SUPPORT-GL-5L.png" alt="" class="user-avatar-xl"></div>
-														<div class="notification-list-user-img m-l-20"><span class="notification-list-user-name">Support (Gl 5L)</span>.
-															<div class="notification-date">Qtd p/ caixa: 4</div>
-															<div class="notification-date">Valor: R$ 79.93</div>
-															<div class="notification-date">Qtd:&nbsp;<input id="inputText4" type="number" class="form-control form-control-xs" placeholder="5" min="1" max="5"></div>
-															<div class="notification-date">SubTotal: R$ 319.72</div>
-														</div>	
-														<div class="notification-list-user-img m-l-25 product"><button class="btn btn-outline-light btn-sm"><i class="fa fa-times"></i></button></div>	
-														
-													</div>
-												</a>
-												<a href="#" class="list-group-item list-group-item-action active">
-													<div class="notification-info">
-														<div class="notification-list-user-img"><img src="http://www.faunasystem.com.br:8080/rtc/SUPPORT-GL-5L.png" alt="" class="user-avatar-xl"></div>
-														<div class="notification-list-user-img m-l-20"><span class="notification-list-user-name">Support (Gl 5L)</span>.
-															<div class="notification-date">Qtd p/ caixa: 4</div>
-															<div class="notification-date">Valor: R$ 79.93</div>
-															<div class="notification-date">Qtd:&nbsp;<input id="inputText4" type="number" class="form-control form-control-xs" placeholder="5" min="1" max="5"></div>
-															<div class="notification-date">SubTotal: R$ 319.72</div>
-														</div>	
-														<div class="notification-list-user-img m-l-25 product"><button class="btn btn-outline-light btn-sm"><i class="fa fa-times"></i></button></div>	
-														
-													</div>
-												</a>
-											
-											
-                                        </div>
-										
+        <div class="dashboard-main-wrapper">
+            <!-- ============================================================== -->
+            <!-- navbar -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- end navbar -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- left sidebar -->
+            <!-- ============================================================== -->
+            <?php 
+            
+            $filtro = "ng-model='produtos.filtro[0].valor' ng-confirm='produtos.attList()'";
+            
+            include("menu.php"); ?>
+            <!-- ============================================================== -->
+            <!-- end left sidebar -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- wrapper  -->
+            <!-- ============================================================== -->
+            <div class="dashboard-wrapper">
+                <div class="dashboard-ecommerce">
+                    <div class="container-fluid dashboard-content ">
+                        <!-- ============================================================== -->
+                        <!-- pageheader  -->
+                        <!-- ============================================================== -->
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="page-header">
+                                    <h2 class="pageheader-title">Comprar</h2>
+                                    <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
+                                    <div class="page-breadcrumb">
+                                        <nav aria-label="breadcrumb">
+                                            <ol class="breadcrumb">
+                                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">RTC</a></li>
+                                                <li class="breadcrumb-item active" aria-current="page">Comprar</li>
+                                            </ol>
+                                        </nav>
                                     </div>
-                                </li>
-                                <li>
-                                    <div class="list-footer"> <a href="carrinho-de-compras.html">Finalizar Compra</a></div>
-                                </li>
-                            </ul>
-                        </li>
-						<li class="nav-item dropdown notification">
-                            <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="far fa-fw fa-comments"></i></span></a>
-                            <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
-                                <li>
-                                    <div class="notification-title bg-primary"> Chat <i class="far fa-comments m-l-10"></i></div>
-                                    <div class="notification-list">
-                                        <div class="list-group">
-											<a href="#" class="list-group-item list-group-item-action bg-chat-pardal">
-                                                <div class="notification-info">
-                                                    <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                    <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal:</span>Quer fazer uma simulação preços com produtos que tenham algum ativo, ou cultura?
-                                                        <div class="notification-date">2 min ago</div>
-                                                    </div>
-                                                </div>
-                                            </a>
-											<a href="#" class="list-group-item list-group-item-action">
-                                                <div class="notification-info">
-                                                    <div class="notification-list-user-img"><img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                    <div class="notification-list-user-block"><span class="notification-list-user-name">Você:</span>teste
-                                                        <div class="notification-date">2 days ago</div>
-                                                    </div>
-                                                </div>
-                                            </a>
-											<a href="#" class="list-group-item list-group-item-action bg-chat-pardal">
-                                                <div class="notification-info">
-                                                    <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                    <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal:</span> Como posso ajudá-lo? Serei seu vendedor virtual!
-                                                        <div class="notification-date text-right">2 min ago</div>
-                                                    </div>
-                                                </div>
-                                            </a>
-											<a href="#" class="list-group-item list-group-item-action">
-                                                <div class="notification-info">
-                                                    <div class="notification-list-user-img"><img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                    <div class="notification-list-user-block"><span class="notification-list-user-name">Você:</span>teste
-                                                        <div class="notification-date">2 days ago</div>
-                                                    </div>
-                                                </div>
-                                            </a>
-											<a href="#" class="list-group-item list-group-item-action bg-chat-pardal">
-                                                <div class="notification-info">
-                                                    <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                    <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal: </span>Sou o Pardal!! Não sou professor, mas inventei o RTC para atendê-lo!
-                                                        <div class="notification-date">2 min ago</div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-										
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="list-footer bg-light"> 
-										<form class="form-inline justify-content-center">
-											<div class="form-group mx-sm-3 mb-2">
-												<input type="text" class="form-control" style="width: 100%" placeholder="Digite sua mensagem" id="txtFala">
-											</div>	
-												<button class="btn btn-sm btn-primary mb-2">Enviar</button>
-										</form>
-									</div>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown notification">
-                            <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-fw fa-bell"></i> <span class="indicator"></span></a>
-                            <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
-                                <li>
-                                    <div class="notification-title"> Notification</div>
-                                    <div class="notification-list">
-                                        <div class="list-group">
-                                            <a href="#" class="list-group-item list-group-item-action active">
-                                                <div class="notification-info">
-                                                    <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                    <div class="notification-list-user-block"><span class="notification-list-user-name">Jeremy Rakestraw</span>accepted your invitation to join the team.
-                                                        <div class="notification-date">2 min ago</div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                            <a href="#" class="list-group-item list-group-item-action">
-                                                <div class="notification-info">
-                                                    <div class="notification-list-user-img"><img src="assets/images/avatar-3.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                    <div class="notification-list-user-block"><span class="notification-list-user-name">John Abraham </span>is now following you
-                                                        <div class="notification-date">2 days ago</div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                            <a href="#" class="list-group-item list-group-item-action">
-                                                <div class="notification-info">
-                                                    <div class="notification-list-user-img"><img src="assets/images/avatar-4.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                    <div class="notification-list-user-block"><span class="notification-list-user-name">Monaan Pechi</span> is watching your main repository
-                                                        <div class="notification-date">2 min ago</div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                            <a href="#" class="list-group-item list-group-item-action">
-                                                <div class="notification-info">
-                                                    <div class="notification-list-user-img"><img src="assets/images/avatar-5.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                                    <div class="notification-list-user-block"><span class="notification-list-user-name">Jessica Caruso</span>accepted your invitation to join the team.
-                                                        <div class="notification-date">2 min ago</div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="list-footer"> <a href="#">View all notifications</a></div>
-                                </li>
-                            </ul>
-                        </li>
-                       
-                        <li class="nav-item dropdown nav-user">
-                            <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle">
-								<span class="hidden-xs">Andre Sbrana</span>
-								<span class=" fa fa-angle-down"></span>
-							</a>
-                            <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
-                                <div class="nav-user-info clearfix align-middle">
-									<div class="float-left m-r-10 m-t-5">
-										<img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle ">
-									</div>
-									<div class="float-left">									
-										<h5 class="mb-0 text-white nav-user-name">Andre Sbrana </h5>
-										<span class="status"></span><span class="ml-2">webdesigner</span>
-									</div>	
                                 </div>
-                                <a class="dropdown-item" href="colaboradores.html"><i class="fas fa-user mr-2"></i>Colaboradores</a>
-                                <a class="dropdown-item" href="alteracao-do-logo.html"><i class="fas fa-font mr-2"></i>Alterar Logo</a>
-								<a class="dropdown-item" href="cadastro-empresas-filiais.html"><i class="fas fa-file-alt mr-2"></i>Empresas / Filiais</a>
-								<a class="dropdown-item" href="configuracao-da-empresa.html"><i class="fas fa-cog mr-2"></i>Configuração da empresa</a>
-                                <a class="dropdown-item" href="#"><i class="fas fa-power-off mr-2"></i>Sair</a>
                             </div>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-        <!-- ============================================================== -->
-        <!-- end navbar -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- left sidebar -->
-        <!-- ============================================================== -->
-        <?php include("menu.php") ?>
-        <!-- ============================================================== -->
-        <!-- end left sidebar -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- wrapper  -->
-        <!-- ============================================================== -->
-        <div class="dashboard-wrapper">
-            <div class="dashboard-ecommerce">
-                <div class="container-fluid dashboard-content ">
-                    <!-- ============================================================== -->
-                    <!-- pageheader  -->
-                    <!-- ============================================================== -->
-                    <div class="row">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                            <div class="page-header">
-                                <h2 class="pageheader-title">Comprar</h2>
-                                <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
-                                <div class="page-breadcrumb">
-                                    <nav aria-label="breadcrumb">
-                                        <ol class="breadcrumb">
-                                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">RTC</a></li>
-                                            <li class="breadcrumb-item active" aria-current="page">Comprar</li>
-                                        </ol>
-                                    </nav>
+                        </div>
+                        <!-- ============================================================== -->
+                        <!-- end pageheader  -->
+                        <!-- ============================================================== -->
+
+                        <!-- ============================================================== -->
+                        <!-- banner  -->
+                        <!-- ============================================================== -->
+                        <div class="row">
+                            <div class="col-xl-9 col-lg-8 col-md-8 col-sm-12 col-12">
+                                <div class="row">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+
+
+                                        <div id="carouselExampleIndicators" class="product-carousel carousel slide m-b-40" data-ride="carousel">
+                                            <ol class="carousel-indicators">
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                                                <!--<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>-->
+                                            </ol>
+                                            <div class="carousel-inner">
+                                                <div class="carousel-item active">
+                                                    <img class="d-block w-100" src="assets/images/banner_queima de estoque_784x295.jpg" alt="First slide">
+                                                </div>
+                                                <div class="carousel-item">
+                                                    <img class="d-block w-100" src="assets/images/mega oferta_784x295.jpg" alt="Second slide">
+                                                </div>
+                                                <!--
+                                                <div class="carousel-item">
+                                                        <img class="d-block w-100" src="assets/images/card-img-3.jpg" alt="Third slide">
+                                                </div>-->
+                                            </div>
+                                            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span class="sr-only">Previous</span>  </a>
+                                            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span class="sr-only">Next</span>  </a>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- ============================================================== -->
+                                    <!-- end banner  -->
+                                    <!-- ============================================================== -->
+                                    <!-- texto resultado -->                                   
+
+                                    <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12" ng-repeat="produto in dividir(produtos.elementos, 2)[0]">
+                                        <div class="product-thumbnail">
+                                            <div class="product-img-head">
+                                                <div class="product-img">
+                                                    <img src="{{produto.imagem}}" id="img_{{produto.id}}" alt="" class="img-fluid" onload="fechaLoad(this)">
+                                                    <br>
+                                                    <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm" style="width:250px;height:250px;margin-bottom:95px"></span>
+                                                </div>
+                                                <div class="ribbons" ng-if="produto.ofertas.length > 0"></div>
+                                                <div class="ribbons-text m-l-10" ng-if="produto.ofertas.length > 0">Oferta</div>
+
+                                            </div>
+                                            <div class="product-content">
+                                                <div class="product-content-head">
+                                                    <h3 class="product-title">{{produto.nome}}</h3>
+                                                    <div class="product-rating d-inline-block" style="min-height: 70px">
+
+                                                        <div ng-repeat="oferta in produto.ofertas" style="font-size:15px">
+
+                                                            <i class="fa fa-fw fa-star"></i>
+                                                            &nbsp;
+                                                            Oferta: 
+                                                            &nbsp;
+
+                                                            <span ng-if="oferta.validade !== 1000">{{oferta.validade| data_st}} &nbsp</span>
+
+                                                            &nbsp;
+
+                                                            <strong style="text-decoration:underline">{{oferta.valor}} R$ ({{(((oferta.valor - produto.valor_base) / produto.valor_base) * 100).toFixed(0)}}%)</strong>
+
+                                                        </div>
+
+                                                        <div ng-if="produto.ofertas.length === 0" style="color:Gray">
+                                                            <i class="fa fa-fw fa-star"></i> Sem ofertas no momento
+                                                        </div>
+                                                        
+                                                        <div style="color:SteelBlue">
+                                                            <i class="fas fa-road"></i>&nbsp {{produto.empresa.nome}} 
+                                                        </div>
+                                                        
+                                                        <div ng-if="produto.logistica !== null" style="color:DarkBlue">
+                                                            
+                                                            <i class="fas fa-box"></i>&nbsp {{produto.logistica.nome}} 
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="product-val"><button class="btn bn-default" style="margin-bottom:10px" ng-click="setProduto(produto)" data-toggle="modal" data-target="#validadeProduto"><i class="fa fa-info"></i>&nbsp Ver validades</button></div>
+                                                    <div class="product-quant">{{produto.grade.gr[0]}} p/ caixa</div>
+                                                    <div class="product-price">R$ {{produto.valor_base}} </div>
+
+                                                </div>
+
+                                                <div class="product-btn text-center">
+                                                    <button ng-click="setProduto(produto)" data-toggle="modal" data-target="#validadeProduto" class="btn btn-primary btn-block">Comprar&nbsp;&nbsp;<i class="fas fa-shopping-cart"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- ============================================================== -->
+                                    <!-- banner  -->
+                                    <!-- ============================================================== -->
+
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+
+
+                                        <div id="carouselExampleIndicators" class="product-carousel carousel slide m-b-40" data-ride="carousel">
+                                            <ol class="carousel-indicators">
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                                                <!--<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>-->
+                                            </ol>
+                                            <div class="carousel-inner">
+                                                <div class="carousel-item active">
+                                                    <img class="d-block w-100" src="assets/images/banner_queima de estoque_784x295.jpg" alt="First slide">
+                                                </div>
+                                                <div class="carousel-item">
+                                                    <img class="d-block w-100" src="assets/images/mega oferta_784x295.jpg" alt="Second slide">
+                                                </div>
+                                                <!--
+                                                <div class="carousel-item">
+                                                        <img class="d-block w-100" src="assets/images/card-img-3.jpg" alt="Third slide">
+                                                </div>-->
+                                            </div>
+                                            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span class="sr-only">Previous</span>  </a>
+                                            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span class="sr-only">Next</span>  </a>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12" ng-repeat="produto in dividir(produtos.elementos, 2)[1]">
+                                        <div class="product-thumbnail">
+                                            <div class="product-img-head">
+                                                <div class="product-img">
+                                                    <img src="{{produto.imagem}}" id="img_{{produto.id}}" onload="fechaLoad(this)" alt="" class="img-fluid"></div>
+                                                    <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm " style="width:250px;height:250px;margin-left:calc(50% - 125px )"></span>
+                                                <div class="ribbons" ng-if="produto.ofertas.length > 0"></div>
+                                                <div class="ribbons-text m-l-10" ng-if="produto.ofertas.length > 0">Oferta</div>
+
+                                            </div>
+                                            <div class="product-content">
+                                                <div class="product-content-head">
+                                                    <h3 class="product-title">{{produto.nome}}</h3>
+                                                    <div class="product-rating d-inline-block" style="min-height: 70px">
+
+                                                        <div ng-repeat="oferta in produto.ofertas" style="font-size:15px">
+
+                                                            <i class="fa fa-fw fa-star"></i>
+                                                            &nbsp;
+                                                            Oferta: 
+                                                            &nbsp;
+
+                                                            <span ng-if="oferta.validade !== 1000">{{oferta.validade| data_st}} &nbsp</span>
+
+                                                            &nbsp;
+
+                                                            <strong style="text-decoration:underline">{{oferta.valor}} R$ ({{(((oferta.valor - produto.valor_base) / produto.valor_base) * 100).toFixed(0)}}%)</strong>
+
+                                                        </div>
+
+                                                        <div ng-if="produto.ofertas.length === 0" style="color:Gray">
+                                                            <i class="fa fa-fw fa-star"></i> Sem ofertas no momento
+                                                        </div>
+                                                        
+                                                        <div style="color:SteelBlue">
+                                                            <i class="fas fa-road"></i>&nbsp {{produto.empresa.nome}} 
+                                                        </div>
+                                                        
+                                                        <div ng-if="produto.logistica !== null" style="color:DarkBlue">
+                                                            
+                                                            <i class="fas fa-box"></i>&nbsp {{produto.logistica.nome}} 
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="product-val"><button class="btn bn-default" style="margin-bottom:10px" ng-click="setProduto(produto)" data-toggle="modal" data-target="#validadeProduto"><i class="fa fa-info"></i>&nbsp Ver validades</button></div>
+                                                    <div class="product-quant">{{produto.grade.gr[0]}} p/ caixa</div>
+                                                    <div class="product-price">R$ {{produto.valor_base}} </div>
+
+                                                </div>
+
+                                                <div class="product-btn text-center">
+                                                    <button ng-click="setProduto(produto)" data-toggle="modal" data-target="#validadeProduto" class="btn btn-primary btn-block">Comprar&nbsp;&nbsp;<i class="fas fa-shopping-cart"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
+
+                                    <!-- ============================================================== -->
+                                    <!-- paginação  -->
+                                    <!-- ============================================================== -->
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        <nav aria-label="Page navigation example">
+                                            <ul class="pagination">
+                                                <li class="page-item"><button class="page-link" ng-click="produtos.prev()">Anterior</button></li>
+                                                <li class="page-item" ng-repeat="p in produtos.paginas"><button class="page-link {{p.isAtual?'btn btn-primary':''}}" ng-click="p.ir()">{{p.numero + 1}}</button></li>
+                                                <li class="page-item"><button class="page-link" ng-click="produtos.next()">Proximo</button></li>
+                                            </ul>
+                                        </nav>
+                                    </div>
                                 </div>
+                            </div>
+
+
+
+                            <!-- ============================================================== -->
+                            <!-- sidebar BANNER + FILTRO  -->
+                            <!-- ============================================================== -->	
+
+                            <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-12">
+                                <div class="product-sidebar m-b-30">
+
+
+                                    <div class="product-sidebar-widget" ng-repeat="filtro in produtos.filtro">
+                                        <h4 class="product-sidebar-widget-title">{{filtro.nome}}</h4>
+                                        <div class="form-group" ng-if="filtro._classe === 'FiltroTextual'">
+                                            <div class="icon-addon addon-lg">
+                                                <input class="form-control form-control-lg" ng-model="filtro.valor" ng-confirm="produtos.attList()" type="search" placeholder="{{filtro.nome}}" aria-label="Search">
+                                                <label for="email" class="fa fa-search" rel="tooltip" title="email"></label>
+                                            </div>
+                                        </div>
+
+                                        <div ng-if="filtro._classe === 'FiltroOpcional'" class="custom-control custom-checkbox" ng-repeat="opcao in filtro.opcoes" style="{{opcao.quantidade===0?'text-decoration:line-through;color:DarkRed':''}}">
+                                            <button ng-if="opcao.selecionada === 0" ng-click="addLevel(opcao)" class="btn btn-default" style="width:20px;height:20px;padding:1px;padding-top:0px;padding-right:0px"><i class="fa fa-adjust"></i></button>
+                                            <button ng-if="opcao.selecionada === 1" ng-click="addLevel(opcao)" class="btn btn-success" style="width:20px;height:20px;padding:1px;padding-top:0px;padding-right:0px"><i class="fa fa-check"></i></button>
+                                            <button ng-if="opcao.selecionada === 2" ng-click="addLevel(opcao)" class="btn btn-danger" style="width:20px;height:20px;padding:1px;padding-top:0px;padding-right:0px"><i class="fa fa-times"></i></button>
+                                            - {{opcao.nome}} <strong> ({{opcao.quantidade}})</strong>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="product-sidebar-widget">
+                                        <button type="button" class="btn btn-outline-light" ng-click="resetarFiltro()">Resetar Filtro</button>
+                                    </div>
+                                </div>
+
+                                <div class="modal fade" id="validadeProduto" tabindex="99" role="dialog" aria-labelledby="validadeProduto" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Validades do produto {{prod.nome}}</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                            </div>
+                                            <div class="modal-body">
+
+                                                <table class="table table-striped table-bordered first">
+                                                    <thead>
+                                                    <th>Produto</th>
+                                                    <th>Validade</th>
+                                                    <th>Valor</th>
+                                                    <th>Limite</th>
+                                                    <th>Selecionar</th>
+                                                    </thead>
+                                                    <tr ng-repeat="v in prod.validades">
+                                                        <th>{{prod.nome}}</th>
+                                                        <th ng-if="v.validade !== 1000">{{v.validade| data_st}} <i class="fas fa-arrow-up" ng-if="v.alem" ></i></th>
+                                                        <th ng-if="v.validade === 1000"> ------ </th>
+                                                        <th>{{v.valor}} R$</th>
+                                                        <th ng-if="v.limite>0"> {{v.limite}} </th>
+                                                        <th ng-if="v.limite<=0"> ------ </th>
+                                                        <th><button class="btn btn-success" data-dismiss="modal" aria-label="Close" ng-click="setValidade(v)" data-toggle="modal" data-target="#qtdProduto"><i class="fas fa-plus-circle"></i></button></th>
+                                                    </tr>
+                                                </table>
+
+                                            </div>
+                                            <div class="modal-footer">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal fade" id="qtdProduto" tabindex="99" role="dialog" aria-labelledby="qtdProduto" aria-hidden="true">
+                                    <div class="modal-dialog" style="max-width:227px">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Digite a quantidade desejada ?</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                            </div>
+                                            <div class="modal-body">
+
+                                                <inteiro type="text" model="qtd"></inteiro>
+                                                
+                                            
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-primary" data-dismiss="modal" aria-label="Close" ng-click="addCarrinho()"><i class="fa fa-check"></i> &nbsp Adicionar ao carrinho</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- ============================================================== -->
+                                <!-- sidebar BANNER 300x250  -->
+                                <!-- ============================================================== -->
+
+                                <div class="product-sidebar m-b-30">
+                                    <div class="product-sidebar-widget p-0" style="margin-bottom: 0px">
+                                        <img alt="pampa Design Medium Rectangle 300x250" src="assets/images/banner_300x250_pampa.jpg" style="width: 100%;">
+                                    </div>
+                                </div>
+
+                                <!-- ============================================================== -->
+                                <!-- sidebar BANNER 240x400  -->
+                                <!-- ============================================================== -->
+
+                                <div class="product-sidebar m-b-30">
+                                    <div class="product-sidebar-widget p-0" style="margin-bottom: 0px">
+                                        <img alt="tordon banner 240x400" src="assets/images/banner_240x400_tordon.jpg" style="width: 100%;">
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
-                    <!-- ============================================================== -->
-                    <!-- end pageheader  -->
-                    <!-- ============================================================== -->
-					
-					<!-- ============================================================== -->
-                    <!-- banner  -->
-                    <!-- ============================================================== -->
-					<div class="row">
-					<div class="col-xl-9 col-lg-8 col-md-8 col-sm-12 col-12">
-                            <div class="row">
-							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-								
-									
-										<div id="carouselExampleIndicators" class="product-carousel carousel slide m-b-40" data-ride="carousel">
-											<ol class="carousel-indicators">
-												<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-												<li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-												<!--<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>-->
-											</ol>
-											<div class="carousel-inner">
-												<div class="carousel-item active">
-													<img class="d-block w-100" src="assets/images/banner_queima de estoque_784x295.jpg" alt="First slide">
-												</div>
-												<div class="carousel-item">
-													<img class="d-block w-100" src="assets/images/mega oferta_784x295.jpg" alt="Second slide">
-												</div>
-												<!--
-												<div class="carousel-item">
-													<img class="d-block w-100" src="assets/images/card-img-3.jpg" alt="Third slide">
-												</div>-->
-											</div>
-											<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-											  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-											   <span class="sr-only">Previous</span>  </a>
-											<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-												<span class="carousel-control-next-icon" aria-hidden="true"></span>
-													<span class="sr-only">Next</span>  </a>
-										</div>
-							
-							</div>
-					
-					<!-- ============================================================== -->
-                    <!-- end banner  -->
-                    <!-- ============================================================== -->
-							<!-- texto resultado -->
-							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-								<div class="m-b-10">2461 produtos encontrados</div>
-							</div>
-                    
-					
-                                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
-                                    <div class="product-thumbnail">
-                                        <div class="product-img-head">
-                                            <div class="product-img">
-                                                <img src="http://www.faunasystem.com.br:8080/rtc/FASON-NICOSULFURON-40-SC-GL-5L.png" alt="" class="img-fluid"></div>
-                                            <div class="ribbons"></div>
-											<div class="ribbons-text m-l-10">Novo</div>
-                                            
-                                            <div class=""><a href="#" class="product-wishlist-btn"><i class="fas fa-heart"></i></a></div>
-                                        </div>
-                                        <div class="product-content">
-                                            <div class="product-content-head">
-                                                <h3 class="product-title">Fason (GL 5 LT) Nicosulfuron 40 SC</h3>
-												<div class="product-rating d-inline-block">
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                </div>
-												<div class="product-val">val. 30 / 06 / 2019</div>
-												<div class="product-quant">4 p/ caixa</div>
-                                                <div class="product-price">R$ 128.88</div>
-                                            </div>
-											
-											<div class="form-group row justify-content-center">
-													<label for="inputText4" class="col-sm-5 col-form-label">Quantidade</label>
-													<div class="col-sm-5">
-														<input id="inputText4" type="number" class="form-control" placeholder="1" min="1" max="5">
-													</div>	
-											</div>	
-											
-                                            <div class="product-btn text-center">
-                                                <a href="#" class="btn btn-primary btn-block">Comprar&nbsp;&nbsp;<i class="fas fa-shopping-cart"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-								<div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
-                                    <div class="product-thumbnail">
-                                        <div class="product-img-head">
-                                            <div class="product-img">
-                                                <img src="http://www.faunasystem.com.br:8080/rtc/PAMPA-BD-20L.png" alt="" class="img-fluid"></div>
-                                            <div class="ribbons bg-danger"></div>
-                                            <div class="ribbons-text" style="margin-left: 2px">Vendido</div>
-                                            <div class=""><a href="#" class="product-wishlist-btn"><i class="fas fa-heart"></i></a></div>
-                                        </div>
-                                        <div class="product-content">
-                                            <div class="product-content-head">
-                                                <h3 class="product-title">Pampa (Bd 20L)</h3>
-												<div class="product-rating d-inline-block">
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                </div>
-												<div class="product-val">val. 30 / 09 / 2021</div>
-												<div class="product-quant">1 p/ caixa</div>
-                                                <div class="product-price">R$ 372.88</div>
-                                            </div>
-												<div class="form-group row justify-content-center">
-													<label for="inputText4" class="col-sm-5 col-form-label">Quantidade</label>
-													<div class="col-sm-5">
-														<input id="inputText4" type="number" class="form-control" placeholder="1" min="1" max="5">
-													</div>	
-												</div>	
-                                            <div class="product-btn text-center">
-                                                <a href="#" class="btn btn-primary btn-block">Comprar&nbsp;&nbsp;<i class="fas fa-shopping-cart"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
-                                    <div class="product-thumbnail">
-                                        <div class="product-img-head">
-                                            <div class="product-img">
-                                                <img src="http://www.faunasystem.com.br:8080/rtc/TORDON-BD-20L.png" alt="" class="img-fluid"></div>
-                                            <div class="ribbons bg-brand"></div>
-                                            <div class="ribbons-text" style="margin-left: 6px">Oferta</div>
-                                            <div class=""><a href="#" class="product-wishlist-btn"><i class="fas fa-heart"></i></a></div>
-                                        </div>
-                                        <div class="product-content">
-                                            <div class="product-content-head">
-                                                <h3 class="product-title">Tordon (bd 20L)</h3>
-												<div class="product-rating d-inline-block">
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                </div>
-												<div class="product-val">val. 30 / 06 / 2020</div>
-												<div class="product-quant">1 p/ caixa</div>
-                                                <div class="product-price">R$ 590.00</div>
-                                            </div>
-												<div class="form-group row justify-content-center">
-													<label for="inputText4" class="col-sm-5 col-form-label">Quantidade</label>
-													<div class="col-sm-5">
-														<input id="inputText4" type="number" class="form-control" placeholder="1" min="1" max="5">
-													</div>	
-												</div>	
-                                            <div class="product-btn text-center">
-                                                <a href="#" class="btn btn-primary btn-block">Comprar&nbsp;&nbsp;<i class="fas fa-shopping-cart"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-								
-								<div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
-                                    <div class="product-thumbnail">
-                                        <div class="product-img-head">
-                                            <div class="product-img">
-                                                <img src="http://www.faunasystem.com.br:8080/rtc/FASON-NICOSULFURON-40-SC-GL-5L.png" alt="" class="img-fluid"></div>
-                                            <div class="ribbons"></div>
-                                            <div class="ribbons-text m-l-10">Novo</div>
-                                            <div class=""><a href="#" class="product-wishlist-btn"><i class="fas fa-heart"></i></a></div>
-                                        </div>
-                                        <div class="product-content">
-                                            <div class="product-content-head">
-                                                <h3 class="product-title">Fason (GL 5 LT) Nicosulfuron 40 SC</h3>
-												<div class="product-rating d-inline-block">
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                </div>
-												<div class="product-val">val. 30 / 06 / 2019</div>
-												<div class="product-quant">4 p/ caixa</div>
-                                                <div class="product-price">R$ 128.88</div>
-                                            </div>
-												<div class="form-group row justify-content-center">
-													<label for="inputText4" class="col-sm-5 col-form-label">Quantidade</label>
-													<div class="col-sm-5">
-														<input id="inputText4" type="number" class="form-control" placeholder="1" min="1" max="5">
-													</div>	
-												</div>	
-                                            <div class="product-btn text-center">
-                                                <a href="#" class="btn btn-primary btn-block">Comprar&nbsp;&nbsp;<i class="fas fa-shopping-cart"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-								<div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
-                                    <div class="product-thumbnail">
-                                        <div class="product-img-head">
-                                            <div class="product-img">
-                                                <img src="http://www.faunasystem.com.br:8080/rtc/PAMPA-BD-20L.png" alt="" class="img-fluid"></div>
-                                            <div class="ribbons bg-danger"></div>
-                                            <div class="ribbons-text" style="margin-left: 2px">Vendido</div>
-                                            <div class=""><a href="#" class="product-wishlist-btn"><i class="fas fa-heart"></i></a></div>
-                                        </div>
-                                        <div class="product-content">
-                                            <div class="product-content-head">
-                                                <h3 class="product-title">Pampa (Bd 20L)</h3>
-												<div class="product-rating d-inline-block">
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                </div>
-												<div class="product-val">val. 30 / 09 / 2021</div>
-												<div class="product-quant">1 p/ caixa</div>
-                                                <div class="product-price">R$ 372.88</div>
-                                            </div>
-												<div class="form-group row justify-content-center">
-													<label for="inputText4" class="col-sm-5 col-form-label">Quantidade</label>
-													<div class="col-sm-5">
-														<input id="inputText4" type="number" class="form-control" placeholder="1" min="1" max="5">
-													</div>	
-												</div>	
-                                            <div class="product-btn text-center">
-                                                <a href="#" class="btn btn-primary btn-block">Comprar&nbsp;&nbsp;<i class="fas fa-shopping-cart"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
-                                    <div class="product-thumbnail">
-                                        <div class="product-img-head">
-                                            <div class="product-img">
-                                                <img src="http://www.faunasystem.com.br:8080/rtc/TORDON-BD-20L.png" alt="" class="img-fluid"></div>
-                                            <div class="ribbons bg-brand"></div>
-                                            <div class="ribbons-text" style="margin-left: 6px">Oferta</div>
-                                            <div class=""><a href="#" class="product-wishlist-btn"><i class="fas fa-heart"></i></a></div>
-                                        </div>
-                                        <div class="product-content">
-                                            <div class="product-content-head">
-                                                <h3 class="product-title">Tordon (bd 20L)</h3>
-												<div class="product-rating d-inline-block">
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                </div>
-												<div class="product-val">val. 30 / 06 / 2020</div>
-												<div class="product-quant">1 p/ caixa</div>
-                                                <div class="product-price">R$ 590.00</div>
-                                            </div>
-												<div class="form-group row justify-content-center">
-													<label for="inputText4" class="col-sm-5 col-form-label">Quantidade</label>
-													<div class="col-sm-5">
-														<input id="inputText4" type="number" class="form-control" placeholder="1" min="1" max="5">
-													</div>	
-												</div>	
-                                            <div class="product-btn text-center">
-                                                <a href="#" class="btn btn-primary btn-block">Comprar&nbsp;&nbsp;<i class="fas fa-shopping-cart"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-								
-								 <!-- ============================================================== -->
-								<!-- banner  -->
-								<!-- ============================================================== -->
-								
-								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-									
-										
-											<div id="carouselExampleIndicators" class="product-carousel carousel slide m-b-40" data-ride="carousel">
-												<ol class="carousel-indicators">
-													<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-													<li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-													<!--<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>-->
-												</ol>
-												<div class="carousel-inner">
-													<div class="carousel-item active">
-														<img class="d-block w-100" src="assets/images/banner_queima de estoque_784x295.jpg" alt="First slide">
-													</div>
-													<div class="carousel-item">
-														<img class="d-block w-100" src="assets/images/mega oferta_784x295.jpg" alt="Second slide">
-													</div>
-													<!--
-													<div class="carousel-item">
-														<img class="d-block w-100" src="assets/images/card-img-3.jpg" alt="Third slide">
-													</div>-->
-												</div>
-												<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-												  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-												   <span class="sr-only">Previous</span>  </a>
-												<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-													<span class="carousel-control-next-icon" aria-hidden="true"></span>
-														<span class="sr-only">Next</span>  </a>
-											</div>
-								
-								</div>
-								
-								
-								<div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
-                                    <div class="product-thumbnail">
-                                        <div class="product-img-head">
-                                            <div class="product-img">
-                                                <img src="http://www.faunasystem.com.br:8080/rtc/TORDON-BD-20L.png" alt="" class="img-fluid"></div>
-                                            <div class="ribbons bg-brand"></div>
-                                            <div class="ribbons-text" style="margin-left: 6px">Oferta</div>
-                                            <div class=""><a href="#" class="product-wishlist-btn"><i class="fas fa-heart"></i></a></div>
-                                        </div>
-                                        <div class="product-content">
-                                            <div class="product-content-head">
-                                                <h3 class="product-title">Tordon (bd 20L)</h3>
-												<div class="product-rating d-inline-block">
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                </div>
-												<div class="product-val">val. 30 / 06 / 2020</div>
-												<div class="product-quant">1 p/ caixa</div>
-                                                <div class="product-price">R$ 590.00</div>
-                                            </div>
-												<div class="form-group row justify-content-center">
-													<label for="inputText4" class="col-sm-5 col-form-label">Quantidade</label>
-													<div class="col-sm-5">
-														<input id="inputText4" type="number" class="form-control" placeholder="1" min="1" max="5">
-													</div>	
-												</div>	
-                                            <div class="product-btn text-center">
-                                                <a href="#" class="btn btn-primary btn-block">Comprar&nbsp;&nbsp;<i class="fas fa-shopping-cart"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-								<div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
-                                    <div class="product-thumbnail">
-                                        <div class="product-img-head">
-                                            <div class="product-img">
-                                                <img src="http://www.faunasystem.com.br:8080/rtc/PAMPA-BD-20L.png" alt="" class="img-fluid"></div>
-                                            <div class="ribbons bg-danger"></div>
-                                            <div class="ribbons-text" style="margin-left: 2px">Vendido</div>
-                                            <div class=""><a href="#" class="product-wishlist-btn"><i class="fas fa-heart"></i></a></div>
-                                        </div>
-                                        <div class="product-content">
-                                            <div class="product-content-head">
-                                                <h3 class="product-title">Pampa (Bd 20L)</h3>
-												<div class="product-rating d-inline-block">
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                </div>
-												<div class="product-val">val. 30 / 09 / 2021</div>
-												<div class="product-quant">1 p/ caixa</div>
-                                                <div class="product-price">R$ 372.88</div>
-                                            </div>
-												<div class="form-group row justify-content-center">
-													<label for="inputText4" class="col-sm-5 col-form-label">Quantidade</label>
-													<div class="col-sm-5">
-														<input id="inputText4" type="number" class="form-control" placeholder="1" min="1" max="5">
-													</div>	
-												</div>	
-                                            <div class="product-btn text-center">
-                                                <a href="#" class="btn btn-primary btn-block">Comprar&nbsp;&nbsp;<i class="fas fa-shopping-cart"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-								<div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
-                                    <div class="product-thumbnail">
-                                        <div class="product-img-head">
-                                            <div class="product-img">
-                                                <img src="http://www.faunasystem.com.br:8080/rtc/FASON-NICOSULFURON-40-SC-GL-5L.png" alt="" class="img-fluid"></div>
-                                            <div class="ribbons"></div>
-                                            <div class="ribbons-text m-l-10">Novo</div>
-                                            <div class=""><a href="#" class="product-wishlist-btn"><i class="fas fa-heart"></i></a></div>
-                                        </div>
-                                        <div class="product-content">
-                                            <div class="product-content-head">
-                                                <h3 class="product-title">Fason (GL 5 LT) Nicosulfuron 40 SC</h3>
-												<div class="product-rating d-inline-block">
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                    <i class="fa fa-fw fa-star"></i>
-                                                </div>
-												<div class="product-val">val. 30 / 06 / 2019</div>
-												<div class="product-quant">4 p/ caixa</div>
-                                                <div class="product-price">R$ 128.88</div>
-                                            </div>
-												<div class="form-group row justify-content-center">
-													<label for="inputText4" class="col-sm-5 col-form-label">Quantidade</label>
-													<div class="col-sm-5">
-														<input id="inputText4" type="number" class="form-control" placeholder="1" min="1" max="5">
-													</div>	
-												</div>	
-                                            <div class="product-btn text-center">
-                                                <a href="#" class="btn btn-primary btn-block">Comprar&nbsp;&nbsp;<i class="fas fa-shopping-cart"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-								
-								
-								
-								<!-- ============================================================== -->
-								<!-- paginação  -->
-								<!-- ============================================================== -->
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination">
-                                            <li class="page-item"><a class="page-link" href="#">Anterior</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                            <li class="page-item active"><a class="page-link " href="#">2</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">Próximo</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </div>
+                </div>
+                <!-- ============================================================== -->
+                <!-- footer -->
+                <!-- ============================================================== -->
+
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="copyright">
+                            <p>Copyright © 2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
                         </div>
-						
-					<!-- ============================================================== -->
-                    <!-- sidebar BANNER + FILTRO  -->
-                    <!-- ============================================================== -->	
-						
-                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-12">
-						<div class="product-sidebar m-b-30">
-								<div class="product-sidebar-widget">
-                                    <h4 class="product-sidebar-widget-title">Busca</h4>
-                                    <form>
-										<div class="form-group">
-											<div class="icon-addon addon-lg">
-												<input class="form-control form-control-lg" type="search" placeholder="Digite o que procura" aria-label="Search">
-												<label for="email" class="fa fa-search" rel="tooltip" title="email"></label>
-											</div>
-										</div>
-                                    </form>
-                                </div>
-                                <div class="product-sidebar-widget">
-                                    <h4 class="mb-0">Busca por filtro</h4>
-                                </div>
-                                <div class="product-sidebar-widget">
-                                    <h4 class="product-sidebar-widget-title">Category</h4>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="cat-1">
-                                        <label class="custom-control-label" for="cat-1">Categories #1</label>
-                                    </div>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="cat-2">
-                                        <label class="custom-control-label" for="cat-2">Categories #2</label>
-                                    </div>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="cat-3">
-                                        <label class="custom-control-label" for="cat-3">Categories #3</label>
-                                    </div>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="cat-4">
-                                        <label class="custom-control-label" for="cat-4">Categories #4</label>
-                                    </div>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="cat-5">
-                                        <label class="custom-control-label" for="cat-5">Categories #5</label>
-                                    </div>
-                                </div>
-                                <div class="product-sidebar-widget">
-                                    <h4 class="product-sidebar-widget-title">Size</h4>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="size-1">
-                                        <label class="custom-control-label" for="size-1">Small</label>
-                                    </div>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="size-2">
-                                        <label class="custom-control-label" for="size-2">Medium</label>
-                                    </div>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="size-3">
-                                        <label class="custom-control-label" for="size-3">Large</label>
-                                    </div>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="size-4">
-                                        <label class="custom-control-label" for="size-4">Extra Large</label>
-                                    </div>
-                                </div>
-                                <div class="product-sidebar-widget">
-                                    <h4 class="product-sidebar-widget-title">Brand</h4>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="brand-1">
-                                        <label class="custom-control-label" for="brand-1">Brand Name #1</label>
-                                    </div>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="brand-2">
-                                        <label class="custom-control-label" for="brand-2">Brand Name #2</label>
-                                    </div>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="brand-3">
-                                        <label class="custom-control-label" for="brand-3">Brand Name #3</label>
-                                    </div>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="brand-4">
-                                        <label class="custom-control-label" for="brand-4">Brand Name #4</label>
-                                    </div>
-                                </div>
-                                <div class="product-sidebar-widget">
-                                    <h4 class="product-sidebar-widget-title">Price</h4>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="price-1">
-                                        <label class="custom-control-label" for="price-1">$$</label>
-                                    </div>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="price-2">
-                                        <label class="custom-control-label" for="price-2">$$$</label>
-                                    </div>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="price-3">
-                                        <label class="custom-control-label" for="price-3">$$$$</label>
-                                    </div>
-                                </div>
-                                <div class="product-sidebar-widget">
-                                    <a href="#" class="btn btn-outline-light">Resetar Filtro</a>
-                                </div>
-                            </div>
-							
-							
-							<!-- ============================================================== -->
-							<!-- sidebar BANNER 300x250  -->
-							<!-- ============================================================== -->
-						
-							<div class="product-sidebar m-b-30">
-								<div class="product-sidebar-widget p-0" style="margin-bottom: 0px">
-                                    <img alt="pampa Design Medium Rectangle 300x250" src="assets/images/banner_300x250_pampa.jpg" style="width: 100%;">
-                                </div>
-							</div>
-							
-							<!-- ============================================================== -->
-							<!-- sidebar BANNER 240x400  -->
-							<!-- ============================================================== -->
-							
-							<div class="product-sidebar m-b-30">
-								<div class="product-sidebar-widget p-0" style="margin-bottom: 0px">
-                                    <img alt="tordon banner 240x400" src="assets/images/banner_240x400_tordon.jpg" style="width: 100%;">
-                                </div>
-							</div>
-                            
-                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- end footer -->
+                <!-- ============================================================== -->
+            </div>
+            <!-- ============================================================== -->
+            <!-- end wrapper  -->
+            <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- end main wrapper  -->
+        <!-- ============================================================== -->
+
+        <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
+            <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <div class="modal-body text-center">
+
+                        <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
+                        <br>
+                        <h3 style="margin-top:20px;">Carregando as informações...</h3>
+
+                    </div>
+                    <div class="modal-footer">
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- footer -->
-            <!-- ============================================================== -->
-            
-                <div class="row">
-                            <div class="col-md-12">
-                                <div class="copyright">
-                                    <p>Copyright © 2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
-                                </div>
-                            </div>
-                        </div>
-
-            <!-- ============================================================== -->
-            <!-- end footer -->
-            <!-- ============================================================== -->
         </div>
-        <!-- ============================================================== -->
-        <!-- end wrapper  -->
-        <!-- ============================================================== -->
-    </div>
-    <!-- ============================================================== -->
-    <!-- end main wrapper  -->
-    <!-- ============================================================== -->
-    <!-- Optional JavaScript -->
-    <!-- jquery 3.3.1 -->
-    <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-    <!-- bootstap bundle js -->
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-    <!-- slimscroll js -->
-    <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-    <!-- main js -->
-    <script src="assets/libs/js/main-js.js"></script>
-    <!-- chart chartist js -->
-    <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
-    <!-- sparkline js -->
-    <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
-    <!-- morris js -->
-    <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
-    <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
-    <!-- chart c3 js -->
-    <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
-    <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
-    <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
-    <script src="assets/libs/js/dashboard-ecommerce.js"></script>
-</body>
- 
+
+
+        <!-- jquery 3.3.1 -->
+        <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+        <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
+        <script src="assets/libs/js/form-mask.js"></script>
+        <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+
+        <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+        <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+        <!-- slimscroll js -->
+        <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+        <!-- main js -->
+        <script src="assets/libs/js/main-js.js"></script>
+        <!-- chart chartist js -->
+        <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
+        <!-- sparkline js -->
+        <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+        <!-- morris js -->
+        <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
+        <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
+        <!-- chart c3 js -->
+        <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
+        <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+        <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
+        <script src="assets/libs/js/dashboard-ecommerce.js"></script>
+        <!-- parsley js -->
+        <script src="assets/vendor/parsley/parsley.js"></script>
+
+        <!-- Optional JavaScript -->
+        <script>
+            
+            function fechaLoad(img){
+                
+                var im = $(img);
+                var num = im.attr('id').split('_')[1];
+               
+                $("#sp_"+num).hide();
+                
+            }
+
+                                                                    var sh = false;
+                                                                    var it = null;
+
+                                                                    loading.show = function () {
+
+                                                                        if (it != null) {
+                                                                            clearInterval(it);
+                                                                        }
+                                                                        it = setInterval(function () {
+                                                                            $("#loading").modal("show");
+                                                                            if ($("#loading").hasClass('in')) {
+                                                                                clearInterval(it);
+                                                                            }
+
+                                                                        }, 300)
+
+                                                                    }
+
+                                                                    loading.close = function () {
+
+                                                                        if (it != null) {
+                                                                            clearInterval(it);
+                                                                        }
+                                                                        it = setInterval(function () {
+
+                                                                            $("#loading").modal("hide");
+                                                                            if (!$("#loading").hasClass('in')) {
+                                                                                clearInterval(it);
+                                                                            }
+                                                                        }, 300)
+
+                                                                    }
+
+
+
+
+        </script>
+
+    </body>
+
 </html>

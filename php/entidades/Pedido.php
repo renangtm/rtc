@@ -38,7 +38,7 @@ class Pedido {
         $this->transportadora = null;
         $this->frete = 0;
         $this->observacoes = "";
-        $this->frete_incluso = "";
+        $this->frete_incluso = true;
         $this->empresa = null;
         $this->data = round(microtime(true) * 1000);
         $this->excluido = false;
@@ -512,11 +512,11 @@ class Pedido {
     public function merge($con) {
 
         $prods = $this->getProdutos($con);
-
-        if ($this->produtos == null) {
+               
+        if ($this->produtos === null) {            
             $this->produtos = $prods;
         }
-
+        
         foreach ($this->produtos as $key => $value) {
             if ($this->logistica === null) {
                 if ($value->produto->logistica !== null) {
@@ -547,9 +547,10 @@ class Pedido {
         }
 
         $erro = null;
-
+        
+        
         foreach ($prods as $key => $value) {
-
+            
             foreach ($this->produtos as $key2 => $value2) {
 
                 if ($value->id == $value2->id) {
@@ -559,7 +560,7 @@ class Pedido {
             }
 
             try {
-
+                
                 $value->delete($con);
             } catch (Exception $ex) {
 

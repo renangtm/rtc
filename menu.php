@@ -16,40 +16,57 @@ $fonte = $logo->getCorFonteAdequada();
 if (!isset($filtro)) {
     $filtro = "";
 }
+$rtc = $empresa->getRTC(new ConnectionFactory());
+$rtc->numero--;
+
 ?>
 
 <style type="text/css">
-    
+
+    .modal-lg {
+        max-width: 60% !important;
+    }
+
     .btn-primary{
         background-color:<?php echo $logo->cor_predominante; ?> !important;
         color: <?php echo $fonte; ?> !important;
         border-color: <?php echo $logo->cor_predominante; ?> !important;
     }
-    
+
     .navbar-light{
-         background-color:<?php echo $logo->cor_predominante; ?> !important;
+        background-color:<?php echo $logo->cor_predominante; ?> !important;
     }
 
+    .menu-list{
+        background-color:<?php echo $logo->cor_predominante; ?> !important;
+    }
+    
     #men .nav-link{
         color: <?php echo $fonte; ?> !important;
     }
-    
+
     #men i{
         color: <?php echo $fonte; ?> !important;
     }
-    
+
     #men .nav-link:hover{
-         background-color:<?php echo $logo->cor_predominante; ?> !important;
+        background-color:<?php echo $logo->cor_predominante; ?> !important;
         filter: brightness(85%);
         color: <?php echo $fonte; ?> !important;
     }
-  
-    
+
+
 </style>
 
-<div class="dashboard-header">
+<div class="dashboard-header" ng-controller="crtCarrinho">
     <nav class="navbar navbar-expand-lg bg-white fixed-top">
         <a class="navbar-brand" href="index.html"><img id="logo" src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" title="" style="max-height:50px"></a>
+        &nbsp;
+        <div ng-controller="crtEmpresa">
+            <select class="form-control" ng-model="empresa" ng-change="setEmpresa()">
+                <option ng-repeat="e in filiais" ng-value="e">{{e.nome}}</option>
+            </select>
+        </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -66,52 +83,27 @@ if (!isset($filtro)) {
                     </div>
                 </li>
                 <li class="nav-item dropdown notification">
-                    <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-fw fa-shopping-cart fa-bell"></i></a>
+                    <a class="nav-link nav-icons" href="#" ng-click="$event.preventDefault(); attCarrinho()" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-fw fa-shopping-cart fa-bell"></i><span id="indicadorAdd" style="visibility:hidden" class="indicator"></span></a>
                     <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
                         <li>
-                            <div class="notification-title">Carrinho de Compras<span class="badge badge-primary badge-pill m-l-20">3</span></div>
+                            <div class="notification-title">Carrinho de Compras<span class="badge badge-primary badge-pill m-l-20">{{carrinho.length}}</span></div>
                             <div class="notification-list">
                                 <div class="list-group">
 
-                                    <a href="#" class="list-group-item list-group-item-action active">
+                                    <a href="#" class="list-group-item list-group-item-action active" ng-repeat="item in carrinho">
                                         <div class="notification-info">
-                                            <div class="notification-list-user-img"><img src="http://www.faunasystem.com.br:8080/rtc/SUPPORT-GL-5L.png" alt="" class="user-avatar-xl"></div>
-                                            <div class="notification-list-user-img m-l-20"><span class="notification-list-user-name">Support (Gl 5L)</span>.
-                                                <div class="notification-date">Qtd p/ caixa: 4</div>
-                                                <div class="notification-date">Valor: R$ 79.93</div>
-                                                <div class="notification-date">Qtd:&nbsp;<input id="inputText4" type="number" class="form-control form-control-xs" placeholder="5" min="1" max="5"></div>
-                                                <div class="notification-date">SubTotal: R$ 319.72</div>
+                                            <div class="notification-list-user-img"><img src="{{item.imagem}}" alt="" class="user-avatar-xl"></div>
+                                            <div class="notification-list-user-img m-l-20"><span class="notification-list-user-name">{{item.nome}}</span>.
+                                                <div ng-if="item.validade.validade !== 1000" class="notification-date">Validade: {{item.validade.validade| data_st}}</div>
+                                                <div class="notification-date">Valor: {{item.validade.valor}}</div>
+                                                <div class="notification-date">Qtd:&nbsp;{{item.quantidade_comprada}}</div>
+                                                <div class="notification-date">SubTotal: R$ {{(item.quantidade_comprada * item.validade.valor).toFixed(2)}}</div>
                                             </div>	
-                                            <div class="notification-list-user-img m-l-25 product"><button class="btn btn-outline-light btn-sm"><i class="fa fa-times"></i></button></div>	
+                                            <div class="notification-list-user-img m-l-25 product"><button ng-click="removerProduto(item)" class="btn btn-outline-light btn-sm"><i class="fa fa-times"></i></button></div>	
 
                                         </div>
                                     </a>
-                                    <a href="#" class="list-group-item list-group-item-action active">
-                                        <div class="notification-info">
-                                            <div class="notification-list-user-img"><img src="http://www.faunasystem.com.br:8080/rtc/SUPPORT-GL-5L.png" alt="" class="user-avatar-xl"></div>
-                                            <div class="notification-list-user-img m-l-20"><span class="notification-list-user-name">Support (Gl 5L)</span>.
-                                                <div class="notification-date">Qtd p/ caixa: 4</div>
-                                                <div class="notification-date">Valor: R$ 79.93</div>
-                                                <div class="notification-date">Qtd:&nbsp;<input id="inputText4" type="number" class="form-control form-control-xs" placeholder="5" min="1" max="5"></div>
-                                                <div class="notification-date">SubTotal: R$ 319.72</div>
-                                            </div>	
-                                            <div class="notification-list-user-img m-l-25 product"><button class="btn btn-outline-light btn-sm"><i class="fa fa-times"></i></button></div>	
 
-                                        </div>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action active">
-                                        <div class="notification-info">
-                                            <div class="notification-list-user-img"><img src="http://www.faunasystem.com.br:8080/rtc/SUPPORT-GL-5L.png" alt="" class="user-avatar-xl"></div>
-                                            <div class="notification-list-user-img m-l-20"><span class="notification-list-user-name">Support (Gl 5L)</span>.
-                                                <div class="notification-date">Qtd p/ caixa: 4</div>
-                                                <div class="notification-date">Valor: R$ 79.93</div>
-                                                <div class="notification-date">Qtd:&nbsp;<input id="inputText4" type="number" class="form-control form-control-xs" placeholder="5" min="1" max="5"></div>
-                                                <div class="notification-date">SubTotal: R$ 319.72</div>
-                                            </div>	
-                                            <div class="notification-list-user-img m-l-25 product"><button class="btn btn-outline-light btn-sm"><i class="fa fa-times"></i></button></div>	
-
-                                        </div>
-                                    </a>
 
 
                                 </div>
@@ -119,7 +111,7 @@ if (!isset($filtro)) {
                             </div>
                         </li>
                         <li>
-                            <div class="list-footer"> <a href="carrinho-de-compras.html">Finalizar Compra</a></div>
+                            <div class="list-footer"> <a href="carrinho-de-compras.php">Finalizar Compra</a></div>
                         </li>
                     </ul>
                 </li>
@@ -187,7 +179,7 @@ if (!isset($filtro)) {
                     </ul>
                 </li>
                 <li class="nav-item dropdown notification">
-                    <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-fw fa-bell"></i> <span class="indicator"></span></a>
+                    <a style="display:none" class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-fw fa-bell"></i> <span class="indicator"></span></a>
                     <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
                         <li>
                             <div class="notification-title"> Notification</div>
@@ -252,9 +244,9 @@ if (!isset($filtro)) {
                         </div>
                         <a class="dropdown-item" href="cfg.php"><i class="fas fa-user mr-2"></i>Colaboradores</a>
                         <a class="dropdown-item" href="alteracao-do-logo.php"><i class="fas fa-font mr-2"></i>Alterar Logo</a>
-                        <a class="dropdown-item" href="cadastro-empresas-filiais.html"><i class="fas fa-file-alt mr-2"></i>Empresas / Filiais</a>
-                        <a class="dropdown-item" href="configuracao-da-empresa.html"><i class="fas fa-cog mr-2"></i>Configuração da empresa</a>
-                        <a class="dropdown-item" href="#"><i class="fas fa-power-off mr-2"></i>Sair</a>
+                        <!--<a class="dropdown-item" href="cadastro-empresas-filiais.html"><i class="fas fa-file-alt mr-2"></i>Empresas / Filiais</a>-->
+                        <!--<a class="dropdown-item" href="configuracao-da-empresa.html"><i class="fas fa-cog mr-2"></i>Configuração da empresa</a>-->
+                        <a class="dropdown-item" href="index.php"><i class="fas fa-power-off mr-2"></i>Sair</a>
                     </div>
                 </li>
             </ul>
@@ -272,78 +264,76 @@ if (!isset($filtro)) {
                 <ul class="navbar-nav flex-column" id="men">
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         <?php
-                        
-                            $rtc = $empresa->getRTC(new ConnectionFactory());
-                            
-                            echo $rtc->nome;
-                            
+                        echo $rtc->nome;
                         ?>
                     </li>
                     <li class="nav-item ">
-                        <a class="nav-link" href="comprar.php" ><i class="fa fa-fw fa-shopping-basket"></i>Comprar</a>
+                        <a class="nav-link" href="comprar.php" ><i class="fa fa-fw fa-shopping-basket"></i>Compra Parceiros</a>
                     </li>
                     <li class="nav-item ">
                         <a class="nav-link" href="carrinho-de-compras.php" ><i class="fa fa-fw fa-shopping-cart"></i>Carrinho</a>
                     </li>
-                    <li class="nav-item ">
-                        <a class="nav-link" href="encomendar.php" ><i class="fa fa-fw fa-truck"></i>Encomendar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="carrinho-de-encomenda.php" ><i class="fa fa-fw fa-shopping-cart"></i>Carrinho Encomenda</a>
-                    </li>
+
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
-                        <?php echo $empresa->nome; ?>
+<?php echo $empresa->nome; ?>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="cfg.php" ><i class="fas fa-user mr-2"></i>Colaboradores</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="lista-de-preco.php" ><i class="fas fa-clipboard-list"></i>Lista de Preço</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="campanhas.php" ><i class="fas fa-anchor"></i>Campanhas</a>
-                    </li>
+                        <?php if ($rtc->numero > 0) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="cfg.php" ><i class="fas fa-user mr-2"></i>Colaboradores</a>
+                        </li>                  
+                        <li class="nav-item">
+                            <a class="nav-link" href="lista-de-preco.php" ><i class="fas fa-clipboard-list"></i>Receituario</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="campanhas.php" ><i class="fas fa-anchor"></i>Campanhas</a>
+                        </li>
+<?php } ?>
                     <li class="nav-item">
                         <a class="nav-link" href="fornecedores.php" ><i class="fas fa-industry"></i>Fornecedores</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="bancos.php" ><i class="fas fa-calculator"></i>Bancos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="movimentos_banco.php" ><i class="fas fa-money-bill-alt"></i>Movimentos Financeiro</a>
-                    </li>
-                    <?php if($empresa->is_logistica){ ?>
+<?php if ($rtc->numero > 0) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="bancos.php" ><i class="fas fa-calculator"></i>Bancos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="movimentos_banco.php" ><i class="fas fa-money-bill-alt"></i>Movimentos Financeiro</a>
+                        </li>
+<?php } ?>
+<?php if ($empresa->is_logistica) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="produto-cliente-logistic.php"><i class="fas fa-camera"></i>Produtos cliente Logistic</a>
                         </li>
-                    <?php } ?>
+<?php } ?>
                     <li class="nav-item">
                         <a class="nav-link" href="cadastro-de-produtos.php"><i class="fas fa-cube"></i>Cadastro de Produtos</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="notas.php"><i class="fas fa-book"></i>Notas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-exchange-alt"></i>Movimentação</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="lotes.php"><i class="fas fa-cubes"></i>Lotes</a>
-                    </li>
+<?php if ($rtc->numero > 0) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="notas.php"><i class="fas fa-book"></i>Notas</a>
+                        </li>                   
+                        <li class="nav-item">
+                            <a class="nav-link" href="lotes.php"><i class="fas fa-cubes"></i>Lotes</a>
+                        </li>
+<?php } ?>
                     <li class="nav-item">
                         <a class="nav-link" href="clientes.php" ><i class="fas fa-users"></i>Clientes</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="transportadoras.php" ><i class="fas fa-truck"></i>Transportadoras</a>
-                    </li>
+<?php if ($rtc->numero > 0) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="transportadoras.php" ><i class="fas fa-truck"></i>Transportadoras</a>
+                        </li>
+<?php } ?>
                     <li class="nav-item">
                         <a class="nav-link" href="cotacao-compra.php"><i class="fas fa-check-square"></i>Cotacao</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="visualizar-pedidos-compra.php"><i class="fas fa-tasks"></i>Pedidos de Compra</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="entrada_nota.php"><i class="fas fa-code"></i>Entrada NFe</a>
-                    </li>
+<?php if ($rtc->numero > 0) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="entrada_nota.php"><i class="fas fa-code"></i>Entrada NFe</a>
+                        </li>
+<?php } ?>
                     <li class="nav-item">
                         <a class="nav-link" href="visualizar-pedidos-venda.php"><i class="fas fa-tasks"></i>Pedidos de Venda</a>
                     </li>

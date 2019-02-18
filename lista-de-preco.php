@@ -227,7 +227,8 @@
                                                                             <tbody>
                                                                                 <tr ng-repeat="o in produt[0].ofertas">
                                                                                     <td>{{o.valor}} R$</td>
-                                                                                    <td>{{o.validade | data}}</td>
+                                                                                    <td ng-if="o.validade !== 1000">{{o.validade | data}}</td>
+                                                                                    <td ng-if="o.validade === 1000">------</td>
                                                                                     <td>{{o.campanha.inicio | data}}</td>
                                                                                     <td>{{o.campanha.fim | data}}</td>
                                                                                 </tr>

@@ -13,6 +13,27 @@
  */
 class Utilidades {
 
+    public static function getAttr($obj,$atributo){
+        
+        $a = explode('.', $atributo);
+        $o = $obj;
+        
+        foreach($a as $key=>$value){
+            
+            if(!isset($o->$value)){
+                
+                return "";
+                
+            }
+            
+            $o = $o->$value;
+            
+        }
+        
+        return $o;
+        
+    }
+    
     public static function eq($string) {
 
         return strtoupper($string);

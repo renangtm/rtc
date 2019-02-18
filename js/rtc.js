@@ -1,4 +1,4 @@
-var projeto = "http://192.168.18.121:888/novo_rtc_web";
+var projeto = "http://10.0.0.107/novo_rtc_web";
 
 
 function resolverRecursao(obj, pilha) {
@@ -146,6 +146,124 @@ function paraJson(objeto) {
 
 }
 
+
+
+function createFilterList(service, cols, rows, maxPage) {
+
+    var listar = {
+        filtro: null,
+        ordem: null,
+        linhas: rows,
+        por_coluna: cols,
+        elementos: [],
+        pagina: 0,
+        next: function () {
+            this.pagina++;
+            this.attList();
+        },
+        prev: function () {
+            this.pagina--;
+            this.attList();
+        },
+        paginas: [],
+        attList: function () {
+
+            var este = this;
+
+
+            //----------------------------
+
+            loading.show();
+            service.getElementos(este.pagina * (este.linhas * este.por_coluna),
+                    (este.pagina + 1) * (este.linhas * este.por_coluna),
+                    este.filtro, este.ordem, function (e) {
+                       
+                        if (este.filtro == null) {
+                            este.filtro = e.filtros;
+                        }else{
+                            for(var i=0;i<este.filtro.length;i++){
+                                var f = este.filtro[i];
+                                if(typeof f.opcoes === 'undefined'){
+                                    continue;
+                                }
+                                for(var op=0;op<f.opcoes.length;op++){
+                                    f.opcoes[op].quantidade = 0;
+                                }
+                                for(var j=0;j<e.filtros.length;j++){
+                                    var ff = e.filtros[j];
+                                    if(ff.id === f.id){
+                                        for(var o=0;o<ff.opcoes.length;o++){
+                                            var op = ff.opcoes[o];
+                                            for(var oo=0;oo<f.opcoes.length;oo++){
+                                                var oop = f.opcoes[oo];
+                                                if(oop.id === op.id){
+                                                    oop.quantidade = op.quantidade;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                        }
+
+                        if (este.ordem == null) {
+      
+                            este.ordem = e.ordem;
+                        }
+                       
+                        var np = Math.ceil(e.qtd / (este.linhas * este.por_coluna));
+                        este.pagina = Math.max(Math.min(este.pagina, np - 1), 0);
+
+                        este.elementos = [];
+
+                        var els = e.elementos;
+
+                        for (var i = 0; i < este.linhas && (i * este.por_coluna) < els.length; i++) {
+                            este.elementos[i] = [];
+                            for (var j = 0; j < este.por_coluna && (i * este.por_coluna + j) < els.length; j++) {
+                                este.elementos[i][j] = els[i * este.por_coluna + j];
+                            }
+                        }
+
+                        este.paginas = [];
+                        
+                        var a = Math.max(este.pagina - maxPage + 1, 0);
+                        for (var i = a; i < a + maxPage && i < np; i++) {
+                            var p = {numero: i, ir: function () {
+                                    este.pagina = this.numero;
+                                    este.attList();
+                                }, isAtual: este.pagina == i}
+                            este.paginas[este.paginas.length] = p;
+                        }
+
+                        if (typeof este["posload"] !== 'undefined') {
+                            este["posload"](els);
+                        }
+                     
+                       loading.close();
+
+                    });
+
+
+            //-----------------------------
+
+
+
+
+
+        }
+    }
+
+    listar.attList();
+    
+
+    return listar;
+
+}
+
 function createAssinc(lista, cols, rows, maxPage) {
 
     var listar = {
@@ -197,8 +315,8 @@ function createAssinc(lista, cols, rows, maxPage) {
                                     }, isAtual: este.pagina == i}
                                 este.paginas[este.paginas.length] = p;
                             }
-                            
-                            if(typeof este["posload"] !== 'undefined'){
+
+                            if (typeof este["posload"] !== 'undefined') {
                                 este["posload"](els);
                             }
 
@@ -415,7 +533,7 @@ var msg = {
 
 function toDate(lo) {
 
-    var d = new Date(parseFloat(lo+""));
+    var d = new Date(parseFloat(lo + ""));
 
     var dia = d.getDate();
     var mes = (d.getMonth() + 1);
@@ -427,7 +545,7 @@ function toDate(lo) {
 
 function toTime(lo) {
 
-    var d = new Date(parseFloat(lo+""));
+    var d = new Date(parseFloat(lo + ""));
 
     var dia = d.getDate();
     var mes = (d.getMonth() + 1);
@@ -499,16 +617,13 @@ function fix(str, n) {
 
 }
 
+var ids = [];
+var id = 0;
+
 function baseService(http, q, obj, get, cancel) {
 
-    loading.show();
+    var idt = ++id;
 
-    for (var i = 0; i < requests.length; i++) {
-        if (cancel) {
-            requests[i].resolve();
-        }
-    }
-    requests = [];
 
     var p = q.defer();
 
@@ -525,17 +640,36 @@ function baseService(http, q, obj, get, cancel) {
         timeout: p.promise,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (exx) {
 
-        loading.close();
+        var m = 0;
+        for (var i = 0; i < ids.length; i++) {
+            if (ids[i] == idt) {
+                ids[i] = 0;
+            } else if (m < ids[i]) {
+                m = ids[i];
+            }
+        }
+        if (m == 0) {
+            loading.close();
+        }
 
         if (typeof obj["sucesso"] !== 'undefined') {
             obj.sucesso(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&").split("<m>").join("+").split("<p>").join("%")));
         }
 
 
-
     }, function (exx) {
 
-        loading.close();
+        var m = 0;
+        for (var i = 0; i < ids.length; i++) {
+            if (ids[i] == idt) {
+                ids[i] = 0;
+            } else if (m < ids[i]) {
+                m = ids[i];
+            }
+        }
+        if (m == 0) {
+            loading.close();
+        }
 
         if (typeof obj["falha"] !== 'undefined') {
             obj.falha(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&").split("<m>").join("+").split("<p>").join("%")));
@@ -543,6 +677,26 @@ function baseService(http, q, obj, get, cancel) {
 
     })
 
+    var m = 0;
+    for (var i = 0; i < ids.length; i++) {
+        if (ids[i] > m) {
+            m = ids[i];
+        }
+    }
+
+    if (m == 0) {
+        loading.show();
+    }
+
+    for (var i = 0; i < requests.length; i++) {
+        if (cancel) {
+            requests[i].resolve();
+            ids[i] = 0;
+        }
+    }
+    requests = [];
+
+    ids[ids.length] = idt;
     requests[requests.length] = p;
 
 }
@@ -846,8 +1000,8 @@ rtc.directive('decimal', function ($parse) {
                 }
                 return s;
             }
-            
-         
+
+
 
             var ultm =
                     scope.ini = function () {
@@ -950,7 +1104,7 @@ rtc.directive('email', function () {
 
                 var emailEnvio = "";
 
-                //Nomes dos grupos devem condizer com a da classe Email.php, acoplado :(, por?©m infelizmente n?£o vai dar tempo de tomar uma abordagem mais correta;
+                //Nomes dos grupos devem condizer com a da classe Email.php, acoplado :(, por?ï¿½m infelizmente n?ï¿½o vai dar tempo de tomar uma abordagem mais correta;
                 //De qualquer forma, salvo este acoplamento nestes dois locais, essa abordagem nao tr??z prejuizos maiores;
 
                 var grupos = [{nome: "Emails Principais", enderecos: [], principal: true},

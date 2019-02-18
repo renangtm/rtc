@@ -11,25 +11,23 @@
  *
  * @author T-Gamer
  */
-class BoletoEspecialAgroFauna extends FormaPagamento{
-    
+class BoletoEspecialAgroFauna extends FormaPagamento {
+
     function __construct() {
-        
+
         $this->id = 2;
         $this->nome = "Boleto Agro Fauna";
+    }
+
+    public function aoFinalizarPedido($pedido) {
+
+        return "";
         
     }
-    
-    public function aoFinalizarPedido($pedido){
-        
-        return "teste.html";
-        
-    }
-    
-    public function habilitada($pedido){
+
+    public function habilitada($pedido) {
 
         return strpos($pedido->empresa->nome, 'Agro') !== false && strpos($pedido->empresa->nome, 'Fauna') !== false;
-        
     }
-    
+
 }

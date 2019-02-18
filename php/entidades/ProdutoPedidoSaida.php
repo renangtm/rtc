@@ -43,6 +43,7 @@ class ProdutoPedidoSaida {
 
     public function merge($con) {
 
+        
         // -------- atualizando produto ------------
 
         $ps = $con->getConexao()->prepare("SELECT estoque, disponivel FROM produto WHERE id=" . $this->produto->id);
@@ -283,6 +284,30 @@ class ProdutoPedidoSaida {
 
     public function atualizarCustos() {
 
+        if($this->id == 0){
+            $campanha = null;
+            $valor_oferta = 0;
+            foreach($this->produto->ofertas as $key=>$value){
+                if($value->validade == $this->validade_minima){
+                    $campanha = $value->campanha;
+                    $valor_oferta = $value->valor;
+                    break;
+                }
+            }
+            
+            if($campanha !== null){
+                if($campanha->parcelas > 0 && $campanha->prazo > 0){
+                    if($this->pedido->prazo > $campanha->prazo){
+                        $this->retirou_promocao = $valor_oferta;
+                        $this->valor_base = $this->produto->valor_base;                       
+                    }else{
+                        unset($this->retirou_promocao);
+                        $this->valor_base = $valor_oferta;
+                    }
+                }
+            }
+        }
+        
         $cat = $this->produto->categoria;
 
         $emp = $this->pedido->empresa;
