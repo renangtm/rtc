@@ -89,6 +89,8 @@
                                             <ol class="carousel-indicators">
                                                 <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
                                                 <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
                                                 <!--<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>-->
                                             </ol>
                                             <div class="carousel-inner">
@@ -97,6 +99,17 @@
                                                 </div>
                                                 <div class="carousel-item">
                                                     <img class="d-block w-100" src="assets/images/mega oferta_784x295.jpg" alt="Second slide">
+                                                </div>
+                                                <div class="carousel-item">
+                                                    <a href="http://agrofauna.com.br/mail/fraude_boletos/email_fraude_boletos_bancarios.html">
+                                                        <img class="d-block w-100" src="assets/images/banner_fraude_em_boletos_784x295.jpg" alt="terceiro slide">
+                                                    </a>
+
+                                                </div>
+                                                <div class="carousel-item">
+                                                    <a href="http://agrofauna.com.br/apresentacao_rtc_v3.pdf" target="_blank">
+                                                        <img class="d-block w-100" src="assets/images/banner_conheca_projeto_novos_rumos_784x295.jpg" alt="quarto slide">
+                                                    </a>
                                                 </div>
                                                 <!--
                                                 <div class="carousel-item">
@@ -164,9 +177,9 @@
                                                         </div>
 
                                                     </div>
-                                                    <div class="product-val"><button class="btn bn-default" style="margin-bottom:10px" ng-click="setProduto(produto)" data-toggle="modal" data-target="#validadeProduto"><i class="fa fa-info"></i>&nbsp Ver validades</button></div>
+                                                    <div class="product-val text-center"><button class="btn bn-default" style="margin-bottom:10px" ng-click="setProduto(produto)" data-toggle="modal" data-target="#validadeProduto"><i class="fa fa-info"></i>&nbsp Ver validades</button></div>
                                                     <div class="product-quant">{{produto.grade.gr[0]}} p/ caixa</div>
-                                                    <div class="product-price">R$ {{produto.valor_base}} </div>
+                                                    <div class="product-price" style="margin-bottom: 20px;">R$ {{produto.valor_base}} </div>
 
                                                 </div>
 
@@ -189,7 +202,8 @@
                                             <ol class="carousel-indicators">
                                                 <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
                                                 <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                                                <!--<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>-->
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
                                             </ol>
                                             <div class="carousel-inner">
                                                 <div class="carousel-item active">
@@ -197,6 +211,17 @@
                                                 </div>
                                                 <div class="carousel-item">
                                                     <img class="d-block w-100" src="assets/images/mega oferta_784x295.jpg" alt="Second slide">
+                                                </div>
+                                                <div class="carousel-item">
+                                                    <a href="http://agrofauna.com.br/mail/fraude_boletos/email_fraude_boletos_bancarios.html">
+                                                        <img class="d-block w-100" src="assets/images/banner_fraude_em_boletos_784x295.jpg" alt="terceiro slide">
+                                                    </a>
+
+                                                </div>
+                                                <div class="carousel-item">
+                                                    <a href="http://agrofauna.com.br/apresentacao_rtc_v3.pdf" target="_blank">
+                                                        <img class="d-block w-100" src="assets/images/banner_conheca_projeto_novos_rumos_784x295.jpg" alt="quarto slide">
+                                                    </a>
                                                 </div>
                                                 <!--
                                                 <div class="carousel-item">
@@ -258,9 +283,9 @@
                                                         </div>
 
                                                     </div>
-                                                    <div class="product-val"><button class="btn bn-default" style="margin-bottom:10px" ng-click="setProduto(produto)" data-toggle="modal" data-target="#validadeProduto"><i class="fa fa-info"></i>&nbsp Ver validades</button></div>
+                                                    <div class="product-val text-center"><button class="btn bn-default" style="margin-bottom:10px" ng-click="setProduto(produto)" data-toggle="modal" data-target="#validadeProduto"><i class="fa fa-info"></i>&nbsp Ver validades</button></div>
                                                     <div class="product-quant">{{produto.grade.gr[0]}} p/ caixa</div>
-                                                    <div class="product-price">R$ {{produto.valor_base}} </div>
+                                                    <div class="product-price" style="margin-bottom: 20px;">R$ {{produto.valor_base}} </div>
 
                                                 </div>
 
@@ -323,6 +348,10 @@
                                         <button type="button" class="btn btn-outline-light" ng-click="resetarFiltro()">Resetar Filtro</button>
                                     </div>
                                 </div>
+                                
+                            <!-- ============================================================== -->
+                            <!-- MODAL validade produto  -->
+                            <!-- ============================================================== -->
 
                                 <div class="modal fade" id="validadeProduto" tabindex="99" role="dialog" aria-labelledby="validadeProduto" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -345,7 +374,7 @@
                                                         <th>{{prod.nome}}</th>
                                                         <th ng-if="v.validade !== 1000">{{v.validade| data_st}} <i class="fas fa-arrow-up" ng-if="v.alem" ></i></th>
                                                         <th ng-if="v.validade === 1000"> ------ </th>
-                                                        <th>{{v.valor}} R$</th>
+                                                        <th>R$ {{v.valor}} </th>
                                                         <th ng-if="v.limite>0"> {{v.limite}} </th>
                                                         <th ng-if="v.limite<=0"> ------ </th>
                                                         <th><button class="btn btn-success" data-dismiss="modal" aria-label="Close" ng-click="setValidade(v)" data-toggle="modal" data-target="#qtdProduto"><i class="fas fa-plus-circle"></i></button></th>

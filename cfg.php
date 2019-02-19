@@ -106,14 +106,14 @@
                                                         <th data-ordem="usuario.id">Cod.</th>
                                                         <th data-ordem="usuario.nome">Nome</th>
                                                         <th data-ordem="usuario.email_usu.endereco">Email</th>
-                                                        <th width="150px">A?�?�o</th>
+                                                        <th width="150px">A&ccedil;&atilde;o</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr id="tr_{{usuari[0].id}}" class="{{usuari[0].id===usuario.id?'selecionado':'selecionavel'}}" ng-click="setUsuario(usuari[0])" ng-repeat-start="usuari in usuarios.elementos">
                                                         <td>{{usuari[0].id}}</td>
                                                         <td>{{usuari[0].nome}}</td>
-                                                        <td><email entidade="Usuario" atributo="usuari[0].email" senha="true" alterar="false"></email></td>
+                                                        <td><email entidade="Usu&aacute;rio" atributo="usuari[0].email" senha="true" alterar="false"></email></td>
                                                 <th style="{{usuari[0].id===usuario.id?'border-right:2px solid #5F5F5F':''}}">
                                                     <div class="product-btn">
                                                         <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setUsuario(usuari[0])" data-target="#demo{{usuari[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
@@ -134,7 +134,10 @@
                                                                         </tr>
                                                                         <tr>
                                                                             <td>Senha:</td>
-                                                                            <td>{{usuari[0].senha}}</td>
+                                                                            <td><?php
+                                                                                $str = "?>{{usuari[0].senha}}<?php";
+                                                                                echo md5($str);
+                                                                             ?></td>
                                                                         </tr>
                                                                          <tr>
                                                                             <td>CPF:</td>
@@ -149,11 +152,11 @@
                                                                             <td>{{usuari[0].telefones}}</td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <td>Endere?�o:</td>
+                                                                            <td>Endere&ccedil;o:</td>
                                                                             <td>{{usuari[0].endereco.rua}}</td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <td>N?�mero:</td>
+                                                                            <td>N&uacute;mero:</td>
                                                                             <td>{{usuari[0].endereco.numero}}</td>
                                                                         </tr>
                                                                         <tr>
@@ -184,7 +187,7 @@
                                                         <th>Cod.</th>
                                                         <th>Nome</th>
                                                         <th>Email</th>
-                                                        <th>A?�?�o</th>
+                                                        <th>A&ccedil;&atilde;o</th>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -195,16 +198,16 @@
                                                     <ul class="pagination justify-content-end">
                                                         <li class="page-item" ng-click="usuarios.prev()"><a class="page-link" href="">Anterior</a></li>
                                                         <li class="page-item" ng-repeat="pg in usuarios.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="usuarios.next()"><a class="page-link" href="">Pr?�ximo</a></li>
+                                                        <li class="page-item" ng-click="usuarios.next()"><a class="page-link" href="">Pr&oacute;ximo</a></li>
                                                     </ul>
                                                 </nav>
                                             </div>
 
                                         </div>
                                         <div class="col-md-5" id="dvPermissoes" style="margin-top:{{marginTop}}px;border:2px solid #5F5F5F;padding:10px;margin-left:0px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-top-left-radius: 2px; border-bottom-left-radius: 10px">
-                                            Permissoes do usuario: <strong>{{usuario.id}} - {{usuario.nome}}</strong>
+                                            Permiss&otilde;es do usu&aacute;rio: <strong>{{usuario.id}} - {{usuario.nome}}</strong>
                                             <hr>
-                                            <button class="btn btn-outline-light" ng-click="mergeUsuario()"><i class="fas fa-check"></i>&nbspConfirmar altera?�?�es</button>
+                                            <button class="btn btn-outline-light" ng-click="mergeUsuario()"><i class="fas fa-check"></i>&nbspConfirmar altera&ccedil;&otilde;es</button>
                                             <hr>
                                             <table id="clientes" class="table table-striped table-bordered first">
                                                 <thead>
@@ -240,7 +243,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="copyright">
-                                    <p>Copyright ?� 2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
+                                    <p>Copyright &copy; 2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
                                 </div>
                             </div>
                         </div>
@@ -262,9 +265,16 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere os dados de seu Usuario</h5>
+                                <?php
+                                    if (usuario.nome != ''){
+                                        $titulo = '<i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere';
+                                    } else{
+                                        $titulo = '<i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Adicione';
+                                    }
+                                ?>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><?php echo $titulo ?> os dados de seu Usu&aacute;rio</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">?�</span>
+                                    <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
 
@@ -299,7 +309,7 @@
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-9 col-lg-10">
-                                            <email entidade="Usuario" atributo="usuario.email" senha="true" alterar="true"></email>
+                                            <email entidade="usu&aacute;rio" atributo="usuario.email" senha="true" alterar="true"></email>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -321,7 +331,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endere?�o</label>
+                                        <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endere&ccedil;o</label>
                                         <div class="col-9 col-lg-10">
                                             <input id="txtend" type="text" ng-model="usuario.endereco.rua" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
@@ -330,7 +340,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">N?�mero</label>
+                                        <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">N&uacute;mero</label>
                                         <div class="col-9 col-lg-10">
                                             <input id="txtendnum" type="text" ng-model="usuario.endereco.numero" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
@@ -397,7 +407,7 @@
                                         <table class="table table-striped table-bordered first">
                                             <thead>
                                                 <tr>
-                                                    <th>Numero</th>
+                                                    <th>N&uacute;mero</th>
                                                     <th><i class="fa fa-times"></i></th>
                                                 </tr>
                                             </thead>
@@ -433,14 +443,14 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de seu Usuario</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">?�</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             </div>
                             <div class="modal-body">
                                 <p class="text-center"> Tem certeza de que deseja excluir este Usuario?</p>
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-primary" ng-click="deleteUsuario(usuario)">Sim</button>
-                                <button type="button" class="btn btn-light" data-dismiss="modal">N?�o</button>
+                                <button type="button" class="btn btn-light" data-dismiss="modal">N&atilde;o</button>
                             </div>
                         </div>
                     </div>
