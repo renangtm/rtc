@@ -909,14 +909,14 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
           $value->merge($con);
           }
          */
-        /*
+        
           $af = new Empresa(104);
           $ma = new Empresa(105);
           $lo = new Empresa(106);
 
 
           //---- categorias de produto;
-
+          /*
           $ps = $con->getConexao()->prepare("DELETE FROM categoria_produto");
           $ps->execute();
           $ps->close();
@@ -1139,10 +1139,10 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
           $value2->merge($con);
           }
           }
-
+          
           //------------------------------------------------------------
           //----------------- PASSAGEM MATRIZ
-
+          
           $produtos = array();
           $ps = $this->getConexao()->prepare("SELECT p.F_CODPROD,p.F_DESCRICA,p.F_UNIDADES IN ('Frc','Gl','Bd','Amp'),p.F_UNIDADES,p.F_UNIDADEQ,p.F_PREPRO*2.33,c.PRECUS,IFNULL(a.ATVCF,''),p.F_PESOL,p.F_PESOB,(IFNULL(r.qtd,0)),p.F_QUANTIDA,ll.qtd,p.F_PRATIVO,p.F_CONCENTR,p.F_QECX,IFNULL(pi.nm_link,''),p.F_FABVEND,IFNULL(p.F_CLRISCO,0) FROM db_agrofauna.PRODUTO p INNER JOIN db_agro_matriz.produto_imagem pi ON pi.id_produto=p.F_CODPROD LEFT JOIN (SELECT 0 as 'qtd',rr.COD_PROD FROM db_agrofauna.CAD_RES rr GROUP BY rr.COD_PROD) r ON r.COD_PROD=p.F_CODPROD LEFT JOIN db_agrofauna.CADATV a ON a.ATVCOD=p.F_CODPATV INNER JOIN db_agrofauna.FATFCUST c ON c.CODPRO=p.F_CODPROD INNER JOIN (SELECT SUM(l.quantidade_real) as 'qtd',l.id_produto FROM lotes_n.lotes_n l GROUP BY l.id_produto) ll ON ll.id_produto=p.F_CODPROD WHERE F_TIPEST like '%Agric%Lista%' AND p.F_DESCRICA not like '%val%/%'");
           $ps->execute();
@@ -1199,7 +1199,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
           $lote->codigo_fabricante = $lote_fabricante;
           $lote->quantidade_inicial = $quantidade_real;
           $lote->quantidade_real = $quantidade_real;
-          $lote->data_validade = $data_vencimento;
+          $lote->validade = $data_vencimento;
           $lote->grade = new Grade($grade . ",1");
           $lote->rua = $rua;
           $lote->numero = $numero;
@@ -1234,7 +1234,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
           }
           }
 
-         */
+         /*
         $ps = $con->getConexao()->prepare("DELETE FROM operacao");
         $ps->execute();
         $ps->close();
@@ -1278,7 +1278,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             $value->merge($con);
         }
         
-        /*
+        
         $empresas = array();
         $usuarios = array();
         
@@ -1365,8 +1365,46 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         
         $ps = $con->getConexao()->prepare("UPDATE empresa SET rtc=1 WHERE id NOT IN (104,105,106)");
         $ps->execute();
-        $ps->close();*/
-        
+        $ps->close();
+        */
+          
+         $validades = array(); 
+         $ps = $this->getConexao()->prepare("SELECT lote_fabricante,UNIX_TIMESTAMP(data_vencimento) FROM lotes_n_matriz.lotes_n");
+         $ps->execute();
+         $ps->bind_result($fab,$venc);
+         
+         while($ps->fetch()){
+             
+             $validades[$fab] = $venc;
+             
+         }
+         
+         $ps->close();
+         
+         $lotes = array();
+         $ps = $con->getConexao()->prepare("SELECT id,codigo_fabricante FROM lote");
+         $ps->execute();
+         $ps->bind_result($id,$fab);
+         while($ps->fetch()){
+             
+             $lotes[$id] = $fab;
+             
+         }
+         $ps->close();
+         
+         
+         foreach($lotes as $key=>$value){
+             
+             if(!isset($validades[$value])){
+                 continue;
+             }
+             
+             $ps = $con->getConexao()->prepare("UPDATE lote SET validade = FROM_UNIXTIME(".$validades[$value].") WHERE id=$key");
+             $ps->execute();
+             $ps->close();
+             
+         }
+         
     }
 
 }

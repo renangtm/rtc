@@ -124,7 +124,7 @@
                                                 <div class="product-img">
                                                     <img src="{{produto.imagem}}" id="img_{{produto.id}}" alt="" class="img-fluid" onload="fechaLoad(this)" style="display: none">
                                                     <br>
-                                                    <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm" style="width:250px;height:250px;margin-bottom:95px"></span>
+                                                    <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm" style="width:100px;height:100px;margin-bottom:95px"></span>
                                                 </div>
                                                 <div class="ribbons" ng-if="produto.ofertas.length > 0"></div>
                                                 <div class="ribbons-text m-l-10" ng-if="produto.ofertas.length > 0">Oferta</div>
@@ -219,7 +219,7 @@
                                             <div class="product-img-head">
                                                 <div class="product-img">
                                                     <img src="{{produto.imagem}}" id="img_{{produto.id}}" onload="fechaLoad(this)" alt="" class="img-fluid" style="display: none"></div>
-                                                    <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm " style="width:250px;height:250px;margin-left:calc(50% - 125px )"></span>
+                                                    <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm " style="width:100px;height:100px;margin-bottom:95px"></span>
                                                 <div class="ribbons" ng-if="produto.ofertas.length > 0"></div>
                                                 <div class="ribbons-text m-l-10" ng-if="produto.ofertas.length > 0">Oferta</div>
 

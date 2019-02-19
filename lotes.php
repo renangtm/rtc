@@ -188,7 +188,7 @@
                                                 </tfoot>
                                             </table>
 
-                                            <!-- paginaï?½ï?½o  -->
+                                            <!-- pagina??½??½o  -->
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
@@ -213,7 +213,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="copyright">
-                                    <p>Copyright ï?½ 2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
+                                    <p>Copyright ??½ 2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
                                 </div>
                             </div>
                         </div>
@@ -243,7 +243,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Cadastros pendentes</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">ï?½</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">??½</span></button>
                             </div>
                             <div class="modal-body">
 
@@ -291,7 +291,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Cadastros de lotes</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">ï?½</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">??½</span></button>
                             </div>
                             <div class="modal-body">
 
@@ -329,7 +329,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Edite os dados de seu Lote</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">ï?½</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">??½</span></button>
                             </div>
                             <div class="modal-body">
                                 <form ng-submit="mergeLote()">
@@ -389,7 +389,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de seu Lote</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">ï?½</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">??½</span></button>
                             </div>
                             <div class="modal-body">
                                 <p class="text-center"> Tem certeza de que deseja excluir este Lote?</p>
@@ -397,7 +397,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-primary" ng-click="deletarLote(lote)">Sim</button>
-                                <button type="button" class="btn btn-light" data-dismiss="modal">Nï?½o</button>
+                                <button type="button" class="btn btn-light" data-dismiss="modal">N??½o</button>
                             </div>
                         </div>
                     </div>
@@ -486,13 +486,13 @@
 
 
                                             $(document).ready(function () {
-                                                $('.btninfo').tooltip({title: "Mais informaï?½ï?½o", placement: "top"});
+                                                $('.btninfo').tooltip({title: "Mais informa??½??½o", placement: "top"});
                                                 $('.btnedit').tooltip({title: "Editar", placement: "top"});
                                                 $('.btndel').tooltip({title: "Deletar", placement: "top"});
                                             });
                                             $(document).ready(function () {
                                                 $('#clientes').DataTable({
-                                                    "language": {//Altera o idioma do DataTable para o portuguï?½s do Brasil
+                                                    "language": {//Altera o idioma do DataTable para o portugu??½s do Brasil
                                                         "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
                                                     },
                                                 });
