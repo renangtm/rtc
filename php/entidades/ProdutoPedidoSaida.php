@@ -131,7 +131,25 @@ class ProdutoPedidoSaida {
 
                     $ls[] = $value;
                     $qtd -= $value->quantidade_real;
+                    
+                }else{
+                
+                    if($li === null){
+                        
+                        $li = $value;
+                        
+                    }else{
+                        
+                        if($li->quantidade_real > $value->quantidade_real){
+                            
+                            $li = $value;
+                            
+                        }
+                        
+                    }
+                    
                 }
+                
             }
 
             if ($qtd > 0 && count($ls) == count($lotes)) {
@@ -160,17 +178,16 @@ class ProdutoPedidoSaida {
                 
             } else if ($qtd > 0) {
 
-                $li = $lotes[count($lotes) - 1];
-                $i = $lotes[count($lotes) - 1]->getItem()->filhos;
+                $i = $li->getItem()->filhos;
 
                 while ($qtd > 0) {
 
     
                     for ($j = 1; $j < count($i); $j++) {
-                        if ($i[$j] == null)
+                        if ($i[$j] === null)
                             continue;
                         for ($k = $j; $k > 0; $k--) {
-                            if ($i[$k - 1] != null) {
+                            if ($i[$k - 1] !== null) {
                                 if (!($i[$k]->quantidade > $i[$k - 1]->quantidade))
                                     break;
                             }
@@ -179,35 +196,41 @@ class ProdutoPedidoSaida {
                             $i[$k - 1] = $t;
                         }
                     }
-                    
-                    $min = 0;
-                    
-                    for ($j = 0; $j < count($i); $j++) {
-                        if($i[$min] == null){
-                            $min = $j;
-                        }else if($i[$j] != null){
-                            if($i[$min]->quantidade>=$i[$j]->quantidade){
-                                $min = $j;
-                            }
-                        }
-                    }
-                    
+                      
                     for ($j = 0; $j < count($i) && $qtd > 0; $j++) {
 
-                        if ($i[$j] == null)
+                        if ($i[$j] === null)
                             continue;
 
                         if ($i[$j]->quantidade <= $qtd) {
 
                             $qtd -= $i[$j]->quantidade;
                             $is[] = $i[$j];
+                            $i[$j] = null;
                             
+                        }
+                    }
+                    
+                    $min = -1;
+                    
+                    for ($j = 0; $j < count($i); $j++) {
+                        if($i[$j] !== null){
+                            if($min < 0){
+                                $min = $j;
+                            }else if($i[$min]->quantidade>=$i[$j]->quantidade){
+                                $min = $j;
+                            }
                         }
                     }
 
                     if ($qtd > 0) {
+                        
+                        $th = $min < 0;
+                        if(!$th){
+                            $th = $i[$min]->quantidade_filhos === 0;
+                        }
 
-                        if ($i[$min]->quantidade_filhos == 0) {
+                        if ($th) {
 
                             $this->produto->estoque -= $this->influencia_estoque;
                             $this->produto->disponivel -= $this->influencia_reserva;

@@ -1367,7 +1367,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         $ps->execute();
         $ps->close();
         */
-          
+          /*
          $validades = array(); 
          $ps = $this->getConexao()->prepare("SELECT lote_fabricante,UNIX_TIMESTAMP(data_vencimento) FROM lotes_n_matriz.lotes_n");
          $ps->execute();
@@ -1404,6 +1404,8 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
              $ps->close();
              
          }
+         
+         */
          
     }
 

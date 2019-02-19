@@ -213,7 +213,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="copyright">
-                                    <p>Copyright ??½ 2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
+                                    <p>Copyright  2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
                                 </div>
                             </div>
                         </div>
@@ -243,7 +243,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Cadastros pendentes</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">??½</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"></span></button>
                             </div>
                             <div class="modal-body">
 
@@ -414,7 +414,7 @@
 
                             <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
                             <br>
-                            <h3 style="margin-top:20px;">Carregando as informa?§?µes...</h3>
+                            <h3 style="margin-top:20px;">Carregando as informacoes...</h3>
 
                         </div>
                         <div class="modal-footer">
