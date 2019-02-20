@@ -700,11 +700,13 @@ class Sistema {
         $servico = realpath('../micro_servicos_java');
         $servico .= "/$nome.jar";
         $comando = "java -jar \"$servico\"";
-        if ($parametros != null) {
-            $comando .= " \"$parametros\" 2>&1";
+              
+        if ($parametros !== null) {
+            $comando .= " \"".$parametros."\"";
         } else {
-            $comando .= " 200 2>&1";
+            $comando .= " 200";
         }
+
         exec($comando, $output);
         return $output[0];
     }
@@ -714,19 +716,22 @@ class Sistema {
         $caminho = realpath("../uploads");
         $arquivo = "etiqueta_" . round(microtime(true) * 1000) . ".pdf";
         $caminho_completo = $caminho . "/$arquivo";
-
+        
+        
+        
         $request = new stdClass();
         $request->arquivo = $caminho_completo;
         $request->etiquetas = $etiquetas;
 
         $final_request = Utilidades::toJson($request);
         $final_request = addslashes($final_request);
-
+        
         $resp = Utilidades::fromJson(self::getMicroServicoJava('GeradorEtiqueta', $final_request));
-
+      
         if (!$resp->sucesso) {
 
             throw new Exception('falha');
+            
         } else {
 
             return $arquivo;

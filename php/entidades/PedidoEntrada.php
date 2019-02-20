@@ -418,6 +418,12 @@ class PedidoEntrada {
             }
             
         }
+        
+        if($this->produtos === null){
+            
+            $this->produtos = $prods;
+            
+        }
 
         foreach ($prods as $key => $value) {
 

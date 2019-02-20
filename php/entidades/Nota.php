@@ -35,12 +35,14 @@ class Nota {
     public $ficha;
     public $cancelada;
     public $protocolo;
+    public $validar;
 
     function __construct() {
 
         $this->id = 0;
         $this->fornecedor = null;
         $this->cliente = null;
+        $this->validar = true;
         $this->transportadora = null;
         $this->saida = true;
         $this->excluida = false;
@@ -111,18 +113,30 @@ class Nota {
 
     public function calcularImpostosAutomaticamente() {
 
-        $cat = $this->produto->categoria;
+        
         $est = ($this->saida) ? $this->cliente->endereco->cidade->estado : $this->fornecedor->endereco->cidade->estado;
 
+        $suf = false;
+        
+        if($this->saida){
+            if($this->cliente->suframado){
+                $suf = true;
+            }
+        }
+        
         foreach ($this->produtos as $key => $value) {
-
-            $value->base_calculo = ($cat->base_calculo / 100) * $value->valor_unitario;
             
-            if ($cat->icms_normal) {
-                $icm = Sistema::getIcmsEstado($est);
-                $value->icms = $value->base_calculo * ($icm / 100);
-            } else {
-                $value->icms = $value->base_calculo * ($cat->icms / 100);
+            $cat = $value->produto->categoria;
+            $value->base_calculo = ($cat->base_calculo / 100) * $value->valor_unitario;
+            if($est->sigla !== $this->empresa->endereco->cidade->estado->sigla && !$suf){
+                if ($cat->icms_normal) {
+                    $icm = Sistema::getIcmsEstado($est);
+                    $value->icms = $value->base_calculo * ($icm / 100);
+                } else {
+                    $value->icms = $value->base_calculo * ($cat->icms / 100);
+                }
+            }else{
+                $value->icms = 0;
             }
             
         }
@@ -515,14 +529,14 @@ class Nota {
 
         $vencimentos = $this->getVencimentos($con);
 
-        if ($this->vencimentos == null) {
+        if ($this->vencimentos === null) {
 
             $this->vencimentos = $vencimentos;
         }
 
         $prods = $this->getProdutos($con);
 
-        if ($this->produtos == null) {
+        if ($this->produtos === null) {
 
             $this->produtos = $prods;
         }
@@ -542,7 +556,7 @@ class Nota {
             $totp += $value->valor_total;
         }
 
-        if ($totv != $totp) {
+        if ($totv != $totp && $this->validar) {
 
             throw new Exception('Somatorio das parcelas difere do valor da nota Total:' . $totp . ', Somatorio: ' . $totv);
         }

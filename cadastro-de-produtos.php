@@ -97,8 +97,8 @@
                                                         <th data-ordem="produto.disponivel">Disp</th>
                                                         <th data-ordem="produto.transito">Trans</th>
                                                         <th data-ordem="produto.valor_base">Valor (R$)</th>
-                                                        <th data-ordem="produto.ativo">Princípio ativo</th>
-                                                        <th width="150px">Ação</th>
+                                                        <th data-ordem="produto.ativo">Principio ativo</th>
+                                                        <th width="150px">Acao</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -164,7 +164,7 @@
                                                                             <tr>
                                                                                 <td colspan="2">
 
-                                                                                    Indicação de Uso:
+                                                                                    Indicacao de Uso:
                                                                                     <hr>
                                                                                     <div ng-repeat="rec in produto[0].receituario">
                                                                                         Cultura: <strong>{{rec.cultura.nome}}</strong>
@@ -220,19 +220,19 @@
                                                         <th>Disp</th>
                                                         <th>Trans</th>
                                                         <th>Valor (R$)</th>
-                                                        <th>Princípio ativo</th>
-                                                        <th width="150px">Ação</th>
+                                                        <th>Principio ativo</th>
+                                                        <th width="150px">Acao</th>
                                                     </tr>
                                                 </tfoot>
                                             </table>
 
-                                            <!-- paginação  -->
+                                            <!-- paginacao  -->
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
                                                         <li class="page-item" ng-click="produtos.prev()"><a class="page-link" href="">Anterior</a></li>
                                                         <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Próximo</a></li>
+                                                        <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Proximo</a></li>
                                                     </ul>
                                                 </nav>
                                             </div>
@@ -282,7 +282,7 @@
                                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                         <a class="nav-item nav-link active" id="nav-prod-tab" data-toggle="tab" href="#nav-prod" role="tab" aria-controls="nav-prod" aria-selected="true">Produto</a>
                                         <a class="nav-item nav-link" id="nav-img-tab" data-toggle="tab" href="#nav-img" role="tab" aria-controls="nav-img" aria-selected="false">Imagem</a>
-                                        <a class="nav-item nav-link text-center" id="nav-uso-tab" data-toggle="tab" href="#nav-uso" role="tab" aria-controls="nav-uso" aria-selected="false">Indicações<br> de uso</a>
+                                        <a class="nav-item nav-link text-center" id="nav-uso-tab" data-toggle="tab" href="#nav-uso" role="tab" aria-controls="nav-uso" aria-selected="false">Indicacoes<br> de uso</a>
                                     </div>
                                 </nav>
                                 <div class="tab-content" id="nav-tabContent">
@@ -335,6 +335,24 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="form-group row">
+                                                <label for="txtqtdcaixa" class="col-3 col-lg-2 col-form-label text-left">NCM</label>
+                                                <div class="col-9 col-lg-10">
+                                                    <input ng-model="produto.ncm" id="txtqtdcaixa" type="text" required placeholder="" class="form-control">
+                                                    <div class="invalid-feedback">
+                                                        Please provide a valid text.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="txtqtdcaixa" class="col-3 col-lg-2 col-form-label text-left">Qtd Unidade</label>
+                                                <div class="col-9 col-lg-10">
+                                                    <decimal model="produto.quantidade_unidade"></decimal>
+                                                    <div class="invalid-feedback">
+                                                        Please provide a valid text.
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                             <div class="form-group row">
                                                 <label for="txtdisp" class="col-3 col-lg-2 col-form-label text-left">Disp.</label>
@@ -364,7 +382,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Princípio ativo</label>
+                                                <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Principio ativo</label>
                                                 <div class="col-9 col-lg-9 text-left">
                                                     <input id="txtpativo" ng-model="produto.ativo" type="text" required placeholder="" class="form-control">
                                                     <div class="invalid-feedback">
@@ -494,7 +512,7 @@
                                                 <br>
                                                 Observacao:
                                                 <hr>
-                                                <textarea ng-model="receituario.instrucoes" class="form-control" style=""width:100%>
+                                                <textarea ng-model="receituario.instrucoes" class="form-control" style="width:100%">
 
                                             </textarea>
                                         </div>
@@ -569,29 +587,29 @@
                                                     <td width="45%"><select class="custom-select" name="" size="10" multiple>
                                                             <option value="AC">Acre</option>
                                                             <option value="AL">Alagoas</option>
-                                                            <option value="AP">Amapá</option>
+                                                            <option value="AP">Amap??</option>
                                                             <option value="AM">Amazonas</option>
                                                             <option value="BA">Bahia</option>
-                                                            <option value="CE">Ceará</option>
+                                                            <option value="CE">Cear??</option>
                                                             <option value="DF">Distrito Federal</option>
-                                                            <option value="ES">Espírito Santo</option>
-                                                            <option value="GO">Goiás</option>
-                                                            <option value="MA">Maranhão</option>
+                                                            <option value="ES">Espirito Santo</option>
+                                                            <option value="GO">Goi??s</option>
+                                                            <option value="MA">Maranhao</option>
                                                             <option value="MT">Mato Grosso</option>
                                                             <option value="MS">Mato Grosso do Sul</option>
                                                             <option value="MG">Minas Gerais</option>
-                                                            <option value="PA">Pará</option>
-                                                            <option value="PB">Paraíba</option>
-                                                            <option value="PR">Paraná</option>
+                                                            <option value="PA">Par??</option>
+                                                            <option value="PB">Paraiba</option>
+                                                            <option value="PR">Paran??</option>
                                                             <option value="PE">Pernambuco</option>
-                                                            <option value="PI">Piauí</option>
+                                                            <option value="PI">Piaui</option>
                                                             <option value="RJ">Rio de Janeiro</option>
                                                             <option value="RN">Rio Grande do Norte</option>
                                                             <option value="RS">Rio Grande do Sul</option>
-                                                            <option value="RO">Rondônia</option>
+                                                            <option value="RO">Rondonia</option>
                                                             <option value="RR">Roraima</option>
                                                             <option value="SC">Santa Catarina</option>
-                                                            <option value="SP">São Paulo</option>
+                                                            <option value="SP">Sao Paulo</option>
                                                             <option value="SE">Sergipe</option>
                                                             <option value="TO">Tocantins</option>
                                                         </select>
@@ -621,13 +639,13 @@
                                             <label for="txtpeso" class="col-4 col-form-label text-left">Paramentros para<br> faturamento</label>
                                             <div class="col-4 col-lg-4" style="padding-top: 5px;">
                                                 <label class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Sem Tributação</span>
+                                                    <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Sem Tributacao</span>
                                                 </label>
                                                 <label class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Tributação normal</span>
+                                                    <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Tributacao normal</span>
                                                 </label>
                                                 <label class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Tributação especial 4%</span>
+                                                    <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Tributacao especial 4%</span>
                                                 </label>
                                                 <div class="invalid-feedback">
                                                     Please provide a valid text.
@@ -714,7 +732,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endereço</label>
+                                    <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endereco</label>
                                     <div class="col-9 col-lg-10">
                                         <input id="txtend" type="text" required data-parsley-type="email" placeholder="Rua: Coutinho Cavalcante" class="form-control">
                                         <div class="invalid-feedback">
@@ -723,7 +741,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Número</label>
+                                    <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Numero</label>
                                     <div class="col-9 col-lg-10">
                                         <input id="txtendnum" type="text" required data-parsley-type="email" placeholder="00" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
                                         <div class="invalid-feedback">
@@ -748,29 +766,29 @@
                                             <option value="ac">Acre</option> 
                                             <option value="al">Alagoas</option> 
                                             <option value="am">Amazonas</option> 
-                                            <option value="ap">Amapá</option> 
+                                            <option value="ap">Amap??</option> 
                                             <option value="ba">Bahia</option> 
-                                            <option value="ce">Ceará</option> 
+                                            <option value="ce">Cear??</option> 
                                             <option value="df">Distrito Federal</option> 
-                                            <option value="es">Espírito Santo</option> 
-                                            <option value="go">Goiás</option> 
-                                            <option value="ma">Maranhão</option> 
+                                            <option value="es">Espirito Santo</option> 
+                                            <option value="go">Goi??s</option> 
+                                            <option value="ma">Maranhao</option> 
                                             <option value="mt">Mato Grosso</option> 
                                             <option value="ms">Mato Grosso do Sul</option> 
                                             <option value="mg">Minas Gerais</option> 
-                                            <option value="pa">Pará</option> 
-                                            <option value="pb">Paraíba</option> 
-                                            <option value="pr">Paraná</option> 
+                                            <option value="pa">Par??</option> 
+                                            <option value="pb">Paraiba</option> 
+                                            <option value="pr">Paran??</option> 
                                             <option value="pe">Pernambuco</option> 
-                                            <option value="pi">Piauí</option> 
+                                            <option value="pi">Piaui</option> 
                                             <option value="rj">Rio de Janeiro</option> 
                                             <option value="rn">Rio Grande do Norte</option> 
-                                            <option value="ro">Rondônia</option> 
+                                            <option value="ro">Rondonia</option> 
                                             <option value="rs">Rio Grande do Sul</option> 
                                             <option value="rr">Roraima</option> 
                                             <option value="sc">Santa Catarina</option> 
                                             <option value="se">Sergipe</option> 
-                                            <option value="sp" selected>São Jose do Rio Preto</option> 
+                                            <option value="sp" selected>Sao Jose do Rio Preto</option> 
                                             <option value="to">Tocantins</option> 
                                         </select>
                                         <div class="invalid-feedback">
@@ -786,29 +804,29 @@
                                             <option value="ac">Acre</option> 
                                             <option value="al">Alagoas</option> 
                                             <option value="am">Amazonas</option> 
-                                            <option value="ap">Amapá</option> 
+                                            <option value="ap">Amap??</option> 
                                             <option value="ba">Bahia</option> 
-                                            <option value="ce">Ceará</option> 
+                                            <option value="ce">Cear??</option> 
                                             <option value="df">Distrito Federal</option> 
-                                            <option value="es">Espírito Santo</option> 
-                                            <option value="go">Goiás</option> 
-                                            <option value="ma">Maranhão</option> 
+                                            <option value="es">Espirito Santo</option> 
+                                            <option value="go">Goi??s</option> 
+                                            <option value="ma">Maranhao</option> 
                                             <option value="mt">Mato Grosso</option> 
                                             <option value="ms">Mato Grosso do Sul</option> 
                                             <option value="mg">Minas Gerais</option> 
-                                            <option value="pa">Pará</option> 
-                                            <option value="pb">Paraíba</option> 
-                                            <option value="pr">Paraná</option> 
+                                            <option value="pa">Par??</option> 
+                                            <option value="pb">Paraiba</option> 
+                                            <option value="pr">Paran??</option> 
                                             <option value="pe">Pernambuco</option> 
-                                            <option value="pi">Piauí</option> 
+                                            <option value="pi">Piaui</option> 
                                             <option value="rj">Rio de Janeiro</option> 
                                             <option value="rn">Rio Grande do Norte</option> 
-                                            <option value="ro">Rondônia</option> 
+                                            <option value="ro">Rondonia</option> 
                                             <option value="rs">Rio Grande do Sul</option> 
                                             <option value="rr">Roraima</option> 
                                             <option value="sc">Santa Catarina</option> 
                                             <option value="se">Sergipe</option> 
-                                            <option value="sp" selected>São Paulo</option> 
+                                            <option value="sp" selected>Sao Paulo</option> 
                                             <option value="to">Tocantins</option> 
                                         </select>
                                         <div class="invalid-feedback">
@@ -853,7 +871,7 @@
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-primary" ng-click="deletarProduto()">Sim</button>
-                            <button type="button" class="btn btn-light" data-dismiss="modal">Não</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Nao</button>
                         </div>
                     </div>
                 </div>
@@ -871,7 +889,7 @@
 
                             <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
                             <br>
-                            <h3 style="margin-top:20px;">Carregando as informações...</h3>
+                            <h3 style="margin-top:20px;">Carregando as informacoes...</h3>
 
                         </div>
                         <div class="modal-footer">
@@ -962,7 +980,7 @@
             </script>
             <script>
                 $(document).ready(function () {
-                    $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                    $('.btninfo').tooltip({title: "Mais informacoes", placement: "top"});
                     $('.btnedit').tooltip({title: "Editar", placement: "top"});
                     $('.btndel').tooltip({title: "Deletar", placement: "top"});
                 });
