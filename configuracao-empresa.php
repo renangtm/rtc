@@ -113,6 +113,15 @@
                                                 </div>
                                             </div>
                                             <div class="form-group row">
+                                                <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Telefone</label>
+                                                <div class="col-md-4">
+                                                    <input id="txtname" type="text" ng-model="empresa.telefone.numero" required data-parsley-type="email" placeholder="" class="form-control">
+                                                    <div class="invalid-feedback">
+                                                        Please provide a valid text.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
                                                 <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">CNPJ</label>
                                                 <div class="col-md-4">
                                                     <input id="txtname" type="text" ng-model="empresa.cnpj.valor" required data-parsley-type="email" placeholder="" class="form-control">
@@ -220,7 +229,7 @@
                                             <div class="form-group row">
                                                 <div class="col-md-2">Certificado</div>
                                                 <div class="col-md-3">
-                                                    <button onclick="$('#uploaderCertificadoDigital').click()" class="btn btn-outline-{{parametros_emissao.certificado===''?'danger':'success'}}"><i class="fas fa-key"></i>&nbsp Certificado Digital NFe A1</button>
+                                                    <button type="button" onclick="$('#uploaderCertificadoDigital').click()" class="btn btn-outline-{{parametros_emissao.certificado===''?'danger':'success'}}"><i class="fas fa-key"></i>&nbsp Certificado Digital NFe A1</button>
                                                     <input type="file" id="uploaderCertificadoDigital" style="display:none">
                                                 </div>
                                             </div>
@@ -233,6 +242,8 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <hr>
+                                            <button class="btn btn-sucess"><i class="fas fa-check"></i>&nbsp Confirmar Alteracoes</button>
                                         </form>
 
                                     </div>

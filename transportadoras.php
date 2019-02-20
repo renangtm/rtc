@@ -697,7 +697,14 @@
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
-
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <input type="text" ng-model="cliente.razao_social" class="form-control" placeholder="Selecao de cliente" value="" disabled="">
+                                    </div>
+                                    <div class="col">
+                                        <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#clientes"><i class="fas fa-search"></i></a>
+                                    </div>
+                                </div>
                                 <div class="form-group row">
                                     <label  class="col-3 col-lg-2 col-form-label text-left">Estado</label>
                                     <div class="col-9 col-lg-10">
@@ -756,7 +763,7 @@
                                         <td>{{frete.transportadora.id}}</td>
                                         <td>{{frete.transportadora.razao_social}}</td>
                                         <td>{{frete.transportadora.despacho}} R$</td>
-                                        <td>{{frete.valor | decimal}} R$</td>
+                                        <td>{{frete.valor| decimal}} R$</td>
                                         <td>{{(frete.valor + frete.transportadora.despacho) | decimal}} R$</td>
                                     </tr>
                                 </table>
@@ -766,7 +773,7 @@
                     </div>
                 </div>
                 <!-- /.modal-content -->
-                
+
                 <!-- /.modal-content TABELA --> 
                 <div class="modal fade" id="testeIndividual" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
@@ -776,7 +783,14 @@
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
-
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <input type="text" ng-model="cliente.razao_social" class="form-control" placeholder="Selecao de cliente" value="" disabled="">
+                                    </div>
+                                    <div class="col">
+                                        <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#clientes"><i class="fas fa-search"></i></a>
+                                    </div>
+                                </div>
                                 <div class="form-group row">
                                     <label  class="col-3 col-lg-2 col-form-label text-left">Estado</label>
                                     <div class="col-9 col-lg-10">
@@ -851,143 +865,182 @@
 
 
                 <!-- /.modal-content LOADING --> 
-            <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                        </div>
-                        <div class="modal-body text-center">
+                <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body text-center">
 
-                            <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                            <br>
-                            <h3 style="margin-top:20px;">Carregando as informações...</h3>
+                                <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
+                                <br>
+                                <h3 style="margin-top:20px;">Carregando as informações...</h3>
 
-                        </div>
-                        <div class="modal-footer">
+                            </div>
+                            <div class="modal-footer">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
+                <div class="modal fade" id="clientes" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Selecao de Cliente</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="text" class="form-control" id="filtroClientes" placeholder="Filtro">
+                                <hr>
+                                <table class="table table-striped table-bordered first">
+                                    <thead>
+                                    <th data-ordem="cliente.id">Cod.</th>
+                                    <th data-ordem="cliente.razao_social">Nome</th>
+                                    <th>Selecionar</th>
+                                    </thead>
+                                    <tr ng-repeat="cli in clientes.elementos">
+                                        <th>{{cli[0].id}}</th>
+                                        <th>{{cli[0].razao_social}}</th>
+                                        <th><button data-dismiss="modal" aria-label="Close" class="btn btn-success" ng-click="setCliente(cli[0])"><i class="fa fa-info"></i></button></th>
+                                    </tr> 
+                                </table>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-end">
+                                            <li class="page-item" ng-click="clientes.prev()"><a class="page-link" href="">Anterior</a></li>
+                                            <li class="page-item" ng-repeat="pg in clientes.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                            <li class="page-item" ng-click="clientes.next()"><a class="page-link" href="">Próximo</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
 
-            <!-- jquery 3.3.1 -->
-            <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-            <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
-            <script src="assets/libs/js/form-mask.js"></script>
-            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+                            </div>
+                            <div class="modal-footer">
 
-            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-            <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-            <!-- slimscroll js -->
-            <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-            <!-- main js -->
-            <script src="assets/libs/js/main-js.js"></script>
-            <!-- chart chartist js -->
-            <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
-            <!-- sparkline js -->
-            <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
-            <!-- morris js -->
-            <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
-            <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
-            <!-- chart c3 js -->
-            <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
-            <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
-            <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
-            <script src="assets/libs/js/dashboard-ecommerce.js"></script>
-            <!-- parsley js -->
-            <script src="assets/vendor/parsley/parsley.js"></script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Optional JavaScript -->
-            <script>
+                <!-- jquery 3.3.1 -->
+                <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+                <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
+                <script src="assets/libs/js/form-mask.js"></script>
+                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
-                                var sh = false;
-                                var it = null;
+                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+                <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+                <!-- slimscroll js -->
+                <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+                <!-- main js -->
+                <script src="assets/libs/js/main-js.js"></script>
+                <!-- chart chartist js -->
+                <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
+                <!-- sparkline js -->
+                <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+                <!-- morris js -->
+                <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
+                <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
+                <!-- chart c3 js -->
+                <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
+                <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+                <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
+                <script src="assets/libs/js/dashboard-ecommerce.js"></script>
+                <!-- parsley js -->
+                <script src="assets/vendor/parsley/parsley.js"></script>
 
-                                loading.show = function () {
-                                    if (it != null) {
-                                        clearInterval(it);
-                                    }
-                                    it = setInterval(function () {
-                                        $("#loading").modal("show");
-                                        if ($("#loading").hasClass('in')) {
-                                            clearInterval(it);
-                                        }
-                                    }, 300)
+                <!-- Optional JavaScript -->
+                <script>
 
-                                }
+                                                        var sh = false;
+                                                        var it = null;
 
-                                loading.close = function () {
-
-                                    if (it != null) {
-                                        clearInterval(it);
-                                    }
-                                    it = setInterval(function () {
-                                        $("#loading").modal("hide");
-                                        if (!$("#loading").hasClass('in')) {
-                                            clearInterval(it);
-                                        }
-                                    }, 300)
-
-                                }
-                    $(document).on('keyup', '.txtsuf', function() {
-                        $(this).mask('000000000');
-                    });
-                    $(document).on('keyup', '.cnpj', function() {
-                        $(this).mask('00.000.000/0000-00', {reverse: true});
-                    });
-                    $(document).on('keyup', '.cpf', function() {
-                        $(this).mask('000.000.000-00', {reverse: true});
-                    });
-                    $(document).on('keyup', '.rg', function() {
-                        $(this).mask('99.999.999-A', {reverse: true});
-                    });
-                    $(document).on('keyup', '.ie_', function() {
-                        $(this).mask('000000000000000', {reverse: true});
-                    });
-                                            $(document).ready(function () {
-                                                $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
-                                                $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                                                $('.btndel').tooltip({title: "Deletar", placement: "top"});
-                                            });
-                                            $(document).ready(function () {
-                                                $('#clientes').DataTable({
-                                                    "language": {//Altera o idioma do DataTable para o português do Brasil
-                                                        "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
-                                                    },
-                                                });
-
-                                                $.getJSON('estados_cidades.json', function (data) {
-                                                    var items = [];
-                                                    var options = '<option value="">escolha um estado</option>';
-                                                    $.each(data, function (key, val) {
-                                                        options += '<option value="' + val.nome + '">' + val.nome + '</option>';
-                                                    });
-                                                    $("#estados").html(options);
-
-                                                    $("#estados").change(function () {
-
-                                                        var options_cidades = '';
-                                                        var str = "";
-
-                                                        $("#estados option:selected").each(function () {
-                                                            str += $(this).text();
-                                                        });
-
-                                                        $.each(data, function (key, val) {
-                                                            if (val.nome == str) {
-                                                                $.each(val.cidades, function (key_city, val_city) {
-                                                                    options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
-                                                                });
+                                                        loading.show = function () {
+                                                            if (it != null) {
+                                                                clearInterval(it);
                                                             }
+                                                            it = setInterval(function () {
+                                                                $("#loading").modal("show");
+                                                                if ($("#loading").hasClass('in')) {
+                                                                    clearInterval(it);
+                                                                }
+                                                            }, 300)
+
+                                                        }
+
+                                                        loading.close = function () {
+
+                                                            if (it != null) {
+                                                                clearInterval(it);
+                                                            }
+                                                            it = setInterval(function () {
+                                                                $("#loading").modal("hide");
+                                                                if (!$("#loading").hasClass('in')) {
+                                                                    clearInterval(it);
+                                                                }
+                                                            }, 300)
+
+                                                        }
+                                                        $(document).on('keyup', '.txtsuf', function () {
+                                                            $(this).mask('000000000');
                                                         });
-                                                        $("#cidades").html(options_cidades);
+                                                        $(document).on('keyup', '.cnpj', function () {
+                                                            $(this).mask('00.000.000/0000-00', {reverse: true});
+                                                        });
+                                                        $(document).on('keyup', '.cpf', function () {
+                                                            $(this).mask('000.000.000-00', {reverse: true});
+                                                        });
+                                                        $(document).on('keyup', '.rg', function () {
+                                                            $(this).mask('99.999.999-A', {reverse: true});
+                                                        });
+                                                        $(document).on('keyup', '.ie_', function () {
+                                                            $(this).mask('000000000000000', {reverse: true});
+                                                        });
+                                                        $(document).ready(function () {
+                                                            $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                                                            $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                                                            $('.btndel').tooltip({title: "Deletar", placement: "top"});
+                                                        });
+                                                        $(document).ready(function () {
+                                                            $('#clientes').DataTable({
+                                                                "language": {//Altera o idioma do DataTable para o português do Brasil
+                                                                    "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
+                                                                },
+                                                            });
 
-                                                    }).change();
+                                                            $.getJSON('estados_cidades.json', function (data) {
+                                                                var items = [];
+                                                                var options = '<option value="">escolha um estado</option>';
+                                                                $.each(data, function (key, val) {
+                                                                    options += '<option value="' + val.nome + '">' + val.nome + '</option>';
+                                                                });
+                                                                $("#estados").html(options);
 
-                                                });
-                                            });
+                                                                $("#estados").change(function () {
+
+                                                                    var options_cidades = '';
+                                                                    var str = "";
+
+                                                                    $("#estados option:selected").each(function () {
+                                                                        str += $(this).text();
+                                                                    });
+
+                                                                    $.each(data, function (key, val) {
+                                                                        if (val.nome == str) {
+                                                                            $.each(val.cidades, function (key_city, val_city) {
+                                                                                options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
+                                                                            });
+                                                                        }
+                                                                    });
+                                                                    $("#cidades").html(options_cidades);
+
+                                                                }).change();
+
+                                                            });
+                                                        });
 
                 </script>
 
