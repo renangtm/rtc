@@ -30,7 +30,7 @@
                 align-items: center;
                 padding-top: 40px;
                 padding-bottom: 40px;
-                background-color:#414141;
+                background-color: #414141;
                 background-position: center;
                 background-size: cover;
             }

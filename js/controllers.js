@@ -1,3 +1,134 @@
+rtc.controller("crtEmpresaConfig", function ($scope, empresaService, cidadeService, baseService, uploadService) {
+
+    $scope.empresa = null;
+    $scope.filiais = [];
+    $scope.parametros_emissao = null;
+    $scope.estados = [];
+    $scope.cidades = [];
+    $scope.estado = null;
+
+    $("#uploaderCertificadoDigital").change(function () {
+
+        uploadService.upload($(this).prop("files"), function (arquivos, sucesso) {
+
+            if (!sucesso) {
+
+                msg.erro("Falha ao subir arquivo");
+
+            } else {
+
+                for (var i = 0; i < arquivos.length; i++) {
+
+                    $scope.parametros_emissao.certificado = arquivos[i];
+                   
+                }
+
+                msg.alerta("Upload feito com sucesso");
+            }
+
+        })
+
+    })
+
+    empresaService.getEmpresa(function (r) {
+
+
+        $scope.empresa = r.empresa;
+
+        $scope.filiais = [];
+        $scope.filiais[$scope.filiais.length] = r.empresa;
+
+        empresaService.getFiliais(function (rr) {
+
+            for (var i = 0; i < rr.filiais.length; i++) {
+                if (rr.filiais[i].id === $scope.empresa.id)
+                    continue;
+                $scope.filiais[$scope.filiais.length] = rr.filiais[i];
+
+            }
+
+        })
+
+
+        empresaService.getParametrosEmissao($scope.empresa, function (e) {
+
+            $scope.parametros_emissao = e.parametros_emissao;
+            if ($scope.empresa !== null) {
+                equalize($scope.empresa.endereco, "cidade", $scope.cidades);
+                if (typeof $scope.empresa.endereco.cidade !== 'undefined') {
+                    $scope.estado = $scope.empresa.endereco.cidade.estado;
+                } else {
+                    $scope.empresa.endereco.cidade = $scope.cidades[0];
+                    $scope.estado = $scope.empresa.endereco.cidade.estado;
+                }
+            }
+        })
+
+    })
+
+    $scope.mergeEmpresa = function () {
+
+        if ($scope.empresa.endereco.cidade == null) {
+            msg.erro("Empresa sem cidade.");
+            return;
+        }
+
+        baseService.merge($scope.empresa, function (r) {
+            if (r.sucesso) {
+
+                $scope.empresa = r.o;
+
+                baseService.merge($scope.parametros_emissao, function (rr) {
+                    if (rr.sucesso) {
+                        $scope.parametros_emissao = rr.o;
+
+                        msg.alerta("Operacao efetuada com sucesso");
+
+                    } else {
+                        msg.erro("Problema ao efetuar operacao.#");
+                    }
+                });
+
+            } else {
+                msg.erro("Problema ao efetuar operacao. ");
+            }
+        });
+
+    }
+
+    cidadeService.getElementos(function (p) {
+        var estados = [];
+        var cidades = p.elementos;
+        $scope.cidades = cidades;
+
+        lbl:
+                for (var i = 0; i < cidades.length; i++) {
+            var c = cidades[i];
+            for (var j = 0; j < estados.length; j++) {
+                if (estados[j].id === c.estado.id) {
+                    estados[j].cidades[estados[j].cidades.length] = c;
+                    c.estado = estados[j];
+                    continue lbl;
+                }
+            }
+            c.estado["cidades"] = [c];
+            estados[estados.length] = c.estado;
+        }
+
+        $scope.estados = estados;
+        if ($scope.empresa !== null) {
+            equalize($scope.empresa.endereco, "cidade", $scope.cidades);
+            if (typeof $scope.empresa.endereco.cidade !== 'undefined') {
+                $scope.estado = $scope.empresa.endereco.cidade.estado;
+            } else {
+                $scope.empresa.endereco.cidade = $scope.cidades[0];
+                $scope.estado = $scope.empresa.endereco.cidade.estado;
+            }
+        }
+    })
+
+})
+
 rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaService, carrinhoService, pedidoService, formaPagamentoService, transportadoraService) {
 
     $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 4);
@@ -2155,17 +2286,17 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
         logService.getLogs($scope.pedido, function (l) {
 
             $scope.logs = l.logs;
-            
-            $("#shLogs").children("*").each(function(){
+
+            $("#shLogs").children("*").each(function () {
                 $(this).remove();
             })
-            
-            for(var i=0;i<$scope.logs.length;i++){
-                
+
+            for (var i = 0; i < $scope.logs.length; i++) {
+
                 var l = $scope.logs[i];
 
-                $("<div></div>").css('width','100%').css('display','inline').css('border-bottom','1px solid Gray').css('padding','10px').html(l.obs).appendTo($("#shLogs"));
-                
+                $("<div></div>").css('width', '100%').css('display', 'inline').css('border-bottom', '1px solid Gray').css('padding', '10px').html(l.usuario + " / " + toTime(l.momento) + " / " + l.obs).appendTo($("#shLogs"));
+
             }
 
         })

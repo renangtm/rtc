@@ -48,30 +48,29 @@ class Empresa {
 
             $ps = $cf->getConexao()->prepare("SELECT empresa.nome,empresa.cnpj,endereco.id,endereco.rua,endereco.bairro,endereco.cep,endereco.numero,cidade.id,cidade.nome,estado.id,estado.sigla FROM empresa INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' INNER JOIN cidade ON cidade.id=endereco.id_cidade INNER JOIN estado ON estado.id=cidade.id_estado WHERE empresa.id=$id");
             $ps->execute();
-            $ps->bind_result($nome, $cnpj,$end_id,$end_rua,$end_bairro,$end_cep,$end_num,$cid_id,$cid_nom,$est_id,$est_sg);
+            $ps->bind_result($nome, $cnpj, $end_id, $end_rua, $end_bairro, $end_cep, $end_num, $cid_id, $cid_nom, $est_id, $est_sg);
             if ($ps->fetch()) {
                 $this->nome = $nome;
                 $this->cnpj = new CNPJ($cnpj);
-                
+
                 $endereco = new Endereco();
                 $endereco->id = $end_id;
                 $endereco->rua = $end_rua;
                 $endereco->bairro = $end_bairro;
                 $endereco->cep = new CEP($end_cep);
                 $endereco->numero = $end_num;
-                
+
                 $cid = new Cidade();
                 $cid->id = $cid_id;
                 $cid->nome = $cid_nom;
-                
+
                 $est = new Estado();
                 $est->id = $est_id;
                 $est->sigla = $est_sg;
                 $cid->estado = $est;
                 $endereco->cidade = $cid;
-                
+
                 $this->endereco = $endereco;
-                
             }
             $ps->close();
         }
@@ -109,7 +108,7 @@ class Empresa {
     public function merge($con) {
 
         if ($this->id == 0) {
-            
+
             $ps = $con->getConexao()->prepare("INSERT INTO empresa(nome,excluida,inscricao_estadual,consigna,aceitou_contrato,juros_mensal,cnpj,is_logistica) VALUES('" . addslashes($this->nome) . "',false,'" . $this->inscricao_estadual . "'," . ($this->consigna ? "true" : "false") . "," . ($this->aceitou_contrato ? "true" : "false") . ",$this->juros_mensal,'" . $this->cnpj->valor . "'," . ($this->is_logistica ? "true" : "false") . ")");
             $ps->execute();
             $this->id = $ps->insert_id;
@@ -146,13 +145,12 @@ class Empresa {
         $ps->execute();
         $ps->close();
     }
-    
-    public function setFilial($con,$empresa){
-        
+
+    public function setFilial($con, $empresa) {
+
         $ps = $con->getConexao()->prepare("INSERT INTO filial(id_empresa1,id_empresa2) VALUES($this->id,$empresa->id)");
         $ps->execute();
         $ps->close();
-        
     }
 
     public function getFiliais($con) {
@@ -340,7 +338,7 @@ class Empresa {
             $p->nota = $nota;
             $p->lote = $lote;
             $p->serie = $serie;
-            $p->certificado = Utilidades::base64encode($certificado);
+            $p->certificado = $certificado;
             $p->senha_certificado = $senha_certificado;
             $p->empresa = $this;
 
@@ -349,7 +347,12 @@ class Empresa {
 
         $ps->close();
 
-        return null;
+        $p = new ParametrosEmissao();
+        $p->empresa = $this;
+        $p->certificado = "";
+        $p->senha_certificado = "";
+
+        return $p;
     }
 
     public function setLogo($con, $logo) {
@@ -379,7 +382,7 @@ class Empresa {
 
                 if ($rgb[0] === 255 && $rgb[1] === 255 && $rgb[2] === 255)
                     continue;
-                
+
                 $hash = "";
 
                 foreach ($rgb as $key => $p) {
@@ -1366,7 +1369,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_pro,$id_log, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_pro, $id_log, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
 
 
@@ -2983,7 +2986,6 @@ class Empresa {
             $telefone->numero = $numero;
 
             $v[$id_entidade]->telefones[] = $telefone;
-            
         }
         $ps->close();
 

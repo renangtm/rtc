@@ -364,7 +364,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="txtval" class="col-3 col-lg-2 col-form-label text-left">Custo (R$)</label>
+                                                <label for="txtval" class="col-3 col-lg-2 col-form-label text-left">Custo (U$)</label>
                                                 <div class="col-9 col-lg-10">
                                                     <decimal model="produto.custo"></decimal>
                                                     <div class="invalid-feedback">

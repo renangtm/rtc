@@ -1218,6 +1218,22 @@ rtc.service('empresaService', function ($http, $q) {
             falha: fn
         });
     }
+    this.getParametrosEmissao = function(empresa,fn){
+        baseService($http, $q, {
+            o: empresa,
+            query: "$r->parametros_emissao = $o->getParametrosEmissao($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.setParametrosEmissao = function(pe,fn){
+        baseService($http, $q, {
+            o: pe,
+            query: "$o->merge($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.setEmpresa = function (empresa, fn) {
         baseService($http, $q, {
             o: empresa,
