@@ -19,7 +19,8 @@ class Email {
     public static $MANUTENCAO = "Manutencao";
     public static $DIRETORIA = "Diretoria";
     public static $ADMINISTRATIVO = "Administrativo";
-    public static $TIPOS_GRUPO = array("Logistica","Compras","Vendas","Manutencao","Diretoria","Administrativo");
+    public static $FINANCEIRO = "Financeiro";
+    public static $TIPOS_GRUPO = array("Logistica","Compras","Vendas","Manutencao","Diretoria","Administrativo","Financeiro");
     
     public $id;
     public $endereco;

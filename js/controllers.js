@@ -53,10 +53,19 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
             }
 
             $scope.carrinho = novo_carrinho;
-
+            var p = r.o;
             carrinhoService.setCarrinho($scope.carrinho, function (s) {
 
-                msg.alerta("Compra feita com sucesso, voc?� sera redirecionado a cobranca do pedidido dependendo da forma de pagamento selecionada");
+                pedidoService.gerarCobranca(p, function (r) {
+                    $("#finalizarCompraModal").modal('show');
+                    if (r.sucesso) {
+                        $("#finalizarCompra").html("Cobranca gerada com sucesso. <hr> " + r.retorno);
+                    } else {
+                        $("#finalizarCompra").html("Compra finalizada porem houve um problema ao gerar a cobranca");
+                    }
+
+                })
+
 
                 pedido.finalizado = true;
 
@@ -1062,16 +1071,16 @@ rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoSe
 
     $scope.calcular = function () {
 
-        if($scope.nota.calcular_valores){
-            notaService.calcularImpostosAutomaticamente($scope.nota,function(n){
+        if ($scope.nota.calcular_valores) {
+            notaService.calcularImpostosAutomaticamente($scope.nota, function (n) {
 
                 $scope.nota = n.o;
                 $scope.nota.calcular_valores = true;
-                equalize($scope.nota,"forma_pagamento",$scope.formas_pagamento);
+                equalize($scope.nota, "forma_pagamento", $scope.formas_pagamento);
 
             })
         }
-        
+
     }
 
     $scope.setCliente = function (cli) {
@@ -2065,7 +2074,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
 
 
 })
-rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, baseService, produtoService, sistemaService, statusPedidoSaidaService, formaPagamentoService, transportadoraService, clienteService, produtoPedidoService) {
+rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabelaService, baseService, produtoService, sistemaService, statusPedidoSaidaService, formaPagamentoService, transportadoraService, clienteService, produtoPedidoService) {
 
     $scope.pedidos = createAssinc(pedidoService, 1, 10, 10);
     $scope.pedidos.attList();
@@ -2116,11 +2125,53 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
 
     $scope.logisticas = [];
 
+    $scope.logs = [];
+
+    $scope.retorno_cobranca = ""
+
     sistemaService.getLogisticas(function (rr) {
 
         $scope.logisticas = rr.logisticas;
 
     })
+
+
+    $scope.gerarCobranca = function () {
+
+        pedidoService.gerarCobranca($scope.pedido, function (r) {
+
+            if (r.sucesso) {
+                $("#retCob").html("Cobranca gerada com sucesso. <hr> " + r.retorno);
+            } else {
+                $("#retCob").html("Problema ao gerar cobranca");
+            }
+
+        })
+
+    }
+
+    $scope.getLogs = function () {
+
+        logService.getLogs($scope.pedido, function (l) {
+
+            $scope.logs = l.logs;
+            
+            $("#shLogs").children("*").each(function(){
+                $(this).remove();
+            })
+            
+            for(var i=0;i<$scope.logs.length;i++){
+                
+                var l = $scope.logs[i];
+
+                $("<div></div>").css('width','100%').css('display','inline').css('border-bottom','1px solid Gray').css('padding','10px').html(l.obs).appendTo($("#shLogs"));
+                
+            }
+
+        })
+
+
+    }
 
     $scope.getPesoBrutoPedido = function () {
 
@@ -2311,15 +2362,13 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
                 equalize($scope.pedido, "status", $scope.status_pedido);
                 equalize($scope.pedido, "forma_pagamento", $scope.formas_pagamento);
 
-                msg.confirma("Operacao realizada com sucesso. Deseja gerar a cobranca referente a forma de pagamento selecionada ?", function () {
+                msg.alerta("Operacao efetuada com sucesso");
 
-                    formaPagamentoService.aoFinalizarPedido($scope.pedido.forma_pagamento, $scope.pedido, function (re) {
+                if (typeof $scope.pedido["retorno"] !== 'undefined') {
 
-                        window.open(re.retorno);
+                    msg.alerta($scope.pedido["retorno"]);
 
-                    })
-
-                })
+                }
 
             } else {
                 $scope.pedido = r.o;

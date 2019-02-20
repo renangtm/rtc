@@ -1,6 +1,16 @@
 var debuger = function (l) {
     alert(paraJson(l));
 }
+rtc.service('logService', function ($http, $q) {
+    this.getLogs = function (entidade, fn) {
+        baseService($http, $q, {
+            o: entidade,
+            query: "$r->logs=Logger::getLogs($o)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('compraParceiroService', function ($http, $q) {
     this.getElementos = function (x1, x2, filtro, ordem, fn) {
         baseService($http, $q, {
@@ -340,6 +350,14 @@ rtc.service('pedidoService', function ($http, $q) {
     this.getPedido = function (fn) {
         baseService($http, $q, {
             query: "$r->pedido=new Pedido();$r->pedido->usuario=$usuario;$r->pedido->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.gerarCobranca = function (pedido, fn) {
+        baseService($http, $q, {
+            o: pedido,
+            query: "$r->retorno=$o->gerarCobranca()",
             sucesso: fn,
             falha: fn
         });

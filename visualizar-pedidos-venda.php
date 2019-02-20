@@ -100,7 +100,7 @@
                                                         <td>{{pedid[0].id}}</td>
                                                         <td>{{pedid[0].cliente.razao_social}}</td>
                                                         <td>{{pedid[0].data| data}}</td>
-                                                        <td>{{pedid[0].frete}}</td>
+                                                        <td>{{pedid[0].frete.toFixed(2)}}</td>
                                                         <td>{{pedid[0].status.nome}}</td>
                                                         <td>{{pedid[0].usuario.nome}}</td>
                                                         <th>
@@ -329,6 +329,12 @@
                                             <div class="form-inline col-3" style="margin-left: 40px;">
                                                 <a href="#" ng-disabled="!pedido.status.altera" class="btn btn-primary" data-title="calcFrete" data-toggle="modal" ng-click="getFretes()" data-target="#calcFrete" ng-if="calculoPronto()">Calcular Frete</a>
                                             </div>
+                                            <div class="form-inline col-3" style="margin-left: 40px;">
+                                                <a href="#" class="btn btn-outline-success" data-title="logs" data-toggle="modal" ng-click="getLogs()" data-target="#logs"><i class="fas fa-address-card"></i>&nbspLogs do pedido</a>
+                                            </div>
+                                            <div class="form-inline col-3" style="margin-left: 40px;">
+                                                <a href="#" class="btn btn-outline-success" data-title="cobranca" data-toggle="modal" ng-click="gerarCobranca()" data-target="#cobranca"><i class="fas fa-money-bill-alt"></i>&nbspGerar cobranca</a>
+                                            </div>
                                         </div>
                                     </div>
                                     <hr>
@@ -369,7 +375,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                                <button class="btn btn-primary" ng-click="mergePedido()" ng-disabled="pedido.status.parado">
+                                <button class="btn btn-primary"  data-toggle="modal" data-target="#observacoes">
                                     <i class="fas fa-save"></i> &nbsp; Salvar
                                 </button>
                             </div>
@@ -381,11 +387,30 @@
 
 
                 <!-- /.modal-content DELETE --> 
+                <div class="modal fade" id="observacoes" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-address-book fa-3x"></i>&nbsp;&nbsp;&nbsp;Digite as observacoes desse status de pedido caso haja alguma</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <textarea class="form-control" ng-model="pedido.observacao_status"></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" ng-click="mergePedido()">Prosseguir</button>
+                                <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.modal-content --> 
+                
                 <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de seu Pedido</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Digite uma mensagem para enviar para o Cliente Juntamente ao Status</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
@@ -398,8 +423,23 @@
                         </div>
                     </div>
                 </div>
-                <!-- /.modal-content --> 
 
+                 <div class="modal fade" id="cobranca" tabindex="-1" role="dialog" aria-labelledby="vizPedido" aria-hidden="true">
+                    <div class="modal-dialog modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-check fa-3x"></i>&nbsp;&nbsp;&nbsp;Cobranca do pedido</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body text-center" id="retCob">
+                               
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- /.modal-content VISUALIZAR PEDIDO --> 
                 <div class="modal fade" id="vizPedido" tabindex="-1" role="dialog" aria-labelledby="vizPedido" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -656,7 +696,25 @@
                     </div>
                 </div>
                 <!-- /.modal-content --> 
-
+                <div class="modal fade" id="logs" tcalculoProntoabindex="-1" role="dialog" aria-labelledby="logs" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fa fa-fw fa-truck fa-3x"></i>&nbsp;&nbsp;&nbsp;Logs do pedido</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;" id="shLogs">
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- /.modal-content CALCFRETE --> 
                 <div class="modal fade" id="calcFrete" tcalculoProntoabindex="-1" role="dialog" aria-labelledby="calcFrete" aria-hidden="true">
                     <div class="modal-dialog">

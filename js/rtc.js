@@ -1104,7 +1104,7 @@ rtc.directive('email', function () {
 
                 var emailEnvio = "";
 
-                //Nomes dos grupos devem condizer com a da classe Email.php, acoplado :(, por?ï?½m infelizmente n?ï?½o vai dar tempo de tomar uma abordagem mais correta;
+                //Nomes dos grupos devem condizer com a da classe Email.php, acoplado :(, por?ï¿½?ï¿½m infelizmente n?ï¿½?ï¿½o vai dar tempo de tomar uma abordagem mais correta;
                 //De qualquer forma, salvo este acoplamento nestes dois locais, essa abordagem nao tr??z prejuizos maiores;
 
                 var grupos = [{nome: "Emails Principais", enderecos: [], principal: true},
@@ -1113,7 +1113,8 @@ rtc.directive('email', function () {
                     {nome: "Vendas", enderecos: [], principal: false},
                     {nome: "Manutencao", enderecos: [], principal: false},
                     {nome: "Diretoria", enderecos: [], principal: false},
-                    {nome: "Administrativo", enderecos: [], principal: false}];
+                    {nome: "Administrativo", enderecos: [], principal: false},
+                    {nome: "Financeiro", enderecos: [], principal: false}];
 
                 for (var i = 0, j = 0; i < e.length; i++) {
 

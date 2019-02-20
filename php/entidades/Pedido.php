@@ -509,6 +509,17 @@ class Pedido {
         return $nota;
     }
 
+    public function gerarCobranca(){
+        
+        $retorno = $this->forma_pagamento->aoFinalizarPedido($this);
+        $log = Logger::gerarLog($this, "Cobranca via ".$this->forma_pagamento->nome.", gerada $retorno");        
+        $this->empresa->email->enviarEmail($this->empresa->email->filtro(Email::$FINANCEIRO),"Cobranca de pagamento",$log->toHtml());
+        $this->empresa->email->enviarEmail($this->cliente->email->filtro(Email::$FINANCEIRO),"Cobranca de pagamento",$log->toHtml());
+        
+        return $retorno;
+        
+    }
+    
     public function merge($con) {
 
         $prods = $this->getProdutos($con);
@@ -532,7 +543,9 @@ class Pedido {
                 }
             }
         }
-
+        
+        $inicial = $this->id === 0;
+        
         if ($this->id == 0) {
 
             $ps = $con->getConexao()->prepare("INSERT INTO pedido(id_cliente,id_transportadora,frete,observacoes,frete_inclusao,id_empresa,data,excluido,id_usuario,id_nota,prazo,parcelas,id_status,id_forma_pagamento,id_logistica) VALUES(" . $this->cliente->id . "," . $this->transportadora->id . ",$this->frete,'$this->observacoes'," . ($this->frete_incluso ? "true" : "false") . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data/1000),false," . $this->usuario->id . ",$this->id_nota,$this->prazo,$this->parcelas," . $this->status->id . "," . $this->forma_pagamento->id . "," . ($this->logistica != null ? $this->logistica->id : 0) . ")");
@@ -579,19 +592,12 @@ class Pedido {
             }
         }
         $this->produtos = $np;
+        
+        Logger::gerarLog($this, $this->status->nome);
 
-        if ($this->status->emailCliente) {
-
-            $html = Sistema::getHtml('visualizar-pedido-print', $this);
-
-            $this->usuario->email->enviarEmail($this->cliente->email->filtro(Email::$COMPRAS), "Pedido numero " . $this->id, $html);
-        } else if ($this->status->emailInterno) {
-
-            $html = Sistema::getHtml('visualizar-pedido-print', $this);
-
-            $this->usuario->email->enviarEmail($this->empresa->email->filtro(Email::$LOGISTICA), "Pedido numero " . $this->id, $html);
-        }
-
+        
+        $this->status->enviarEmails($this);
+        
         if ($this->status->nota && $this->id_nota == 0) {
 
             $nota = $this->gerarNotaPadrao();
