@@ -16,9 +16,46 @@ $fonte = $logo->getCorFonteAdequada();
 if (!isset($filtro)) {
     $filtro = "";
 }
-$rtc = $empresa->getRTC(new ConnectionFactory());
-$rtc->numero--;
 
+$rtc = $ses->get('rtc');
+
+if ($rtc == null) {
+
+    $rtc = $empresa->getRTC(new ConnectionFactory());
+
+    $rtcs = Sistema::getRTCS();
+
+    $possiveis = array();
+    foreach ($rtcs as $key => $value) {
+        if ($value->numero > $rtc->numero) {
+            continue;
+        }
+        $possiveis[] = $value;
+    }
+
+    $ses->set('rtcs', $possiveis);
+}
+$possiveis = $ses->get('rtcs');
+
+if (isset($_GET['t'])) {
+    $n = $_GET['t'];
+    foreach ($possiveis as $key => $value) {
+        if ($value->numero == $n) {
+            $rtc = $value;
+            break;
+        }
+    }
+}
+
+foreach ($possiveis as $key => $value) {
+    if ($value->numero === $rtc->numero) {
+        $possiveis[$key] = $possiveis[0];
+        break;
+    }
+}
+
+$possiveis[0] = $rtc;
+$rtc->numero--;
 ?>
 
 <style type="text/css">
@@ -40,7 +77,7 @@ $rtc->numero--;
     .menu-list{
         background-color:<?php echo $logo->cor_predominante; ?> !important;
     }
-    
+
     #men .nav-link{
         color: <?php echo $fonte; ?> !important;
     }
@@ -57,6 +94,8 @@ $rtc->numero--;
 
 
 </style>
+
+
 
 <div class="dashboard-header" ng-controller="crtCarrinho">
     <nav class="navbar navbar-expand-lg bg-white fixed-top">
@@ -263,9 +302,13 @@ $rtc->numero--;
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav flex-column" id="men">
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
-                        <?php
-                        echo $rtc->nome;
-                        ?>
+                        <select class="form-control" onchange="window.location = 'comprar.php?t=' + $(this).find('option:selected').val()">
+                            <?php
+                            foreach ($possiveis as $key => $value) {
+                                ?>
+                                <option value="<?php echo $value->numero; ?>"><?php echo $value->nome; ?></option>
+                            <?php } ?>
+                        </select>
                     </li>
                     <li class="nav-item ">
                         <a class="nav-link" href="comprar.php" ><i class="fa fa-fw fa-shopping-basket"></i>Compra Parceiros</a>
@@ -275,69 +318,76 @@ $rtc->numero--;
                     </li>
 
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
-<?php echo $empresa->nome; ?>
+                        <?php echo $empresa->nome; ?>
                     </li>
-                        <?php if ($rtc->numero > 0) { ?>
+                    <?php if ($rtc->numero >= 2) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="cfg.php" ><i class="fas fa-user mr-2"></i>Colaboradores</a>
-                        </li>                  
+                        </li>         
+                    <?php } ?>
+                    <?php if ($rtc->numero === 3) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="lista-de-preco.php" ><i class="fas fa-clipboard-list"></i>Receituario</a>
                         </li>
+                    <?php } ?>
+                    <?php if ($rtc->numero === 3) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="campanhas.php" ><i class="fas fa-anchor"></i>Campanhas</a>
                         </li>
-<?php } ?>
+                    <?php } ?>
                     <li class="nav-item">
                         <a class="nav-link" href="fornecedores.php" ><i class="fas fa-industry"></i>Fornecedores</a>
                     </li>
-<?php if ($rtc->numero > 0) { ?>
+                    <?php if ($rtc->numero == 3) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="bancos.php" ><i class="fas fa-calculator"></i>Bancos</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="movimentos_banco.php" ><i class="fas fa-money-bill-alt"></i>Movimentos Financeiro</a>
                         </li>
-<?php } ?>
-<?php if ($empresa->is_logistica) { ?>
+                    <?php } ?>
+                    <?php if ($empresa->is_logistica) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="produto-cliente-logistic.php"><i class="fas fa-camera"></i>Produtos cliente Logistic</a>
                         </li>
-<?php } ?>
+                    <?php } ?>
                     <li class="nav-item">
                         <a class="nav-link" href="cadastro-de-produtos.php"><i class="fas fa-cube"></i>Cadastro de Produtos</a>
                     </li>
-<?php if ($rtc->numero > 0) { ?>
+                    <?php if ($rtc->numero === 3) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="notas.php"><i class="fas fa-book"></i>Notas</a>
                         </li>                   
                         <li class="nav-item">
                             <a class="nav-link" href="lotes.php"><i class="fas fa-cubes"></i>Lotes</a>
                         </li>
-<?php } ?>
+                    <?php } ?>
                     <li class="nav-item">
                         <a class="nav-link" href="clientes.php" ><i class="fas fa-users"></i>Clientes</a>
                     </li>
-<?php if ($rtc->numero > 0) { ?>
+                    <?php if ($rtc->numero >= 1) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="transportadoras.php" ><i class="fas fa-truck"></i>Transportadoras</a>
                         </li>
-<?php } ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="cotacao-compra.php"><i class="fas fa-check-square"></i>Cotacao</a>
-                    </li>
+                    <?php } ?>
+                    <?php if ($rtc->numero >= 1) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="cotacao-compra.php"><i class="fas fa-check-square"></i>Cotacao</a>
+                        </li>
+                    <?php } ?>
                     <li class="nav-item">
                         <a class="nav-link" href="visualizar-pedidos-compra.php"><i class="fas fa-tasks"></i>Pedidos de Compra</a>
                     </li>
-<?php if ($rtc->numero > 0) { ?>
+                    <?php if ($rtc->numero >= 2) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="entrada_nota.php"><i class="fas fa-code"></i>Entrada NFe</a>
                         </li>
-<?php } ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="visualizar-pedidos-venda.php"><i class="fas fa-tasks"></i>Pedidos de Venda</a>
-                    </li>
-
+                    <?php } ?>
+                    <?php if ($rtc->numero >= 1) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="visualizar-pedidos-venda.php"><i class="fas fa-tasks"></i>Pedidos de Venda</a>
+                        </li>
+                    <?php } ?>
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         Administrativo RTC
                     </li>
@@ -353,3 +403,5 @@ $rtc->numero--;
         </nav>
     </div>
 </div>
+
+
