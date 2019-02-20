@@ -9,6 +9,29 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, cidadeServi
 
     $("#uploaderCertificadoDigital").change(function () {
 
+        var ext = ['pfx'];
+        var pre_arquivos = $(this).prop("files");
+        var arquivos = [];
+        var e = [];
+
+        var total_size = 0;
+
+        for (var i = 0; i < pre_arquivos.length; i++) {
+            for (var j = 0; j < ext.length; j++) {
+                if (ext[j] === pre_arquivos[i].name.split('.')[pre_arquivos[i].name.split('.').length - 1]) {
+                    arquivos[arquivos.length] = pre_arquivos[i];
+                    e[e.length] = pre_arquivos[i].name.split('.')[pre_arquivos[i].name.split('.').length - 1];
+                    total_size += pre_arquivos[i].size;
+                    break;
+                }
+            }
+        }
+
+        if (arquivos.length === 0) {
+            msg.alerta("O Certificado deve ser do tipo PFX A1");
+            return;
+        }
+
         uploadService.upload($(this).prop("files"), function (arquivos, sucesso) {
 
             if (!sucesso) {
@@ -20,7 +43,7 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, cidadeServi
                 for (var i = 0; i < arquivos.length; i++) {
 
                     $scope.parametros_emissao.certificado = arquivos[i];
-                   
+
                 }
 
                 msg.alerta("Upload feito com sucesso");
@@ -77,12 +100,12 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, cidadeServi
             if (r.sucesso) {
 
                 $scope.empresa = r.o;
-
+           
                 baseService.merge($scope.parametros_emissao, function (rr) {
                     if (rr.sucesso) {
                         $scope.parametros_emissao = rr.o;
 
-                        msg.alerta("Operacao efetuada com sucesso");
+                        msg.alerta("Operacao efetuada com sucesso. Relogue para surtir as alteracoes");
 
                     } else {
                         msg.erro("Problema ao efetuar operacao.#");
@@ -3761,7 +3784,7 @@ rtc.controller("crtFornecedores", function ($scope, fornecedorService, categoria
     }
 
 })
-rtc.controller("crtTransportadoras", function ($scope, transportadoraService, regraTabelaService, tabelaService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
+rtc.controller("crtTransportadoras", function ($scope,clienteService, transportadoraService, regraTabelaService, tabelaService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
 
     $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 10);
     $scope.transportadoras.attList();
@@ -3770,10 +3793,17 @@ rtc.controller("crtTransportadoras", function ($scope, transportadoraService, re
             "transportadora",
             ["id", "razao_social", "nome_fantasia", "despacho", "cnpj", "inscricao_estadual", "habilitada"]);
 
+    $scope.clientes = createAssinc(clienteService, 1, 3, 4);
+    $scope.clientes.attList();
+    assincFuncs(
+            $scope.clientes,
+            "cliente",
+            ["id", "razao_social"], "filtroClientes");
+
     $scope.transportadora_novo = {};
     $scope.transportadora = {};
     $scope.estado = {};
-
+    $scope.cliente = {};
     $scope.email = {};
 
     $scope.tabela_nova = {};
@@ -3863,6 +3893,26 @@ rtc.controller("crtTransportadoras", function ($scope, transportadoraService, re
 
         $scope.tabela_selecionada.regras[$scope.tabela_selecionada.regras.length] = angular.copy($scope.regra_nova);
 
+    }
+    
+    $scope.setCliente = function(cliente){
+        
+        lbl:
+        for(var i=0;i<$scope.estados.length;i++){
+            if($scope.estados[i].id === cliente.endereco.cidade.estado.id){
+                var e = $scope.estados[i];
+                $scope.estado_teste = $scope.estados[i];
+                for(var j=0;j<e.cidades.length;j++){
+                    if(e.cidades[j].id === cliente.endereco.cidade.id){
+                        $scope.cidade_teste = e.cidades[j];
+                        break lbl;
+                    }
+                }
+            }
+        }
+        
+        $scope.cliente = cliente;
+        
     }
 
     $scope.attResultadoIndividual = function () {

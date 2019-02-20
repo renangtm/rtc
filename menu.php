@@ -302,11 +302,11 @@ $rtc->numero--;
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav flex-column" id="men">
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
-                        <select class="form-control" onchange="window.location = 'comprar.php?t=' + $(this).find('option:selected').val()">
+                        <select style="background-color:transparent;font-weight:bold;color:#FFFFFF;border:0px solid" class="form-control" onchange="window.location = 'comprar.php?t=' + $(this).find('option:selected').val()">
                             <?php
                             foreach ($possiveis as $key => $value) {
                                 ?>
-                                <option value="<?php echo $value->numero; ?>"><?php echo $value->nome; ?></option>
+                                <option style="color:#000000" value="<?php echo $value->numero; ?>"><?php echo $value->nome; ?></option>
                             <?php } ?>
                         </select>
                     </li>
@@ -320,6 +320,11 @@ $rtc->numero--;
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         <?php echo $empresa->nome; ?>
                     </li>
+                    <?php if ($rtc->numero >= 2) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="configuracao-empresa.php" ><i class="fas fa-compass"></i>Config. Empresa</a>
+                        </li>         
+                    <?php } ?>
                     <?php if ($rtc->numero >= 2) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="cfg.php" ><i class="fas fa-user mr-2"></i>Colaboradores</a>

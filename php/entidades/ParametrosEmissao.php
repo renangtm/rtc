@@ -35,14 +35,14 @@ class ParametrosEmissao {
 
         if ($this->id == 0) {
             
-            $ps = $con->getConexao()->prepare("INSERT INTO parametros_emissao(id_empresa,nota,serie,lote,certificado,senha_certificado) VALUES(".$this->empresa->id.",$this->nota,$this->serie,$this->lote,x'".Utilidades::toHex(Utilidades::base64decode($this->certificado))."','$this->senha_certificado')");
+            $ps = $con->getConexao()->prepare("INSERT INTO parametros_emissao(id_empresa,nota,serie,lote,certificado,senha_certificado) VALUES(".$this->empresa->id.",$this->nota,$this->serie,$this->lote,'".$this->certificado."','$this->senha_certificado')");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
             
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE parametros_emissao SET id_empresa=".$this->empresa->id.",nota=$this->nota,serie=$this->serie,lote=$this->lote,certificado=x'".Utilidades::toHex(Utilidades::base64decode($this->certificado))."',senha_certificado='$this->senha_certificado' WHERE id=$this->id");
+            $ps = $con->getConexao()->prepare("UPDATE parametros_emissao SET id_empresa=".$this->empresa->id.",nota=$this->nota,serie=$this->serie,lote=$this->lote,certificado='".$this->certificado."',senha_certificado='$this->senha_certificado' WHERE id=$this->id");
             $ps->execute();
             $ps->close();
             
