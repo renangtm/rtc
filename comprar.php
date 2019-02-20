@@ -166,7 +166,7 @@
                                                     </div>
                                                     <div class="product-val"><button class="btn bn-default" style="margin-bottom:10px" ng-click="setProduto(produto)" data-toggle="modal" data-target="#validadeProduto"><i class="fa fa-info"></i>&nbsp Ver validades</button></div>
                                                     <div class="product-quant">{{produto.grade.gr[0]}} p/ caixa</div>
-                                                    <div class="product-price">R$ {{produto.valor_base}} </div>
+                                                    <div class="product-price">R$ {{produto.valor_base}} <hr> R$ {{(produto.valor_base/produto.quantidade_unidade).toFixed(2)}} <br> {{produto.liquido?"Lt":"Kg"}}</div>
 
                                                 </div>
 
