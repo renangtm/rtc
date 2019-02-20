@@ -1706,6 +1706,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             echo "Inserida a NFE de ficha $value->ficha";
         }
         */
+        /*
         $filial = new Empresa(104);
         $matriz = new Empresa(105);
  
@@ -1756,7 +1757,19 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             $ps->execute();
             $ps->close();
           }
-
+          */
+        
+        $fichas_filial = "(-1";
+        
+        $ps = $con->getConexao()->prepare("SELECT ficha FROM nota WHERE id_empresa=$filial->id");
+        $ps->execute();
+        $ps->bind_result($ficha);
+        while($ps->fetch()){
+            $fichas_filial .= ",$ficha";
+        }
+        $ps->close();
+        
+        $fichas_filial .= ")";
         
     }
 
