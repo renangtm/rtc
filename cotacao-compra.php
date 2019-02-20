@@ -387,11 +387,11 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Seleção de Fornecedores</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Selecaoo de Fornecedores</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
-                                <input type="text" class="form-control" id="filtroClientes" placeholder="Filtro">
+                                <input type="text" class="form-control" id="filtroFornecedores" placeholder="Filtro">
                                 <hr>
                                 <table class="table table-striped table-bordered first">
                                     <thead>
