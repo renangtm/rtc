@@ -94,6 +94,14 @@ rtc.service('notaService', function ($http, $q) {
             falha: fn
         });
     }
+    this.calcularImpostosAutomaticamente = function (nota, fn) {
+        baseService($http, $q, {
+            o: nota,
+            query: "$o->calcularImpostosAutomaticamente()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getProdutos = function (nota, fn) {
         var f = function (p) {
             for (var i = 0; i < p.produtos.length; i++) {

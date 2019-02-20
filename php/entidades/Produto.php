@@ -49,7 +49,7 @@ class Produto {
         $this->id_universal = 0;
         $this->categoria = null;
         $this->liquido = false;
-        $this->quantidade_unidade = 0;
+        $this->quantidade_unidade = 1;
         $this->excluido = false;
         $this->habilitado = true;
         $this->empresa = null;
@@ -61,7 +61,7 @@ class Produto {
         $this->estoque = 0;
         $this->disponivel = 0;
         $this->transito = 0;
-        $this->grade = null;
+        $this->grade = new Grade("1");
         $this->ofertas = array();
         $this->classe_risco = 0;
         $this->ativo = "";
@@ -69,10 +69,28 @@ class Produto {
         $this->logistica = null;
         $this->sistema_lotes = true;
         $this->nota_usuario = 5;
+        $this->ncm = "000000";
+        $this->unidade = "Ob";
         
     }
 
     public function merge($con) {
+        
+        if($this->id_universal === 0){
+            
+            $ps = $con->getConexao()->prepare("SELECT MAX(id_universal) FROM produto");
+            $ps->execute();
+            $ps->bind_result($idn);
+            
+            if($ps->fetch()){
+                
+                $this->id_universal = $idn;
+                
+            }
+            
+            $ps->close();
+            
+        }
 
         if ($this->id == 0) {
             
@@ -86,6 +104,9 @@ class Produto {
             $ps->execute();
             $ps->close();
         }
+        
+        
+        
     }
 
     public function atualizarEstoque($con) {
