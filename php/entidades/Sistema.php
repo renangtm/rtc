@@ -982,18 +982,18 @@ class Sistema {
 
         $status = array();
 
-        $status[] = new StatusPedidoSaida(1, "Confirmacao de pedido", false, true, true, true, true, true, false, false);
-        $status[] = new StatusPedidoSaida(2, "Limite de credito", false, true, false, false, true, true, false, false);
-        $status[] = new StatusPedidoSaida(3, "Autorizacao de pedido", false, true, false, false, true, true, false, false);
-        $status[] = new StatusPedidoSaida(4, "Confirmacao de pagamento", false, true, true, false, true, true, false, false);
-        $status[] = new StatusPedidoSaida(5, "Separacao", false, true, true, false, false, false, false, false);
-        $status[] = new StatusPedidoSaida(6, "Faturamento", true, true, true, false, false, false, false, true);
-        $status[] = new StatusPedidoSaida(7, "Coleta", true, true, true, true, false, false, false, true);
-        $status[] = new StatusPedidoSaida(8, "Rastreio", true, true, true, false, false, false, false, true);
-        $status[] = new StatusPedidoSaida(9, "Finalizado", true, true, true, false, false, false, true, true);
-        $status[] = new StatusPedidoSaida(10, "Cancelado", false, false, true, true, false, false, true, false);
-        $status[] = new StatusPedidoSaida(11, "Orcamento", false, false, true, true, true, true, false, false);
-        $status[] = new StatusPedidoSaida(30, "Excluido", false, false, false, true, false, false, true, false);
+        $status[] = new StatusPedidoSaida(1, "Confirmacao de pedido", false, true, Email::$COMPRAS, Email::$VENDAS, true, true, false, false);
+        $status[] = new StatusPedidoSaida(2, "Limite de credito", false, true, Email::$COMPRAS, Email::$FINANCEIRO, true, true, false, false);
+        $status[] = new StatusPedidoSaida(3, "Autorizacao de pedido", false, Email::$COMPRAS, Email::$DIRETORIA, false, true, true, false, false);
+        $status[] = new StatusPedidoSaida(4, "Confirmacao de pagamento", false, Email::$FINANCEIRO, Email::$FINANCEIRO, false, true, true, false, false);
+        $status[] = new StatusPedidoSaida(5, "Separacao", false, Email::$COMPRAS, Email::$LOGISTICA, false, false, false, false, false);
+        $status[] = new StatusPedidoSaida(6, "Faturamento", true, Email::$COMPRAS, Email::$LOGISTICA, false, false, false, false, true);
+        $status[] = new StatusPedidoSaida(7, "Coleta", true, Email::$COMPRAS, Email::$LOGISTICA, true, false, false, false, true);
+        $status[] = new StatusPedidoSaida(8, "Rastreio", true, Email::$COMPRAS, Email::$LOGISTICA, false, false, false, false, true);
+        $status[] = new StatusPedidoSaida(9, "Finalizado", true, Email::$COMPRAS, Email::$LOGISTICA, false, false, false, true, true);
+        $status[] = new StatusPedidoSaida(10, "Cancelado", false, Email::$COMPRAS, Email::$VENDAS, true, false, false, true, false);
+        $status[] = new StatusPedidoSaida(11, "Orcamento", false, Email::$COMPRAS, Email::$VENDAS, true, true, true, false, false);
+        $status[] = new StatusPedidoSaida(30, "Excluido", false, Email::$COMPRAS, Email::$VENDAS, true, false, false, true, false);
 
 
         return $status;

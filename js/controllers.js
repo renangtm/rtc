@@ -1,3 +1,134 @@
+rtc.controller("crtEmpresaConfig", function ($scope, empresaService, cidadeService, baseService, uploadService) {
+
+    $scope.empresa = null;
+    $scope.filiais = [];
+    $scope.parametros_emissao = null;
+    $scope.estados = [];
+    $scope.cidades = [];
+    $scope.estado = null;
+
+    $("#uploaderCertificadoDigital").change(function () {
+
+        uploadService.upload($(this).prop("files"), function (arquivos, sucesso) {
+
+            if (!sucesso) {
+
+                msg.erro("Falha ao subir arquivo");
+
+            } else {
+
+                for (var i = 0; i < arquivos.length; i++) {
+
+                    $scope.parametros_emissao.certificado = arquivos[i];
+                   
+                }
+
+                msg.alerta("Upload feito com sucesso");
+            }
+
+        })
+
+    })
+
+    empresaService.getEmpresa(function (r) {
+
+
+        $scope.empresa = r.empresa;
+
+        $scope.filiais = [];
+        $scope.filiais[$scope.filiais.length] = r.empresa;
+
+        empresaService.getFiliais(function (rr) {
+
+            for (var i = 0; i < rr.filiais.length; i++) {
+                if (rr.filiais[i].id === $scope.empresa.id)
+                    continue;
+                $scope.filiais[$scope.filiais.length] = rr.filiais[i];
+
+            }
+
+        })
+
+
+        empresaService.getParametrosEmissao($scope.empresa, function (e) {
+
+            $scope.parametros_emissao = e.parametros_emissao;
+            if ($scope.empresa !== null) {
+                equalize($scope.empresa.endereco, "cidade", $scope.cidades);
+                if (typeof $scope.empresa.endereco.cidade !== 'undefined') {
+                    $scope.estado = $scope.empresa.endereco.cidade.estado;
+                } else {
+                    $scope.empresa.endereco.cidade = $scope.cidades[0];
+                    $scope.estado = $scope.empresa.endereco.cidade.estado;
+                }
+            }
+        })
+
+    })
+
+    $scope.mergeEmpresa = function () {
+
+        if ($scope.empresa.endereco.cidade == null) {
+            msg.erro("Empresa sem cidade.");
+            return;
+        }
+
+        baseService.merge($scope.empresa, function (r) {
+            if (r.sucesso) {
+
+                $scope.empresa = r.o;
+
+                baseService.merge($scope.parametros_emissao, function (rr) {
+                    if (rr.sucesso) {
+                        $scope.parametros_emissao = rr.o;
+
+                        msg.alerta("Operacao efetuada com sucesso");
+
+                    } else {
+                        msg.erro("Problema ao efetuar operacao.#");
+                    }
+                });
+
+            } else {
+                msg.erro("Problema ao efetuar operacao. ");
+            }
+        });
+
+    }
+
+    cidadeService.getElementos(function (p) {
+        var estados = [];
+        var cidades = p.elementos;
+        $scope.cidades = cidades;
+
+        lbl:
+                for (var i = 0; i < cidades.length; i++) {
+            var c = cidades[i];
+            for (var j = 0; j < estados.length; j++) {
+                if (estados[j].id === c.estado.id) {
+                    estados[j].cidades[estados[j].cidades.length] = c;
+                    c.estado = estados[j];
+                    continue lbl;
+                }
+            }
+            c.estado["cidades"] = [c];
+            estados[estados.length] = c.estado;
+        }
+
+        $scope.estados = estados;
+        if ($scope.empresa !== null) {
+            equalize($scope.empresa.endereco, "cidade", $scope.cidades);
+            if (typeof $scope.empresa.endereco.cidade !== 'undefined') {
+                $scope.estado = $scope.empresa.endereco.cidade.estado;
+            } else {
+                $scope.empresa.endereco.cidade = $scope.cidades[0];
+                $scope.estado = $scope.empresa.endereco.cidade.estado;
+            }
+        }
+    })
+
+})
+
 rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaService, carrinhoService, pedidoService, formaPagamentoService, transportadoraService) {
 
     $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 4);
@@ -53,10 +184,19 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
             }
 
             $scope.carrinho = novo_carrinho;
-
+            var p = r.o;
             carrinhoService.setCarrinho($scope.carrinho, function (s) {
 
-                msg.alerta("Compra feita com sucesso, voc?ª sera redirecionado a cobranca do pedidido dependendo da forma de pagamento selecionada");
+                pedidoService.gerarCobranca(p, function (r) {
+                    $("#finalizarCompraModal").modal('show');
+                    if (r.sucesso) {
+                        $("#finalizarCompra").html("Cobranca gerada com sucesso. <hr> " + r.retorno);
+                    } else {
+                        $("#finalizarCompra").html("Compra finalizada porem houve um problema ao gerar a cobranca");
+                    }
+
+                })
+
 
                 pedido.finalizado = true;
 
@@ -1060,63 +1200,16 @@ rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoSe
 
     }
 
-    var calcIcm = function (p, estado) {
-
-        sistemaService.getIcmsEstado(estado, function (i) {
-
-            var icm = i.icms;
-
-            p.icms = p.valor_total * (p.base_calculo / 100) * (icm / 100);
-
-        })
-
-    }
-
     $scope.calcular = function () {
 
-        for (var i = 0; i < $scope.nota.produtos.length; i++) {
+        if ($scope.nota.calcular_valores) {
+            notaService.calcularImpostosAutomaticamente($scope.nota, function (n) {
 
-            var p = $scope.nota.produtos[i];
+                $scope.nota = n.o;
+                $scope.nota.calcular_valores = true;
+                equalize($scope.nota, "forma_pagamento", $scope.formas_pagamento);
 
-            p.valor_total = p.valor_unitario * p.quantidade;
-
-            if (!$scope.nota.calcular_valores)
-                continue;
-
-            p.base_calculo = p.produto.categoria.base_calculo;
-
-            var estado = null;
-
-            if (typeof $scope.nota["fornecedor"] !== 'undefined' && !$scope.nota.saida) {
-
-                estado = $scope.nota.fornecedor.endereco.cidade.estado;
-
-            } else if (typeof $scope.nota["cliente"] !== 'undefined' && $scope.nota.saida) {
-
-                estado = $scope.nota.cliente.endereco.cidade.estado;
-
-                if ($scope.nota.cliente.suframado) {
-                    continue;
-                }
-
-            }
-
-            if (p.produto.categoria.icms_normal) {
-
-                if (estado !== null) {
-
-                    calcIcm(p, estado);
-
-                }
-
-            } else {
-
-                p.icms = p.valor_total * (p.base_calculo / 100) * (p.produto.categoria.icms / 100);
-
-            }
-
-            p.ipi = p.valor_total * (p.produto.categoria.ipi / 100);
-
+            })
         }
 
     }
@@ -1199,7 +1292,7 @@ rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoSe
         for (var i = 0; i < $scope.nota.vencimentos.length; i++) {
             $scope.nota.vencimentos[i].data = fromDate($scope.nota.vencimentos[i].data_texto);
             if ($scope.nota.vencimentos[i].data < 0) {
-                msg.alerta("Data do " + (i + 1) + "?º vencimento, incorreta");
+                msg.alerta("Data do " + (i + 1) + "?ï¿½ vencimento, incorreta");
                 return;
             }
         }
@@ -2112,7 +2205,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
 
 
 })
-rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, baseService, produtoService, sistemaService, statusPedidoSaidaService, formaPagamentoService, transportadoraService, clienteService, produtoPedidoService) {
+rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabelaService, baseService, produtoService, sistemaService, statusPedidoSaidaService, formaPagamentoService, transportadoraService, clienteService, produtoPedidoService) {
 
     $scope.pedidos = createAssinc(pedidoService, 1, 10, 10);
     $scope.pedidos.attList();
@@ -2163,11 +2256,53 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
 
     $scope.logisticas = [];
 
+    $scope.logs = [];
+
+    $scope.retorno_cobranca = ""
+
     sistemaService.getLogisticas(function (rr) {
 
         $scope.logisticas = rr.logisticas;
 
     })
+
+
+    $scope.gerarCobranca = function () {
+
+        pedidoService.gerarCobranca($scope.pedido, function (r) {
+
+            if (r.sucesso) {
+                $("#retCob").html("Cobranca gerada com sucesso. <hr> " + r.retorno);
+            } else {
+                $("#retCob").html("Problema ao gerar cobranca");
+            }
+
+        })
+
+    }
+
+    $scope.getLogs = function () {
+
+        logService.getLogs($scope.pedido, function (l) {
+
+            $scope.logs = l.logs;
+
+            $("#shLogs").children("*").each(function () {
+                $(this).remove();
+            })
+
+            for (var i = 0; i < $scope.logs.length; i++) {
+
+                var l = $scope.logs[i];
+
+                $("<div></div>").css('width', '100%').css('display', 'inline').css('border-bottom', '1px solid Gray').css('padding', '10px').html(l.usuario + " / " + toTime(l.momento) + " / " + l.obs).appendTo($("#shLogs"));
+
+            }
+
+        })
+
+
+    }
 
     $scope.getPesoBrutoPedido = function () {
 
@@ -2358,15 +2493,13 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, tabelaService, bas
                 equalize($scope.pedido, "status", $scope.status_pedido);
                 equalize($scope.pedido, "forma_pagamento", $scope.formas_pagamento);
 
-                msg.confirma("Operacao realizada com sucesso. Deseja gerar a cobranca referente a forma de pagamento selecionada ?", function () {
+                msg.alerta("Operacao efetuada com sucesso");
 
-                    formaPagamentoService.aoFinalizarPedido($scope.pedido.forma_pagamento, $scope.pedido, function (re) {
+                if (typeof $scope.pedido["retorno"] !== 'undefined') {
 
-                        window.open(re.retorno);
+                    msg.alerta($scope.pedido["retorno"]);
 
-                    })
-
-                })
+                }
 
             } else {
                 $scope.pedido = r.o;
@@ -3087,7 +3220,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
                     msg.alerta("Operacao efetuada com sucesso");
                     $scope.campanhas.attList();
                 } else {
-                    msg.erro("Fornecedor alterado, por?©m ocorreu um problema ao subir os documentos");
+                    msg.erro("Fornecedor alterado, por?ï¿½m ocorreu um problema ao subir os documentos");
                 }
             } else {
                 msg.erro("Problema ao efetuar operacao. ");
@@ -3582,7 +3715,7 @@ rtc.controller("crtFornecedores", function ($scope, fornecedorService, categoria
                         $scope.fornecedores.attList();
 
                     } else {
-                        msg.erro("Fornecedor alterado, por?©m ocorreu um problema ao subir os documentos");
+                        msg.erro("Fornecedor alterado, por?ï¿½m ocorreu um problema ao subir os documentos");
 
                     }
 
@@ -3854,7 +3987,7 @@ rtc.controller("crtTransportadoras", function ($scope, transportadoraService, re
                 if (r.sucesso) {
                     msg.alerta("Operacao efetuada com sucesso");
                 } else {
-                    msg.erro("Transportadora alterada, por?©m ocorreu um problema ao subir os documentos");
+                    msg.erro("Transportadora alterada, por?ï¿½m ocorreu um problema ao subir os documentos");
 
                 }
             } else {
@@ -3884,7 +4017,7 @@ rtc.controller("crtTransportadoras", function ($scope, transportadoraService, re
                         $scope.transportadoras.attList();
 
                     } else {
-                        msg.erro("Transportadora alterada, por?©m ocorreu um problema ao subir os documentos");
+                        msg.erro("Transportadora alterada, por?ï¿½m ocorreu um problema ao subir os documentos");
 
                     }
 
@@ -4085,7 +4218,7 @@ rtc.controller("crtClientes", function ($scope, clienteService, categoriaCliente
                         $scope.clientes.attList();
 
                     } else {
-                        msg.erro("Cliente alterado, por?©m ocorreu um problema ao subir os documentos");
+                        msg.erro("Cliente alterado, porem ocorreu um problema ao subir os documentos");
 
                     }
 
@@ -4377,7 +4510,7 @@ rtc.controller("crtLogin", function ($scope, loginService) {
     $scope.logar = function () {
         loginService.login($scope.usuario, $scope.senha, function (r) {
             if (r.usuario === null || !r.sucesso) {
-                msg.erro("Esse usu??rio n?£o existe");
+                msg.erro("Esse usuario nao existe");
             } else {
 
                 window.location = "comprar.php";
