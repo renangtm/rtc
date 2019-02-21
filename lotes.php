@@ -43,6 +43,7 @@
             }
             .arvore i{
                 cursor:pointer;
+                padding: 5px;
             }
             .arvore i:hover{
                 cursor:pointer;
@@ -114,31 +115,31 @@
                                                     <tr>
                                                         <th data-ordem="lote.id">Cod.</th>
                                                         <th data-ordem="lote.produto.nome">Nome Produto</th>
-                                                        <th data-ordem="lote.quantidade_real">Quantidade</th>
+                                                        <th data-ordem="lote.quantidade_real">Quant.</th>
                                                         <th data-ordem="lote.validade">Validade</th>
                                                         <th data-ordem="lote.numero">Numero</th>
                                                         <th data-ordem="lote.rua">Rua</th>
                                                         <th data-ordem="lote.altura">Altura</th>
                                                         <th>Local</th>
                                                         <th>Pertence a</th>
-                                                        <th width="150px">Acao</th>
+                                                        <th width="180px">A&ccedil;&atilde;o</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr ng-repeat-start="lote in lotes.elementos">
-                                                        <td>{{lote[0].id}}</td>
+                                                        <td class="text-center">{{lote[0].id}}</td>
                                                         <td>{{lote[0].produto.id}} - {{lote[0].produto.nome}}</td>
-                                                        <td>{{lote[0].quantidade_real}}</td>
-                                                        <td>{{lote[0].validade| data}}</td>
-                                                        <td>{{lote[0].numero}}</td>
-                                                        <td>{{lote[0].rua}}</td>
-                                                        <td>{{lote[0].altura}}</td>
+                                                        <td class="text-center">{{lote[0].quantidade_real}}</td>
+                                                        <td class="text-center">{{lote[0].validade| data}}</td>
+                                                        <td class="text-center">{{lote[0].numero}}</td>
+                                                        <td class="text-center">{{lote[0].rua}}</td>
+                                                        <td class="text-center">{{lote[0].altura}}</td>
                                                         <td>{{lote[0].produto.logistica !== null ? lote[0].produto.logistica.nome : lote[0].produto.empresa.nome}}</td>
                                                         <td>{{lote[0].produto.empresa.nome}}</td>
                                                         <th>
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setLote(lote[0], 'arvore' + lote[0].id)" data-target="#demo{{lote[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Editar" ng-click="setLote(lote[0], null)" data-toggle="modal" data-target="#edit"><i class="fas fa-edit"></i></a>
+                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Editar" ng-click="setLote(lote[0], null)" data-toggle="modal" data-target="#edit"><i class="fas fa-pencil-alt"></i></i></a>
                                                                 <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setLote(lote[0], null)" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>      
                                                             </div>
                                                         </th>
@@ -176,19 +177,19 @@
                                                     <tr>
                                                         <th>Cod.</th>
                                                         <th>Nome Produto</th>
-                                                        <th>Quantidade</th>
+                                                        <th>Quant.</th>
                                                         <th>Validade</th>
                                                         <th>Numero</th>
                                                         <th>Rua</th>
                                                         <th>Altura</th>
                                                         <th>Local</th>
                                                         <th>Pertence a</th>
-                                                        <th>Acao</th>
+                                                        <th>A&ccedil;&atilde;o</th>
                                                     </tr>
                                                 </tfoot>
                                             </table>
 
-                                            <!-- pagina??½??½o  -->
+                                            <!-- pagina??ï¿½??ï¿½o  -->
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
@@ -239,11 +240,11 @@
                 <!-- /.modal-content --> 				
 
                 <div class="modal fade" id="pendencias" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                    <div class="modal-dialog">
+                    <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Cadastros pendentes</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"></span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
                             </div>
                             <div class="modal-body">
 
@@ -254,19 +255,19 @@
                                         <tr>
                                             <th>Id Produto</th>
                                             <th>Nome Produto</th>
-                                            <th>Quantidade</th>
+                                            <th>Quant.</th>
                                             <th>Grade</th>
-                                            <th>Divisao</th>
+                                            <th width="110px">Divisao</th>
                                             <th>Cadastrar</th>
                                         </tr>
                                     </thead>
                                     <tr ng-repeat="pendencia in pendencias.elementos">
-                                        <td>{{pendencia[0].id_produto}}</td>
+                                        <td class="text-center">{{pendencia[0].id_produto}}</td>
                                         <td>{{pendencia[0].nome_produto}}</td>
-                                        <td>{{pendencia[0].quantidade}}</td>
-                                        <td>{{pendencia[0].grade.str}}</td>
+                                        <td class="text-center">{{pendencia[0].quantidade}}</td>
+                                        <td class="text-center">{{pendencia[0].grade.str}}</td>
                                         <td><input type="number" class="form-control" ng-model="pendencia[0].divisao"></td>
-                                        <td><button class="btn btn-primary" ng-click="setPendencia(pendencia[0], pendencia[0].divisao)" data-toggle="modal" data-target="#cadastroLotes"><i class="fas fa-plus-circle"></i></button></td>
+                                        <td class="text-center"><button class="btn btn-primary" ng-click="setPendencia(pendencia[0], pendencia[0].divisao)" data-toggle="modal" data-target="#cadastroLotes"><i class="fas fa-plus-circle"></i></button></td>
                                     </tr>
                                 </table>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
@@ -291,7 +292,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Cadastros de lotes</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">??½</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">??ï¿½</span></button>
                             </div>
                             <div class="modal-body">
 
@@ -328,8 +329,8 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Edite os dados de seu Lote</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">??½</span></button>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Edite os dados de seu Lote</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
                             </div>
                             <div class="modal-body">
                                 <form ng-submit="mergeLote()">
@@ -361,8 +362,8 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Codigo Fabricante</label>
-                                        <div class="col-9 col-lg-10">
+                                        <label for="txtname" class="col-4 col-lg-4 col-form-label text-left">Codigo Fabricante</label>
+                                        <div class="col-8 col-lg-8">
                                             <input id="txtname" type="text" ng-model="lote.codigo_fabricante" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
@@ -370,8 +371,6 @@
                                         </div>
                                     </div>
 
-
-                                    <hr>
                                     <div class="modal-footer">
                                         <button class="btn btn-primary" ><i class="fas fa-save"></i>&nbsp; Salvar</button>
                                     </div>
@@ -389,7 +388,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de seu Lote</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">??½</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
                             </div>
                             <div class="modal-body">
                                 <p class="text-center"> Tem certeza de que deseja excluir este Lote?</p>
@@ -397,7 +396,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-primary" ng-click="deletarLote(lote)">Sim</button>
-                                <button type="button" class="btn btn-light" data-dismiss="modal">N??½o</button>
+                                <button type="button" class="btn btn-light" data-dismiss="modal">N&atilde;o</button>
                             </div>
                         </div>
                     </div>
@@ -408,13 +407,13 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">?—</span></button>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
                         </div>
                         <div class="modal-body text-center">
 
                             <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
                             <br>
-                            <h3 style="margin-top:20px;">Carregando as informacoes...</h3>
+                            <h3 style="margin-top:20px;">Carregando as informa&ccedil;&otilde;es...</h3>
 
                         </div>
                         <div class="modal-footer">
@@ -486,40 +485,11 @@
 
 
                                             $(document).ready(function () {
-                                                $('.btninfo').tooltip({title: "Mais informa??½??½o", placement: "top"});
+                                                $('.btninfo').tooltip({title: "Mais informa??ï¿½??ï¿½o", placement: "top"});
                                                 $('.btnedit').tooltip({title: "Editar", placement: "top"});
                                                 $('.btndel').tooltip({title: "Deletar", placement: "top"});
                                             });
-                                            $(document).ready(function () {
-                                                $('#clientes').DataTable({
-                                                    "language": {//Altera o idioma do DataTable para o portugu??½s do Brasil
-                                                        "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
-                                                    },
-                                                });
-                                                $.getJSON('estados_cidades.json', function (data) {
-                                                    var items = [];
-                                                    var options = '<option value="">escolha um estado</option>';
-                                                    $.each(data, function (key, val) {
-                                                        options += '<option value="' + val.nome + '">' + val.nome + '</option>';
-                                                    });
-                                                    $("#estados").html(options);
-                                                    $("#estados").change(function () {
-                                                        var options_cidades = '';
-                                                        var str = "";
-                                                        $("#estados option:selected").each(function () {
-                                                            str += $(this).text();
-                                                        });
-                                                        $.each(data, function (key, val) {
-                                                            if (val.nome == str) {
-                                                                $.each(val.cidades, function (key_city, val_city) {
-                                                                    options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
-                                                                });
-                                                            }
-                                                        });
-                                                        $("#cidades").html(options_cidades);
-                                                    }).change();
-                                                });
-                                            });
+                                            
                 </script>
 
                 </body>
