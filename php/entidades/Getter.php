@@ -19,47 +19,81 @@ class Getter {
         $this->empresa = $emp;
     }
     
-    public function getTransportadoraViaTransportadora($con,$transportadora){
-        
-        $transportadora_existente = $this->empresa->getTransportadoras($con,0,1,"transportadora.cnpj = '".$transportadora->cnpj->valor."'");
-        
-        if(count($transportadora_existente)>0){
-            
+    public function getTransportadoraViaCnpj($con, $cnpj) {
+
+        $transportadora_existente = $this->empresa->getTransportadoras($con, 0, 1, "transportadora.cnpj = '" . $cnpj->valor . "'");
+
+        if (count($transportadora_existente) > 0) {
+
             return $transportadora_existente[0];
-            
         }
+
+        return null;
         
+    }
+
+    public function getTransportadoraViaTransportadora($con, $transportadora) {
+
+        $transportadora_existente = $this->empresa->getTransportadoras($con, 0, 1, "transportadora.cnpj = '" . $transportadora->cnpj->valor . "'");
+
+        if (count($transportadora_existente) > 0) {
+
+            return $transportadora_existente[0];
+        }
+
         $nova = Utilidades::copyId0($transportadora);
         $nova->empresa = $this->empresa;
         $nova->tabela = null;
         $nova->merge($con);
-        
+
         return $nova;
-        
+    }
+
+    public function getClienteViaCnpj($con, $cnpj) {
+
+        $cliente = $this->empresa->getClientes($con, 0, 1, "cliente.cnpj='$cnpj->valor'", "");
+
+        if (count($cliente) > 0) {
+
+            return $cliente[0];
+        }
+
+        return null;
     }
     
-    public function getProdutoViaProduto($con,$produtos){
-        
-        $in = "(-1";
-        
-        foreach($produtos as $key=>$value){
-            
-            $in .= ",$value->id_universal";
-            
+    public function getFornecedorViaCnpj($con, $cnpj) {
+
+        $fornecedor = $this->empresa->getFornecedores($con, 0, 1, "fornecedor.cnpj='$cnpj->valor'", "");
+
+        if (count($fornecedor) > 0) {
+
+            return $fornecedor[0];
         }
-        
+
+        return null;
+    }
+
+    public function getProdutoViaProduto($con, $produtos) {
+
+        $in = "(-1";
+
+        foreach ($produtos as $key => $value) {
+
+            $in .= ",$value->id_universal";
+        }
+
         $in .= ")";
-        
-        $produtos_existentes = $this->empresa->getProdutos($con,0,count($produtos),"produto.id_universal IN $in","");
-        
-        foreach($produtos as $key=>$value){
-            
-            foreach($produtos_existentes as $key2=>$value2){                
-                if($value->id_universal === $value2->id_universal){                    
-                    continue 2;   
+
+        $produtos_existentes = $this->empresa->getProdutos($con, 0, count($produtos), "produto.id_universal IN $in", "");
+
+        foreach ($produtos as $key => $value) {
+
+            foreach ($produtos_existentes as $key2 => $value2) {
+                if ($value->id_universal === $value2->id_universal) {
+                    continue 2;
                 }
             }
-            
+
             $novo = Utilidades::copyId0($value);
             $novo->empresa = $this->empresa;
             $novo->logistica = null;
@@ -67,13 +101,36 @@ class Getter {
             $novo->disponivel = 0;
             $novo->transito = 0;
             $novo->merge($con);
-            
-            $produtos_existentes[$key] = $novo;
-            
+
+            $produtos_existentes[] = $novo;
         }
 
         return $produtos_existentes;
-        
+    }
+
+    public function getFornecedorViaCliente($con, $cliente) {
+
+        $fornecedores = $this->empresa->getFornecedores($con, 0, 1, "fornecedor.cnpj='" . $cliente->cnpj->valor . "'");
+
+        if (count($fornecedores) > 0) {
+
+            return $fornecedores[0];
+            
+        }
+
+        $fornecedor = new Fornecedor();
+        $fornecedor->nome = $cliente->razao_social;
+        $fornecedor->empresa = $this->empresa;
+        $fornecedor->cnpj = $cliente->cnpj;
+        $fornecedor->habilitado = true;
+        $fornecedor->inscricao_estadual = $cliente->inscricao_estadual;
+        $fornecedor->email = Utilidades::copyId0($cliente->email);
+        $fornecedor->telefones = Utilidades::copyId0($cliente->telefones);
+        $fornecedor->endereco = Utilidades::copyId0($cliente->endereco);
+
+        $fornecedor->merge($con);
+
+        return $fornecedor;
     }
 
     public function getFornecedorViaEmpresa($con, $empresa) {

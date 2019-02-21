@@ -1,6 +1,16 @@
 var debuger = function (l) {
     alert(paraJson(l));
 }
+rtc.service('logService', function ($http, $q) {
+    this.getLogs = function (entidade, fn) {
+        baseService($http, $q, {
+            o: entidade,
+            query: "$r->logs=Logger::getLogs($o)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('compraParceiroService', function ($http, $q) {
     this.getElementos = function (x1, x2, filtro, ordem, fn) {
         baseService($http, $q, {
@@ -90,6 +100,14 @@ rtc.service('notaService', function ($http, $q) {
     this.getNota = function (fn) {
         baseService($http, $q, {
             query: "$r->nota=new Nota();$r->nota->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.calcularImpostosAutomaticamente = function (nota, fn) {
+        baseService($http, $q, {
+            o: nota,
+            query: "$o->calcularImpostosAutomaticamente()",
             sucesso: fn,
             falha: fn
         });
@@ -332,6 +350,14 @@ rtc.service('pedidoService', function ($http, $q) {
     this.getPedido = function (fn) {
         baseService($http, $q, {
             query: "$r->pedido=new Pedido();$r->pedido->usuario=$usuario;$r->pedido->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.gerarCobranca = function (pedido, fn) {
+        baseService($http, $q, {
+            o: pedido,
+            query: "$r->retorno=$o->gerarCobranca()",
             sucesso: fn,
             falha: fn
         });
@@ -1188,6 +1214,22 @@ rtc.service('empresaService', function ($http, $q) {
     this.getFiliais = function (fn) {
         baseService($http, $q, {
             query: "$r->filiais=$empresa->getFiliais($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getParametrosEmissao = function(empresa,fn){
+        baseService($http, $q, {
+            o: empresa,
+            query: "$r->parametros_emissao = $o->getParametrosEmissao($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.setParametrosEmissao = function(pe,fn){
+        baseService($http, $q, {
+            o: pe,
+            query: "$o->merge($c)",
             sucesso: fn,
             falha: fn
         });

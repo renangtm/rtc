@@ -24,7 +24,7 @@ class StatusPedidoSaida {
     public $parado;
     public $nota;
     
-    function __construct($id=0,$nome="",$estoque=false,$reserva=false,$emailCliente = false,$emailInterno = false,$volta_status=true,$altera_pedido=true,$parado=true,$nota=false) {
+    function __construct($id=0,$nome="",$estoque=false,$reserva=false,$emailCliente = "",$emailInterno = "",$volta_status=true,$altera_pedido=true,$parado=true,$nota=false) {
         
         $this->id = $id;
         $this->nome = $nome;
@@ -37,6 +37,26 @@ class StatusPedidoSaida {
         $this->altera = $altera_pedido;
         $this->parado = $parado;
         $this->nota = $nota;
+        
+    }
+    
+    
+    public function enviarEmails($pedido){
+        
+        if ($this->emailCliente !== "") {
+
+            $html = Sistema::getHtml('visualizar-pedido-print', $pedido);
+
+            $pedido->empresa->email->enviarEmail($pedido->cliente->email->filtro($this->emailCliente), "Pedido numero " . $pedido->id, $html);
+            
+        } 
+        
+        if ($this->emailInterno !== "") {
+
+            $html = Sistema::getHtml('visualizar-pedido-print', $pedido);
+
+            $pedido->empresa->email->enviarEmail($pedido->empresa->email->filtro($this->emailInterno), "Pedido numero " . $pedido->id, $html);
+        }
         
     }
   

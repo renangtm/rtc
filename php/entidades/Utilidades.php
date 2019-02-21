@@ -50,7 +50,14 @@ class Utilidades {
     public static function copyId0($entidade) {
 
         $ne = unserialize(serialize($entidade));
-        $ne->id = 0;
+        
+        if(!is_array($ne)){
+            $ne->id = 0;
+        }else{
+            foreach($ne as $key=>$value){
+                $ne[$key]->id = 0;
+            }
+        }
 
         return $ne;
     }
