@@ -133,25 +133,28 @@
                                             <div class="product-content">
                                                 <div class="product-content-head">
                                                     <h3 class="product-title">{{produto.nome}}</h3>
-                                                    <div class="product-rating d-inline-block" style="min-height: 70px">
+                                                    <hr>
+                                                    
 
-                                                        <div ng-repeat="oferta in produto.ofertas" style="font-size:15px">
+                                                        <button class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;margin-left:2px;width:100%;margin-bottom:10px">
+                                                            
+                                                            <div ng-if="validade.validade !== 1000">
+                                                                Val: {{validade.validade | data_st}}
+                                                            </div>
+                                                            <div ng-if="validade.validade === 1000">
+                                                                Sem validade
+                                                            </div>
+                                                             &nbsp R$ {{validade.valor}}
+                                                             <br>
+                                                             &nbsp {{produto.liquido?'Lt':'Kg'}} R$ {{(validade.valor/produto.quantidade_unidade).toFixed(2)}}
+                                                             <br>
+                                                             <i class="fas fa-shopping-cart"></i>&nbsp Comprar
+                                                             
+                                                        </button>
+                                                        
 
-                                                            <i class="fa fa-fw fa-star"></i>
-                                                            &nbsp;
-                                                            Oferta: 
-                                                            &nbsp;
-
-                                                            <span ng-if="oferta.validade !== 1000">{{oferta.validade| data_st}} &nbsp</span>
-
-                                                            &nbsp;
-
-                                                            <strong style="text-decoration:underline">{{oferta.valor}} R$ ({{(((oferta.valor - produto.valor_base) / produto.valor_base) * 100).toFixed(0)}}%)</strong>
-
-                                                        </div>
-
-                                                        <div ng-if="produto.ofertas.length === 0" style="color:Gray">
-                                                            <i class="fa fa-fw fa-star"></i> Sem ofertas no momento
+                                                        <div class="progress mb-1" ng-if="!tv(produto)">
+                                                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 60%"></div>
                                                         </div>
                                                         
                                                         <div style="color:SteelBlue">
@@ -164,18 +167,17 @@
                                                         </div>
 
                                                     </div>
-                                                    <div class="product-val"><button class="btn bn-default" style="margin-bottom:10px" ng-click="setProduto(produto)" data-toggle="modal" data-target="#validadeProduto"><i class="fa fa-info"></i>&nbsp Ver validades</button></div>
+                                                    
                                                     <div class="product-quant">{{produto.grade.gr[0]}} p/ caixa</div>
-                                                    <div class="product-price">R$ {{produto.valor_base}} <hr> R$ {{(produto.valor_base/produto.quantidade_unidade).toFixed(2)}} <br> {{produto.liquido?"Lt":"Kg"}}</div>
-
+                                                   
                                                 </div>
 
                                                 <div class="product-btn text-center">
-                                                    <button ng-click="setProduto(produto)" data-toggle="modal" data-target="#validadeProduto" class="btn btn-primary btn-block">Comprar&nbsp;&nbsp;<i class="fas fa-shopping-cart"></i></button>
+                                                   
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    
 
 
                                     <!-- ============================================================== -->
@@ -218,8 +220,10 @@
                                         <div class="product-thumbnail">
                                             <div class="product-img-head">
                                                 <div class="product-img">
-                                                    <img src="{{produto.imagem}}" id="img_{{produto.id}}" onload="fechaLoad(this)" alt="" class="img-fluid" style="display: none"></div>
-                                                    <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm " style="width:100px;height:100px;margin-bottom:95px"></span>
+                                                    <img src="{{produto.imagem}}" id="img_{{produto.id}}" alt="" class="img-fluid" onload="fechaLoad(this)" style="display: none">
+                                                    <br>
+                                                    <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm" style="width:100px;height:100px;margin-bottom:95px"></span>
+                                                </div>
                                                 <div class="ribbons" ng-if="produto.ofertas.length > 0"></div>
                                                 <div class="ribbons-text m-l-10" ng-if="produto.ofertas.length > 0">Oferta</div>
 
@@ -227,25 +231,28 @@
                                             <div class="product-content">
                                                 <div class="product-content-head">
                                                     <h3 class="product-title">{{produto.nome}}</h3>
-                                                    <div class="product-rating d-inline-block" style="min-height: 70px">
+                                                    <hr>
+                                                    
 
-                                                        <div ng-repeat="oferta in produto.ofertas" style="font-size:15px">
+                                                        <button class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;margin-left:2px;width:100%;margin-bottom:10px">
+                                                            
+                                                            <div ng-if="validade.validade !== 1000">
+                                                                Val: {{validade.validade | data_st}}
+                                                            </div>
+                                                            <div ng-if="validade.validade === 1000">
+                                                                Sem validade
+                                                            </div>
+                                                             &nbsp R$ {{validade.valor}}
+                                                             <br>
+                                                             &nbsp {{produto.liquido?'Lt':'Kg'}} R$ {{(validade.valor/produto.quantidade_unidade).toFixed(2)}}
+                                                             <br>
+                                                             <i class="fas fa-shopping-cart"></i>&nbsp Comprar
+                                                             
+                                                        </button>
+                                                        
 
-                                                            <i class="fa fa-fw fa-star"></i>
-                                                            &nbsp;
-                                                            Oferta: 
-                                                            &nbsp;
-
-                                                            <span ng-if="oferta.validade !== 1000">{{oferta.validade| data_st}} &nbsp</span>
-
-                                                            &nbsp;
-
-                                                            <strong style="text-decoration:underline">{{oferta.valor}} R$ ({{(((oferta.valor - produto.valor_base) / produto.valor_base) * 100).toFixed(0)}}%)</strong>
-
-                                                        </div>
-
-                                                        <div ng-if="produto.ofertas.length === 0" style="color:Gray">
-                                                            <i class="fa fa-fw fa-star"></i> Sem ofertas no momento
+                                                        <div class="progress mb-1" ng-if="!tv(produto)">
+                                                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 60%"></div>
                                                         </div>
                                                         
                                                         <div style="color:SteelBlue">
@@ -258,18 +265,16 @@
                                                         </div>
 
                                                     </div>
-                                                    <div class="product-val"><button class="btn bn-default" style="margin-bottom:10px" ng-click="setProduto(produto)" data-toggle="modal" data-target="#validadeProduto"><i class="fa fa-info"></i>&nbsp Ver validades</button></div>
+                                                    
                                                     <div class="product-quant">{{produto.grade.gr[0]}} p/ caixa</div>
-                                                    <div class="product-price">R$ {{produto.valor_base}} </div>
-
+                                                   
                                                 </div>
 
                                                 <div class="product-btn text-center">
-                                                    <button ng-click="setProduto(produto)" data-toggle="modal" data-target="#validadeProduto" class="btn btn-primary btn-block">Comprar&nbsp;&nbsp;<i class="fas fa-shopping-cart"></i></button>
+                                                   
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
 
 
@@ -310,10 +315,10 @@
                                         </div>
 
                                         <div ng-if="filtro._classe === 'FiltroOpcional'" class="custom-control custom-checkbox" ng-repeat="opcao in filtro.opcoes" style="{{opcao.quantidade===0?'text-decoration:line-through;color:DarkRed':''}}">
-                                            <button ng-if="opcao.selecionada === 0" ng-click="addLevel(opcao)" class="btn btn-default" style="width:20px;height:20px;padding:1px;padding-top:0px;padding-right:0px"><i class="fa fa-adjust"></i></button>
-                                            <button ng-if="opcao.selecionada === 1" ng-click="addLevel(opcao)" class="btn btn-success" style="width:20px;height:20px;padding:1px;padding-top:0px;padding-right:0px"><i class="fa fa-check"></i></button>
-                                            <button ng-if="opcao.selecionada === 2" ng-click="addLevel(opcao)" class="btn btn-danger" style="width:20px;height:20px;padding:1px;padding-top:0px;padding-right:0px"><i class="fa fa-times"></i></button>
-                                            - {{opcao.nome}} <strong> ({{opcao.quantidade}})</strong>
+                                            <button ng-if="opcao.selecionada === 0" ng-click="addLevel(opcao)" class="btn btn-default" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-adjust"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</button>
+                                            <button ng-if="opcao.selecionada === 1" ng-click="addLevel(opcao)" class="btn btn-success" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-check"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</button>
+                                            <button ng-if="opcao.selecionada === 2" ng-click="addLevel(opcao)" class="btn btn-danger" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-times"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</strong></button>
+                                            
                                         </div>
 
                                     </div>

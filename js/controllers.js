@@ -100,7 +100,7 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, cidadeServi
             if (r.sucesso) {
 
                 $scope.empresa = r.o;
-           
+
                 baseService.merge($scope.parametros_emissao, function (rr) {
                     if (rr.sucesso) {
                         $scope.parametros_emissao = rr.o;
@@ -315,6 +315,7 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
             $scope.pedidos = r.pedidos;
 
             for (var i = 0; i < r.pedidos.length; i++) {
+
                 r.pedidos[i].identificador = i;
                 r.pedidos[i].prazo_parcelas = $scope.possibilidades[0];
                 equalize(r.pedidos[i], "forma_pagamento", r.pedidos[i].formas_pagamento);
@@ -486,8 +487,42 @@ rtc.controller("crtEmpresa", function ($scope, empresaService) {
 
 rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraParceiroService, sistemaService, carrinhoService) {
 
+    $scope.tv = function (produto) {
+
+        return typeof produto["validades"] !== 'undefined';
+
+    }
+
+    var cv = function (produto) {
+        sistemaService.getMesesValidadeCurta(function (p) {
+            produtoService.getValidades(p.meses_validade_curta, produto, function (v) {
+                produto.validades = v;
+                for (var i = 0; i < v.length; i++) {
+                    v[i].oferta = false;
+                    for (var j = 0; j < produto.ofertas.length; j++) {
+                        if (produto.ofertas[j].validade === v[i].validade) {
+                            v[i].oferta = true;
+                            v[i].valor = produto.ofertas[j].valor;
+                            break;
+                        }
+                    }
+                }
+            })
+        });
+    }
+
     $scope.produtos = createFilterList(compraParceiroService, 3, 6, 10);
+    $scope.produtos["posload"] = function (elementos) {
+        for (var i = 0; i < elementos.length; i++) {
+            var e = elementos[i];
+            if (!$scope.tv(e)) {
+                cv(e);
+            }
+        }
+
+    }
     $scope.produtos.attList();
+
 
     $scope.qtd = 0;
     $scope.prod = null;
@@ -2844,7 +2879,7 @@ rtc.controller("crtListaPreco", function ($scope, listaPrecoProdutoService, list
 })
 rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, produtoService, sistemaService) {
 
-    $scope.campanhas = createAssinc(campanhaService, 1, 3, 10);
+    $scope.campanhas = createAssinc(campanhaService, 1, 10, 10);
     $scope.campanhas.attList();
     assincFuncs(
             $scope.campanhas,
@@ -3189,7 +3224,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
 
                 }
 
-                campanha.lista = createList(campanha.produtos, 1, 3, "produto.nome");
+                campanha.lista = createList(campanha.produtos, 1, 5, "produto.nome");
 
 
 
@@ -3784,7 +3819,7 @@ rtc.controller("crtFornecedores", function ($scope, fornecedorService, categoria
     }
 
 })
-rtc.controller("crtTransportadoras", function ($scope,clienteService, transportadoraService, regraTabelaService, tabelaService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
+rtc.controller("crtTransportadoras", function ($scope, clienteService, transportadoraService, regraTabelaService, tabelaService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
 
     $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 10);
     $scope.transportadoras.attList();
@@ -3894,25 +3929,25 @@ rtc.controller("crtTransportadoras", function ($scope,clienteService, transporta
         $scope.tabela_selecionada.regras[$scope.tabela_selecionada.regras.length] = angular.copy($scope.regra_nova);
 
     }
-    
-    $scope.setCliente = function(cliente){
-        
+
+    $scope.setCliente = function (cliente) {
+
         lbl:
-        for(var i=0;i<$scope.estados.length;i++){
-            if($scope.estados[i].id === cliente.endereco.cidade.estado.id){
+                for (var i = 0; i < $scope.estados.length; i++) {
+            if ($scope.estados[i].id === cliente.endereco.cidade.estado.id) {
                 var e = $scope.estados[i];
                 $scope.estado_teste = $scope.estados[i];
-                for(var j=0;j<e.cidades.length;j++){
-                    if(e.cidades[j].id === cliente.endereco.cidade.id){
+                for (var j = 0; j < e.cidades.length; j++) {
+                    if (e.cidades[j].id === cliente.endereco.cidade.id) {
                         $scope.cidade_teste = e.cidades[j];
                         break lbl;
                     }
                 }
             }
         }
-        
+
         $scope.cliente = cliente;
-        
+
     }
 
     $scope.attResultadoIndividual = function () {

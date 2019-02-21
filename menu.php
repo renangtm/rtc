@@ -42,6 +42,7 @@ if (isset($_GET['t'])) {
     foreach ($possiveis as $key => $value) {
         if ($value->numero == $n) {
             $rtc = $value;
+            $ses->set('rtc',$value);
             break;
         }
     }

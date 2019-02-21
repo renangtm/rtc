@@ -137,7 +137,7 @@ class Sistema {
 
             $g = new Getter($emp);
 
-            $cliente = $g->getClienteViaEmpresa($con, $emp);
+            $cliente = $g->getClienteViaEmpresa($con, $empresa);
 
             $pedido = new Pedido();
             $pedido->empresa = $emp;
