@@ -86,9 +86,9 @@
 
                                         <div id="carouselExampleIndicators" class="product-carousel carousel slide m-b-40" data-ride="carousel">
                                             <ol class="carousel-indicators">
-                                                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                                                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                                                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active" style="cursor: pointer;"></li>
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="1" style="cursor: pointer;"></li>
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="2" style="cursor: pointer;"></li>
                                             </ol>
                                             <div class="carousel-inner">
                                                 <div class="carousel-item active">
@@ -186,11 +186,11 @@
 
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 
-                                        <div id="carouselExampleIndicators" class="product-carousel carousel slide m-b-40" data-ride="carousel">
+                                        <div id="carouselExampleIndicators_1" class="product-carousel carousel slide m-b-40" data-ride="carousel">
                                             <ol class="carousel-indicators">
-                                                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                                                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                                                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                                                <li data-target="#carouselExampleIndicators_1" data-slide-to="0" class="active" style="cursor: pointer;"></li>
+                                                <li data-target="#carouselExampleIndicators_1" data-slide-to="1" style="cursor: pointer;"></li>
+                                                <li data-target="#carouselExampleIndicators_1" data-slide-to="2" style="cursor: pointer;"></li>
                                             </ol>
                                             <div class="carousel-inner">
                                                 <div class="carousel-item active">
@@ -207,10 +207,10 @@
                                                         <img class="d-block w-100" src="assets/images/banner_784x295.jpg" alt="Third slide">
                                                 </div>
                                             </div>
-                                            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                                            <a class="carousel-control-prev" href="#carouselExampleIndicators_1" role="button" data-slide="prev">
                                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                                 <span class="sr-only">Previous</span>  </a>
-                                            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                                            <a class="carousel-control-next" href="#carouselExampleIndicators_1" role="button" data-slide="next">
                                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                                 <span class="sr-only">Next</span>  </a>
                                         </div>
