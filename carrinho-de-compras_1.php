@@ -79,7 +79,9 @@
                         <!-- ============================================================== -->
                         <div class="">
                            
-                            <div ng-repeat="pedido in pedidos" ng-if="!finalizado(pedido)" style="display: inline-block; width:48%; min-width:500px;margin-left:10px;margin-bottom: 50px;">
+                            <div ng-repeat="pedido in pedidos" ng-if="!finalizado(pedido)" style="display: inline-block;margin-left:10px;margin-bottom: 50px;">
+                                 <div class="card">
+						<div class="card-body">
                                 <div class="table-responsive-sm">
                                     <strong style="color:SteelBlue"><i class="fas fa-road"></i>&nbsp{{pedido.empresa.nome}}</strong>
                                     <strong ng-if="pedido.logistica !== null" style="color:DarkBlue">&nbsp / &nbsp<i class="fas fa-box"></i>&nbsp{{pedido.logistica.nome}}</strong>
@@ -100,13 +102,13 @@
                                         <tbody>
                                             <tr ng-repeat="produto in pedido.produtos">
                                                 <td class="center" width="10%" style="position: relative"><button class="btn btn-danger" style="position: absolute;left:5px;top:5px;width:20px;height:20px;padding:0px" ng-click="remover(produto)"><i class="fas fa-times"></i></button><img src="{{produto.produto.imagem}}" class="product-image"></td>
-                                                <td class="left">{{produto.produto.nome}}<hr><span ng-if="produto.validade_minima !== 1000">Val:<strong style="text-decorarion:underline">{{produto.validade_minima| data_st}}</strong></span></td>
-                                                <td class="right">{{produto.quantidade}}</td>
+                                                <td class="left">{{produto.produto.nome}}<hr><span ng-if="produto.validade_minima !== 1000">Val.<br><strong style="text-decorarion:underline">{{produto.validade_minima| data_st}}</strong></span></td>
+                                                <td class="text-center">{{produto.quantidade}}</td>
                                                 <td class="text-center" style="color:{{(retirouPromocao(produto) > 0) ? 'Orange' : '#000000'}}">{{produto.valor_base.toFixed(2)}} R$ <span ng-if="retirouPromocao(produto) > 0"><hr>Seria {{retirouPromocao(produto)}} R$ em campanha, no entanto a campanha nao contempla este prazo</span></td>
                                                 <td class="text-center" style="color:SteelBlue">{{produto.base_calculo.toFixed(2)}} R$</td>
                                                 <td class="text-center" style="{{produto.icms>0?'font-size:15px;color:DarkRed;text-decoration:underline':'text-decoration:line-through'}}">{{produto.icms.toFixed(2)}} R$</td>
-                                                <th class="right" style="{{produto.juros>0?'font-size:15px;color:DarkRed;text-decoration:underline':'text-decoration:line-through'}}">{{produto.juros.toFixed(2)}} R$</th>
-                                                <th class="right" style="{{produto.frete>0?'font-size:15px;color:DarkRed;text-decoration:underline':'text-decoration:line-through'}}">{{produto.frete.toFixed(2)}} R$</th>
+                                                <th class="text-center" style="{{produto.juros>0?'font-size:15px;color:DarkRed;text-decoration:underline':'text-decoration:line-through'}}">{{produto.juros.toFixed(2)}} R$</th>
+                                                <th class="text-center" style="{{produto.frete>0?'font-size:15px;color:DarkRed;text-decoration:underline':'text-decoration:line-through'}}">{{produto.frete.toFixed(2)}} R$</th>
                                                 <td class="text-center" style="color:Green">{{((produto.valor_base + produto.icms + produto.frete + produto.ipi + produto.juros) * produto.quantidade).toFixed(2)}} R$</td>
                                             </tr>
 
@@ -207,28 +209,13 @@
                                         </div>
                                     </div>
                                 </div>
-                       
+                            </div>
+                            </div>
                           </div>
                         </div>	
                         <!-- ============================================================== -->
                         <!-- end carrinho  -->
                         <!-- ============================================================== -->		
-                        <div class="modal fade" id="finalizarCompraModal" tabindex="-1" role="dialog" aria-labelledby="vizPedido" aria-hidden="true">
-                            <div class="modal-dialog modal-md">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-check fa-3x"></i>&nbsp;&nbsp;&nbsp;Pedido finalizado com sucesso</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                    </div>
-                                    <div class="modal-body text-center" id="finalizarCompra">
-
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <div class="modal fade" id="fretes" tcalculoProntoabindex="-1" role="dialog" aria-labelledby="fretes" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">

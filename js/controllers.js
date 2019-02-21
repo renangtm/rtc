@@ -544,7 +544,19 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
 
     })
 
-    $scope.addCarrinho = function () {
+    $scope.addCarrinho = function (produto,validade) {
+       
+        $scope.prod = produto;
+        
+        $scope.qtd = parseFloat(window.prompt("Quantidade"));
+        if(isNaN($scope.qtd)){
+             msg.erro("Quantidade incorreta");
+            return;
+        }
+        
+        $scope.qtd = parseInt(($scope.qtd+"").split(".")[0]);
+
+        $scope.val = validade;
 
         if ($scope.qtd > $scope.val.quantidade) {
 
@@ -595,24 +607,6 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
 
     }
 
-    $scope.setValidade = function (v) {
-
-        $('#qtdProduto').find('input').each(function () {
-            var este = $(this);
-            $(this).val('')
-
-            setTimeout(function () {
-
-                este.focus();
-
-            }, 500)
-
-        })
-
-
-        $scope.val = v;
-
-    }
 
     $scope.setProduto = function (produto) {
         $scope.prod = produto;

@@ -113,7 +113,7 @@
                                                     <tr id="tr_{{usuari[0].id}}" class="{{usuari[0].id===usuario.id?'selecionado':'selecionavel'}}" ng-click="setUsuario(usuari[0])" ng-repeat-start="usuari in usuarios.elementos">
                                                         <td>{{usuari[0].id}}</td>
                                                         <td>{{usuari[0].nome}}</td>
-                                                        <td><email entidade="Usuario" atributo="usuari[0].email" senha="true" alterar="false"></email></td>
+                                                        <td><email entidade="Usu&aacute;rio" atributo="usuari[0].email" senha="true" alterar="false"></email></td>
                                                 <th style="{{usuari[0].id===usuario.id?'border-right:2px solid #5F5F5F':''}}">
                                                     <div class="product-btn">
                                                         <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setUsuario(usuari[0])" data-target="#demo{{usuari[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
@@ -134,7 +134,10 @@
                                                                         </tr>
                                                                         <tr>
                                                                             <td>Senha:</td>
-                                                                            <td>{{usuari[0].senha}}</td>
+                                                                            <td><?php
+                                                                                $str = "?>{{usuari[0].senha}}<?php";
+                                                                                echo md5($str);
+                                                                             ?></td>
                                                                         </tr>
                                                                          <tr>
                                                                             <td>CPF:</td>
@@ -202,7 +205,7 @@
 
                                         </div>
                                         <div class="col-md-5" id="dvPermissoes" style="margin-top:{{marginTop}}px;border:2px solid #5F5F5F;padding:10px;margin-left:0px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-top-left-radius: 2px; border-bottom-left-radius: 10px">
-                                            Permissoes do usuario: <strong>{{usuario.id}} - {{usuario.nome}}</strong>
+                                            Permiss&otilde;es do usu&aacute;rio: <strong>{{usuario.id}} - {{usuario.nome}}</strong>
                                             <hr>
                                             <button class="btn btn-outline-light" ng-click="mergeUsuario()"><i class="fas fa-check"></i>&nbspConfirmar alteracoes</button>
                                             <hr>
@@ -262,7 +265,14 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere os dados de seu Usuario</h5>
+                                <?php
+                                    if (usuario.nome != ''){
+                                        $titulo = '<i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere';
+                                    } else{
+                                        $titulo = '<i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Adicione';
+                                    }
+                                ?>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><?php echo $titulo ?> os dados de seu Usu&aacute;rio</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">×</span>
                                 </button>
@@ -299,7 +309,7 @@
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-9 col-lg-10">
-                                            <email entidade="Usuario" atributo="usuario.email" senha="true" alterar="true"></email>
+                                            <email entidade="usu&aacute;rio" atributo="usuario.email" senha="true" alterar="true"></email>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -397,7 +407,7 @@
                                         <table class="table table-striped table-bordered first">
                                             <thead>
                                                 <tr>
-                                                    <th>Numero</th>
+                                                    <th>N&uacute;mero</th>
                                                     <th><i class="fa fa-times"></i></th>
                                                 </tr>
                                             </thead>

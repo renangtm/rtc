@@ -39,11 +39,11 @@
             <!-- ============================================================== -->
             <!-- left sidebar -->
             <!-- ============================================================== -->
-            <?php 
-            
+            <?php
             $filtro = "ng-model='produtos.filtro[0].valor' ng-confirm='produtos.attList()'";
-            
-            include("menu.php"); ?>
+
+            include("menu.php");
+            ?>
             <!-- ============================================================== -->
             <!-- end left sidebar -->
             <!-- ============================================================== -->
@@ -84,24 +84,26 @@
                                 <div class="row">
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 
-
                                         <div id="carouselExampleIndicators" class="product-carousel carousel slide m-b-40" data-ride="carousel">
                                             <ol class="carousel-indicators">
-                                                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                                                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                                                <!--<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>-->
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active" style="cursor: pointer;"></li>
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="1" style="cursor: pointer;"></li>
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="2" style="cursor: pointer;"></li>
                                             </ol>
                                             <div class="carousel-inner">
                                                 <div class="carousel-item active">
-                                                    <img class="d-block w-100" src="assets/images/banner_queima de estoque_784x295.jpg" alt="First slide">
+                                                    <a href="http://agrofauna.com.br/mail/fraude_boletos/email_fraude_boletos_bancarios.html">
+                                                        <img class="d-block w-100" src="assets/images/banner_fraude_em_boletos_784x295.jpg" alt="First slide">
+                                                    </a>
                                                 </div>
                                                 <div class="carousel-item">
-                                                    <img class="d-block w-100" src="assets/images/mega oferta_784x295.jpg" alt="Second slide">
+                                                    <a href="http://agrofauna.com.br/apresentacao_rtc_v3.pdf" target="_blank">
+                                                        <img class="d-block w-100" src="assets/images/banner_conheca_projeto_novos_rumos_784x295.jpg" alt="Second slide">
+                                                    </a>    
                                                 </div>
-                                                <!--
                                                 <div class="carousel-item">
-                                                        <img class="d-block w-100" src="assets/images/card-img-3.jpg" alt="Third slide">
-                                                </div>-->
+                                                        <img class="d-block w-100" src="assets/images/banner_784x295.jpg" alt="Third slide">
+                                                </div>
                                             </div>
                                             <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
                                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -136,7 +138,7 @@
                                                     <hr>
                                                     
 
-                                                        <button class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;margin-left:2px;width:100%;margin-bottom:10px">
+                                                        <button ng-click="addCarrinho(produto,validade)" class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;margin-left:2px;width:100%;margin-bottom:10px">
                                                             
                                                             <div ng-if="validade.validade !== 1000">
                                                                 Val: {{validade.validade | data_st}}
@@ -156,13 +158,13 @@
                                                         <div class="progress mb-1" ng-if="!tv(produto)">
                                                             <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 60%"></div>
                                                         </div>
-                                                        
+
                                                         <div style="color:SteelBlue">
                                                             <i class="fas fa-road"></i>&nbsp {{produto.empresa.nome}} 
                                                         </div>
-                                                        
+
                                                         <div ng-if="produto.logistica !== null" style="color:DarkBlue">
-                                                            
+
                                                             <i class="fas fa-box"></i>&nbsp {{produto.logistica.nome}} 
                                                         </div>
 
@@ -186,29 +188,31 @@
 
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 
-
-                                        <div id="carouselExampleIndicators" class="product-carousel carousel slide m-b-40" data-ride="carousel">
+                                        <div id="carouselExampleIndicators_1" class="product-carousel carousel slide m-b-40" data-ride="carousel">
                                             <ol class="carousel-indicators">
-                                                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                                                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                                                <!--<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>-->
+                                                <li data-target="#carouselExampleIndicators_1" data-slide-to="0" class="active" style="cursor: pointer;"></li>
+                                                <li data-target="#carouselExampleIndicators_1" data-slide-to="1" style="cursor: pointer;"></li>
+                                                <li data-target="#carouselExampleIndicators_1" data-slide-to="2" style="cursor: pointer;"></li>
                                             </ol>
                                             <div class="carousel-inner">
                                                 <div class="carousel-item active">
-                                                    <img class="d-block w-100" src="assets/images/banner_queima de estoque_784x295.jpg" alt="First slide">
+                                                    <a href="http://agrofauna.com.br/mail/fraude_boletos/email_fraude_boletos_bancarios.html">
+                                                        <img class="d-block w-100" src="assets/images/banner_fraude_em_boletos_784x295.jpg" alt="First slide">
+                                                    </a>
                                                 </div>
                                                 <div class="carousel-item">
-                                                    <img class="d-block w-100" src="assets/images/mega oferta_784x295.jpg" alt="Second slide">
+                                                    <a href="http://agrofauna.com.br/apresentacao_rtc_v3.pdf" target="_blank">
+                                                        <img class="d-block w-100" src="assets/images/banner_conheca_projeto_novos_rumos_784x295.jpg" alt="Second slide">
+                                                    </a>    
                                                 </div>
-                                                <!--
                                                 <div class="carousel-item">
-                                                        <img class="d-block w-100" src="assets/images/card-img-3.jpg" alt="Third slide">
-                                                </div>-->
+                                                        <img class="d-block w-100" src="assets/images/banner_784x295.jpg" alt="Third slide">
+                                                </div>
                                             </div>
-                                            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                                            <a class="carousel-control-prev" href="#carouselExampleIndicators_1" role="button" data-slide="prev">
                                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                                 <span class="sr-only">Previous</span>  </a>
-                                            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                                            <a class="carousel-control-next" href="#carouselExampleIndicators_1" role="button" data-slide="next">
                                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                                 <span class="sr-only">Next</span>  </a>
                                         </div>
@@ -220,10 +224,8 @@
                                         <div class="product-thumbnail">
                                             <div class="product-img-head">
                                                 <div class="product-img">
-                                                    <img src="{{produto.imagem}}" id="img_{{produto.id}}" alt="" class="img-fluid" onload="fechaLoad(this)" style="display: none">
-                                                    <br>
-                                                    <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm" style="width:100px;height:100px;margin-bottom:95px"></span>
-                                                </div>
+                                                    <img src="{{produto.imagem}}" id="img_{{produto.id}}" onload="fechaLoad(this)" alt="" class="img-fluid" style="display: none"></div>
+                                                <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm " style="width:100px;height:100px;margin-bottom:95px"></span>
                                                 <div class="ribbons" ng-if="produto.ofertas.length > 0"></div>
                                                 <div class="ribbons-text m-l-10" ng-if="produto.ofertas.length > 0">Oferta</div>
 
@@ -234,7 +236,7 @@
                                                     <hr>
                                                     
 
-                                                        <button class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;margin-left:2px;width:100%;margin-bottom:10px">
+                                                        <button ng-click="addCarrinho(produto,validade)" class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;margin-left:2px;width:100%;margin-bottom:10px">
                                                             
                                                             <div ng-if="validade.validade !== 1000">
                                                                 Val: {{validade.validade | data_st}}
@@ -254,13 +256,13 @@
                                                         <div class="progress mb-1" ng-if="!tv(produto)">
                                                             <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 60%"></div>
                                                         </div>
-                                                        
+
                                                         <div style="color:SteelBlue">
                                                             <i class="fas fa-road"></i>&nbsp {{produto.empresa.nome}} 
                                                         </div>
-                                                        
+
                                                         <div ng-if="produto.logistica !== null" style="color:DarkBlue">
-                                                            
+
                                                             <i class="fas fa-box"></i>&nbsp {{produto.logistica.nome}} 
                                                         </div>
 
@@ -329,6 +331,10 @@
                                     </div>
                                 </div>
 
+                                <!-- ============================================================== -->
+                                <!-- MODAL validade produto  -->
+                                <!-- ============================================================== -->
+
                                 <div class="modal fade" id="validadeProduto" tabindex="99" role="dialog" aria-labelledby="validadeProduto" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
@@ -350,9 +356,9 @@
                                                         <th>{{prod.nome}}</th>
                                                         <th ng-if="v.validade !== 1000">{{v.validade| data_st}} <i class="fas fa-arrow-up" ng-if="v.alem" ></i></th>
                                                         <th ng-if="v.validade === 1000"> ------ </th>
-                                                        <th>{{v.valor}} R$</th>
-                                                        <th ng-if="v.limite>0"> {{v.limite}} </th>
-                                                        <th ng-if="v.limite<=0"> ------ </th>
+                                                        <th>R$ {{v.valor}} </th>
+                                                        <th ng-if="v.limite > 0"> {{v.limite}} </th>
+                                                        <th ng-if="v.limite <= 0"> ------ </th>
                                                         <th><button class="btn btn-success" data-dismiss="modal" aria-label="Close" ng-click="setValidade(v)" data-toggle="modal" data-target="#qtdProduto"><i class="fas fa-plus-circle"></i></button></th>
                                                     </tr>
                                                 </table>
@@ -365,33 +371,15 @@
                                     </div>
                                 </div>
 
-                                <div class="modal fade" id="qtdProduto" tabindex="99" role="dialog" aria-labelledby="qtdProduto" aria-hidden="true">
-                                    <div class="modal-dialog" style="max-width:227px">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Digite a quantidade desejada ?</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                            </div>
-                                            <div class="modal-body">
-
-                                                <inteiro type="text" model="qtd"></inteiro>
-                                                
-                                            
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button class="btn btn-primary" data-dismiss="modal" aria-label="Close" ng-click="addCarrinho()"><i class="fa fa-check"></i> &nbsp Adicionar ao carrinho</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                                 
+
                                 <!-- ============================================================== -->
                                 <!-- sidebar BANNER 300x250  -->
                                 <!-- ============================================================== -->
 
                                 <div class="product-sidebar m-b-30">
                                     <div class="product-sidebar-widget p-0" style="margin-bottom: 0px">
-                                        <img alt="pampa Design Medium Rectangle 300x250" src="assets/images/banner_300x250_pampa.jpg" style="width: 100%;">
+                                        <img alt="banner 300x250" src="assets/images/banner_300x250.jpg" style="width: 100%;">
                                     </div>
                                 </div>
 
@@ -401,7 +389,7 @@
 
                                 <div class="product-sidebar m-b-30">
                                     <div class="product-sidebar-widget p-0" style="margin-bottom: 0px">
-                                        <img alt="tordon banner 240x400" src="assets/images/banner_240x400_tordon.jpg" style="width: 100%;">
+                                        <img alt="banner 240x400" src="assets/images/banner_240x400.jpg" style="width: 100%;">
                                     </div>
                                 </div>
 
@@ -485,50 +473,50 @@
 
         <!-- Optional JavaScript -->
         <script>
-            
-            function fechaLoad(img){
-                
-                var im = $(img);
-                var num = im.attr('id').split('_')[1];
-               
-               
-                $("#sp_"+num).hide();
-                im.css('display','initial');
-                
-            }
 
-                                                                    var sh = false;
-                                                                    var it = null;
+                                                            function fechaLoad(img) {
 
-                                                                    loading.show = function () {
+                                                                var im = $(img);
+                                                                var num = im.attr('id').split('_')[1];
 
-                                                                        if (it != null) {
-                                                                            clearInterval(it);
-                                                                        }
-                                                                        it = setInterval(function () {
-                                                                            $("#loading").modal("show");
-                                                                            if ($("#loading").hasClass('in')) {
-                                                                                clearInterval(it);
-                                                                            }
 
-                                                                        }, 300)
+                                                                $("#sp_" + num).hide();
+                                                                im.css('display', 'initial');
 
+                                                            }
+
+                                                            var sh = false;
+                                                            var it = null;
+
+                                                            loading.show = function () {
+
+                                                                if (it != null) {
+                                                                    clearInterval(it);
+                                                                }
+                                                                it = setInterval(function () {
+                                                                    $("#loading").modal("show");
+                                                                    if ($("#loading").hasClass('in')) {
+                                                                        clearInterval(it);
                                                                     }
 
-                                                                    loading.close = function () {
+                                                                }, 300)
 
-                                                                        if (it != null) {
-                                                                            clearInterval(it);
-                                                                        }
-                                                                        it = setInterval(function () {
+                                                            }
 
-                                                                            $("#loading").modal("hide");
-                                                                            if (!$("#loading").hasClass('in')) {
-                                                                                clearInterval(it);
-                                                                            }
-                                                                        }, 300)
+                                                            loading.close = function () {
 
+                                                                if (it != null) {
+                                                                    clearInterval(it);
+                                                                }
+                                                                it = setInterval(function () {
+
+                                                                    $("#loading").modal("hide");
+                                                                    if (!$("#loading").hasClass('in')) {
+                                                                        clearInterval(it);
                                                                     }
+                                                                }, 300)
+
+                                                            }
 
 
 
