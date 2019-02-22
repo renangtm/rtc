@@ -950,6 +950,25 @@ rtc.directive('ngDownload', function () {
 
 var idsUnicos = 1;
 
+rtc.directive('cronometro', function ($interval) {
+    return {
+        restrict: 'E',
+        scope: {
+            model: '='
+        },
+        templateUrl: 'cronometro.html',
+        link: function (scope, element, attrs) {
+            
+            $interval(function(){
+            
+                scope.model -= 1000;
+                
+            },1000);
+            
+        }
+    };
+})
+
 rtc.directive('inteiro', function () {
     return {
         restrict: 'E',

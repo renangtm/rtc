@@ -138,7 +138,7 @@
                                                     <hr>
                                                     
 
-                                                        <button ng-click="addCarrinho(produto,validade)" class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;margin-left:2px;width:100%;margin-bottom:10px">
+                                                        <button ng-click="addCarrinho(produto,validade)" class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;position:relative;margin-left:2px;width:100%;margin-bottom:10px">
                                                             
                                                             <div ng-if="validade.validade !== 1000">
                                                                 Val: {{validade.validade | data_st}}
@@ -152,6 +152,9 @@
                                                              <br>
                                                              <i class="fas fa-shopping-cart"></i>&nbsp Comprar
                                                              
+                                                             <div ng-if="validade.oferta" style="position:absolute;width:100% height:30px;top:-15px;left:5px">
+                                                                 <cronometro model="validade.restante"></cronometro>
+                                                             </div>
                                                         </button>
                                                         
 

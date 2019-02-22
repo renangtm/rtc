@@ -502,6 +502,8 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
                     for (var j = 0; j < produto.ofertas.length; j++) {
                         if (produto.ofertas[j].validade === v[i].validade) {
                             v[i].oferta = true;
+                            var atual = new Date().getTime();
+                            v[i].restante = produto.ofertas[j].campanha.fim-atual;
                             v[i].valor = produto.ofertas[j].valor;
                             break;
                         }
@@ -514,6 +516,8 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
     $scope.produtos = createFilterList(compraParceiroService, 3, 6, 10);
     $scope.produtos["posload"] = function (elementos) {
         for (var i = 0; i < elementos.length; i++) {
+            
+            
             var e = elementos[i];
             if (!$scope.tv(e)) {
                 cv(e);
