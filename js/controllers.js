@@ -964,7 +964,7 @@ rtc.controller("crtProdutoClienteLogistic", function ($scope, produtoClienteLogi
 })
 rtc.controller("crtMovimentos", function ($scope, movimentoService, sistemaService, notaService, bancoService, baseService) {
 
-    $scope.movimentos = createAssinc(movimentoService, 1, 3, 10);
+    $scope.movimentos = createAssinc(movimentoService, 1, 10, 10);
     $scope.movimentos.attList();
     assincFuncs(
             $scope.movimentos,

@@ -1445,7 +1445,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             }
         }
 */
-
+        /*
         $g = new Getter($filial);
 
         $clienteFiltradoMatriz = new Cliente();
@@ -1734,7 +1734,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             $value->merge($con);
             echo "Inserida a NFE de ficha $value->ficha";
         }
-
+        */
         /*
           $filial = new Empresa(104);
           $matriz = new Empresa(105);
@@ -1787,7 +1787,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
           $ps->close();
           }
          */
-
+        /*
         $ps = $con->getConexao()->prepare("DELETE FROM movimento");
         $ps->execute();
         $ps->close();
@@ -1970,6 +1970,67 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
             $value->insert($con, true);
         }
+        */
+        
+        $ps = $con->getConexao()->prepare("DELETE FROM campanha");
+        $ps->execute();
+        $ps->close();
+        
+        $validades = array();
+        $ps = $con->getConexao()->prepare("SELECT id_produto,UNIX_TIMESTAMP(validade)*1000 FROM lote WHERE validade > DATE_ADD(CURRENT_DATE, INTERVAL 4 MONTH) ORDER BY validade ASC");
+        $ps->execute();
+        $ps->bind_result($id_produto,$validade);
+        while($ps->fetch()){
+            if(!isset($validades[$id_produto])){
+                $validades[$id_produto] = $validade;
+            }
+        }
+        $ps->close();
+        
+        $campanhas = array();
+        $ps = $this->getConexao()->prepare("SELECT c.id_campanha,c.nm_campanha,UNIX_TIMESTAMP(c.dt_inicial)*1000,UNIX_TIMESTAMP(c.dt_final)*1000,p.id_produto,p.vl_preco_campanha,p.limite FROM db_agro_matriz.campanha c INNER JOIN db_agro_matriz.campanha_produto p ON p.id_campanha=c.id_campanha WHERE c.dt_final > CURRENT_TIMESTAMP AND c.sn_status=1");
+        $ps->execute();
+        $ps->bind_result($id,$nome,$inicio,$fim,$produto,$preco,$limite);
+        while($ps->fetch()){
+            
+            if(!isset($validades[$produto]))
+                continue;
+            
+            $v = $validades[$produto];
+            
+            if(!isset($campanhas[$id])){
+                
+                $c = new Campanha();
+                $c->nome = $nome;
+                $c->inicio = $inicio;
+                $c->fim = $fim;
+                $c->prazo = 0;
+                $c->parcelas = 1;
+                $c->empresa = $filial;
+                
+                $campanhas[$id] = $c;
+                
+            }
+            
+            $c = $campanhas[$id];
+            $p = new ProdutoCampanha();
+            $p->campanha = $c;
+            $p->produto = new stdClass();
+            $p->produto->id = $produto;
+            $p->validade = $v;
+            $p->valor = $preco;
+            
+            $c->produtos[] = $p;
+            
+            
+            
+        }
+        $ps->close();
+        
+        foreach($campanhas as $key=>$value){
+            $value->merge($con);
+        }
+        
     }
 
 }

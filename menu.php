@@ -102,7 +102,7 @@ $rtc->numero--;
     <nav class="navbar navbar-expand-lg bg-white fixed-top">
         <a class="navbar-brand" href="index.html"><img id="logo" src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" title="" style="max-height:50px"></a>
         &nbsp;
-        <div ng-controller="crtEmpresa">
+        <div ng-controller="crtEmpresa" style="margin-right: 10px">
             <select class="form-control" ng-model="empresa" ng-change="setEmpresa()">
                 <option ng-repeat="e in filiais" ng-value="e">{{e.nome}}</option>
             </select>
@@ -269,8 +269,15 @@ $rtc->numero--;
                 <li class="nav-item dropdown nav-user">
                     <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" class="user-avatar-md rounded-circle">
-                        <span class="hidden-xs"><?php echo $usuario->nome; ?></span>
-                        <span class=" fa fa-angle-down"></span>
+                        <span class="hidden-lg"><?php 
+                        
+                            if(strlen($usuario->nome)<5){
+                                echo $usuario->nome; 
+                            }else{
+                                echo substr($usuario->nome, 0,5)."..";
+                            }
+                        
+                        ?></span>                       
                     </a>
                     <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
                         <div class="nav-user-info clearfix align-middle" style="background-color:<?php echo $logo->cor_predominante; ?>">
