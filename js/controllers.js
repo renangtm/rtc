@@ -2940,11 +2940,50 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
         v.selecionado = k;
 
     }
+    var a = ["Sabado","Domingo","Segunda","Terca","Quarta","Quinta","Sexta"];
+
+    $scope.add = function(campanha){
+        
+        campanha.inicio += 1000*60*60*24*7;
+        campanha.fim += 1000*60*60*24*7;
+        
+    }
+    
+    $scope.prev = function(campanha){
+        
+        campanha.inicio -= 1000*60*60*24*7;
+        campanha.fim -= 1000*60*60*24*7;
+        
+    }
+
+    $scope.nmd = function(dia){
+        
+        var nome = a[(new Date(fromTime(dia)).getDay()+1)%a.length];
+        var hj = new Date();
+        var diff = fromTime(dia)-hj.getTime();
+  
+        diff=parseInt(diff/1000);
+        diff=parseInt(diff/60);
+        diff=parseInt(diff/60);
+        diff=parseInt(diff/24);
+        diff=parseInt(diff/7);
+        
+        if(diff===0){
+            diff = nome;
+        }else if(diff===1){
+            diff = "Proxima "+nome;
+        }else{
+            diff = (diff+1)+" "+nome;
+        }
+        
+        return diff;
+        
+    }
 
     campanhaService.getCampanha(function (p) {
 
         $scope.campanha_nova = p.campanha;
-
+        
         for (var i = 0; i < 7; i++) {
 
             var c = angular.copy($scope.campanha_nova);
@@ -2958,7 +2997,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
                 }]
             c.inicio = data.getTime() + dia * i;
             c.fim = data.getTime() + (dia * (i + 1));
-            c.nome = "Nova campanha";
+            c.nome = a[(new Date(c.inicio).getDay()+1)%a.length];
 
 
             c.numero = i;

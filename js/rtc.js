@@ -558,6 +558,25 @@ function toTime(lo) {
 
 }
 
+function toHours(lo) {
+
+    var d = new Date(parseFloat(lo + ""));
+
+    var hora = d.getHours();
+    var minuto = d.getMinutes();
+
+    return  hora + ":" + minuto;
+
+}
+
+function fromHours(h){
+    
+    var h = h.split(":");
+    
+    return parseInt(h[0])*60*60*1000 + parseInt(h[1])*60*1000;
+    
+}
+
 function fromTime(str) {
 
     var l = str.split(" ");
