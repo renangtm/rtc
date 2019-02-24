@@ -1445,6 +1445,19 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             }
         }
 */
+        $classes = array();
+        $ps = $this->getConexao()->prepare("SELECT CEIL((k.classe/100)),k.id_produto FROM (SELECT COUNT(*) as 'classe',CODPRO as 'id_produto' FROM db_agrofauna_filial17.COMFPFIC WHERE ATIVID='S' GROUP BY CODPRO) k ORDER BY k.classe DESC");
+        $ps->execute();
+        $ps->bind_result($classe,$produto);
+        while($ps->fetch()){
+            $classes[$produto] = $classe;
+        }
+        $ps->close();
+        foreach($classes as $id_produto=>$classe){
+            $ps = $con->getConexao()->prepare("UPDATE produto SET classificacao_saida=$classe WHERE id_universal=$id_produto");
+            $ps->execute();
+            $ps->close();
+        }
         /*
         $g = new Getter($filial);
 
@@ -1461,7 +1474,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         $nota = new Nota();
 
-        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,IFNULL(n.P_OBSERV1,'') like '%Cancel%',c.CGCCPF,UNIX_TIMESTAMP(n.P_DATAMOV)*1000,n.P_ATIVIDAD,n.P_NUMCHEC,t.CNPJ,UNIX_TIMESTAMP(IFNULL(p.VENCTO,n.P_DATAMOV))*1000,IFNULL(p.VALOR,n.P_VALOR) FROM db_agrofauna_filial17.CADPED n INNER JOIN db_agrofauna_filial17.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO LEFT JOIN db_agrofauna_filial17.PARCFIC p ON p.FICHA=n.P_NRCONTRO WHERE n.P_DATAMOV > '2014-19-02' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> ''");
+        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,IFNULL(n.P_OBSERV1,'') like '%Cancel%',c.CGCCPF,UNIX_TIMESTAMP(n.P_DATAMOV)*1000,n.P_ATIVIDAD,n.P_NUMCHEC,t.CNPJ,UNIX_TIMESTAMP(IFNULL(p.VENCTO,n.P_DATAMOV))*1000,IFNULL(p.VALOR,n.P_VALOR) FROM db_agrofauna_filial17.CADPED n INNER JOIN db_agrofauna_filial17.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO LEFT JOIN db_agrofauna_filial17.PARCFIC p ON p.FICHA=n.P_NRCONTRO WHERE n.P_DATAMOV >= '2019-2-22' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> ''");
         $ps->execute();
         $ps->bind_result($ficha, $cancelada, $cnpj, $data, $es, $nf, $cnpj_transportadora, $vencimento, $valor);
         while ($ps->fetch()) {
@@ -1490,6 +1503,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
                         $cliente = $g->getFornecedorViaCliente($con, $cliente);
                         if ($cliente === null) {
                             continue;
+                             echo "Ficha $ficha, parou por fornecedor ou cliente ";
                         }
                         $fornecedores_cnpj[$cnpj] = $cliente;
                     }
@@ -1507,6 +1521,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
                 }
 
                 if ($transportadora === null) {
+                    echo "Ficha $ficha, parou por transportadora ";
                     continue;
                 }
 
@@ -1543,7 +1558,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         $produtos = array();
 
-        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,p.QTDPRO,p.VALUNI,p.NATOPE,pi.F_DESCRICA,pi.F_CODPROD FROM db_agrofauna_filial17.CADPED n INNER JOIN db_agrofauna_filial17.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna_filial17.COMFPFIC p ON p.CONTRO=n.P_NRCONTRO INNER JOIN db_agrofauna_filial17.PRODUTO pi ON pi.F_CODPROD=p.CODPRO INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO WHERE n.P_DATAMOV > '2014-19-02' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> ''");
+        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,p.QTDPRO,p.VALUNI,p.NATOPE,pi.F_DESCRICA,pi.F_CODPROD FROM db_agrofauna_filial17.CADPED n INNER JOIN db_agrofauna_filial17.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna_filial17.COMFPFIC p ON p.CONTRO=n.P_NRCONTRO INNER JOIN db_agrofauna_filial17.PRODUTO pi ON pi.F_CODPROD=p.CODPRO INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO WHERE n.P_DATAMOV > '2014-19-02' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> '' AND n.P_DATMOV >= '2019-2-22'");
         $ps->execute();
         $ps->bind_result($ficha, $qtd, $val, $cfop, $nom, $id);
         while ($ps->fetch()) {
@@ -1603,7 +1618,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         $nota = new Nota();
 
-        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,IFNULL(n.P_OBSERV1,'') like '%Cancel%',c.CGCCPF,UNIX_TIMESTAMP(n.P_DATAMOV)*1000,n.P_ATIVIDAD,n.P_NUMCHEC,t.CNPJ,UNIX_TIMESTAMP(IFNULL(p.VENCTO,n.P_DATAMOV))*1000,IFNULL(p.VALOR,n.P_VALOR) FROM db_agrofauna.CADPED n INNER JOIN db_agrofauna.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO LEFT JOIN db_agrofauna.PARCFIC p ON p.FICHA=n.P_NRCONTRO WHERE n.P_DATAMOV > '2014-19-02' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> ''");
+        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,IFNULL(n.P_OBSERV1,'') like '%Cancel%',c.CGCCPF,UNIX_TIMESTAMP(n.P_DATAMOV)*1000,n.P_ATIVIDAD,n.P_NUMCHEC,t.CNPJ,UNIX_TIMESTAMP(IFNULL(p.VENCTO,n.P_DATAMOV))*1000,IFNULL(p.VALOR,n.P_VALOR) FROM db_agrofauna.CADPED n INNER JOIN db_agrofauna.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO LEFT JOIN db_agrofauna.PARCFIC p ON p.FICHA=n.P_NRCONTRO WHERE n.P_DATAMOV >= '2019-2-22' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> ''");
         $ps->execute();
         $ps->bind_result($ficha, $cancelada, $cnpj, $data, $es, $nf, $cnpj_transportadora, $vencimento, $valor);
         while ($ps->fetch()) {
@@ -1685,7 +1700,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         $produtos = array();
 
-        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,p.QTDPRO,p.VALUNI,p.NATOPE,pi.F_DESCRICA,pi.F_CODPROD FROM db_agrofauna.CADPED n INNER JOIN db_agrofauna.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna.COMFPFIC p ON p.CONTRO=n.P_NRCONTRO INNER JOIN db_agrofauna.PRODUTO pi ON pi.F_CODPROD=p.CODPRO INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO WHERE n.P_DATAMOV > '2014-19-02' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> ''");
+        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,p.QTDPRO,p.VALUNI,p.NATOPE,pi.F_DESCRICA,pi.F_CODPROD FROM db_agrofauna.CADPED n INNER JOIN db_agrofauna.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna.COMFPFIC p ON p.CONTRO=n.P_NRCONTRO INNER JOIN db_agrofauna.PRODUTO pi ON pi.F_CODPROD=p.CODPRO INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO WHERE n.P_DATAMOV >= '2019-02-22' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> ''");
         $ps->execute();
         $ps->bind_result($ficha, $qtd, $val, $cfop, $nom, $id);
         while ($ps->fetch()) {
@@ -1971,7 +1986,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             $value->insert($con, true);
         }
         */
-        
+        /*
         $ps = $con->getConexao()->prepare("DELETE FROM campanha");
         $ps->execute();
         $ps->close();
@@ -2030,7 +2045,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         foreach($campanhas as $key=>$value){
             $value->merge($con);
         }
-        
+        */
     }
 
 }
