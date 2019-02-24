@@ -503,7 +503,7 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
                         if (produto.ofertas[j].validade === v[i].validade) {
                             v[i].oferta = true;
                             var atual = new Date().getTime();
-                            v[i].restante = produto.ofertas[j].campanha.fim-atual;
+                            v[i].restante = produto.ofertas[j].campanha.fim - atual;
                             v[i].valor = produto.ofertas[j].valor;
                             break;
                         }
@@ -516,8 +516,8 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
     $scope.produtos = createFilterList(compraParceiroService, 3, 6, 10);
     $scope.produtos["posload"] = function (elementos) {
         for (var i = 0; i < elementos.length; i++) {
-            
-            
+
+
             var e = elementos[i];
             if (!$scope.tv(e)) {
                 cv(e);
@@ -548,17 +548,17 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
 
     })
 
-    $scope.addCarrinho = function (produto,validade) {
-       
+    $scope.addCarrinho = function (produto, validade) {
+
         $scope.prod = produto;
-        
+
         $scope.qtd = parseFloat(window.prompt("Quantidade"));
-        if(isNaN($scope.qtd)){
-             msg.erro("Quantidade incorreta");
+        if (isNaN($scope.qtd)) {
+            msg.erro("Quantidade incorreta");
             return;
         }
-        
-        $scope.qtd = parseInt(($scope.qtd+"").split(".")[0]);
+
+        $scope.qtd = parseInt(($scope.qtd + "").split(".")[0]);
 
         $scope.val = validade;
 
@@ -1010,7 +1010,7 @@ rtc.controller("crtMovimentos", function ($scope, movimentoService, sistemaServi
     })
 
     sistemaService.getHistoricos(function (h) {
-
+       
         $scope.historicos = h.historicos;
 
     })
@@ -1090,7 +1090,7 @@ rtc.controller("crtMovimentos", function ($scope, movimentoService, sistemaServi
             msg.erro("Movimento sem historico");
             return;
         }
-
+        /*
         $scope.movimento.data = fromTime($scope.movimento.data_texto);
 
         if ($scope.movimento.data < 0) {
@@ -1099,6 +1099,7 @@ rtc.controller("crtMovimentos", function ($scope, movimentoService, sistemaServi
             return;
 
         }
+        */
 
         baseService.insert($scope.movimento, function (r) {
             if (r.sucesso) {
@@ -2891,13 +2892,22 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
             "produto",
             ["id", "nome", "estoque", "disponivel"], "filtroProdutos");
 
-
-    $scope.campanha = {};
+    $scope.agora = new Date().getTime();
+    $scope.campanha = {inicio:$scope.agora,fim:$scope.agora,id:0};
     $scope.campanha_nova = {};
 
     $scope.criacao_campanhas = [];
+    $scope.cc = null;
+   
+
 
     $scope.produto_campanha_novo = {};
+
+    $scope.teste = new Date().getTime();
+    $scope.teste2 = new Date().getTime() + (10 * 24 * 60 * 60 * 1000);
+    $scope.teste3 = function () {
+        alert("teste4");
+    }
 
     $scope.produto = {};
     $scope.produto_campanha_validade = {};
@@ -2940,41 +2950,16 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
         v.selecionado = k;
 
     }
-
+    
+    var okc = false;
     campanhaService.getCampanha(function (p) {
 
         $scope.campanha_nova = p.campanha;
-
-        for (var i = 0; i < 7; i++) {
-
-            var c = angular.copy($scope.campanha_nova);
-            c.campanhas = [{
-                    inicio: data.getTime() + dia * i,
-                    fim: data.getTime() + (dia + 1) * i,
-                    nome: "Campanha A",
-                    id: 0,
-                    prazo: 0,
-                    parcelas: 1
-                }]
-            c.inicio = data.getTime() + dia * i;
-            c.fim = data.getTime() + (dia * (i + 1));
-            c.nome = "Nova campanha";
-
-
-            c.numero = i;
-            while (new Date(c.fim).getDay() == 0 || new Date(c.fim).getDay() == 6) {
-                c.fim += dia;
-            }
-            c.inicio = toTime(c.inicio);
-            c.fim = toTime(c.fim);
-
-            c.campanhas[0].inicio = c.inicio;
-            c.campanhas[0].fim = c.fim;
-
-            $scope.criacao_campanhas[$scope.criacao_campanhas.length] = c;
-
-        }
-
+        $scope.campanha = p.campanha;
+        okc = true;
+        $scope.setDataCampanha();
+       
+        
     })
 
     $scope.getNumeracaoAlfabetica = function (numero) {
@@ -3102,7 +3087,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     }
 
     var salvarCampanha = function (obj, campanha) {
-
+        
         baseService.merge(campanha, function (r) {
             if (r.sucesso) {
                 obj.atual++;
@@ -3122,7 +3107,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     $scope.terminarCadastro = function () {
 
         var r = [];
-
+        
         for (var i = 0; i < $scope.campanha.campanhas.length; i++) {
 
             var c = $scope.campanha.campanhas[i];
@@ -3131,21 +3116,22 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
             camp.nome = c.nome;
             camp.prazo = c.prazo;
             camp.parcelas = c.parcelas;
-            camp.inicio = fromTime(c.inicio);
-            camp.fim = fromTime(c.fim);
-
-            if (camp.inicio < 0 || camp.fim < 0) {
-                msg.erro("Data da campanha '" + camp.nome + "' invalida");
-                return;
-            }
-
+            camp.inicio = c.inicio;
+            camp.fim = c.fim;
             camp.produtos = [];
 
             for (var j = 0; j < $scope.campanha.produtos.length; j++) {
 
                 var p = $scope.campanha.produtos[j];
 
-                if (p.numeracao !== c.id || p.validade < 0) {
+                if(p.validade < 0){
+                    
+                    msg.alerta("O Produto "+p.produto.nome+", esta sem validade selecionada");
+                    return;
+                    
+                }
+
+                if (p.numeracao !== c.id) {
 
                     continue;
 
@@ -3172,6 +3158,12 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
 
                 }
 
+                if(prod.valor <= 0){
+                    msg.alerta("O produto "+prod.produto.nome+", esta sem valor selecionado");
+                    return;
+                    
+                }
+                
                 if (prod.valor > 0) {
 
                     camp.produtos[camp.produtos.length] = prod;
@@ -3193,15 +3185,68 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
         for (var i = 0; i < r.length; i++) {
             salvarCampanha(obj, r[i]);
         }
-
+        
+        $scope.campanha.terminada = true;
+        
     }
 
-    $scope.setCampanhaCriacao = function (campanha) {
+    $scope.millis = [];
+   
+
+    $scope.setDataCampanha = function () {
+        
+        if(!okc)return;
+        $scope.setCampanhaCriacao($scope.agora);
+
+    }
+    
+    
+    var inl = false;
+    $scope.setCampanhaCriacao = function (millis) {
+     
+        if(inl)
+            return;
+   
+        var campanha = null;
+        inl=true;
+        for (var i = 0; i < $scope.millis.length; i++) {
+            if ($scope.millis[i] === millis) {
+                campanha = $scope.criacao_campanhas[i];
+                break;
+            }
+        }
+        
+        if (campanha === null) {
+            var ms = new Date(parseFloat(millis+""));
+            var c = angular.copy($scope.campanha_nova);
+            c.campanhas = [{
+                    inicio: ms.getTime() + dia * i,
+                    fim: ms.getTime() + (dia) * (i + 1),
+                    nome: "Campanha A",
+                    id: 0,
+                    prazo: 0,
+                    parcelas: 1
+                }]
+            c.inicio = ms.getTime() + dia * i;
+            c.fim = ms.getTime() + (dia * (i + 1));
+            c.nome = "Nova campanha";
+
+            c.numero = i;
+            while (new Date(parseFloat(c.fim+"")).getDay() == 0 || new Date(parseFloat(c.fim+"")).getDay() == 6) {
+                c.fim += dia;
+            }
+            c.terminada = false;
+            $scope.criacao_campanhas[$scope.criacao_campanhas.length] = c;
+            $scope.millis[$scope.millis.length] = millis;
+            campanha = c;
+        }
+
+        $scope.c = campanha;
 
         if (campanha.produtos.length === 0) {
-
-            campanhaService.getProdutosDia(new Date(fromTime(campanha.inicio)).getDay(), function (prods) {
-
+           
+            campanhaService.getProdutosDia(new Date(parseFloat(millis+"")).getDay(), function (prods) {
+                    
                 for (var i = 0; i < prods.produtos.length; i++) {
 
                     var produto = prods.produtos[i];
@@ -3224,10 +3269,12 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
 
                 campanha.lista = createList(campanha.produtos, 1, 5, "produto.nome");
 
-
+                inl=false;
 
             })
 
+        }else{
+            inl=false;
         }
 
         $scope.campanha = campanha;
@@ -3241,34 +3288,12 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     })
 
     $scope.setCampanha = function (campanha) {
-
+  
         $scope.campanha = campanha;
-
-        $scope.campanha.inicio_texto = toTime(campanha.inicio);
-
-        $scope.campanha.fim_texto = toTime(campanha.fim);
-
+      
     }
 
     $scope.mergeCampanha = function () {
-
-        $scope.campanha.inicio = fromTime($scope.campanha.inicio_texto);
-        $scope.campanha.fim = fromTime($scope.campanha.fim_texto);
-
-        if ($scope.campanha.inicio < 0) {
-
-            msg.erro("Data de inicio incorreta");
-            return;
-
-        }
-
-        if ($scope.campanha.fim < 0) {
-
-            msg.erro("Data de fim incorreta");
-            return;
-
-        }
-
         baseService.merge($scope.campanha, function (r) {
             if (r.sucesso) {
                 $scope.campanha = r.o;

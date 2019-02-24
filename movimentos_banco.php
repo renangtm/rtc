@@ -196,10 +196,7 @@
                                     <div class="form-group row">
                                         <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Dt Mov</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtname" type="text" ng-model="movimento.data_texto" required data-parsley-type="email" placeholder="" class="form-control">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
+                                            <calendario model="movimento.data" botao="true" tempo="true" refresh="movimento" meses="1"></calendario>
                                         </div>
                                     </div>
                                     <div class="form-group row">

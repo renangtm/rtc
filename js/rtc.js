@@ -177,26 +177,26 @@ function createFilterList(service, cols, rows, maxPage) {
             service.getElementos(este.pagina * (este.linhas * este.por_coluna),
                     (este.pagina + 1) * (este.linhas * este.por_coluna),
                     este.filtro, este.ordem, function (e) {
-                       
+
                         if (este.filtro == null) {
                             este.filtro = e.filtros;
-                        }else{
-                            for(var i=0;i<este.filtro.length;i++){
+                        } else {
+                            for (var i = 0; i < este.filtro.length; i++) {
                                 var f = este.filtro[i];
-                                if(typeof f.opcoes === 'undefined'){
+                                if (typeof f.opcoes === 'undefined') {
                                     continue;
                                 }
-                                for(var op=0;op<f.opcoes.length;op++){
+                                for (var op = 0; op < f.opcoes.length; op++) {
                                     f.opcoes[op].quantidade = 0;
                                 }
-                                for(var j=0;j<e.filtros.length;j++){
+                                for (var j = 0; j < e.filtros.length; j++) {
                                     var ff = e.filtros[j];
-                                    if(ff.id === f.id){
-                                        for(var o=0;o<ff.opcoes.length;o++){
+                                    if (ff.id === f.id) {
+                                        for (var o = 0; o < ff.opcoes.length; o++) {
                                             var op = ff.opcoes[o];
-                                            for(var oo=0;oo<f.opcoes.length;oo++){
+                                            for (var oo = 0; oo < f.opcoes.length; oo++) {
                                                 var oop = f.opcoes[oo];
-                                                if(oop.id === op.id){
+                                                if (oop.id === op.id) {
                                                     oop.quantidade = op.quantidade;
                                                     break;
                                                 }
@@ -206,14 +206,14 @@ function createFilterList(service, cols, rows, maxPage) {
                                     }
                                 }
                             }
-                            
+
                         }
 
                         if (este.ordem == null) {
-      
+
                             este.ordem = e.ordem;
                         }
-                       
+
                         var np = Math.ceil(e.qtd / (este.linhas * este.por_coluna));
                         este.pagina = Math.max(Math.min(este.pagina, np - 1), 0);
 
@@ -229,7 +229,7 @@ function createFilterList(service, cols, rows, maxPage) {
                         }
 
                         este.paginas = [];
-                        
+
                         var a = Math.max(este.pagina - maxPage + 1, 0);
                         for (var i = a; i < a + maxPage && i < np; i++) {
                             var p = {numero: i, ir: function () {
@@ -242,8 +242,8 @@ function createFilterList(service, cols, rows, maxPage) {
                         if (typeof este["posload"] !== 'undefined') {
                             este["posload"](els);
                         }
-                     
-                       loading.close();
+
+                        loading.close();
 
                     });
 
@@ -258,7 +258,7 @@ function createFilterList(service, cols, rows, maxPage) {
     }
 
     listar.attList();
-    
+
 
     return listar;
 
@@ -555,6 +555,25 @@ function toTime(lo) {
     var minuto = d.getMinutes();
 
     return  ((dia < 10) ? "0" : "") + dia + "/" + ((mes < 10) ? "0" : "") + mes + "/" + ano + " " + hora + ":" + minuto;
+
+}
+
+function toHours(lo) {
+
+    var d = new Date(parseFloat(lo + ""));
+
+    var hora = d.getHours();
+    var minuto = d.getMinutes();
+
+    return  hora + ":" + minuto;
+
+}
+
+function fromHours(h) {
+
+    var h = h.split(":");
+
+    return parseInt(h[0]) * 60 * 60 * 1000 + parseInt(h[1]) * 60 * 1000;
 
 }
 
@@ -958,13 +977,13 @@ rtc.directive('cronometro', function ($interval) {
         },
         templateUrl: 'cronometro.html',
         link: function (scope, element, attrs) {
-            
-            $interval(function(){
-            
+
+            $interval(function () {
+
                 scope.model -= 1000;
-                
-            },1000);
-            
+
+            }, 1000);
+
         }
     };
 })
@@ -1241,3 +1260,412 @@ rtc.directive('email', function () {
         }
     };
 });
+
+var focoAtual = 0;
+
+rtc.directive('calendario', function ($timeout) {
+    return {
+        restrict: 'E',
+        scope: {
+            model: '=?',
+            inicio: '=?',
+            fim: '=?',
+            meses: '=?',
+            botao: '=?',
+            tempo: '=?',
+            change: '&?',
+            confirma: '&?',
+            refresh: '=?'
+        },
+        transclude: true,
+        templateUrl: 'calendario.html',
+        link: function (scope, element, attrs) {
+
+            var lk = function () {
+
+                scope.idUnico = idsUnicos++;
+                scope.intervalo = (typeof scope["inicio"] !== 'undefined') && (typeof scope["fim"] !== 'undefined');
+                scope.quantidade_meses = (typeof scope["meses"] !== 'undefined') ? scope.meses : 2;
+                scope.meses_alias = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jul", "Jun", "Ago", "Set", "Out", "Nov", "Dec"];
+                scope.dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
+                scope.elementos = [];
+
+                scope.horas = [];
+                scope.minutos = [];
+
+                scope.botao = (typeof scope["botao"] === 'undefined') ? false : scope.botao;
+                scope.tem_confirma = scope.confirma !== undefined;
+                scope.dsp = !scope.botao;
+
+                scope.trocar = function () {
+
+                    scope.dsp = !scope.dsp;
+
+                    if (scope.dsp) {
+                        focoAtual = scope.idUnico;
+                    }
+                    scope.$apply();
+
+                }
+
+                scope.foco = function () {
+
+                    return focoAtual === scope.idUnico;
+
+                }
+
+
+                scope.hora_model = {hora: 12};
+                scope.minuto_model = {minuto: 10};
+                scope.hora_inicio = {hora: 12};
+                scope.minuto_inicio = {minuto: 10};
+                scope.hora_fim = {hora: 12};
+                scope.minuto_fim = {minuto: 10};
+
+                if (typeof scope["model"] !== 'undefined') {
+                    scope.hora_model.hora = new Date(scope.model).getHours();
+                    scope.minuto_model.minuto = new Date(scope.model).getMinutes();
+                }
+
+                if (typeof scope["inicio"] !== 'undefined') {
+                    scope.hora_inicio.hora = new Date(scope.inicio).getHours();
+                    scope.minuto_inicio.minuto = new Date(scope.inicio).getMinutes();
+                }
+
+                if (typeof scope["fim"] !== 'undefined') {
+                    scope.hora_fim.hora = new Date(scope.fim).getHours();
+                    scope.minuto_fim.minuto = new Date(scope.fim).getMinutes();
+                }
+
+
+                if (!scope.intervalo) {
+                    scope.initDate = angular.copy(scope.model);
+                } else {
+                    scope.initDate = angular.copy(scope.inicio);
+                }
+
+                scope.trocaPeriodo = function () {
+
+                    if (scope.hora_model.hora === "") {
+                        scope.hora_model.hora = 0;
+                    } else {
+                        scope.hora_model.hora = parseInt(scope.hora_model.hora);
+                        if (isNaN(scope.hora_model.hora)) {
+                            return;
+                        }
+                        if (scope.hora_model.hora >= 24) {
+                            scope.hora_model.hora = 1;
+                        }
+                    }
+
+                    if (scope.minuto_model.minuto === "") {
+                        scope.minuto_model.minuto = 0;
+                    } else {
+                        scope.minuto_model.minuto = parseInt(scope.minuto_model.minuto);
+                        if (isNaN(scope.minuto_model.minuto)) {
+                            return;
+                        }
+                        if (scope.minuto_model.minuto >= 60) {
+                            scope.minuto_model.minuto = 1;
+                        }
+                    }
+                    //----
+                    if (scope.hora_inicio.hora === "") {
+                        scope.hora_inicio.hora = 0;
+                    } else {
+                        scope.hora_inicio.hora = parseInt(scope.hora_inicio.hora);
+                        if (isNaN(scope.hora_inicio.hora)) {
+                            return;
+                        }
+                        if (scope.hora_inicio.hora >= 24) {
+                            scope.hora_inicio.hora = 1;
+                        }
+                    }
+
+                    if (scope.minuto_inicio.minuto === "") {
+                        scope.minuto_inicio.minuto = 0;
+                    } else {
+                        scope.minuto_inicio.minuto = parseInt(scope.minuto_inicio.minuto);
+                        if (isNaN(scope.minuto_inicio.minuto)) {
+                            return;
+                        }
+                        if (scope.minuto_inicio.minuto >= 60) {
+                            scope.minuto_inicio.minuto = 1;
+                        }
+                    }
+                    //----
+                    if (scope.hora_fim.hora === "") {
+                        scope.hora_fim.hora = 0;
+                    } else {
+                        scope.hora_fim.hora = parseInt(scope.hora_fim.hora);
+                        if (isNaN(scope.hora_fim.hora)) {
+                            return;
+                        }
+                        if (scope.hora_fim.hora >= 24) {
+                            scope.hora_fim.hora = 1;
+                        }
+                    }
+
+                    if (scope.minuto_fim.minuto === "") {
+                        scope.minuto_fim.minuto = 0;
+                    } else {
+                        scope.minuto_fim.minuto = parseInt(scope.minuto_fim.minuto + "");
+                        if (isNaN(scope.minuto_fim.minuto)) {
+                            return;
+                        }
+                        if (scope.minuto_fim.minuto >= 60) {
+                            scope.minuto_fim.minuto = 1;
+                        }
+                    }
+
+
+
+                    if (typeof scope["model"] !== "undefined") {
+
+                        var d = new Date(parseInt(scope.model+""));
+                        d.setHours(scope.hora_model.hora);
+                        d.setMinutes(scope.minuto_model.minuto);
+                        scope.model = d.getTime();
+
+                    }
+
+                    if (typeof scope["inicio"] !== "undefined") {
+
+                        var d = new Date(parseInt(scope.inicio+""));
+
+                        d.setHours(scope.hora_inicio.hora);
+                        d.setMinutes(scope.minuto_inicio.minuto);
+                        scope.inicio = d.getTime();
+
+                    }
+
+                    if (typeof scope["fim"] !== "undefined") {
+
+                        var d = new Date(parseInt(scope.fim+""));
+                        d.setHours(scope.hora_fim.hora);
+                        d.setMinutes(scope.minuto_fim.minuto);
+                        scope.fim = d.getTime();
+
+                    }
+
+
+                }
+
+                scope.attCalendario = function () {
+
+                    if (typeof scope["model"] === 'undefined') {
+                        if (typeof scope["inicio"] === 'undefined' || typeof scope["fim"] === 'undefined') {
+                            return;
+                        }
+                    }
+
+                    scope.elementos = [];
+                    var cmp = new Date(parseFloat(scope.model+""));
+                    var inicio = new Date(parseFloat(scope.inicio + ""));
+                    var fim = new Date(parseFloat(scope.fim + ""));
+                    var data = new Date(parseFloat(scope.initDate + ""));
+                    var clone = new Date(parseFloat(scope.initDate + ""));
+                    for (var i = 0; i < scope.quantidade_meses; i++) {
+                        data.setDate(1);
+                        var mes = data.getMonth();
+                        scope.elementos[i] = {titulo: data.getFullYear() + "/" + scope.meses_alias[data.getMonth()], dias: [], i: i};
+                        while (data.getDay() !== 0)
+                            data.setDate(data.getDate() - 1);
+                        for (var j = 0; j < 5; j++) {
+                            scope.elementos[i].dias[j] = [];
+                            for (var k = 0; k < 7; k++, data.setDate(data.getDate() + 1)) {
+                                if (!scope.intervalo) {
+                                    scope.elementos[i].dias[j][k] = {dia: data.getDate(), millis: data.getTime(), mes_contexto: data.getMonth() === mes, inicio: false, fim: false, intervalo: false, selecionado: cmp.getFullYear() === data.getFullYear() && cmp.getMonth() === data.getMonth() && cmp.getDate() === data.getDate(), j: j, k: k};
+                                } else {
+                                    scope.elementos[i].dias[j][k] = {dia: data.getDate(), millis: data.getTime(), mes_contexto: data.getMonth() === mes, inicio: inicio.getFullYear() === data.getFullYear() && inicio.getMonth() === data.getMonth() && inicio.getDate() === data.getDate(), fim: fim.getFullYear() === data.getFullYear() && fim.getMonth() === data.getMonth() && fim.getDate() === data.getDate(), intervalo: data.getTime() > inicio.getTime() && data.getTime() < fim.getTime(), selecionado: false, j: j, k: k};
+                                }
+                            }
+                        }
+                        clone.setMonth(clone.getMonth() + 1);
+                        data = clone;
+                        clone = new Date(clone.getTime());
+                    }
+
+                }
+
+                scope.attCalendario();
+
+
+                scope.inif = 0;
+
+                scope.eventoCalendarioReal = false;
+
+                scope.setData = function (dt) {
+
+
+                    if (!scope.intervalo) {
+                        
+                        
+                        scope.model = dt.millis;
+
+                        scope.attCalendario();
+
+                        $timeout(function () {
+                            
+                            scope.change();
+
+                        }, 100)
+
+
+                    } else {
+
+                        scope.setDataIntervalo(dt);
+
+                    }
+
+                }
+
+                scope.setDataIntervalo = function (dt) {
+
+
+
+                    if (dt.inicio && scope.inif === 0) {
+                        scope.inif = 1;
+                    } else if (dt.fim && scope.inif === 0) {
+                        scope.inif = -1;
+                    } else {
+                        if (scope.setIntervalo(dt)) {
+                            scope.inif = 0;
+                        }
+                    }
+
+                }
+
+                scope.confirmar = function () {
+                    scope.dsp = false;
+                    scope.confirma();
+                }
+
+                scope.setIntervalo = function (dt) {
+
+                    if (scope.inif > 0) {
+
+
+                        if (scope.fim < dt.millis) {
+                            msg.erro("A data inicial nao pode ser maior que a final");
+                            return false;
+                        }
+
+                        scope.inicio = dt.millis;
+                        scope.attCalendario();
+
+                        $timeout(function () {
+
+                            scope.change();
+
+                        }, 100)
+
+
+                    } else if (scope.inif < 0) {
+
+                        if (scope.inicio > dt.millis) {
+                            msg.erro("A data final nao pode ser menor que a inicial");
+                            return false;
+                        }
+
+                        scope.fim = dt.millis;
+                        scope.attCalendario();
+
+                        $timeout(function () {
+
+                            scope.change();
+
+                        }, 100)
+
+                    }
+
+                    return true;
+
+                }
+
+                scope.addMonth = function () {
+                    scope.quantidade_meses++;
+                    scope.attCalendario();
+                }
+
+                scope.removeMonth = function () {
+                    scope.quantidade_meses--;
+                    scope.quantidade_meses = Math.max(1, scope.quantidade_meses);
+                    scope.attCalendario();
+                }
+
+                scope.prevMonth = function () {
+                    var dt = new Date(parseFloat(scope.initDate+""));
+                    if (dt.getMonth() > 0) {
+                        dt.setMonth(dt.getMonth() - 1);
+                        dt.setDate(1);
+                    } else {
+                        dt.setYear(dt.getFullYear() - 1);
+                        dt.setMonth(11);
+                        dt.setDate(1);
+                    }
+                    scope.initDate = dt.getTime();
+                    scope.attCalendario();
+                }
+
+                scope.nextMonth = function () {
+                    var dt = new Date(parseFloat(scope.initDate+""));
+                    dt.setMonth(dt.getMonth() + 1);
+                    dt.setDate(1);
+                    scope.initDate = dt.getTime();
+                    scope.attCalendario();
+                }
+
+                if (typeof scope["refresh"] !== 'undefined') {
+                    scope.$watch(function () {
+                        return scope.refresh;
+                    }, function (n, a) {
+                        
+                        scope.intervalo = (typeof scope["inicio"] !== 'undefined') && (typeof scope["fim"] !== 'undefined');
+                        scope.quantidade_meses = (typeof scope["meses"] !== 'undefined') ? scope.meses : 2;
+                        scope.elementos = [];
+                        scope.horas = [];
+                        scope.minutos = [];
+                        scope.botao = (typeof scope["botao"] === 'undefined') ? false : scope.botao;
+                        scope.tem_confirma = scope.confirma !== undefined;
+                        scope.dsp = !scope.botao;
+
+                        scope.hora_model = {hora: 12};
+                        scope.minuto_model = {minuto: 10};
+                        scope.hora_inicio = {hora: 12};
+                        scope.minuto_inicio = {minuto: 10};
+                        scope.hora_fim = {hora: 12};
+                        scope.minuto_fim = {minuto: 10};
+                        
+                        if (typeof scope["model"] !== 'undefined') {
+                            scope.hora_model.hora = new Date(parseFloat(scope.model+"")).getHours();
+                            scope.minuto_model.minuto = new Date(parseFloat(scope.model+"")).getMinutes();
+                        }
+
+                        if (typeof scope["inicio"] !== 'undefined') {
+                            scope.hora_inicio.hora = new Date(parseFloat(scope.inicio+"")).getHours();
+                            scope.minuto_inicio.minuto = new Date(parseFloat(scope.inicio+"")).getMinutes();
+                        }
+
+                        if (typeof scope["fim"] !== 'undefined') {
+                            scope.hora_fim.hora = new Date(parseFloat(scope.fim+"")).getHours();
+                            scope.minuto_fim.minuto = new Date(parseFloat(scope.fim+"")).getMinutes();
+                        }
+
+
+                        if (!scope.intervalo) {
+                            scope.initDate = angular.copy(scope.model);
+                        } else {
+                            scope.initDate = angular.copy(scope.inicio);
+                        }
+                        
+                        scope.inif = 0;
+                   
+                        scope.attCalendario();
+                    }, false);
+                }
+            }
+            lk();
+        }
+    };
+})

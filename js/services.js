@@ -540,7 +540,7 @@ rtc.service('campanhaService', function ($http, $q) {
     this.getProdutosDia = function (dia, fn) {
         baseService($http, $q, {
             o: {dia: dia},
-            query: "$total=ceil($empresa->getCountProdutos($c,'produto.disponivel>0')/5);$x1=$o->dia*$total;$x2=(($o->dia%5)+1)*$total;$r->produtos=$empresa->getProdutos($c,$x1,$x2,'produto.disponivel>0','');",
+            query: "$r->produtos=Sistema::getProdutosDoDia($c,$o->dia,5,$empresa)",
             sucesso: fn,
             falha: fn
         });
