@@ -152,7 +152,7 @@
                                                              <br>
                                                              <i class="fas fa-shopping-cart"></i>&nbsp Comprar
                                                              
-                                                             <div ng-if="validade.oferta" style="position:absolute;width:100% height:30px;top:-15px;left:5px">
+                                                             <div ng-if="validade.oferta" style="position:absolute;width:100%;height:30px;top:-15px;left:5px">
                                                                  <cronometro model="validade.restante"></cronometro>
                                                              </div>
                                                         </button>

@@ -84,9 +84,11 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="table-responsive">
+
                                             <div class="product-btn m-b-20">
-                                                <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ng-click="setCampanhaCriacao(criacao_campanhas[0])"><i class="fas fa-plus-circle m-r-10"></i>Nova campanha</a>
+                                                <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ng-click="setDataCampanha()"><i class="fas fa-plus-circle m-r-10"></i>Nova campanha</a>
                                             </div>
+
                                             <table id="clientes" class="table table-striped table-bordered first">
                                                 <thead>
                                                     <tr>
@@ -131,7 +133,7 @@
                                                                             <tr ng-repeat="prod in campanha[0].produtos">
                                                                                 <th class="text-center">{{prod.produto.id}}</th>
                                                                                 <th>{{prod.produto.nome}}</th>
-                                                                                <th ng-if="prod.validade !== 1000">{{prod.validade | data}}</th>
+                                                                                <th ng-if="prod.validade !== 1000">{{prod.validade| data}}</th>
                                                                                 <th ng-if="prod.validade === 1000">------</th>
                                                                                 <th class="text-center">{{prod.limite}}</th>
                                                                                 <th class="text-center">R$ {{prod.valor}}</th>
@@ -227,24 +229,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="txtemail" class="col-3 col-lg-2 col-form-label text-left">Inicio</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtemail" ng-model="campanha.inicio_texto" type="text" required data-parsley-type="email" placeholder="" class="form-control date_time">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">Fim</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="campanha.fim_texto" class="form-control date_time">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
+                                    <calendario inicio="campanha.inicio" tempo="true" fim="campanha.fim" botao="true" meses="1" refresh="campanha.id"></calendario>
                                     <div class="form-group row">
                                         <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">Prazo</label>
                                         <div class="col-9 col-lg-10">
@@ -268,7 +254,7 @@
                                         <br>
                                         <button class="btn btn-primary m-b-20" type="button" onclick="$('#produtos').modal('show')"><i class="fa fa-plus-circle"></i>&nbsp; Adicionar produto</button>
                                         <br>
-                                        
+
                                         <table class="table table-striped table-bordered first">
                                             <thead>
                                             <th>Cod.</th>
@@ -508,89 +494,71 @@
                             </div>
                             <div class="modal-body">
 
-                                <nav>
-                                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                        <a class="nav-item nav-link {{c.numero==0?'active':''}}" id="nav-camp-tab{{c.numero}}" ng-repeat="c in criacao_campanhas" ng-click="setCampanhaCriacao(c)" data-toggle="tab" href="#nav-camp{{c.numero}}" role="tab" aria-controls="nav-camp{{c.numero}}" aria-selected="true">{{c.nome}}</a>
-                                    </div>
-                                </nav>
-                                <div class="tab-content" id="nav-tabContent">
-                                    <div class="tab-pane fade {{c.numero==0?'show active':''}}" ng-repeat="c in criacao_campanhas" id="nav-camp{{c.numero}}" role="tabpanel" aria-labelledby="nav-camp-tab{{c.numero}}">
-                                        <br>
+
+
+                                <calendario tempo="false" model="agora" change="setDataCampanha()"></calendario>
+                                <br>
+                                <div ng-repeat="cc in c.campanhas" class="row">
+                                    <div class="col-md-6">
                                         <div class="row">
-                                            <div class="col-md-3" style="text-align:left">
+                                            <div class="col-md-6" style="text-align:left">
                                                 Nome
                                             </div>
-                                            <div class="col-md-2" style="text-align:left">
+                                            <div class="col-md-4" style="text-align:left">
                                                 Prazo
                                             </div>
-                                            <div class="col-md-1" style="text-align:left">
+                                            <div class="col-md-2" style="text-align:left">
                                                 Parcelas
                                             </div>
-                                            <div class="col-md-3" style="text-align:left">
-                                                Data Inicial
-                                            </div>
-                                            <div class="col-md-3" style="text-align:left">
-                                                Data Final
-                                            </div>
                                         </div>
-                                        <div class="row" ng-repeat="cc in c.campanhas" style="margin-bottom:4px">
-                                            <div class="col-md-3" style="text-align:left">
+                                        <div class="row" style="margin-bottom:4px">
+                                            <div class="col-md-6" style="text-align:left">
                                                 <input type="text" class="form-control" ng-model="cc.nome">
                                             </div>
-                                            <div class="col-md-2" style="text-align:left">
+                                            <div class="col-md-4" style="text-align:left">
                                                 <input type="text" class="form-control" ng-model="cc.prazo">
                                             </div>
-                                            <div class="col-md-1" style="text-align:left">
+                                            <div class="col-md-2" style="text-align:left">
                                                 <input type="text" class="form-control" ng-model="cc.parcelas">
                                             </div>
-                                            <div class="col-md-3" style="text-align:left">
-                                                {{nmd(cc.inicio)}}
-                                                <br>
-                                                <input type="text" class="form-control" ng-model="cc.inicio">
-                                            </div>
-                                            <div class="col-md-3" style="text-align:left">
-                                                {{nmd(cc.fim)}}
-                                                <input type="text" class="form-control" ng-model="cc.fim">
-                                            </div>
-                                        </div>
-                                        <hr>
-
-                                        <table class="table table-striped table-bordered first">
-                                            <thead>
-                                            <th>Camp</th>
-                                            <th>Produto</th>
-                                            <th>Validade</th>
-                                            <th>Limite</th>
-                                            <th>Valor</th>
-                                            <th ng-repeat="v in campanha.lista.elementos[0][0].valores">Sugestao</th>
-                                            <th><i class="fas fa-edit"></i> R$</th>
-                                            </thead>
-                                            <tr ng-repeat="prod in campanha.lista.elementos">
-                                                <th><button ng-click="addNumeracao(prod[0])" class="btn btn-default" style="width:23px;height:23px;padding:1px;display:inline;background-color:{{getNumeracaoCor(prod[0].numeracao)}};color:#FFFFFF">{{getNumeracaoAlfabetica(prod[0].numeracao)}}</button></th>
-                                                <th>{{prod[0].produto.id}} - {{prod[0].produto.nome}}</th>
-                                                <th ng-if="prod[0].validade !== 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-{{prod[0].validade<0?'danger':'success'}}" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">{{(prod[0].validade > 0) ? (prod[0].validade | data_st) : 'Selecione'}}</strong></th>
-                                                <th ng-if="prod[0].validade === 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-warning" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">------</strong></th>
-                                                <th><input type="text" style="max-width:60px" class="form-control" ng-model="prod[0].limite"></th>
-                                                <th>{{prod[0].produto.custo}}</th>
-                                                <th ng-click="selecionarValor(prod[0], v)" style="cursor:pointer;{{v.selecionado?'text-decoration:underline;color:Green':''}}" ng-repeat="v in prod[0].valores">{{v.valor}} R$</th>
-                                                <th ng-click="selecionarValor(prod[0], prod[0].valor_editavel)"><input type="text" class="form-control" style="width:50px;{{prod[0].valor_editavel.selecionado?'color:Green;text-decoration:underline':''}}" ng-model="prod[0].valor_editavel.valor"></th>
-                                            </tr>
-                                        </table>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                            <nav aria-label="Page navigation example">
-                                                <ul class="pagination justify-content-end">
-
-                                                    <li class="page-item" ng-repeat="pg in campanha.lista.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-
-                                                </ul>
-                                            </nav>
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <calendario inicio="cc.inicio" tempo="true" fim="cc.fim" botao="true" meses="1"></calendario>
+                                    </div>
                                 </div>
+                                <hr>
 
+                                <table class="table table-striped table-bordered first">
+                                    <thead>
+                                    <th>Camp</th>
+                                    <th>Produto</th>
+                                    <th>Validade</th>
+                                    <th>Limite</th>
+                                    <th>Valor</th>
+                                    <th ng-repeat="v in campanha.lista.elementos[0][0].valores">Sugestao</th>
+                                    <th><i class="fas fa-edit"></i> R$</th>
+                                    </thead>
+                                    <tr ng-repeat="prod in campanha.lista.elementos">
+                                        <th><button ng-click="addNumeracao(prod[0])" class="btn btn-default" style="width:23px;height:23px;padding:1px;display:inline;background-color:{{getNumeracaoCor(prod[0].numeracao)}};color:#FFFFFF">{{getNumeracaoAlfabetica(prod[0].numeracao)}}</button></th>
+                                        <th>{{prod[0].produto.id}} - {{prod[0].produto.nome}}</th>
+                                        <th ng-if="prod[0].validade !== 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-{{prod[0].validade<0?'danger':'success'}}" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">{{(prod[0].validade > 0) ? (prod[0].validade | data_st) : 'Selecione'}}</strong></th>
+                                        <th ng-if="prod[0].validade === 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-warning" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">------</strong></th>
+                                        <th><input type="text" style="max-width:60px" class="form-control" ng-model="prod[0].limite"></th>
+                                        <th>{{prod[0].produto.custo}}</th>
+                                        <th ng-click="selecionarValor(prod[0], v)" style="cursor:pointer;{{v.selecionado?'text-decoration:underline;color:Green':''}}" ng-repeat="v in prod[0].valores">{{v.valor}} R$</th>
+                                        <th ng-click="selecionarValor(prod[0], prod[0].valor_editavel)"><input type="text" class="form-control" style="width:50px;{{prod[0].valor_editavel.selecionado?'color:Green;text-decoration:underline':''}}" ng-model="prod[0].valor_editavel.valor"></th>
+                                    </tr>
+                                </table>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+
+                                    <div style="display: inline-block" class="page-item" ng-repeat="pg in campanha.lista.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></div>
+                                </div>
+                                
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary" data-dismiss="modal" aria-label="Close" ng-click="terminarCadastro()"><i class="fas fa-check"></i>&nbsp; Terminar</button>
+                                <button class="btn btn-primary" ng-click="terminarCadastro()" ng-if="!campanha.terminada"><i class="fas fa-check"></i>&nbsp; Terminar</button>
+                                <button class="btn btn-warning" data-dismiss="modal" aria-label="Close" ng-if="campanha.terminada"><i class="fas fa-check"></i>&nbsp; Campanha ja esta formada</button>
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
                             </div>
                         </div>
@@ -598,7 +566,7 @@
                 </div>
 
                 <!-- /.modal-content VALIDADE DE PRODUTO --> 
-                
+
                 <div class="modal fade" id="validadeProduto" tabindex="99" role="dialog" aria-labelledby="validadeProduto" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -617,7 +585,7 @@
                                     </thead>
                                     <tr ng-repeat="v in produto.validades">
                                         <th>{{produto.nome}}</th>
-                                        <th ng-if="v.validade !== 1000">{{v.validade | data}} <i class="fas fa-arrow-up" ng-if="v.alem" ></i></th>
+                                        <th ng-if="v.validade !== 1000">{{v.validade| data}} <i class="fas fa-arrow-up" ng-if="v.alem" ></i></th>
                                         <th ng-if="v.validade === 1000"> ------ </th>
                                         <th class="text-center">{{v.quantidade}}</th>
                                         <th><button class="btn btn-success" data-dismiss="modal" aria-label="Close" ng-click="setAutoValidade(v)"><i class="fas fa-plus-circle"></i></th>
@@ -700,128 +668,128 @@
                     </div>
                 </div>
                 <!-- /.modal-content --> 
-                
+
                 <!-- /.modal-content LOADING --> 
-            <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                        </div>
-                        <div class="modal-body text-center">
+                <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body text-center">
 
-                            <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                            <br>
-                            <h3 style="margin-top:20px;">Carregando as informações...</h3>
+                                <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
+                                <br>
+                                <h3 style="margin-top:20px;">Carregando as informações...</h3>
 
-                        </div>
-                        <div class="modal-footer">
+                            </div>
+                            <div class="modal-footer">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
 
-            <!-- jquery 3.3.1 -->
-            <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-            <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
-            <script src="assets/libs/js/form-mask.js"></script>
-            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+                <!-- jquery 3.3.1 -->
+                <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+                <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
+                <script src="assets/libs/js/form-mask.js"></script>
+                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
-            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-            <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-            <!-- slimscroll js -->
-            <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-            <!-- main js -->
-            <script src="assets/libs/js/main-js.js"></script>
-            <!-- chart chartist js -->
-            <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
-            <!-- sparkline js -->
-            <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
-            <!-- morris js -->
-            <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
-            <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
-            <!-- chart c3 js -->
-            <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
-            <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
-            <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
-            <script src="assets/libs/js/dashboard-ecommerce.js"></script>
-            <!-- parsley js -->
-            <script src="assets/vendor/parsley/parsley.js"></script>
+                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+                <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+                <!-- slimscroll js -->
+                <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+                <!-- main js -->
+                <script src="assets/libs/js/main-js.js"></script>
+                <!-- chart chartist js -->
+                <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
+                <!-- sparkline js -->
+                <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+                <!-- morris js -->
+                <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
+                <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
+                <!-- chart c3 js -->
+                <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
+                <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+                <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
+                <script src="assets/libs/js/dashboard-ecommerce.js"></script>
+                <!-- parsley js -->
+                <script src="assets/vendor/parsley/parsley.js"></script>
 
-            <!-- Optional JavaScript -->
-            <script>
+                <!-- Optional JavaScript -->
+                <script>
 
-                                var sh = false;
-                                var it = null;
+                                                        var sh = false;
+                                                        var it = null;
 
-                                loading.show = function () {
-                                    if (it != null) {
-                                        clearInterval(it);
-                                    }
-                                    it = setInterval(function () {
-                                        $("#loading").modal("show");
-                                        if ($("#loading").hasClass('in')) {
-                                            clearInterval(it);
-                                        }
-                                    }, 300)
+                                                        loading.show = function () {
+                                                            if (it != null) {
+                                                                clearInterval(it);
+                                                            }
+                                                            it = setInterval(function () {
+                                                                $("#loading").modal("show");
+                                                                if ($("#loading").hasClass('in')) {
+                                                                    clearInterval(it);
+                                                                }
+                                                            }, 300)
 
-                                }
+                                                        }
 
-                                loading.close = function () {
+                                                        loading.close = function () {
 
-                                    if (it != null) {
-                                        clearInterval(it);
-                                    }
-                                    it = setInterval(function () {
-                                        $("#loading").modal("hide");
-                                        if (!$("#loading").hasClass('in')) {
-                                            clearInterval(it);
-                                        }
-                                    }, 300)
+                                                            if (it != null) {
+                                                                clearInterval(it);
+                                                            }
+                                                            it = setInterval(function () {
+                                                                $("#loading").modal("hide");
+                                                                if (!$("#loading").hasClass('in')) {
+                                                                    clearInterval(it);
+                                                                }
+                                                            }, 300)
 
-                                }
-                    
-                    
-                    $(document).ready(function () {
-                                        $(document).on({
-                                            'show.bs.modal': function () {
-                                                var zIndex = 1040 + (10 * $('.modal:visible').length);
-                                                $(this).css('z-index', zIndex);
-                                                setTimeout(function () {
-                                                    $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
-                                                }, 0);
-                                            },
-                                            'hidden.bs.modal': function () {
-                                                if ($('.modal:visible').length > 0) {
-                                                    // restore the modal-open class to the body element, so that scrolling works
-                                                    // properly after de-stacking a modal.
-                                                    setTimeout(function () {
-                                                        $(document.body).addClass('modal-open');
-                                                    }, 0);
-                                                }
-                                            }
-                                        }, '.modal');
-                                    });
-                                    
-                                    $("#loading").modal({
-                        backdrop: 'static',
-                        keyboard: false
-                    })
-                    
-                    
-                    
-                    $(document).on('keyup', '.date_time', function() {
-                        $(this).mask('00/00/0000 00:00:00');
-                    });
-                    
-                     $(document).ready(function () {
-                         $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
-                         $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                         $('.btndel').tooltip({title: "Deletar", placement: "top"});
-                     });
-                                                        
+                                                        }
+
+
+                                                        $(document).ready(function () {
+                                                            $(document).on({
+                                                                'show.bs.modal': function () {
+                                                                    var zIndex = 1040 + (10 * $('.modal:visible').length);
+                                                                    $(this).css('z-index', zIndex);
+                                                                    setTimeout(function () {
+                                                                        $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+                                                                    }, 0);
+                                                                },
+                                                                'hidden.bs.modal': function () {
+                                                                    if ($('.modal:visible').length > 0) {
+                                                                        // restore the modal-open class to the body element, so that scrolling works
+                                                                        // properly after de-stacking a modal.
+                                                                        setTimeout(function () {
+                                                                            $(document.body).addClass('modal-open');
+                                                                        }, 0);
+                                                                    }
+                                                                }
+                                                            }, '.modal');
+                                                        });
+
+                                                        $("#loading").modal({
+                                                            backdrop: 'static',
+                                                            keyboard: false
+                                                        })
+
+
+
+                                                        $(document).on('keyup', '.date_time', function () {
+                                                            $(this).mask('00/00/0000 00:00:00');
+                                                        });
+
+                                                        $(document).ready(function () {
+                                                            $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                                                            $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                                                            $('.btndel').tooltip({title: "Deletar", placement: "top"});
+                                                        });
+
                 </script>
 
                 </body>

@@ -12,6 +12,55 @@
  * @author Renan
  */
 class Sistema {
+    
+    public static function getProdutosDoDia($con,$dia,$num,$empresa){
+        
+        $dia = $dia-1;
+        
+        while($dia<0){
+            $dia += $num;
+        }
+        
+        $dia = $dia%$num;
+        
+        $classes = array();
+        $ps = $con->getConexao()->prepare("SELECT id,classificacao_saida FROM produto WHERE id_empresa=$empresa->id AND produto.disponivel > 0");
+        $ps->execute();
+        $ps->bind_result($id,$classe);
+        while($ps->fetch()){
+            if(!isset($classes[$classe])){
+                $classes[$classe] = array();
+            }
+            $classes[$classe][] = $id;
+        }
+        $ps->close();
+        
+        $produtos = "(-1";
+        
+        
+        foreach($classes as $key=>$classe){
+            
+            $fat = floor(count($classe)/$num);
+            $rst = count($classe)%$num;
+            
+            for($i=$fat*$dia;$i<$fat*($dia+1);$i++){
+                $produtos .= ",".$classe[$i];
+            }
+            
+            if($dia<$rst){
+                
+                $produtos .= ",".$classe[$fat*$num+$dia];
+                
+            }
+            
+        }
+        
+        $produtos .= ")";
+        
+        
+        return $empresa->getProdutos($con,0,10000000,"produto.id IN $produtos","");
+        
+    }
 
     public static function finalizarCompraParceiros($con, $pedido, $empresa) {
 
