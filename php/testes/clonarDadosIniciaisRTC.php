@@ -1445,19 +1445,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             }
         }
 */
-        $classes = array();
-        $ps = $this->getConexao()->prepare("SELECT CEIL((k.classe/100)),k.id_produto FROM (SELECT COUNT(*) as 'classe',CODPRO as 'id_produto' FROM db_agrofauna_filial17.COMFPFIC WHERE ATIVID='S' GROUP BY CODPRO) k ORDER BY k.classe DESC");
-        $ps->execute();
-        $ps->bind_result($classe,$produto);
-        while($ps->fetch()){
-            $classes[$produto] = $classe;
-        }
-        $ps->close();
-        foreach($classes as $id_produto=>$classe){
-            $ps = $con->getConexao()->prepare("UPDATE produto SET classificacao_saida=$classe WHERE id_universal=$id_produto");
-            $ps->execute();
-            $ps->close();
-        }
+        
         /*
         $g = new Getter($filial);
 
@@ -1802,6 +1790,8 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
           $ps->close();
           }
          */
+        
+        
         /*
         $ps = $con->getConexao()->prepare("DELETE FROM movimento");
         $ps->execute();
