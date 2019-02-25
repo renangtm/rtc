@@ -262,7 +262,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-row" ng-if="nota.emitida">
+                                    <div class="form-row">
                                         <div class="col-9">
                                             <div class="form-group">                                             
                                                 <div class="form-row" style="margin-bottom:5px">
@@ -287,6 +287,14 @@
                                                     </div>
                                                     <div class="col-md-5">
                                                         <input type="text" class="form-control" ng-model="nota.protocolo"></input>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row" style="margin-bottom:5px">
+                                                    <div class="col-md-5">
+                                                        <label for="">Numero: </label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <input type="number" class="form-control" ng-model="nota.numero"></input>
                                                     </div>
                                                 </div>
                                             </div>			

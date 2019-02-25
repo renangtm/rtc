@@ -152,16 +152,16 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             }
 
             $m = $mp[$value->ficha];
+            
+            $p = min(max(0,$value->numero_parcela-1),count($vencimentos[$value->ficha])-1);
 
-
-            while (!isset($vencimentos[$value->ficha][$m])) {
-                $m--;
-                if($m<0)continue 2;
+            if (!isset($vencimentos[$value->ficha][$p])) {
+                continue;
             }
 
 
             $value->vencimento = new stdClass();
-            $value->vencimento->id = $vencimentos[$value->ficha][$m];
+            $value->vencimento->id = $vencimentos[$value->ficha][$p];
 
             $mp[$value->ficha] ++;
 
@@ -235,17 +235,17 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             }
 
             $m = $mp[$value->ficha];
+            
+            $p = min(max(0,$value->numero_parcela-1),count($vencimentos[$value->ficha])-1);
 
-
-            while (!isset($vencimentos[$value->ficha][$m])) {
-                $m--;
-                if($m<0)continue 2;
+            if (!isset($vencimentos[$value->ficha][$p])) {
+                continue;
             }
 
 
 
             $value->vencimento = new stdClass();
-            $value->vencimento->id = $vencimentos[$value->ficha][$m];
+            $value->vencimento->id = $vencimentos[$value->ficha][$p];
 
             $mp[$value->ficha] ++;
 

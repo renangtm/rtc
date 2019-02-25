@@ -1439,6 +1439,11 @@ rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoSe
 
     $scope.calcular = function () {
 
+        for(var i=0;i<$scope.nota.produtos.length;i++){
+            var p = $scope.nota.produtos[i];
+            p.valor_total = p.valor_unitario*p.quantidade;
+        }
+
         if ($scope.nota.calcular_valores) {
             notaService.calcularImpostosAutomaticamente($scope.nota, function (n) {
 
