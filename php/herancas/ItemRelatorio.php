@@ -68,6 +68,18 @@ class ItemRelatorio {
                 $w .= " AND k.$campo->nome='" . $this->valores_campos[$key] . "'";
             }
         }
+        
+        foreach ($this->relatorio->campos as $key => $campo) {
+            $f = $campo->filtro;
+            
+            if ($f !== "") {
+                if($w === ""){
+                    $w .= "WHERE $f";
+                }else{
+                    $w .= " AND $f";
+                }
+            }
+        }
 
 
 
