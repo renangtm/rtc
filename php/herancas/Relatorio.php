@@ -13,14 +13,20 @@
  */
 class Relatorio {
 
+    public $id;
+    public $nome;
+    
     public $campos;
     public $sql;
     public $order;
 
-    public function __construct($sql) {
+    public function __construct($sql,$id) {
+        
+        $this->id = $id;
         $this->sql = $sql;
         $this->campos = array();
         $this->order = "";
+        
     }
 
     public function getCount($con) {
@@ -31,7 +37,7 @@ class Relatorio {
         $groupby = "";
 
         $a = false;
-        foreach ($campos as $key => $campo) {
+        foreach ($this->campos as $key => $campo) {
 
             if ($campo->filtro !== "") {
 
@@ -64,6 +70,7 @@ class Relatorio {
         }
 
         $query = "SELECT COUNT(*) FROM ($query) kk";
+
 
         $ps = $con->getConexao()->prepare($query);
         $ps->execute();
@@ -136,12 +143,12 @@ class Relatorio {
         }
 
         $query .= " LIMIT $x1, " . ($x2 - $x1);
-
-        $ps = mysql_query($con->getConexao(), $query);
+        
+        $ps = mysqli_query($con->getConexao(), $query);
 
         $itens = array();
 
-        while ($n = mysql_fetch_array($ps)) {
+        while ($n = mysqli_fetch_array($ps)) {
 
             $item = new ItemRelatorio($this);
 

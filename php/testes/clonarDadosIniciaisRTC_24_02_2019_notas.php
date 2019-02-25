@@ -99,7 +99,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         
         //------------
-
+        /*
         $g = new Getter($filial);
 
         $fornecedores_cnpj = array();
@@ -239,7 +239,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             $value->merge($con);
             echo "Inserida a NFE de ficha $value->ficha";
         }
- 
+        */
         //------------------------------------------------------- MATRIZ
 
         $g = new Getter($matriz);
@@ -331,7 +331,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         $produtos = array();
 
-        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,p.QTDPRO,p.VALUNI,p.NATOPE,pi.F_DESCRICA,pi.F_CODPROD FROM db_agrofauna_filial17.CADPED n INNER JOIN db_agrofauna_filial17.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna_filial17.COMFPFIC p ON p.CONTRO=n.P_NRCONTRO INNER JOIN db_agrofauna_filial17.PRODUTO pi ON pi.F_CODPROD=p.CODPRO WHERE n.P_DATAMOV > '2014-19-02'");
+        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,p.QTDPRO,p.VALUNI,p.NATOPE,pi.F_DESCRICA,pi.F_CODPROD FROM db_agrofauna_filial17.CADPED n INNER JOIN db_agrofauna.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna.COMFPFIC p ON p.CONTRO=n.P_NRCONTRO INNER JOIN db_agrofauna.PRODUTO pi ON pi.F_CODPROD=p.CODPRO WHERE n.P_DATAMOV > '2014-19-02'");
         $ps->execute();
         $ps->bind_result($ficha, $qtd, $val, $cfop, $nom, $id);
         while ($ps->fetch()) {

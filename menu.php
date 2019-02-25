@@ -308,7 +308,7 @@ $rtc->numero--;
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav flex-column" id="men">
+                <ul class="navbar-nav flex-column" id="men" ng-controller="crtRelatorio">
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         <select style="background-color:transparent;font-weight:bold;color:#FFFFFF;border:0px solid" class="form-control" onchange="window.location = 'comprar.php?t=' + $(this).find('option:selected').val()">
                             <?php
@@ -359,6 +359,9 @@ $rtc->numero--;
                             <a class="nav-link" href="movimentos_banco.php" ><i class="fas fa-money-bill-alt"></i>Movimentos Financeiro</a>
                         </li>
                     <?php } ?>
+                        <li class="nav-item" ng-repeat="relatorio in relatorios">
+                            <a class="nav-link" href="relatorios.php?rel={{relatorio.id}}" ><i class="fas fa-paper-plane"></i>{{relatorio.nome}}</a>
+                        </li>
                     <?php if ($empresa->is_logistica) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="produto-cliente-logistic.php"><i class="fas fa-camera"></i>Produtos cliente Logistic</a>
