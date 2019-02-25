@@ -186,7 +186,7 @@ echo $relatorio;
                                                             <th ng-repeat="cc in item[0].campos_agrupados">{{cc.titulo}}</th>
                                                             </thead>
                                                             <tr>
-                                                                <td ng-repeat="cc in item[0].valores_campos_agrupados">{{cc}}</td>
+                                                                <td ng-repeat="cc in item[0].valores_campos_agrupados track by $index">{{cc}}</td>
                                                             </tr>
 
 
