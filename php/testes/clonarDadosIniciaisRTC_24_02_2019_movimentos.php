@@ -33,7 +33,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         if (true) {
 
             //retire para realmente executar o script
-            return;
+            //return;
         }
 
         $cidades = array();
@@ -45,7 +45,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             $c = new Cidade();
             $c->id = $id;
             $c->nome = $nome;
-            $cidades[] = $cidade;
+            $cidades[] = $c;
         }
         $ps->close();
 
@@ -129,7 +129,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         $vencimentos = array();
 
-        $ps = $con->getConexao()->prepare("SELECT vencimento.id,nota.ficha FROM vencimento INNER JOIN nota ON nota.id=vencimento.id_nota");
+        $ps = $con->getConexao()->prepare("SELECT vencimento.id,nota.ficha FROM vencimento INNER JOIN nota ON nota.id=vencimento.id_nota WHERE nota.id_empresa=$filial->id");
         $ps->execute();
         $ps->bind_result($id, $ficha);
         while ($ps->fetch()) {
@@ -151,17 +151,17 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
                 $mp[$value->ficha] = 0;
             }
 
-            $m = $mp[$value->ficha] = 0;
+            $m = $mp[$value->ficha];
+            
+            $p = min(max(0,$value->numero_parcela-1),count($vencimentos[$value->ficha])-1);
 
-
-            if (!isset($vencimentos[$value->ficha][$m])) {
+            if (!isset($vencimentos[$value->ficha][$p])) {
                 continue;
             }
 
 
-
             $value->vencimento = new stdClass();
-            $value->vencimento->id = $vencimentos[$value->ficha][$m];
+            $value->vencimento->id = $vencimentos[$value->ficha][$p];
 
             $mp[$value->ficha] ++;
 
@@ -214,23 +214,38 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         }
         $ps->close();
 
+        $vencimentos = array();
+
+        $ps = $con->getConexao()->prepare("SELECT vencimento.id,nota.ficha FROM vencimento INNER JOIN nota ON nota.id=vencimento.id_nota WHERE nota.id_empresa=$matriz->id");
+        $ps->execute();
+        $ps->bind_result($id, $ficha);
+        while ($ps->fetch()) {
+
+            if (!isset($vencimentos[$ficha])) {
+                $vencimentos[$ficha] = array();
+            }
+
+            $vencimentos[$ficha][] = $id;
+        }
+
         foreach ($movimentos as $key => $value) {
 
             if (!isset($mp[$value->ficha])) {
                 $mp[$value->ficha] = 0;
             }
 
-            $m = $mp[$value->ficha] = 0;
+            $m = $mp[$value->ficha];
+            
+            $p = min(max(0,$value->numero_parcela-1),count($vencimentos[$value->ficha])-1);
 
-
-            if (!isset($vencimentos[$value->ficha][$m])) {
+            if (!isset($vencimentos[$value->ficha][$p])) {
                 continue;
             }
 
 
 
             $value->vencimento = new stdClass();
-            $value->vencimento->id = $vencimentos[$value->ficha][$m];
+            $value->vencimento->id = $vencimentos[$value->ficha][$p];
 
             $mp[$value->ficha] ++;
 
