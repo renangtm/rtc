@@ -11,37 +11,49 @@
  *
  * @author Renan
  */
-class RelatorioFinanceiro extends Relatorio{
-    
-    public function __construct($empresa) {
-        
-        parent::__construct("SELECT (CASE WHEN nota.saida THEN 'Saida' ELSE 'Entrada' END) as 'tipo', (CASE WHEN nota.saida THEN CONCAT(CONCAT(nota.id_cliente,' - '),cliente.razao_social) ELSE '---------' END) as 'cliente',(CASE WHEN nota.saida THEN '----------' ELSE CONCAT(CONCAT(nota.id_fornecedor,' - '),fornecedor.nome) END) as 'fornecedor',(CASE WHEN nota.saida THEN vencimento.valor ELSE vencimento.valor*-1 END) as 'valor',DATE(vencimento.data) as 'dia', MONTH(vencimento.data) as 'mes', YEAR(vencimento.data) as 'ano', nota.ficha as 'ficha',(UNIX_TIMESTAMP(vencimento.data)*1000) as 'data' FROM nota INNER JOIN vencimento ON vencimento.id_nota = nota.id LEFT JOIN cliente ON cliente.id=nota.id_cliente LEFT JOIN fornecedor ON fornecedor.id=nota.id_fornecedor WHERE vencimento.id_movimento = 0 AND nota.id_empresa=$empresa->id AND nota.cancelada=false");
-        
-        $saida_entrada = new CampoRelatorio('tipo','Tipo de Movimento','S');
-        $cliente = new CampoRelatorio('cliente','Cliente','S');
-        $fornecedor = new CampoRelatorio('fornecedor','Fornecedor','S');
-        $valor = new CampoRelatorio('valor','Valor da Pendencia','N');
-        $dia = new CampoRelatorio('dia','Dia','N',false,true);
-        $mes = new CampoRelatorio('mes','Mes','N',false,true);
-        $ano = new CampoRelatorio('ano','Ano','N',false,true);
-        $ficha = new CampoRelatorio('ficha','Ficha','T');
-        $data = new CampoRelatorio('data','Data','D');
+class RelatorioFinanceiro extends Relatorio {
+
+    public function __construct($empresa = null) {
+
+        if ($empresa === null) {
+
+            return;
+        }
+
+
+        parent::__construct("SELECT (CASE WHEN nota.saida THEN 'Saida' ELSE 'Entrada' END) as 'tipo', (CASE WHEN nota.saida THEN CONCAT(CONCAT(nota.id_cliente,' - '),cliente.razao_social) ELSE '---------' END) as 'cliente',(CASE WHEN nota.saida THEN '----------' ELSE CONCAT(CONCAT(nota.id_fornecedor,' - '),fornecedor.nome) END) as 'fornecedor',((CASE WHEN nota.saida THEN 1 ELSE -1 END)*(vencimento.valor-(SUM(IFNULL(movimento.valor,0))))) as 'valor',UNIX_TIMESTAMP(vencimento.data)*1000 as 'vencimento', nota.ficha as 'ficha', vencimento.data as 'data', MONTH(vencimento.data) as 'mes', YEAR(vencimento.data) as 'ano', DAY(vencimento.data) as 'dia' FROM nota INNER JOIN vencimento ON vencimento.id_nota = nota.id LEFT JOIN cliente ON cliente.id=nota.id_cliente LEFT JOIN fornecedor ON fornecedor.id=nota.id_fornecedor LEFT JOIN movimento ON movimento.id_vencimento=vencimento.id AND nota.id_empresa=$empresa->id AND nota.cancelada=false GROUP BY vencimento.id", 0);
+
+        $this->nome = "Contas Pagar/Receber";
+
+        $saida_entrada = new CampoRelatorio('tipo', 'Tipo de Movimento', 'T');
+        $saida_entrada->possiveis = array("Saida", "Entrada");
+        $saida_entrada->filtro = "k.tipo='Saida'";
+        $cliente = new CampoRelatorio('cliente', 'Cliente', 'T');
+
+        $fornecedor = new CampoRelatorio('fornecedor', 'Fornecedor', 'T');
+
+        $valor = new CampoRelatorio('valor', 'Valor da Pendencia', 'N');
+        $valor->agrupado = false;
+        $dia = new CampoRelatorio('dia', 'Dia', 'N', false, true);
+        $dia->agrupado = false;
+        $mes = new CampoRelatorio('mes', 'Mes', 'N', false, true);
+        $ano = new CampoRelatorio('ano', 'Ano', 'N', false, true);
+        $ficha = new CampoRelatorio('ficha', 'Ficha', 'T');
+        $ficha->agrupado = false;
+        $data = new CampoRelatorio('data', 'Data', 'D');
         $data->somente_filtro = true;
-        
-        
+
+
         $this->campos = array(
             $saida_entrada,
+            $data,
             $cliente,
             $fornecedor,
             $valor,
             $dia,
             $mes,
             $ano,
-            $ficha,
-            $data);
-        
-        
+            $ficha);
     }
-    
-    
+
 }

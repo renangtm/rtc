@@ -12,6 +12,22 @@
  * @author Renan
  */
 class Sistema {
+  
+    public static function getRelatorios($empresa){
+        
+        $rtc = $empresa->getRTC(new ConnectionFactory());
+        
+        $relatorios = array();
+        
+        if($rtc->numero >= 3){
+            
+            $relatorios[] = new RelatorioFinanceiro($empresa);
+            
+        }
+        
+        return $relatorios;
+        
+    }
     
     public static function getProdutosDoDia($con,$dia,$num,$empresa){
         

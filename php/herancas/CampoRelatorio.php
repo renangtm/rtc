@@ -21,7 +21,7 @@ class CampoRelatorio {
     public $possiveis;
     public $somente_filtro;
     public $null_on_group;
-    function __construct($nome, $titulo, $tipo, $sm=false, $null_on_group=false) {
+    function __construct($nome = null, $titulo = null, $tipo = null, $sm=false, $null_on_group=false) {
 
         $this->nome = $nome;
         $this->titulo = $titulo;
@@ -30,6 +30,7 @@ class CampoRelatorio {
         $this->filtro = "";
         $this->somente_filtro = $sm;
         $this->null_on_group = $null_on_group;
+        $this->possiveis = array();
         
     }
 
@@ -38,12 +39,12 @@ class CampoRelatorio {
             return $this->nome;
         }else{
             if($this->null_on_group){
-                return "------";
+                return "'------'";
             }
             if($this->tipo === 'N'){
                 return "SUM(k.$this->nome)";
             }else if($this->tipo === 'T'){
-                return "CONCAT(CONCAT(CONCAT('Ultimo:',MAX(k.$this->nome)),' - Primeiro:'),MIN(k.$this->nome))";
+                return "CASE WHEN MAX(k.$this->nome) IS NOT NULL AND MAX(k.$this->nome) <> '' THEN CONCAT(CONCAT(CONCAT('Ultimo:',MAX(k.$this->nome)),' - Primeiro:'),MIN(k.$this->nome)) ELSE '------' END";
             }else if($this->tipo === 'D'){
                 return "CONCAT(CONCAT(CONCAT('De:',FROM_UNIXTIME(MIN(k.$this->nome)/1000)),' - Ate:'),FROM_UNIXTIME(MAX(k.$this->nome)/1000))";
             }

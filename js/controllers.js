@@ -1,3 +1,183 @@
+rtc.controller("crtRelatorio", function ($scope, relatorioService) {
+
+    $scope.relatorios = [];
+    $scope.gerado = null;
+
+    $scope.modos = ["Igual a", "Maior que", "Menor que"];
+    $scope.mn = [0, 1, 2];
+
+    if (typeof rtc["relatorio"] !== 'undefined') {
+
+        $scope.relatorio = rtc["relatorio"];
+
+
+    }
+
+    $scope.addOrdem = function (campo) {
+        campo.ordem++;
+    }
+
+    $scope.removeOrdem = function (campo) {
+        campo.ordem = Math.max(0, campo.ordem - 1);
+    }
+
+    $scope.inverteGroup = function (campo) {
+        campo.agrupado = !campo.agrupado;
+    }
+
+    $scope.gerarRelatorio = function () {
+
+        var order = "";
+        var order_fields = [];
+        for (var i = 0; i < $scope.relatorio.campos.length; i++) {
+
+            var campo = $scope.relatorio.campos[i];
+
+            if (campo.ordem > 0) {
+                var j = 0
+                for (; j < order_fields.length; j++) {
+                    if (campo.ordem >= order_fields[j].ordem) {
+                        for (var k = order_fields.length - 1; k >= j; k--) {
+                            order_fields[k + 1] = order_fields[k];
+                        }
+                        break;
+                    }
+                }
+                order_fields[j] = campo;
+            }
+
+            if (campo.possiveis.length > 0) {
+
+                var sub = "";
+                for (var j = 0; j < campo.possiveis.length; j++) {
+                    var p = campo.possiveis[j];
+
+                    if (p.selecionado) {
+                        
+                        if (sub !== "") {
+                            sub += " OR ";
+                        }
+
+                        sub += "k." + campo.nome + "='" + p.termo + "'";
+                    }
+                }
+                if (sub !== "") {
+                    campo.filtro = "(" + sub + ") ";
+                }else{
+                    campo.filtro = "";
+                }
+            } else if (campo.tipo === 'T') {
+
+
+                campo.filtro = "k." + campo.nome + " like '%" + campo.texto + "%' ";
+
+            } else if (campo.tipo === 'N') {
+
+                if (campo.numero !== 0) {
+                    
+
+                    campo.filtro = "k." + campo.nome;
+
+                    if (campo.modo === 0) {
+                        campo.filtro += "=";
+                    } else if (campo.modo === 1) {
+                        campo.filtro += ">";
+                    } else if (campo.modo === 2) {
+                        campo.filtro += "<";
+                    }
+
+                    campo.filtro += campo.numero + " ";
+
+                } else {
+                    campo.filtro = "";
+                }
+
+            } else if (campo.tipo === 'D') {
+
+
+                campo.filtro = "(k." + campo.nome + " >= FROM_UNIXTIME(" + campo.inicio + "/1000) AND k." + campo.nome + " <= FROM_UNIXTIME(" + campo.fim + "/1000)) ";
+
+            }
+
+        }
+
+        for (var i = 0; i < order_fields.length; i++) {
+            if (i > 0) {
+                order += ",";
+            }
+            order += "k." + order_fields[i].nome;
+        }
+
+        $scope.relatorio.order = order;
+        
+        relatorioService.relatorio = $scope.relatorio;
+        
+        $scope.gerado = createAssinc(relatorioService, 1, 20, 1000);
+
+        $("#mdlRelatorio").modal("show");
+
+    }
+
+    $scope.init = function () {
+
+        var r = $scope.relatorio;
+
+        for (var i = 0; i < r.campos.length; i++) {
+
+            var campo = r.campos[i];
+
+            campo.ordem = 0;
+            if (campo.possiveis.length > 0) {
+
+                for (var j = 0; j < campo.possiveis.length; j++) {
+
+                    campo.possiveis[j] = {termo: campo.possiveis[j], selecionado: true};
+
+                }
+
+            } else if (campo.tipo === 'T') {
+
+                campo.texto = "";
+
+            } else if (campo.tipo === 'N') {
+
+                campo.modo = 0;
+                campo.numero = 0;
+
+            } else if (campo.tipo === 'D') {
+
+                campo.inicio = new Date().getTime();
+                campo.fim = new Date().getTime() + (24 * 60 * 60 * 1000);
+
+            }
+
+        }
+
+    }
+
+
+    relatorioService.getRelatorios(function (f) {
+
+        $scope.relatorios = f.relatorios;
+
+        if (typeof $scope["relatorio"] !== 'undefined') {
+
+            for (var i = 0; i < $scope.relatorios.length; i++) {
+                if (($scope.relatorios[i].id + "") === ($scope.relatorio + "")) {
+                    $scope.relatorio = $scope.relatorios[i];
+                    $scope.init();
+                    break;
+                }
+            }
+
+        }
+
+    })
+
+
+
+
+})
 rtc.controller("crtEmpresaConfig", function ($scope, empresaService, cidadeService, baseService, uploadService) {
 
     $scope.empresa = null;
@@ -1010,7 +1190,7 @@ rtc.controller("crtMovimentos", function ($scope, movimentoService, sistemaServi
     })
 
     sistemaService.getHistoricos(function (h) {
-       
+
         $scope.historicos = h.historicos;
 
     })
@@ -1091,15 +1271,15 @@ rtc.controller("crtMovimentos", function ($scope, movimentoService, sistemaServi
             return;
         }
         /*
-        $scope.movimento.data = fromTime($scope.movimento.data_texto);
-
-        if ($scope.movimento.data < 0) {
-
-            msg.alerta("Data do movimento incorreta");
-            return;
-
-        }
-        */
+         $scope.movimento.data = fromTime($scope.movimento.data_texto);
+         
+         if ($scope.movimento.data < 0) {
+         
+         msg.alerta("Data do movimento incorreta");
+         return;
+         
+         }
+         */
 
         baseService.insert($scope.movimento, function (r) {
             if (r.sucesso) {
@@ -2893,12 +3073,12 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
             ["id", "nome", "estoque", "disponivel"], "filtroProdutos");
 
     $scope.agora = new Date().getTime();
-    $scope.campanha = {inicio:$scope.agora,fim:$scope.agora,id:0};
+    $scope.campanha = {inicio: $scope.agora, fim: $scope.agora, id: 0};
     $scope.campanha_nova = {};
 
     $scope.criacao_campanhas = [];
     $scope.cc = null;
-   
+
 
 
     $scope.produto_campanha_novo = {};
@@ -2950,7 +3130,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
         v.selecionado = k;
 
     }
-    
+
     var okc = false;
     campanhaService.getCampanha(function (p) {
 
@@ -2958,8 +3138,8 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
         $scope.campanha = p.campanha;
         okc = true;
         $scope.setDataCampanha();
-       
-        
+
+
     })
 
     $scope.getNumeracaoAlfabetica = function (numero) {
@@ -3087,7 +3267,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     }
 
     var salvarCampanha = function (obj, campanha) {
-        
+
         baseService.merge(campanha, function (r) {
             if (r.sucesso) {
                 obj.atual++;
@@ -3107,7 +3287,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     $scope.terminarCadastro = function () {
 
         var r = [];
-        
+
         for (var i = 0; i < $scope.campanha.campanhas.length; i++) {
 
             var c = $scope.campanha.campanhas[i];
@@ -3124,11 +3304,11 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
 
                 var p = $scope.campanha.produtos[j];
 
-                if(p.validade < 0){
-                    
-                    msg.alerta("O Produto "+p.produto.nome+", esta sem validade selecionada");
+                if (p.validade < 0) {
+
+                    msg.alerta("O Produto " + p.produto.nome + ", esta sem validade selecionada");
                     return;
-                    
+
                 }
 
                 if (p.numeracao !== c.id) {
@@ -3158,12 +3338,12 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
 
                 }
 
-                if(prod.valor <= 0){
-                    msg.alerta("O produto "+prod.produto.nome+", esta sem valor selecionado");
+                if (prod.valor <= 0) {
+                    msg.alerta("O produto " + prod.produto.nome + ", esta sem valor selecionado");
                     return;
-                    
+
                 }
-                
+
                 if (prod.valor > 0) {
 
                     camp.produtos[camp.produtos.length] = prod;
@@ -3185,39 +3365,40 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
         for (var i = 0; i < r.length; i++) {
             salvarCampanha(obj, r[i]);
         }
-        
+
         $scope.campanha.terminada = true;
-        
+
     }
 
     $scope.millis = [];
-   
+
 
     $scope.setDataCampanha = function () {
-        
-        if(!okc)return;
+
+        if (!okc)
+            return;
         $scope.setCampanhaCriacao($scope.agora);
 
     }
-    
-    
+
+
     var inl = false;
     $scope.setCampanhaCriacao = function (millis) {
-     
-        if(inl)
+
+        if (inl)
             return;
-   
+
         var campanha = null;
-        inl=true;
+        inl = true;
         for (var i = 0; i < $scope.millis.length; i++) {
             if ($scope.millis[i] === millis) {
                 campanha = $scope.criacao_campanhas[i];
                 break;
             }
         }
-        
+
         if (campanha === null) {
-            var ms = new Date(parseFloat(millis+""));
+            var ms = new Date(parseFloat(millis + ""));
             var c = angular.copy($scope.campanha_nova);
             c.campanhas = [{
                     inicio: ms.getTime() + dia * i,
@@ -3232,7 +3413,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
             c.nome = "Nova campanha";
 
             c.numero = i;
-            while (new Date(parseFloat(c.fim+"")).getDay() == 0 || new Date(parseFloat(c.fim+"")).getDay() == 6) {
+            while (new Date(parseFloat(c.fim + "")).getDay() == 0 || new Date(parseFloat(c.fim + "")).getDay() == 6) {
                 c.fim += dia;
             }
             c.terminada = false;
@@ -3244,9 +3425,9 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
         $scope.c = campanha;
 
         if (campanha.produtos.length === 0) {
-           
-            campanhaService.getProdutosDia(new Date(parseFloat(millis+"")).getDay(), function (prods) {
-                    
+
+            campanhaService.getProdutosDia(new Date(parseFloat(millis + "")).getDay(), function (prods) {
+
                 for (var i = 0; i < prods.produtos.length; i++) {
 
                     var produto = prods.produtos[i];
@@ -3269,12 +3450,12 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
 
                 campanha.lista = createList(campanha.produtos, 1, 5, "produto.nome");
 
-                inl=false;
+                inl = false;
 
             })
 
-        }else{
-            inl=false;
+        } else {
+            inl = false;
         }
 
         $scope.campanha = campanha;
@@ -3288,9 +3469,9 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     })
 
     $scope.setCampanha = function (campanha) {
-  
+
         $scope.campanha = campanha;
-      
+
     }
 
     $scope.mergeCampanha = function () {

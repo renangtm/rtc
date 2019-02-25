@@ -95,7 +95,7 @@
 
 <div style="position:relative;{{foco()?'z-index:999':'z-index:3'}};padding:10px;background-color: #FAFAFA">
 
-    <div style="width:100%;z-index:500;padding:20px;border-radius: 5px;{{botao?'position:absolute;left:5px;top:5px;border:1px solid':''}};background-color:#FFFFFF" id="cal_dv{{idUnico}}" ng-if="dsp">
+    <div style="width:auto;z-index:500;padding:20px;border-radius: 5px;{{botao?'position:absolute;left:5px;top:5px;border:1px solid':''}};background-color:#FFFFFF" id="cal_dv{{idUnico}}" ng-if="dsp">
         <table ng-repeat="el in elementos" style="display: inline;width:{{100 / quantidade_meses}}%" class="calendarioClasse">
             <tr>
                 <th colspan="{{dias.length}}" style="text-align: center;background-color: #CCC;border-top-left-radius: 5px;border-top-right-radius: {{el.i===quantidade_meses-1?'5px':'0px'}};border-top-left-radius: {{el.i===0?'5px':'0px'}}">

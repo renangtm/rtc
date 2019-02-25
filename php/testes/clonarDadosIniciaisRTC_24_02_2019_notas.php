@@ -99,7 +99,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         
         //------------
-/*
+        /*
         $g = new Getter($filial);
 
         $fornecedores_cnpj = array();
@@ -239,7 +239,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             $value->merge($con);
             echo "Inserida a NFE de ficha $value->ficha";
         }
- */
+        */
         //------------------------------------------------------- MATRIZ
 
         $g = new Getter($matriz);

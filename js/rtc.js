@@ -285,7 +285,7 @@ function createAssinc(lista, cols, rows, maxPage) {
         attList: function () {
 
             var este = this;
-
+            
             lista.getCount(este.filtro, function (r) {
                 //----------------------------
                 var np = Math.ceil(r.qtd / (este.por_pagina * este.por_coluna));
@@ -295,9 +295,9 @@ function createAssinc(lista, cols, rows, maxPage) {
                         Math.min((este.pagina + 1) * (este.por_pagina * este.por_coluna), r.qtd),
                         este.filtro, este.ordem, function (e) {
                             este.elementos = [];
-
+                            
                             var els = e.elementos;
-
+                        
                             for (var i = 0; i < este.por_pagina && (i * este.por_coluna) < els.length; i++) {
                                 este.elementos[i] = [];
                                 for (var j = 0; j < este.por_coluna && (i * este.por_coluna + j) < els.length; j++) {
@@ -319,6 +319,7 @@ function createAssinc(lista, cols, rows, maxPage) {
                             if (typeof este["posload"] !== 'undefined') {
                                 este["posload"](els);
                             }
+                            
 
                         });
 
