@@ -1595,10 +1595,10 @@ rtc.directive('calendario', function ($timeout) {
                     scope.attCalendario();
                 }
 
-                scope.prevMonth = function () {
+                scope.prevMonth = function (q) {
                     var dt = new Date(parseFloat(scope.initDate+""));
                     if (dt.getMonth() > 0) {
-                        dt.setMonth(dt.getMonth() - 1);
+                        dt.setMonth(dt.getMonth() - q);
                         dt.setDate(1);
                     } else {
                         dt.setYear(dt.getFullYear() - 1);
@@ -1609,9 +1609,9 @@ rtc.directive('calendario', function ($timeout) {
                     scope.attCalendario();
                 }
 
-                scope.nextMonth = function () {
+                scope.nextMonth = function (q) {
                     var dt = new Date(parseFloat(scope.initDate+""));
-                    dt.setMonth(dt.getMonth() + 1);
+                    dt.setMonth(dt.getMonth() + q);
                     dt.setDate(1);
                     scope.initDate = dt.getTime();
                     scope.attCalendario();
