@@ -6,6 +6,8 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
     $scope.modos = ["Igual a", "Maior que", "Menor que"];
     $scope.mn = [0, 1, 2];
 
+    $scope.filhos = [];
+
     if (typeof rtc["relatorio"] !== 'undefined') {
 
         $scope.relatorio = rtc["relatorio"];
@@ -23,6 +25,18 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
 
     $scope.inverteGroup = function (campo) {
         campo.agrupado = !campo.agrupado;
+    }
+
+    $scope.detalhes = function (item) {
+
+
+        relatorioService.getFilhos(item, function (f) {
+
+            $scope.filhos = f.filhos;
+            $("#mdlFilhos").modal("show");
+
+        })
+
     }
 
     $scope.gerarRelatorio = function () {
@@ -53,7 +67,7 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
                     var p = campo.possiveis[j];
 
                     if (p.selecionado) {
-                        
+
                         if (sub !== "") {
                             sub += " OR ";
                         }
@@ -63,7 +77,7 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
                 }
                 if (sub !== "") {
                     campo.filtro = "(" + sub + ") ";
-                }else{
+                } else {
                     campo.filtro = "";
                 }
             } else if (campo.tipo === 'T') {
@@ -74,7 +88,7 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
             } else if (campo.tipo === 'N') {
 
                 if (campo.numero !== 0) {
-                    
+
 
                     campo.filtro = "k." + campo.nome;
 
@@ -109,9 +123,9 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
         }
 
         $scope.relatorio.order = order;
-        
+
         relatorioService.relatorio = $scope.relatorio;
-        
+
         $scope.gerado = createAssinc(relatorioService, 1, 20, 1000);
 
         $("#mdlRelatorio").modal("show");
@@ -1438,6 +1452,11 @@ rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoSe
     }
 
     $scope.calcular = function () {
+
+        for (var i = 0; i < $scope.nota.produtos.length; i++) {
+            var p = $scope.nota.produtos[i];
+            p.valor_total = p.valor_unitario * p.quantidade;
+        }
 
         if ($scope.nota.calcular_valores) {
             notaService.calcularImpostosAutomaticamente($scope.nota, function (n) {

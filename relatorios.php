@@ -184,11 +184,13 @@ echo $relatorio;
                                                         <table class="table table-striped table-bordered first">
                                                             <thead>
                                                             <th ng-repeat="cc in item[0].campos_agrupados">{{cc.titulo}}</th>
+                                                            <th style="max-width:20px">Det</th>
                                                             </thead>
                                                             <tr>
                                                                 <td ng-repeat="cc in item[0].valores_campos_agrupados track by $index">{{cc}}</td>
+                                                                <td style="text-align: center;max-width:20px;{{item[0].quantidade_filhos>0?'cursor:pointer;color:SteelBlue;background-color:#FFFFFF':''}}" ng-click="detalhes(item[0])"><i class="fas fa-arrow-alt-circle-up"></i></td>
                                                             </tr>
-
+                                                            
 
                                                         </table>
 
