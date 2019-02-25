@@ -23,7 +23,7 @@ class Cidade {
         $this->id = 0;
         $this->excluida = false;
         $this->estado = new Estado();
-        
+        $this->sigla = "SP";
         
     }
     

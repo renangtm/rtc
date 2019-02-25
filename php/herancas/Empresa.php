@@ -3307,8 +3307,8 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare("SELECT "
                 . "campanha.id,"
-                . "campanha.inicio,"
-                . "campanha.fim,"
+                . "UNIX_TIMESTAMP(campanha.inicio)*1000,"
+                . "UNIX_TIMESTAMP(campanha.fim)*1000,"
                 . "campanha.prazo,"
                 . "campanha.parcelas,"
                 . "campanha.cliente_expression,"

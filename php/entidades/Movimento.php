@@ -38,7 +38,24 @@ class Movimento {
         $this->estorno = 0;
     }
 
-    public function insert($con) {
+    public function insert($con, $rp_insert = false) {
+
+        if ($rp_insert) {
+
+            $ps = $con->getConexao()->prepare("INSERT INTO movimento(data,saldo_anterior,valor,id_vencimento,id_banco,juros,descontos,id_historico,id_operacao,estorno) VALUES(FROM_UNIXTIME($this->data/1000),$this->saldo_anterior,$this->valor," . $this->vencimento->id . "," . $this->banco->id . ",$this->juros,$this->descontos," . $this->historico->id . "," . $this->operacao->id . ",$this->estorno)");
+            $ps->execute();
+            $this->id = $ps->insert_id;
+            $ps->close();
+
+
+            if ($this->estorno == 0) {
+                $ps = $con->getConexao()->prepare("UPDATE vencimento SET id_movimento=$this->id, data=data WHERE id=" . $this->vencimento->id);
+                $ps->execute();
+                $ps->close();
+            }
+
+            return;
+        }
 
         if ($this->id == 0) {
 
@@ -78,7 +95,6 @@ class Movimento {
                 $ps->bind_result($v);
                 if ($ps->fetch()) {
                     $ps->close();
-
                 } else {
                     $ps->close();
                     throw new Exception('O Movimento de estorno deve ter a data maior que a do movimento estornado');
@@ -151,7 +167,7 @@ class Movimento {
             $ps->close();
 
             if ($this->estorno == 0) {
-                $ps = $con->getConexao()->prepare("UPDATE vencimento SET id_movimento=$this->id WHERE id=" . $this->vencimento->id);
+                $ps = $con->getConexao()->prepare("UPDATE vencimento SET id_movimento=$this->id,data=data WHERE id=" . $this->vencimento->id);
                 $ps->execute();
                 $ps->close();
             }

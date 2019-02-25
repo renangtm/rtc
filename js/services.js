@@ -1,6 +1,40 @@
 var debuger = function (l) {
     alert(paraJson(l));
 }
+rtc.service('relatorioService', function ($http, $q) {
+    this.getRelatorios = function (fn) {
+        baseService($http, $q, {
+            query: "$r->relatorios=Sistema::getRelatorios($empresa)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getFilhos = function (item,fn) {
+        baseService($http, $q, {
+            o:item,
+            query: "$r->filhos=$o->getFilhos($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.relatorio = null;
+    this.getCount = function(filtro,fn){
+        baseService($http, $q, {
+            o: this.relatorio,
+            query: "$r->qtd=$o->getCount($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, relatorio:this.relatorio},
+            query: "$r->elementos=$o->relatorio->getItens($c,$o->x0,$o->x1)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('logService', function ($http, $q) {
     this.getLogs = function (entidade, fn) {
         baseService($http, $q, {
@@ -540,7 +574,7 @@ rtc.service('campanhaService', function ($http, $q) {
     this.getProdutosDia = function (dia, fn) {
         baseService($http, $q, {
             o: {dia: dia},
-            query: "$total=ceil($empresa->getCountProdutos($c,'produto.disponivel>0')/7);$x1=$o->dia*$total;$x2=($o->dia+1)*$total;$r->produtos=$empresa->getProdutos($c,$x1,$x2,'produto.disponivel>0','');",
+            query: "$r->produtos=Sistema::getProdutosDoDia($c,$o->dia,5,$empresa)",
             sucesso: fn,
             falha: fn
         });

@@ -18,7 +18,7 @@ class Getter {
     function __construct($emp) {
         $this->empresa = $emp;
     }
-    
+
     public function getTransportadoraViaCnpj($con, $cnpj) {
 
         $transportadora_existente = $this->empresa->getTransportadoras($con, 0, 1, "transportadora.cnpj = '" . $cnpj->valor . "'");
@@ -29,7 +29,6 @@ class Getter {
         }
 
         return null;
-        
     }
 
     public function getTransportadoraViaTransportadora($con, $transportadora) {
@@ -60,7 +59,7 @@ class Getter {
 
         return null;
     }
-    
+
     public function getFornecedorViaCnpj($con, $cnpj) {
 
         $fornecedor = $this->empresa->getFornecedores($con, 0, 1, "fornecedor.cnpj='$cnpj->valor'", "");
@@ -108,14 +107,15 @@ class Getter {
         return $produtos_existentes;
     }
 
-    public function getFornecedorViaCliente($con, $cliente) {
+    public function getFornecedorViaCliente($con, $cliente, $cache = true) {
 
-        $fornecedores = $this->empresa->getFornecedores($con, 0, 1, "fornecedor.cnpj='" . $cliente->cnpj->valor . "'");
+        if ($cache) {
+            $fornecedores = $this->empresa->getFornecedores($con, 0, 1, "fornecedor.cnpj='" . $cliente->cnpj->valor . "'");
 
-        if (count($fornecedores) > 0) {
+            if (count($fornecedores) > 0) {
 
-            return $fornecedores[0];
-            
+                return $fornecedores[0];
+            }
         }
 
         $fornecedor = new Fornecedor();

@@ -42,6 +42,7 @@ if (isset($_GET['t'])) {
     foreach ($possiveis as $key => $value) {
         if ($value->numero == $n) {
             $rtc = $value;
+            $ses->set('rtc',$value);
             break;
         }
     }
@@ -101,7 +102,7 @@ $rtc->numero--;
     <nav class="navbar navbar-expand-lg bg-white fixed-top">
         <a class="navbar-brand" href="index.html"><img id="logo" src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" title="" style="max-height:50px"></a>
         &nbsp;
-        <div ng-controller="crtEmpresa">
+        <div ng-controller="crtEmpresa" style="margin-right: 10px">
             <select class="form-control" ng-model="empresa" ng-change="setEmpresa()">
                 <option ng-repeat="e in filiais" ng-value="e">{{e.nome}}</option>
             </select>
@@ -268,8 +269,15 @@ $rtc->numero--;
                 <li class="nav-item dropdown nav-user">
                     <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" class="user-avatar-md rounded-circle">
-                        <span class="hidden-xs"><?php echo $usuario->nome; ?></span>
-                        <span class=" fa fa-angle-down"></span>
+                        <span class="hidden-lg"><?php 
+                        
+                            if(strlen($usuario->nome)<5){
+                                echo $usuario->nome; 
+                            }else{
+                                echo substr($usuario->nome, 0,5)."..";
+                            }
+                        
+                        ?></span>                       
                     </a>
                     <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
                         <div class="nav-user-info clearfix align-middle" style="background-color:<?php echo $logo->cor_predominante; ?>">
@@ -300,7 +308,7 @@ $rtc->numero--;
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav flex-column" id="men">
+                <ul class="navbar-nav flex-column" id="men" ng-controller="crtRelatorio">
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         <select style="background-color:transparent;font-weight:bold;color:#FFFFFF;border:0px solid" class="form-control" onchange="window.location = 'comprar.php?t=' + $(this).find('option:selected').val()">
                             <?php
@@ -351,6 +359,9 @@ $rtc->numero--;
                             <a class="nav-link" href="movimentos_banco.php" ><i class="fas fa-money-bill-alt"></i>Movimentos Financeiro</a>
                         </li>
                     <?php } ?>
+                        <li class="nav-item" ng-repeat="relatorio in relatorios">
+                            <a class="nav-link" href="relatorios.php?rel={{relatorio.id}}" ><i class="fas fa-paper-plane"></i>{{relatorio.nome}}</a>
+                        </li>
                     <?php if ($empresa->is_logistica) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="produto-cliente-logistic.php"><i class="fas fa-camera"></i>Produtos cliente Logistic</a>

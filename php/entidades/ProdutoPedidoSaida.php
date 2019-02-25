@@ -319,7 +319,7 @@ class ProdutoPedidoSaida {
             }
             
             if($campanha !== null){
-                if($campanha->parcelas > 0 && $campanha->prazo > 0){
+                if($campanha->parcelas > 0 && $campanha->prazo >= 0){
                     if($this->pedido->prazo > $campanha->prazo){
                         $this->retirou_promocao = $valor_oferta;
                         $this->valor_base = $this->produto->valor_base;                       
