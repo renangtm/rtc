@@ -33,7 +33,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         if (true) {
 
             //retire para realmente executar o script
-            return;
+            //return;
         }
 
         $cidades = array();
@@ -45,7 +45,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             $c = new Cidade();
             $c->id = $id;
             $c->nome = $nome;
-            $cidades[] = $cidade;
+            $cidades[] = $c;
         }
         $ps->close();
 
@@ -129,7 +129,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         $vencimentos = array();
 
-        $ps = $con->getConexao()->prepare("SELECT vencimento.id,nota.ficha FROM vencimento INNER JOIN nota ON nota.id=vencimento.id_nota");
+        $ps = $con->getConexao()->prepare("SELECT vencimento.id,nota.ficha FROM vencimento INNER JOIN nota ON nota.id=vencimento.id_nota WHERE nota.id_empresa=$filial->id");
         $ps->execute();
         $ps->bind_result($id, $ficha);
         while ($ps->fetch()) {
@@ -151,13 +151,13 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
                 $mp[$value->ficha] = 0;
             }
 
-            $m = $mp[$value->ficha] = 0;
+            $m = $mp[$value->ficha];
 
 
-            if (!isset($vencimentos[$value->ficha][$m])) {
-                continue;
+            while (!isset($vencimentos[$value->ficha][$m])) {
+                $m--;
+                if($m<0)continue 2;
             }
-
 
 
             $value->vencimento = new stdClass();
@@ -214,17 +214,32 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         }
         $ps->close();
 
+        $vencimentos = array();
+
+        $ps = $con->getConexao()->prepare("SELECT vencimento.id,nota.ficha FROM vencimento INNER JOIN nota ON nota.id=vencimento.id_nota WHERE nota.id_empresa=$matriz->id");
+        $ps->execute();
+        $ps->bind_result($id, $ficha);
+        while ($ps->fetch()) {
+
+            if (!isset($vencimentos[$ficha])) {
+                $vencimentos[$ficha] = array();
+            }
+
+            $vencimentos[$ficha][] = $id;
+        }
+
         foreach ($movimentos as $key => $value) {
 
             if (!isset($mp[$value->ficha])) {
                 $mp[$value->ficha] = 0;
             }
 
-            $m = $mp[$value->ficha] = 0;
+            $m = $mp[$value->ficha];
 
 
-            if (!isset($vencimentos[$value->ficha][$m])) {
-                continue;
+            while (!isset($vencimentos[$value->ficha][$m])) {
+                $m--;
+                if($m<0)continue 2;
             }
 
 
