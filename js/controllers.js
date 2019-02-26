@@ -1910,6 +1910,8 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tr
             msg.erro("Cotacao sem status.");
             return;
         }
+        
+        p.observacao = formatTextArea(p.observacao);
 
         baseService.merge(p, function (r) {
             if (r.sucesso) {
@@ -2273,6 +2275,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
             msg.erro("Pedido sem status.");
             return;
         }
+        p.observacoes = formatTextArea(p.observacoes);
 
         baseService.merge(p, function (r) {
             if (r.sucesso) {
@@ -4816,7 +4819,9 @@ rtc.controller("crtLogin", function ($scope, loginService) {
     $scope.senha = "";
     $scope.email = "";
     $scope.logar = function () {
+        
         loginService.login($scope.usuario, $scope.senha, function (r) {
+            
             if (r.usuario === null || !r.sucesso) {
                 msg.erro("Esse usuario nao existe");
             } else {
