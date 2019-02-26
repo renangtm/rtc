@@ -220,7 +220,7 @@
                                                 <label for="">Observações</label>
                                                 <div class="form-row">
                                                     <div class="col">
-                                                        <textarea class="form-control" rows="2" id="comment" ng-model="pedido.observacao"></textarea>
+                                                        <textarea ng-trim="true" class="form-control" rows="2" id="comment" ng-model="pedido.observacoes"></textarea>
                                                     </div>
                                                 </div>
 
@@ -397,7 +397,7 @@
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
-                                <input type="text" class="form-control" id="filtroClientes" placeholder="Filtro">
+                                <input type="text" class="form-control" id="filtroFornecedores" placeholder="Filtro">
                                 <hr>
                                 <table class="table table-striped table-bordered first">
                                     <thead>

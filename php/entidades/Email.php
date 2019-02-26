@@ -183,7 +183,8 @@ class Email {
             }
 
             $mail->IsHTML(true);
-            $mail->Username = $this->endereco; // your gmail address
+            
+            $mail->Username = $th; // your gmail address
             $mail->Password = $this->senha; // password
 
             $mail->SetFrom($th);

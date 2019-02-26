@@ -411,7 +411,8 @@ class PedidoEntrada {
 
                 $html = Sistema::getHtml('visualizar-pedidos-compra', $this);
 
-                $this->usuario->email->enviarEmail($this->fornecedor->email->filtro(Email::$VENDAS), "Pedido de Compra", $html);
+                $this->empresa->email->enviarEmail($this->fornecedor->email->filtro(Email::$VENDAS), "Pedido de Compra", $html);
+                $this->empresa->email->enviarEmail($this->empresa->email->filtro(Email::$LOGISTICA), "Pedido de Compra", $html);
                 
             } catch (Exception $ex) {
                 

@@ -1017,6 +1017,10 @@ rtc.directive('inteiro', function () {
     };
 })
 
+function formatTextArea(str){
+    return str.split("\n").join(" <br> ");
+}
+
 rtc.directive('decimal', function ($parse) {
     return {
         restrict: 'E',
