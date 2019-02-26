@@ -411,7 +411,7 @@ class Sistema {
 
         foreach ($empresas as $key => $value) {
 
-            $prods = $value->getProdutos($con, 0, 500000, '', '');
+            $prods = $value->getProdutos($con, 0, 500000, 'categoria_produto.loja=true', '');
 
             foreach ($prods as $key2 => $value2) {
 

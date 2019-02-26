@@ -3557,7 +3557,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
 rtc.controller("crtLotes", function ($scope, loteService, baseService) {
 
 
-    $scope.lotes = createAssinc(loteService, 1, 3, 10);
+    $scope.lotes = createAssinc(loteService, 1, 10, 10);
     $scope.lotes.attList();
     assincFuncs(
             $scope.lotes,
