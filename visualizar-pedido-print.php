@@ -43,7 +43,7 @@
 		</tr>
 	</table>	
 	<br>
-    <table style="width:100%; border: 1px solid black;">
+    <table style="width:100%; border: 1px solid black;border-collapse: collapse;">
 					  <tr style="background-color:#ccc;">
 						<th style="padding:10px; border: 1px solid black;">Dados do pedido - nº <strong id="idPedido"></strong></th>
 					  </tr>
@@ -75,7 +75,7 @@
 					  </tr>
 					</table>
 					<br>
-					<table id="produtos" style="width:100%;border: 1px solid black;">
+					<table id="produtos" style="width:100%;border: 1px solid black;border-collapse: collapse;">
 					  <tr>
 						<th colspan="5" class="text-center" style="background-color:#ccc;padding:10px; border: 1px solid black;">Produtos</th>
 					  </tr>
@@ -104,7 +104,7 @@
 					  </tr>
 					</table>
 					<br>
-					<table style="width:100%">
+					<table style="width:100%;border-collapse: collapse;">
 					  <tr>
 						<th width="100%" class="text-center" style="padding:10px; border: 1px solid black;background-color:#ccc;">Frete</th>
 					  </tr>

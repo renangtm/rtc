@@ -296,7 +296,7 @@
 
                                             </div>
                                         </div>
-
+                                    </div>       
 
 
 
@@ -327,43 +327,30 @@
 
 
                                     <div class="product-sidebar-widget" ng-repeat="filtro in produtos.filtro">
-                                        <h4 class="product-sidebar-widget-title">{{filtro.nome}}</h4>
+                                        <h4 ng-if="filtro._classe === 'FiltroTextual'" class="product-sidebar-widget-title">Busca por filtro</h4>
+                                            <h4 ng-if="filtro._classe === 'FiltroOpcional'" class="product-sidebar-widget-title">
+                                                <a class="" data-toggle="collapse" href="#collapseExample_{{filtro.id}}" role="button" aria-expanded="false" aria-controls="collapseExample_{{filtro.id}}">
+                                                    {{filtro.nome}}<span class="fas ml-2 fa-angle-down"></span>
+                                                </a>
+                                            </h4>
                                         <div class="form-group" ng-if="filtro._classe === 'FiltroTextual'">
                                             <div class="icon-addon addon-lg">
                                                 <input class="form-control form-control-lg" ng-model="filtro.valor" ng-confirm="produtos.attList()" type="search" placeholder="{{filtro.nome}}" aria-label="Search">
                                                 <label for="email" class="fa fa-search" rel="tooltip" title="email"></label>
                                             </div>
                                         </div>
-
-                                        <div ng-if="filtro._classe === 'FiltroOpcional'" class="custom-control custom-checkbox" ng-repeat="opcao in filtro.opcoes" style="{{opcao.quantidade===0?'text-decoration:line-through;color:DarkRed':''}}">
+                                    <div ng-if="filtro._classe === 'FiltroOpcional'" class="collapse" id="collapseExample_{{filtro.id}}">
+                                        <div  class="custom-control custom-checkbox" ng-repeat="opcao in filtro.opcoes" style="{{opcao.quantidade===0?'text-decoration:line-through;color:DarkRed':''}}">
                                             <button ng-if="opcao.selecionada === 0" ng-click="addLevel(opcao)" class="btn btn-default" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-adjust"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</button>
                                             <button ng-if="opcao.selecionada === 1" ng-click="addLevel(opcao)" class="btn btn-success" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-check"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</button>
                                             <button ng-if="opcao.selecionada === 2" ng-click="addLevel(opcao)" class="btn btn-danger" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-times"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</strong></button>
 
                                         </div>
-
+                                    </div>
                                     </div>
                                     
                                     
-                                    <!-- COLLAPSE nos filtros  -->
-                                    <div class="product-sidebar-widget">
-                                        <h4 class="product-sidebar-widget-title">
-                                            <a class="" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                                                Category<span class="fas ml-2 fa-angle-down"></span>
-                                            </a>
-                                        </h4>
-                                        <div class="collapse" id="collapseExample"> 
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="cat-1">
-                                                <label class="custom-control-label" for="cat-1">Categories #1</label>
-                                            </div>
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="cat-2">
-                                                <label class="custom-control-label" for="cat-2">Categories #2</label>
-                                            </div>
-                                        </div>    
-                                    </div>       
-                                    <!-- fim COLLAPSE nos filtros  -->
+                                    
                                     
                                     <div class="product-sidebar-widget">
                                         <button type="button" class="btn btn-outline-light" ng-click="resetarFiltro()">Resetar Filtro</button>
