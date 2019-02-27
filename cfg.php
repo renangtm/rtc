@@ -265,14 +265,16 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <?php
-                                    if (usuario.nome != ''){
-                                        $titulo = '<i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere';
-                                    } else{
-                                        $titulo = '<i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Adicione';
-                                    }
-                                ?>
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><?php echo $titulo ?> os dados de seu Usu&aacute;rio</h5>
+                               
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle">
+                                    <div ng-if="usuario.id===0">
+                                        <i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Adicione
+                                    </div>
+                                    <div ng-if="usuario.id>0">
+                                        <i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere
+                                    </div>
+                                    
+                                </h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">×</span>
                                 </button>
