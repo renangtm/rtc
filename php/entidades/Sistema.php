@@ -31,7 +31,7 @@ class Sistema {
     
     public static function getProdutosDoDia($con,$dia,$num,$empresa){
         
-        $dia = $dia-1;
+        $dia = $dia - 1;
         
         while($dia<0){
             $dia += $num;
