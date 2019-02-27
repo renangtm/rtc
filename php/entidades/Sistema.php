@@ -23,7 +23,6 @@ class Sistema {
             
             $relatorios[] = new RelatorioFinanceiro($empresa);
             $relatorios[] = new RelatorioMovimento($empresa);
-            
         }
         
         return $relatorios;
