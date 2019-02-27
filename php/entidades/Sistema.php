@@ -22,6 +22,7 @@ class Sistema {
         if($rtc->numero >= 3){
             
             $relatorios[] = new RelatorioFinanceiro($empresa);
+            $relatorios[] = new RelatorioMovimento($empresa);
             
         }
         

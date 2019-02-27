@@ -1976,7 +1976,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             $value->insert($con, true);
         }
         */
-        /*
+        
         $ps = $con->getConexao()->prepare("DELETE FROM campanha");
         $ps->execute();
         $ps->close();
@@ -2035,7 +2035,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         foreach($campanhas as $key=>$value){
             $value->merge($con);
         }
-        */
+        
     }
 
 }

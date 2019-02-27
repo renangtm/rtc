@@ -173,9 +173,9 @@ echo $relatorio;
                                                 <th ng-repeat="c in gerado.elementos[0][0].campos">{{c.titulo}}</th>
                                                 </thead>
                                                 <tr ng-repeat-start="item in gerado.elementos">
-                                                    <th ng-repeat="c in item[0].valores_campos">{{c}}</th>
+                                                    <th ng-repeat="c in item[0].valores_campos track by $index">{{c}}</th>
                                                 </tr>
-                                                <tr ng-repeat-end>
+                                                <tr ng-repeat-end ng-if="item[0].campos_agrupados.length > 0">
                                                     <td colspan="{{gerado.elementos[0][0].campos.length}}">
 
 
@@ -187,8 +187,8 @@ echo $relatorio;
                                                             <th style="max-width:20px">Det</th>
                                                             </thead>
                                                             <tr>
-                                                    <td ng-repeat="cc in item[0].valores_campos_agrupados track by $index">{{cc}}</td>
-                                                                <td style="text-align: center;max-width:20px;{{item[0].quantidade_filhos>0?'cursor:pointer;color:SteelBlue;background-color:#FFFFFF':''}}" ng-click="detalhes(item[0])"><i class="fas fa-arrow-alt-circle-up"></i></td>
+                                                                <td ng-repeat="cc in item[0].valores_campos_agrupados track by $index">{{cc}}</td>
+                                                                <td style="text-align: center;max-width:20px;{{(item[0].quantidade_filhos>0 && item[0].campos_agrupados.length > 0)?'cursor:pointer;color:SteelBlue;background-color:#FFFFFF':''}}" ng-click="detalhes(item[0])"><i class="fas fa-arrow-alt-circle-up"></i></td>
                                                             </tr>
 
 
@@ -222,7 +222,7 @@ echo $relatorio;
                                                                 <thead>
                                                                 <th ng-repeat="c in filhos[0].campos">{{c.titulo}}</th>
                                                                 </thead>
-                                                                <tr ng-repeat="item in filhos">
+                                                                <tr ng-repeat="item in filhos track by $index">
                                                                     <th ng-repeat="c in item.valores_campos">{{c}}</th>
                                                                 </tr>
                                                                
