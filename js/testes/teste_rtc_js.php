@@ -17,12 +17,71 @@ and open the template in the editor.
         
         <script>
             
-            var j = '{"_classe":"Vencimento","id":1,"valor":100,"data":1548870767951,"nota":{"_classe":"Nota","id":1,"transportadora":{"_classe":"Transportadora","id":1,"razao_social":"T1","nome_fantasia":"T2","telefones":[{"_classe":"Telefone","id":1088,"numero":1234432,"excluido":false}],"despacho":999,"empresa":{"_classe":"Empresa","id":359,"nome":"Teste","email":{"_classe":"Email","id":1387,"endereco":"emailinvalido@invalido.com.br","excluido":false,"senha":""},"telefone":{"_classe":"Telefone","id":1087,"numero":"t1241243","excluido":false},"endereco":{"_classe":"Endereco","id":1391,"rua":"Rua Teste","bairro":"Bairro Teste","numero":0,"cep":{"_classe":"CEP","valor":"07195-201"},"cidade":{"_classe":"Cidade","id":5568,"nome":"ACRELANDIA","excluida":false,"estado":{"_classe":"Estado","id":34,"sigla":"AC","excluido":false}}},"cnpj":{"_classe":"CNPJ","valor":"11.122.233/3444-55"},"excluida":false,"consigna":false,"aceitou_contrato":false,"juros_mensal":1.5,"inscricao_estadual":1234412},"endereco":{"_classe":"Endereco","id":1393,"rua":"Rua Teste","bairro":"Bairro Teste","numero":0,"cep":{"_classe":"CEP","valor":"07195-201"},"cidade":{"_classe":"Cidade","id":5568,"nome":"ACRELANDIA","excluida":false,"estado":{"_classe":"Estado","id":34,"sigla":"AC","excluido":false}}},"email":{"_classe":"Email","id":1389,"endereco":"renan_goncalves@outlook.com.br","excluido":false,"senha":""},"cnpj":{"_classe":"CNPJ","valor":"11.111.111/1111-11"},"excluida":false,"inscricao_estadual":333333333,"habilitada":true,"tabela":{"_classe":"Tabela","id":201,"nome":"teste unitario","regras":[{"_classe":"RegraTabela","id":393,"condicional":"!valor>50&\'!cliente.cidade\'=\'TESTE\'","resultante":"!valor+!peso*5","interpretadorNumerico":{"_classe":"InterpretadorNumerico","replacer":null,"index":null,"funcoesNumericas":[{"_classe":"Max"},{"_classe":"Min"},{"_classe":"Baixo"},{"_classe":"Cima"}],"obj":null},"interpretadorBooleano":{"_classe":"InterpretadorBooleano","funcoes":[{"_classe":"GrupoCidadesExp"}],"leitorNumerico":{"_classe":"InterpretadorNumerico","replacer":null,"index":null,"funcoesNumericas":[{"_classe":"Max"},{"_classe":"Min"},{"_classe":"Baixo"},{"_classe":"Cima"}],"obj":null},"obj":null}},{"_classe":"RegraTabela","id":394,"condicional":"!valor>40&!valor<50&\'!cliente.cidade\'=\'TESTE\'","resultante":"!valor+!peso*4","interpretadorNumerico":{"_classe":"InterpretadorNumerico","replacer":null,"index":null,"funcoesNumericas":[{"_classe":"Max"},{"_classe":"Min"},{"_classe":"Baixo"},{"_classe":"Cima"}],"obj":null},"interpretadorBooleano":{"_classe":"InterpretadorBooleano","funcoes":[{"_classe":"GrupoCidadesExp"}],"leitorNumerico":{"_classe":"InterpretadorNumerico","replacer":null,"index":null,"funcoesNumericas":[{"_classe":"Max"},{"_classe":"Min"},{"_classe":"Baixo"},{"_classe":"Cima"}],"obj":null},"obj":null}}],"excluida":false}},"fornecedor":{"_classe":"Fornecedor","id":1,"nome":"Teste","email":{"_classe":"Email","id":1388,"endereco":"renan.miranda@agrofauna.com.br","excluido":false,"senha":""},"telefones":[],"endereco":{"_classe":"Endereco","id":1392,"rua":"Rua Teste","bairro":"Bairro Teste","numero":0,"cep":{"_classe":"CEP","valor":"07195-201"},"cidade":{"_classe":"Cidade","id":5619,"nome":"FELIZ DESERTO","excluida":false,"estado":{"_classe":"Estado","id":35,"sigla":"AL","excluido":false}}},"cnpj":{"_classe":"CNPJ","valor":"11.122.233/3444-55"},"excluido":false,"empresa":{"_classe":"Empresa","id":359,"nome":"Teste","email":{"_classe":"Email","id":1387,"endereco":"emailinvalido@invalido.com.br","excluido":false,"senha":""},"telefone":{"_classe":"Telefone","id":1087,"numero":"t1241243","excluido":false},"endereco":{"_classe":"Endereco","id":1391,"rua":"Rua Teste","bairro":"Bairro Teste","numero":0,"cep":{"_classe":"CEP","valor":"07195-201"},"cidade":{"_classe":"Cidade","id":5568,"nome":"ACRELANDIA","excluida":false,"estado":{"_classe":"Estado","id":34,"sigla":"AC","excluido":false}}},"cnpj":{"_classe":"CNPJ","valor":"11.122.233/3444-55"},"excluida":false,"consigna":false,"aceitou_contrato":false,"juros_mensal":1.5,"inscricao_estadual":1234412},"telefone":111111},"cliente":null,"saida":true,"chave":"","empresa":{"_classe":"Empresa","id":359,"nome":"Teste","email":{"_classe":"Email","id":1387,"endereco":"emailinvalido@invalido.com.br","excluido":false,"senha":""},"telefone":{"_classe":"Telefone","id":1087,"numero":"t1241243","excluido":false},"endereco":{"_classe":"Endereco","id":1391,"rua":"Rua Teste","bairro":"Bairro Teste","numero":0,"cep":{"_classe":"CEP","valor":"07195-201"},"cidade":{"_classe":"Cidade","id":5568,"nome":"ACRELANDIA","excluida":false,"estado":{"_classe":"Estado","id":34,"sigla":"AC","excluido":false}}},"cnpj":{"_classe":"CNPJ","valor":"11.122.233/3444-55"},"excluida":false,"consigna":false,"aceitou_contrato":false,"juros_mensal":1.5,"inscricao_estadual":1234412},"data_emissao":1548870766261,"excluida":false,"interferir_estoque":false,"produtos":[{"_classe":"ProdutoNota","id":362,"produto":{"_classe":"Produto","id":1,"id_universal":12,"nome":"teste","categoria":{"_classe":"stdClass","id":2,"ipi":0,"base_calculo":40,"icms":0,"icms_normal":true},"liquido":false,"unidade":"Galao","quantidade_unidade":0.25,"excluido":false,"habilitado":true,"empresa":{"_classe":"Empresa","id":359,"nome":"Teste","email":{"_classe":"Email","id":1387,"endereco":"emailinvalido@invalido.com.br","excluido":false,"senha":""},"telefone":{"_classe":"Telefone","id":1087,"numero":"t1241243","excluido":false},"endereco":{"_classe":"Endereco","id":1391,"rua":"Rua Teste","bairro":"Bairro Teste","numero":0,"cep":{"_classe":"CEP","valor":"07195-201"},"cidade":{"_classe":"Cidade","id":5568,"nome":"ACRELANDIA","excluida":false,"estado":{"_classe":"Estado","id":34,"sigla":"AC","excluido":false}}},"cnpj":{"_classe":"CNPJ","valor":"11.122.233/3444-55"},"excluida":false,"consigna":false,"aceitou_contrato":false,"juros_mensal":1.5,"inscricao_estadual":1234412},"valor_base":100,"lucro_consignado":0,"custo":123,"ncm":12341234,"peso_liquido":12,"peso_bruto":23,"estoque":85,"ativo":"","concentracao":"","disponivel":85,"transito":0,"ofertas":[],"grade":{"_classe":"Grade","gr":[15,2,1],"str":"15,2,1"}},"quantidade":65,"nota":{"_classe":"Nota","recursao":2},"valor_total":0,"cfop":123,"valor_unitario":10,"base_calculo":0,"icms":0,"ipi":0,"influencia_estoque":0},{"_classe":"ProdutoNota","id":363,"produto":{"_classe":"Produto","id":2,"id_universal":12,"nome":"teste","categoria":{"_classe":"stdClass","id":2,"ipi":0,"base_calculo":40,"icms":0,"icms_normal":true},"liquido":false,"unidade":"Galao","quantidade_unidade":0.25,"excluido":false,"habilitado":true,"empresa":{"_classe":"Empresa","id":359,"nome":"Teste","email":{"_classe":"Email","id":1387,"endereco":"emailinvalido@invalido.com.br","excluido":false,"senha":""},"telefone":{"_classe":"Telefone","id":1087,"numero":"t1241243","excluido":false},"endereco":{"_classe":"Endereco","id":1391,"rua":"Rua Teste","bairro":"Bairro Teste","numero":0,"cep":{"_classe":"CEP","valor":"07195-201"},"cidade":{"_classe":"Cidade","id":5568,"nome":"ACRELANDIA","excluida":false,"estado":{"_classe":"Estado","id":34,"sigla":"AC","excluido":false}}},"cnpj":{"_classe":"CNPJ","valor":"11.122.233/3444-55"},"excluida":false,"consigna":false,"aceitou_contrato":false,"juros_mensal":1.5,"inscricao_estadual":1234412},"valor_base":15,"lucro_consignado":0,"custo":123,"ncm":12341234,"peso_liquido":12,"peso_bruto":23,"estoque":80,"ativo":"","concentracao":"","disponivel":80,"transito":0,"ofertas":[],"grade":{"_classe":"Grade","gr":[15,2,1],"str":"15,2,1"}},"quantidade":20,"nota":{"_classe":"Nota","recursao":2},"valor_total":0,"cfop":123,"valor_unitario":100,"base_calculo":0,"icms":0,"ipi":0,"influencia_estoque":0},{"_classe":"ProdutoNota","id":364,"produto":{"_classe":"Produto","id":1,"id_universal":12,"nome":"teste","categoria":{"_classe":"stdClass","id":2,"ipi":0,"base_calculo":40,"icms":0,"icms_normal":true},"liquido":false,"unidade":"Galao","quantidade_unidade":0.25,"excluido":false,"habilitado":true,"empresa":{"_classe":"Empresa","id":359,"nome":"Teste","email":{"_classe":"Email","id":1387,"endereco":"emailinvalido@invalido.com.br","excluido":false,"senha":""},"telefone":{"_classe":"Telefone","id":1087,"numero":"t1241243","excluido":false},"endereco":{"_classe":"Endereco","id":1391,"rua":"Rua Teste","bairro":"Bairro Teste","numero":0,"cep":{"_classe":"CEP","valor":"07195-201"},"cidade":{"_classe":"Cidade","id":5568,"nome":"ACRELANDIA","excluida":false,"estado":{"_classe":"Estado","id":34,"sigla":"AC","excluido":false}}},"cnpj":{"_classe":"CNPJ","valor":"11.122.233/3444-55"},"excluida":false,"consigna":false,"aceitou_contrato":false,"juros_mensal":1.5,"inscricao_estadual":1234412},"valor_base":100,"lucro_consignado":0,"custo":123,"ncm":12341234,"peso_liquido":12,"peso_bruto":23,"estoque":85,"ativo":"","concentracao":"","disponivel":85,"transito":0,"ofertas":[],"grade":{"_classe":"Grade","gr":[15,2,1],"str":"15,2,1"}},"quantidade":21,"nota":{"_classe":"Nota","recursao":2},"valor_total":0,"cfop":123,"valor_unitario":150,"base_calculo":0,"icms":0,"ipi":0,"influencia_estoque":0},{"_classe":"ProdutoNota","id":365,"produto":{"_classe":"Produto","id":3,"id_universal":12,"nome":"teste","categoria":{"_classe":"stdClass","id":2,"ipi":0,"base_calculo":40,"icms":0,"icms_normal":true},"liquido":false,"unidade":"Galao","quantidade_unidade":0.25,"excluido":false,"habilitado":true,"empresa":{"_classe":"Empresa","id":359,"nome":"Teste","email":{"_classe":"Email","id":1387,"endereco":"emailinvalido@invalido.com.br","excluido":false,"senha":""},"telefone":{"_classe":"Telefone","id":1087,"numero":"t1241243","excluido":false},"endereco":{"_classe":"Endereco","id":1391,"rua":"Rua Teste","bairro":"Bairro Teste","numero":0,"cep":{"_classe":"CEP","valor":"07195-201"},"cidade":{"_classe":"Cidade","id":5568,"nome":"ACRELANDIA","excluida":false,"estado":{"_classe":"Estado","id":34,"sigla":"AC","excluido":false}}},"cnpj":{"_classe":"CNPJ","valor":"11.122.233/3444-55"},"excluida":false,"consigna":false,"aceitou_contrato":false,"juros_mensal":1.5,"inscricao_estadual":1234412},"valor_base":10,"lucro_consignado":0,"custo":123,"ncm":12341234,"peso_liquido":12,"peso_bruto":23,"estoque":80,"ativo":"","concentracao":"","disponivel":80,"transito":0,"ofertas":[],"grade":{"_classe":"Grade","gr":[40,10,2],"str":"40,10,2"}},"quantidade":56,"nota":{"_classe":"Nota","recursao":2},"valor_total":0,"cfop":123,"valor_unitario":11,"base_calculo":0,"icms":0,"ipi":0,"influencia_estoque":0}],"observacao":null,"vencimentos":[],"incluir_frete":true,"frete":10,"prazo":20},"movimento":null}';
-        
-            var obj = paraObjeto(j);
-        
-            document.write(paraJson(obj));
-        
+            function htmlToJson(html){
+                
+                var j = 1;
+                var tbl = [];
+                var spec = [];
+                
+                var a = 0;
+                var b = 0;
+                for(var i=0;i<html.length;i++){
+                    
+                    var c = html.charAt(i);
+                    
+                    if(a === 1){
+                        
+                        if(b%2===1){
+                            tbl[j] += c;
+                        }else{
+                            spec[j].atributos[spec[j].atributos.length-1] += c;
+                        }
+                    }
+                    
+                    if(c === "<" && a === 0){
+                        
+                        a=1;
+                        b=0;
+                        j++;
+                        
+                        tbl[j] = "";
+                        spec[j] = {entrada:true,atributos:[]};
+                        
+                        continue;
+                        
+                    }
+                    
+                    if(a > 0 && c === "/"){
+                        
+                        if(html.charAt(i+1) === ">"){
+                            
+                            a = 0;
+                            
+                        }
+                        
+                    }else if (a > 0 && c === ">"){
+                        
+                        a = 0;
+                        
+                    }else if(a > 0 && c === "\""){
+                        
+                        b++;
+                        if(b%2===1){
+                            
+                            spec[j].atributos[spec[j].atributos.length] = "";
+                            
+                        }
+                        
+                    }
+                    
+                    
+                }
+                
+            }
+            
+            document.write(htmlToJson('<html><table><td>Notificacao:</td> <td style="margin frfrfr"></td></table></html>'));
+            
+            
         </script>
         
     </body>
