@@ -78,7 +78,7 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
 
         $lk = $objeto->link;
 
-        return "<button class='btn btn-primary' onclick='window.open(\\\"$lk\\\")'><i class='fas fa-download'></i>&nbsp Abrir boleto</button>";
+        return "<a style='margin-left:10px' href='$lk'><i class='fas fa-download'></i>&nbsp Abrir boleto</a>";
         
     }
 

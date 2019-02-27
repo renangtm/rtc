@@ -86,13 +86,13 @@
                                             <table id="pedidos" class="table table-striped table-bordered first">
                                                 <thead>
                                                     <tr>
-                                                        <th data-ordem="pedido.id">Cod.</th>
+                                                        <th width="70px" data-ordem="pedido.id">Cod.</th>
                                                         <th data-ordem="pedido.cliente.razao_social">Cliente</th>
                                                         <th data-ordem="pedido.data">Data</th>
-                                                        <th data-ordem="pedido.frete">frete</th>
+                                                        <th width="70px" data-ordem="pedido.frete">frete</th>
                                                         <th data-ordem="pedido.id_status">Status</th>
-                                                        <th data-ordem="pedido.usuario.nome">Vendedor</th>
-                                                        <th>Acao</th>
+                                                        <th width="105px" data-ordem="pedido.usuario.nome">Vendedor</th>
+                                                        <th width="180px">Ação</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -119,7 +119,7 @@
                                                         <th>frete</th>
                                                         <th>Status</th>
                                                         <th>Vendedor</th>
-                                                        <th>Acao</th>
+                                                        <th>Ação</th>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -201,11 +201,15 @@
                                                 <option ng-repeat="l in logisticas" ng-value="l">{{l.nome}}</option>
                                             </select>
                                         </div>
-                                        <div ng-if="pedido.logistica===null" style="color:SteelBlue">
+                                        <div ng-if="pedido.logistica === null" style="color:SteelBlue">
+                                            <div class="form-row" style="margin-top: 10px;">
                                             Pedido normal feito com estoque da <?php echo $empresa->nome; ?>
+                                            </div>
                                         </div>
-                                        <div ng-if="pedido.logistica!==null" style="color:Orange">
+                                        <div ng-if="pedido.logistica !== null" style="color:Orange">
+                                             <div class="form-row" style="margin-top: 10px;">
                                             Pedido feito por meio do {{pedido.logistica.nome}}
+                                            </div>
                                         </div>
                                     </div>
                                     <hr>
@@ -255,24 +259,24 @@
                                             <tr>
                                                 <th>Cod</th>
                                                 <th>Nome</th>
-                                                <th>Qtd.</th>
+                                                <th class="text-center">Qtd.</th>
                                                 <th class="text-center">Val</th>
                                                 <th class="text-center">Vl.base</th>
                                                 <th class="text-center">Juros</th>
                                                 <th class="text-center">Frete</th>
                                                 <th class="text-center">Icms</th>
                                                 <th class="text-center">Ipi</th>
-                                                <th class="text-center">Valor</th>
+                                                <th class="text-center">Valor R$</th>
                                                 <th>Ação</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr ng-repeat="prod in pedido.produtos">
-                                                <td>{{prod.produto.id}}</td>
+                                                <td class="text-center">{{prod.produto.id}}</td>
                                                 <td>{{prod.produto.nome}}</td>
                                                 <td class="text-center" width="100px">{{prod.quantidade}}</td>
-                                                <td ng-if="prod.validade_minima>0 && prod.validade_minima !== 1000" class="text-center">{{prod.validade_minima | data}}</td>
-                                                <td ng-if="prod.validade_minima===1000" class="text-center">-------</td>
+                                                <td ng-if="prod.validade_minima > 0 && prod.validade_minima !== 1000" class="text-center">{{prod.validade_minima| data}}</td>
+                                                <td ng-if="prod.validade_minima === 1000" class="text-center">-------</td>
                                                 <td class="text-center"><input ng-disabled="!pedido.status.altera" type="number" steep="0.01" ng-confirm="atualizaCustos()" class="form-control" ng-model="prod.valor_base"></td>
                                                 <td class="text-center">{{prod.juros}}</td>
                                                 <td class="text-center">{{prod.frete}}</td>
@@ -296,6 +300,7 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
+                                                <td></td>
                                                 <td>
                                                     <div class="product-btn">
                                                         <a href="#" class="btn btn-outline-light btnaddprod" ng-disabled="!pedido.status.altera" ng-click="produtos.attList()" data-title="addproduto" data-toggle="modal" data-target="#produtos"><i class="fas fa-plus-circle"></i></a>
@@ -307,8 +312,8 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <th colspan="7" style="text-align:right;">VALOR TOTAL</th>
-                                                <th colspan="3">R$ {{getTotalPedido().toFixed(2)}}</th>
+                                                <th colspan="10" style="text-align:right;">VALOR TOTAL R$ {{getTotalPedido().toFixed(2)}}</th>
+                                                <th></th>
                                             </tr>
                                         </tfoot>		
                                     </table>
@@ -329,12 +334,7 @@
                                             <div class="form-inline col-3" style="margin-left: 40px;">
                                                 <a href="#" ng-disabled="!pedido.status.altera" class="btn btn-primary" data-title="calcFrete" data-toggle="modal" ng-click="getFretes()" data-target="#calcFrete" ng-if="calculoPronto()">Calcular Frete</a>
                                             </div>
-                                            <div class="form-inline col-3" style="margin-left: 40px;">
-                                                <a href="#" class="btn btn-outline-success" data-title="logs" data-toggle="modal" ng-click="getLogs()" data-target="#logs"><i class="fas fa-address-card"></i>&nbspLogs do pedido</a>
-                                            </div>
-                                            <div class="form-inline col-3" style="margin-left: 40px;">
-                                                <a href="#" class="btn btn-outline-success" data-title="cobranca" data-toggle="modal" ng-click="gerarCobranca()" data-target="#cobranca"><i class="fas fa-money-bill-alt"></i>&nbspGerar cobranca</a>
-                                            </div>
+                           
                                         </div>
                                     </div>
                                     <hr>
@@ -343,31 +343,42 @@
                                             <div class="form-inline" style="margin-right: 20px;">
                                                 <label for="">Forma de pagamento</label>
                                             </div>
+                                             <div class="form-inline" style="margin-left: 40px;">
+                                                <select ng-disabled="!pedido.status.altera" class="form-control" id="ped" ng-model="pedido.forma_pagamento">    
+                                                    <option ng-value="forma_pagamento" ng-repeat="forma_pagamento in formas_pagamento">{{forma_pagamento.nome}}</option>
+                                                </select>
+                                            </div>
                                             <div class="form-inline">
-                                                <label for="" style="margin-left: 25px;margin-right: 10px;">Prazo:</label>
+                                                <label for="" style="margin-left: 35px;margin-right: 10px;">Prazo:</label>
                                                 <input ng-disabled="!pedido.status.altera" type="number" class="form-control col-5" ng-model="pedido.prazo" ng-confirm="atualizaCustos()" placeholder="5" min="0" max="90" value="0">
                                             </div>
                                             <div class="form-inline">
                                                 <label for="" style="margin-left: 25px;margin-right: 10px;">Parcelas:</label>
                                                 <input ng-disabled="!pedido.status.altera" type="number" class="form-control col-5" ng-model="pedido.parcelas" ng-confirm="atualizaCustos()" placeholder="1" min="0" max="90" value="1">
                                             </div>
+                                            
                                         </div>
+                                        <div class="form-row m-t-20">
+                                            <div class="form-inline col-3" style="margin-left: 200px;">
+                                                <a href="#" class="btn btn-outline-success" data-title="cobranca" data-toggle="modal" ng-click="gerarCobranca()" data-target="#cobranca"><i class="fas fa-money-bill-alt"></i>&nbsp;&nbspGerar cobrança</a>
+                                            </div>
+                              
+                                        </div>
+                                    
                                     </div>
                                     <hr>
                                     <div class="form-group">
                                         <div class="form-row">
                                             <div class="form-inline col-7">
                                                 <label for="" style="margin-right: 20px;">Status</label>
-                                                <select class="form-control col-7" id="status" ng-model="pedido.status" ng-disabled="pedido.status.parado">    
-                                                    <option ng-value="status" ng-repeat="status in status_pedido" ng-disabled="!pedido.status.volta_status && status.id<pedido.status.id">{{status.nome}}</option>
+                                                <select class="form-control col" id="status" ng-model="pedido.status" ng-disabled="pedido.status.parado">    
+                                                    <option ng-value="status" ng-repeat="status in status_pedido" ng-disabled="!pedido.status.volta_status && status.id < pedido.status.id">{{status.nome}}</option>
                                                 </select>
                                             </div>
-                                            <div class="form-inline col-5">
-                                                <label for="" style="margin-right: 20px;">Forma pagamento</label>
-                                                <select ng-disabled="!pedido.status.altera" class="form-control col-7" id="ped" ng-model="pedido.forma_pagamento">    
-                                                    <option ng-value="forma_pagamento" ng-repeat="forma_pagamento in formas_pagamento">{{forma_pagamento.nome}}</option>
-                                                </select>
+                                            <div class="form-inline col-3" style="">
+                                                <a href="#" class="btn btn-outline-success" data-title="logs" data-toggle="modal" ng-click="getLogs()" data-target="#logs"><i class="fas fa-clipboard-list"></i>&nbsp;Logs do pedido</a>
                                             </div>
+                                           
                                         </div>
                                     </div>					
                                 </form>
@@ -405,7 +416,7 @@
                     </div>
                 </div>
                 <!-- /.modal-content --> 
-                
+
                 <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -424,15 +435,15 @@
                     </div>
                 </div>
 
-                 <div class="modal fade" id="cobranca" tabindex="-1" role="dialog" aria-labelledby="vizPedido" aria-hidden="true">
+                <div class="modal fade" id="cobranca" tabindex="-1" role="dialog" aria-labelledby="vizPedido" aria-hidden="true">
                     <div class="modal-dialog modal-md">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-check fa-3x"></i>&nbsp;&nbsp;&nbsp;Cobranca do pedido</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-money-bill-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Cobranca do pedido</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body text-center" id="retCob">
-                               
+
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
@@ -579,7 +590,7 @@
                                                             <th>Selecionar</th>
                                                             </thead>
                                                             <tr ng-repeat="validade in produt[0].validades">
-                                                                <th ng-if="validade.validade>0 && validade.validade !== 1000">{{validade.validade| data}} <i class="fas fa-arrow-up" ng-if="validade.alem" ></i> </th>
+                                                                <th ng-if="validade.validade > 0 && validade.validade !== 1000">{{validade.validade| data}} <i class="fas fa-arrow-up" ng-if="validade.alem" ></i> </th>
                                                                 <th ng-if="validade.validade === 1000">-------</th>
                                                                 <th>{{validade.quantidade}} <strong>{{validade.limite<0?'Sem limite':'Limite de '+validade.limite}}</strong></th>
                                                                 <th>{{validade.valor}}</th>
@@ -700,14 +711,14 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fa fa-fw fa-truck fa-3x"></i>&nbsp;&nbsp;&nbsp;Logs do pedido</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-clipboard-list fa-3x"></i>&nbsp;&nbsp;&nbsp;Logs do pedido</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
                                 <div class="form-group">
                                     <div class="form-row">
                                         <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;" id="shLogs">
-                                            
+
                                         </div>
                                     </div>
                                 </div>
@@ -789,35 +800,35 @@
             <!-- Optional JavaScript -->
             <script>
 
-                                var sh = false;
-                                var it = null;
+                                                        var sh = false;
+                                                        var it = null;
 
-                                loading.show = function () {
-                                    if (it != null) {
-                                        clearInterval(it);
-                                    }
-                                    it = setInterval(function () {
-                                        $("#loading").modal("show");
-                                        if ($("#loading").hasClass('in')) {
-                                            clearInterval(it);
-                                        }
-                                    }, 300)
+                                                        loading.show = function () {
+                                                            if (it != null) {
+                                                                clearInterval(it);
+                                                            }
+                                                            it = setInterval(function () {
+                                                                $("#loading").modal("show");
+                                                                if ($("#loading").hasClass('in')) {
+                                                                    clearInterval(it);
+                                                                }
+                                                            }, 300)
 
-                                }
+                                                        }
 
-                                loading.close = function () {
+                                                        loading.close = function () {
 
-                                    if (it != null) {
-                                        clearInterval(it);
-                                    }
-                                    it = setInterval(function () {
-                                        $("#loading").modal("hide");
-                                        if (!$("#loading").hasClass('in')) {
-                                            clearInterval(it);
-                                        }
-                                    }, 300)
+                                                            if (it != null) {
+                                                                clearInterval(it);
+                                                            }
+                                                            it = setInterval(function () {
+                                                                $("#loading").modal("hide");
+                                                                if (!$("#loading").hasClass('in')) {
+                                                                    clearInterval(it);
+                                                                }
+                                                            }, 300)
 
-                                }
+                                                        }
 
                                                         $(document).ready(function () {
                                                             $('.btnvis').tooltip({title: "Visualizar", placement: "top"});
@@ -826,7 +837,26 @@
                                                             $('.btnaddprod').tooltip({title: "Adicionar", placement: "top"});
                                                         });
 
-
+                                                        $(document).ready(function () {
+                                                            $(document).on({
+                                                                'show.bs.modal': function () {
+                                                                    var zIndex = 1040 + (10 * $('.modal:visible').length);
+                                                                    $(this).css('z-index', zIndex);
+                                                                    setTimeout(function () {
+                                                                        $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+                                                                    }, 0);
+                                                                },
+                                                                'hidden.bs.modal': function () {
+                                                                    if ($('.modal:visible').length > 0) {
+                                                                        // restore the modal-open class to the body element, so that scrolling works
+                                                                        // properly after de-stacking a modal.
+                                                                        setTimeout(function () {
+                                                                            $(document.body).addClass('modal-open');
+                                                                        }, 0);
+                                                                    }
+                                                                }
+                                                            }, '.modal');
+                                                        });
             </script>
 
     </body>
