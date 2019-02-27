@@ -103,14 +103,14 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr ng-repeat-start="cliente in clientes.elementos">
-                                                        <td>{{cliente[0].id}}</td>
+                                                        <td class="text-center">{{cliente[0].id}}</td>
                                                         <td>{{cliente[0].razao_social}}</td>
                                                         <td>{{cliente[0].nome_fantasia}}</td>
                                                         <td>{{cliente[0].inscricao_estadual}}</td>
                                                         <td>{{cliente[0].pessoa_fisica?'------':cliente[0].cnpj.valor}}</td>
                                                         <td>{{cliente[0].pessoa_fisica?cliente[0].cpf.valor:'------'}}</td>
                                                         <td>{{cliente[0].limite_credito}}</td>
-                                                        <td style="{{(cliente[0].inicio_limite>data_atual || cliente[0].termino_limite<data_atual)?'background-color:#71748d;color:#FFFFFF':'' }}">{{cliente[0].termino_limite| data}}<button class="btn btn-default" style="float:right" ng-if="cliente[0].inicio_limite>data_atual || cliente[0].termino_limite<data_atual"><i class="fa fa-address-card"></i></button></td>
+                                                        <td style="{{(cliente[0].inicio_limite > data_atual|| cliente[0].termino_limite<data_atual)?'background-color:#71748d;color:#FFFFFF':'' }}">{{cliente[0].termino_limite| data}}<button class="btn btn-default" style="float:right" ng-if="cliente[0].inicio_limite > data_atual || cliente[0].termino_limite < data_atual"><i class="fa fa-address-card"></i></button></td>
                                                         <th>
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setCliente(cliente[0])" data-target="#demo{{cliente[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
@@ -394,13 +394,13 @@
                                     <div class="form-group row">
                                         <label for="txtsuf" class="col-3 col-form-label text-left">Tem Suframa ?</label>
                                         <div class="col-9">
-                                                <label class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" name="radio-inline2" data-ng-value="true" data-ng-model="cliente.suframado" class="custom-control-input"><span class="custom-control-label">Sim</span>
-                                                </label>
-                                              <label class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" name="radio-inline2" data-ng-value="false" data-ng-model="cliente.suframado" checked="" class="custom-control-input"><span class="custom-control-label">Nao</span>
-                                                </label>
-                            
+                                            <label class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" name="radio-inline2" data-ng-value="true" data-ng-model="cliente.suframado" class="custom-control-input"><span class="custom-control-label">Sim</span>
+                                            </label>
+                                            <label class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" name="radio-inline2" data-ng-value="false" data-ng-model="cliente.suframado" checked="" class="custom-control-input"><span class="custom-control-label">Nao</span>
+                                            </label>
+
                                         </div>
                                         <div class="invalid-feedback">
                                             Please provide a valid text.
@@ -688,112 +688,133 @@
                     </div>
                 </div>
                 <!-- /.modal-content --> 
-                
-                
-               <!-- /.modal-content LOADING --> 
-            <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                        </div>
-                        <div class="modal-body text-center">
 
-                            <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                            <br>
-                            <h3 style="margin-top:20px;">Carregando as informações...</h3>
 
-                        </div>
-                        <div class="modal-footer">
+                <!-- /.modal-content LOADING --> 
+                <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body text-center">
+
+                                <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
+                                <br>
+                                <h3 style="margin-top:20px;">Carregando as informações...</h3>
+
+                            </div>
+                            <div class="modal-footer">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
 
-            <!-- jquery 3.3.1 -->
-            <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-            <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
-            <script src="assets/libs/js/form-mask.js"></script>
-            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+                <!-- jquery 3.3.1 -->
+                <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+                <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
+                <script src="assets/libs/js/form-mask.js"></script>
+                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
-            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-            <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-            <!-- slimscroll js -->
-            <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-            <!-- main js -->
-            <script src="assets/libs/js/main-js.js"></script>
-            <!-- chart chartist js -->
-            <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
-            <!-- sparkline js -->
-            <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
-            <!-- morris js -->
-            <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
-            <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
-            <!-- chart c3 js -->
-            <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
-            <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
-            <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
-            <script src="assets/libs/js/dashboard-ecommerce.js"></script>
-            <!-- parsley js -->
-            <script src="assets/vendor/parsley/parsley.js"></script>
+                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+                <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+                <!-- slimscroll js -->
+                <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+                <!-- main js -->
+                <script src="assets/libs/js/main-js.js"></script>
+                <!-- chart chartist js -->
+                <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
+                <!-- sparkline js -->
+                <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+                <!-- morris js -->
+                <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
+                <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
+                <!-- chart c3 js -->
+                <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
+                <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+                <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
+                <script src="assets/libs/js/dashboard-ecommerce.js"></script>
+                <!-- parsley js -->
+                <script src="assets/vendor/parsley/parsley.js"></script>
 
-            <!-- Optional JavaScript -->
-            <script>
+                <!-- Optional JavaScript -->
+                <script>
 
-                                var sh = false;
-                                var it = null;
+                                            $(document).ready(function () {
+                                                $(document).on({
+                                                    'show.bs.modal': function () {
+                                                        var zIndex = 1040 + (10 * $('.modal:visible').length);
+                                                        $(this).css('z-index', zIndex);
+                                                        setTimeout(function () {
+                                                            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+                                                        }, 0);
+                                                    },
+                                                    'hidden.bs.modal': function () {
+                                                        if ($('.modal:visible').length > 0) {
+                                                            // restore the modal-open class to the body element, so that scrolling works
+                                                            // properly after de-stacking a modal.
+                                                            setTimeout(function () {
+                                                                $(document.body).addClass('modal-open');
+                                                            }, 0);
+                                                        }
+                                                    }
+                                                }, '.modal');
+                                            });
 
-                                loading.show = function () {
-                                    if (it != null) {
-                                        clearInterval(it);
-                                    }
-                                    it = setInterval(function () {
-                                        $("#loading").modal("show");
-                                        if ($("#loading").hasClass('in')) {
-                                            clearInterval(it);
-                                        }
-                                    }, 300)
+                                            var sh = false;
+                                            var it = null;
 
-                                }
+                                            loading.show = function () {
+                                                if (it != null) {
+                                                    clearInterval(it);
+                                                }
+                                                it = setInterval(function () {
+                                                    $("#loading").modal("show");
+                                                    if ($("#loading").hasClass('in')) {
+                                                        clearInterval(it);
+                                                    }
+                                                }, 300)
 
-                                loading.close = function () {
+                                            }
 
-                                    if (it != null) {
-                                        clearInterval(it);
-                                    }
-                                    it = setInterval(function () {
-                                        $("#loading").modal("hide");
-                                        if (!$("#loading").hasClass('in')) {
-                                            clearInterval(it);
-                                        }
-                                    }, 300)
+                                            loading.close = function () {
 
-                                }
-                    
-                    $(document).on('keyup', '.txtsuf', function() {
-                        $(this).mask('000000000');
-                    });
-                    $(document).on('keyup', '.cnpj', function() {
-                        $(this).mask('00.000.000/0000-00', {reverse: true});
-                    });
-                    $(document).on('keyup', '.cpf', function() {
-                        $(this).mask('000.000.000-00', {reverse: true});
-                    });
-                    $(document).on('keyup', '.rg', function() {
-                        $(this).mask('99.999.999-A', {reverse: true});
-                    });
-                    $(document).on('keyup', '.ie_', function() {
-                        $(this).mask('000000000000000', {reverse: true});
-                    });
-                    
+                                                if (it != null) {
+                                                    clearInterval(it);
+                                                }
+                                                it = setInterval(function () {
+                                                    $("#loading").modal("hide");
+                                                    if (!$("#loading").hasClass('in')) {
+                                                        clearInterval(it);
+                                                    }
+                                                }, 300)
+
+                                            }
+
+                                            $(document).on('keyup', '.txtsuf', function () {
+                                                $(this).mask('000000000');
+                                            });
+                                            $(document).on('keyup', '.cnpj', function () {
+                                                $(this).mask('00.000.000/0000-00', {reverse: true});
+                                            });
+                                            $(document).on('keyup', '.cpf', function () {
+                                                $(this).mask('000.000.000-00', {reverse: true});
+                                            });
+                                            $(document).on('keyup', '.rg', function () {
+                                                $(this).mask('99.999.999-A', {reverse: true});
+                                            });
+                                            $(document).on('keyup', '.ie_', function () {
+                                                $(this).mask('000000000000000', {reverse: true});
+                                            });
+
                                             $(document).ready(function () {
                                                 $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
                                                 $('.btnedit').tooltip({title: "Editar", placement: "top"});
                                                 $('.btndel').tooltip({title: "Deletar", placement: "top"});
                                             });
-                                            
+
 
                 </script>
 

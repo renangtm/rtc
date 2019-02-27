@@ -222,8 +222,8 @@ echo $relatorio;
                                                                 <thead>
                                                                 <th ng-repeat="c in filhos[0].campos">{{c.titulo}}</th>
                                                                 </thead>
-                                                                <tr ng-repeat="item in filhos track by $index">
-                                                                    <th ng-repeat="c in item.valores_campos">{{c}}</th>
+                                                                <tr ng-repeat="item in filhos">
+                                                                    <th ng-repeat="c in item.valores_campos track by $index">{{c}}</th>
                                                                 </tr>
                                                                
                                                             </table>
