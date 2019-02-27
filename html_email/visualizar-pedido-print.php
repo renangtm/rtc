@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <?php
-    
+    /*
     $p  = $GLOBALS['obj'];
   
     $logo = $p->empresa->getLogo(new ConnectionFactory());
-   
+   */
     
 ?>
 <html>
@@ -28,7 +28,7 @@
                                     <tr style="border-collapse: collapse;"></tr>
                                     <tr style="border-collapse: collapse;">
                                         <td class="es-adaptive" align="center" style="padding: 0px; margin: 0px;">
-                                            <table class="es-header-body" width="600" cellspacing="0" cellpadding="0" align="center" style="border-collapse: collapse; border-spacing: 0px; background-color: transparent;">
+                                            <table class="es-header-body" width="800" cellspacing="0" cellpadding="0" align="center" style="border-collapse: collapse; border-spacing: 0px; background-color: transparent;">
                                                 <tbody style="">
                                                     <tr style="border-collapse: collapse;">
                                                         <td style="margin: 0px; background-color: rgb(255, 255, 255); padding: 15px 20px 20px;" bgcolor="#ffffff" align="left">
@@ -85,7 +85,7 @@
                                 <tbody style="">
                                     <tr style="border-collapse: collapse;">
                                         <td align="center" style="padding: 0px; margin: 0px;">
-                                            <table class="es-content-body" width="600" cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center" style="border-collapse: collapse; border-spacing: 0px; background-color: rgb(255, 255, 255);">
+                                            <table class="es-content-body" width="800" cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center" style="border-collapse: collapse; border-spacing: 0px; background-color: rgb(255, 255, 255);">
                                                 <tbody style="">
                                                     <tr>
                                                         <td style="padding: 5px 20px 20px; margin: 0px;">
@@ -128,17 +128,18 @@
                                                             <br>
                                                             <table id="produtos" style="width:100%;border-collapse: collapse;" cellspacing="0" cellpadding="0">
                                                                 <tr>
-                                                                    <th colspan="8" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); background-color:#f0f0f0;padding:10px; border: 1px solid black;">Produtos</th>
+                                                                    <th colspan="9" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); background-color:#f0f0f0;padding:10px; border: 1px solid black;">Produtos</th>
                                                                 </tr>
                                                                 <tr>
                                                                     <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;width: 180px;">Produto</th>
-                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">Validade</th>
+                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">Val.</th>
                                                                     <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">Qtd.</th>
-                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">Frete.</th>
-                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">Icms.</th>
+                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;width: 100px;">Preço Ini.(R$)</th>
+                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">Frete (R$)</th>
+                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">Icms (R$)</th>
          
-                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">Prazo.</th>
-                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;width: 100px;">Preço (R$)</th>
+                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">Prazo (R$)</th>
+                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;width: 100px;">Preço Fin.(R$)</th>
                                                                     <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;width: 100px;">Subtotal (R$)</td>
                                                                 </tr>
                                                                 <?php
@@ -148,14 +149,15 @@
                                                                 foreach ($p->produtos as $key => $value) {
                                                                     ?>
                                                                     <tr id="produto">
-                                                                        <td data-tipo="nome" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $value->produto->nome; ?></td>
-                                                                        <td align="center" data-tipo="validade" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo date('d/m/Y', $value->validade_minima/1000); ?></td>
-                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $value->quantidade; ?></td>
-                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $value->frete; ?></td>
-                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $value->icms; ?></td>
-                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $value->juros; ?></td>
-                                                                        <td align="center" data-tipo="valor" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete); ?></td>
-                                                                        <td align="center" data-tipo="total" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $value->quantidade * ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete); ?></td>
+                                                                        <td data-tipo="nome" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo $value->produto->nome; ?></td>
+                                                                        <td align="center" data-tipo="validade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo date('d/m/y', $value->validade_minima/1000); ?></td>
+                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo $value->quantidade; ?></td>
+                                                                        <td align="center" data-tipo="valor" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo ($value->valor_base); ?></td>
+                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo $value->frete; ?></td>
+                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo $value->icms; ?></td>
+                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo $value->juros; ?></td>
+                                                                        <td align="center" data-tipo="valor" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete); ?></td>
+                                                                        <td align="center" data-tipo="total" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo $value->quantidade * ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete); ?></td>
                                                                     </tr>
 
                                                                     <?php
@@ -168,7 +170,7 @@
                                                                 ?> 
                                                                 <tfoot style=""> 
                                                                     <tr style=""> 
-                                                                        <th align="left" colspan="7" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">VALOR TOTAL</th>
+                                                                        <th align="left" colspan="8" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">VALOR TOTAL</th>
                                                                         <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;"><?php echo $valor_total; ?></th>
                                                                     </tr>
                                                                 </tfoot>   
@@ -289,7 +291,7 @@
                                 <tbody style="">
                                     <tr style="border-collapse: collapse;">
                                         <td align="center" style="padding: 0px; margin: 0px;">
-                                            <table class="es-footer-body" width="600" cellspacing="0" cellpadding="0" align="center" style="border-collapse: collapse; border-spacing: 0px; background-color: rgb(128, 128, 128);">
+                                            <table class="es-footer-body" width="800" cellspacing="0" cellpadding="0" align="center" style="border-collapse: collapse; border-spacing: 0px; background-color: rgb(128, 128, 128);">
                                                 <tbody style="">
                                                     <tr style="border-collapse: collapse;">
                                                         <td align="left" bgcolor="#333" style="margin: 0px; background-color: rgb(51, 51, 51); padding: 20px;">
