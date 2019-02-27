@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <?php
-    /*
+    
     $p  = $GLOBALS['obj'];
   
     $logo = $p->empresa->getLogo(new ConnectionFactory());
-   */
+   
     
 ?>
 <html>
