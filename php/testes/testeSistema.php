@@ -90,7 +90,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         $em->enviarEmail(new Email("renan_goncalves@outlook.com.br"), "teste", "testew");
         */
         
-       
+       $usuario = Sistema::logar('1','0cairnseto');
       
     }
 
