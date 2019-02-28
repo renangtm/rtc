@@ -23,6 +23,17 @@
         <link rel="stylesheet" href="assets/vendor/charts/c3charts/c3.css">
         <link rel="stylesheet" href="assets/vendor/fonts/flag-icon-css/flag-icon.min.css">
         <title>RTC (Reltrab Cliente) - WEB</title>
+        <style>
+            a:hover {
+                color: #4aaf51;
+            }
+            
+            .product-sidebar-widget-title .fas {
+                transition: .3s transform ease-in-out;   
+            }
+
+         
+        </style>
     </head>
 
     <body ng-controller="crtCompraParceiros">
@@ -102,7 +113,7 @@
                                                     </a>    
                                                 </div>
                                                 <div class="carousel-item">
-                                                        <img class="d-block w-100" src="assets/images/banner_784x295.jpg" alt="Third slide">
+                                                    <img class="d-block w-100" src="assets/images/banner_784x295.jpg" alt="Third slide">
                                                 </div>
                                             </div>
                                             <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -129,98 +140,69 @@
                                                     <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm" style="width:100px;height:100px;margin-bottom:95px"></span>
                                                 </div>
                                                 <div class="ribbons" ng-if="produto.ofertas.length > 0"></div>
-                                                <div class="ribbons-text m-l-10" ng-if="produto.ofertas.length > 0">Oferta</div>
+                                                <div class="ribbons-text" ng-if="produto.ofertas.length > 0" style="margin-left: 5px;">Oferta</div>
 
                                             </div>
                                             <div class="product-content">
                                                 <div class="product-content-head">
                                                     <h3 class="product-title">{{produto.nome}}</h3>
                                                     <hr>
-                                                    
 
-                                                        <button ng-click="addCarrinho(produto,validade)" class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;position:relative;margin-left:2px;width:100%;margin-bottom:10px">
-                                                            
-                                                            <div ng-if="validade.validade !== 1000">
-                                                                Val: {{validade.validade | data_st}}
-                                                            </div>
-                                                            <div ng-if="validade.validade === 1000">
-                                                                Sem validade
-                                                            </div>
-                                                             &nbsp R$ {{validade.valor}}
-                                                             <br>
-                                                             &nbsp {{produto.liquido?'Lt':'Kg'}} R$ {{(validade.valor/produto.quantidade_unidade).toFixed(2)}}
-                                                             <br>
-                                                             <i class="fas fa-shopping-cart"></i>&nbsp Comprar
-                                                             
-                                                             <div ng-if="validade.oferta" style="position:absolute;width:100%;height:30px;top:-15px;left:5px">
-                                                                 <cronometro model="validade.restante"></cronometro>
-                                                             </div>
-                                                        </button>
+
+                                                    <button ng-click="addCarrinho(produto, validade)" class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;position:relative;margin-left:2px;width:100%;margin-bottom:10px">
                                                         
-
-                                                        <div class="progress mb-1" ng-if="!tv(produto)">
-                                                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 60%"></div>
+                                                        <div ng-if="validade.oferta" style="margin-bottom: 5px;">
+                                                            <cronometro model="validade.restante"></cronometro>
                                                         </div>
-
-                                                        <div style="color:SteelBlue">
-                                                            <i class="fas fa-road"></i>&nbsp {{produto.empresa.nome}} 
+                                                            
+                                                        <div ng-if="validade.validade !== 1000">
+                                                            <span style="font-size: 14px;">Val: {{validade.validade| data_st}}</span>
                                                         </div>
-
-                                                        <div ng-if="produto.logistica !== null" style="color:DarkBlue">
-
-                                                            <i class="fas fa-box"></i>&nbsp {{produto.logistica.nome}} 
+                                                        <div ng-if="validade.validade === 1000">
+                                                            <span style="font-size: 14px;">Sem validade</span>
                                                         </div>
+                                                        <span style="font-size: 18px;">R$ {{validade.valor}}</span>
+                                                        <br>
+                                                        <span style="font-size: 14px;">R$ {{(validade.valor / produto.quantidade_unidade).toFixed(2)}} por {{produto.liquido?'Lt':'Kg'}}</span> 
+                                                        <hr>
+                                                        <i class="fas fa-shopping-cart"></i>&nbsp Comprar
 
+                                                        
+                                                    </button>
+
+
+                                                    <div class="progress mb-1" ng-if="!tv(produto)">
+                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 60%"></div>
                                                     </div>
-                                                    
-                                                    <div class="product-quant">{{produto.grade.gr[0]}} p/ caixa</div>
-                                                   
+
+                                                    <div style="color:SteelBlue">
+                                                        <i class="fas fa-road"></i>&nbsp {{produto.empresa.nome}} 
+                                                    </div>
+
+                                                    <div ng-if="produto.logistica !== null" style="color:DarkBlue">
+
+                                                        <i class="fas fa-box"></i>&nbsp {{produto.logistica.nome}} 
+                                                    </div>
+
                                                 </div>
 
-                                                <div class="product-btn text-center">
-                                                   
-                                                </div>
+                                                <div class="product-quant">{{produto.grade.gr[0]}} p/ caixa</div>
+
+                                            </div>
+
+                                            <div class="product-btn text-center">
+
                                             </div>
                                         </div>
-                                    
+                                    </div>
+
 
 
                                     <!-- ============================================================== -->
                                     <!-- banner  -->
                                     <!-- ============================================================== -->
 
-                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-
-                                        <div id="carouselExampleIndicators_1" class="product-carousel carousel slide m-b-40" data-ride="carousel">
-                                            <ol class="carousel-indicators">
-                                                <li data-target="#carouselExampleIndicators_1" data-slide-to="0" class="active" style="cursor: pointer;"></li>
-                                                <li data-target="#carouselExampleIndicators_1" data-slide-to="1" style="cursor: pointer;"></li>
-                                                <li data-target="#carouselExampleIndicators_1" data-slide-to="2" style="cursor: pointer;"></li>
-                                            </ol>
-                                            <div class="carousel-inner">
-                                                <div class="carousel-item active">
-                                                    <a href="http://agrofauna.com.br/mail/fraude_boletos/email_fraude_boletos_bancarios.html">
-                                                        <img class="d-block w-100" src="assets/images/banner_fraude_em_boletos_784x295.jpg" alt="First slide">
-                                                    </a>
-                                                </div>
-                                                <div class="carousel-item">
-                                                    <a href="http://agrofauna.com.br/apresentacao_rtc_v3.pdf" target="_blank">
-                                                        <img class="d-block w-100" src="assets/images/banner_conheca_projeto_novos_rumos_784x295.jpg" alt="Second slide">
-                                                    </a>    
-                                                </div>
-                                                <div class="carousel-item">
-                                                        <img class="d-block w-100" src="assets/images/banner_784x295.jpg" alt="Third slide">
-                                                </div>
-                                            </div>
-                                            <a class="carousel-control-prev" href="#carouselExampleIndicators_1" role="button" data-slide="prev">
-                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                <span class="sr-only">Previous</span>  </a>
-                                            <a class="carousel-control-next" href="#carouselExampleIndicators_1" role="button" data-slide="next">
-                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                <span class="sr-only">Next</span>  </a>
-                                        </div>
-
-                                    </div>
+                                    
 
 
                                     <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12" ng-repeat="produto in dividir(produtos.elementos, 2)[1]">
@@ -230,57 +212,60 @@
                                                     <img src="{{produto.imagem}}" id="img_{{produto.id}}" onload="fechaLoad(this)" alt="" class="img-fluid" style="display: none"></div>
                                                 <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm " style="width:100px;height:100px;margin-bottom:95px"></span>
                                                 <div class="ribbons" ng-if="produto.ofertas.length > 0"></div>
-                                                <div class="ribbons-text m-l-10" ng-if="produto.ofertas.length > 0">Oferta</div>
+                                                <div class="ribbons-text" ng-if="produto.ofertas.length > 0" style="margin-left: 5px;">Oferta</div>
 
                                             </div>
                                             <div class="product-content">
                                                 <div class="product-content-head">
                                                     <h3 class="product-title">{{produto.nome}}</h3>
                                                     <hr>
-                                                    
 
-                                                        <button ng-click="addCarrinho(produto,validade)" class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;margin-left:2px;width:100%;margin-bottom:10px">
+
+                                                    <button ng-click="addCarrinho(produto, validade)" class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;margin-left:2px;width:100%;margin-bottom:10px">
+
+                                                         <div ng-if="validade.oferta" style="margin-bottom: 5px;">
+                                                            <cronometro model="validade.restante"></cronometro>
+                                                        </div>
                                                             
-                                                            <div ng-if="validade.validade !== 1000">
-                                                                Val: {{validade.validade | data_st}}
-                                                            </div>
-                                                            <div ng-if="validade.validade === 1000">
-                                                                Sem validade
-                                                            </div>
-                                                             &nbsp R$ {{validade.valor}}
-                                                             <br>
-                                                             &nbsp {{produto.liquido?'Lt':'Kg'}} R$ {{(validade.valor/produto.quantidade_unidade).toFixed(2)}}
-                                                             <br>
-                                                             <i class="fas fa-shopping-cart"></i>&nbsp Comprar
-                                                             
-                                                        </button>
-                                                        
-
-                                                        <div class="progress mb-1" ng-if="!tv(produto)">
-                                                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 60%"></div>
+                                                        <div ng-if="validade.validade !== 1000">
+                                                            <span style="font-size: 14px;">Val: {{validade.validade| data_st}}</span>
                                                         </div>
-
-                                                        <div style="color:SteelBlue">
-                                                            <i class="fas fa-road"></i>&nbsp {{produto.empresa.nome}} 
+                                                        <div ng-if="validade.validade === 1000">
+                                                            <span style="font-size: 14px;">Sem validade</span>
                                                         </div>
+                                                        <span style="font-size: 18px;">R$ {{validade.valor}}</span>
+                                                        <br>
+                                                        <span style="font-size: 14px;">R$ {{(validade.valor / produto.quantidade_unidade).toFixed(2)}} por {{produto.liquido?'Lt':'Kg'}}</span> 
+                                                        <hr>
+                                                        <i class="fas fa-shopping-cart"></i>&nbsp Comprar
 
-                                                        <div ng-if="produto.logistica !== null" style="color:DarkBlue">
+                                                    </button>
 
-                                                            <i class="fas fa-box"></i>&nbsp {{produto.logistica.nome}} 
-                                                        </div>
 
+                                                    <div class="progress mb-1" ng-if="!tv(produto)">
+                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 60%"></div>
                                                     </div>
-                                                    
-                                                    <div class="product-quant">{{produto.grade.gr[0]}} p/ caixa</div>
-                                                   
+
+                                                    <div style="color:SteelBlue">
+                                                        <i class="fas fa-road"></i>&nbsp {{produto.empresa.nome}} 
+                                                    </div>
+
+                                                    <div ng-if="produto.logistica !== null" style="color:DarkBlue">
+
+                                                        <i class="fas fa-box"></i>&nbsp {{produto.logistica.nome}} 
+                                                    </div>
+
                                                 </div>
 
-                                                <div class="product-btn text-center">
-                                                   
-                                                </div>
+                                                <div class="product-quant">{{produto.grade.gr[0]}} p/ caixa</div>
+
+                                            </div>
+
+                                            <div class="product-btn text-center">
+
                                             </div>
                                         </div>
-
+                                    </div>       
 
 
 
@@ -311,24 +296,31 @@
 
 
                                     <div class="product-sidebar-widget" ng-repeat="filtro in produtos.filtro">
-                                        <h4 class="product-sidebar-widget-title">{{filtro.nome}}</h4>
+                                        <h4 ng-if="filtro._classe === 'FiltroTextual'" class="product-sidebar-widget-title">Busca por filtro</h4>
+                                            <h4 ng-if="filtro._classe === 'FiltroOpcional'" class="product-sidebar-widget-title">
+                                                <a class="" data-toggle="collapse" href="#collapseExample_{{filtro.id}}" role="button" aria-expanded="false" aria-controls="collapseExample_{{filtro.id}}">
+                                                    {{filtro.nome}}<span class="fas ml-2 fa-angle-down"></span>
+                                                </a>
+                                            </h4>
                                         <div class="form-group" ng-if="filtro._classe === 'FiltroTextual'">
                                             <div class="icon-addon addon-lg">
                                                 <input class="form-control form-control-lg" ng-model="filtro.valor" ng-confirm="produtos.attList()" type="search" placeholder="{{filtro.nome}}" aria-label="Search">
                                                 <label for="email" class="fa fa-search" rel="tooltip" title="email"></label>
                                             </div>
                                         </div>
-
-                                        <div ng-if="filtro._classe === 'FiltroOpcional'" class="custom-control custom-checkbox" ng-repeat="opcao in filtro.opcoes" style="{{opcao.quantidade===0?'text-decoration:line-through;color:DarkRed':''}}">
+                                    <div ng-if="filtro._classe === 'FiltroOpcional'" class="collapse" id="collapseExample_{{filtro.id}}">
+                                        <div  class="custom-control custom-checkbox" ng-repeat="opcao in filtro.opcoes" style="{{opcao.quantidade===0?'text-decoration:line-through;color:DarkRed':''}}">
                                             <button ng-if="opcao.selecionada === 0" ng-click="addLevel(opcao)" class="btn btn-default" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-adjust"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</button>
                                             <button ng-if="opcao.selecionada === 1" ng-click="addLevel(opcao)" class="btn btn-success" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-check"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</button>
                                             <button ng-if="opcao.selecionada === 2" ng-click="addLevel(opcao)" class="btn btn-danger" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-times"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</strong></button>
-                                            
+
                                         </div>
-
                                     </div>
-
-
+                                    </div>
+                                    
+                                    
+                                    
+                                    
                                     <div class="product-sidebar-widget">
                                         <button type="button" class="btn btn-outline-light" ng-click="resetarFiltro()">Resetar Filtro</button>
                                     </div>
@@ -374,7 +366,7 @@
                                     </div>
                                 </div>
 
-                                
+
 
                                 <!-- ============================================================== -->
                                 <!-- sidebar BANNER 300x250  -->
@@ -477,55 +469,65 @@
         <!-- Optional JavaScript -->
         <script>
 
-                                                            function fechaLoad(img) {
+                                                                    function fechaLoad(img) {
 
-                                                                var im = $(img);
-                                                                var num = im.attr('id').split('_')[1];
+                                                                        var im = $(img);
+                                                                        var num = im.attr('id').split('_')[1];
 
 
-                                                                $("#sp_" + num).hide();
-                                                                im.css('display', 'initial');
+                                                                        $("#sp_" + num).hide();
+                                                                        im.css('display', 'initial');
 
-                                                            }
-
-                                                            var sh = false;
-                                                            var it = null;
-
-                                                            loading.show = function () {
-
-                                                                if (it != null) {
-                                                                    clearInterval(it);
-                                                                }
-                                                                it = setInterval(function () {
-                                                                    $("#loading").modal("show");
-                                                                    if ($("#loading").hasClass('in')) {
-                                                                        clearInterval(it);
                                                                     }
 
-                                                                }, 300)
+                                                                    var sh = false;
+                                                                    var it = null;
 
-                                                            }
+                                                                    loading.show = function () {
 
-                                                            loading.close = function () {
+                                                                        if (it != null) {
+                                                                            clearInterval(it);
+                                                                        }
+                                                                        it = setInterval(function () {
+                                                                            $("#loading").modal("show");
+                                                                            if ($("#loading").hasClass('in')) {
+                                                                                clearInterval(it);
+                                                                            }
 
-                                                                if (it != null) {
-                                                                    clearInterval(it);
-                                                                }
-                                                                it = setInterval(function () {
+                                                                        }, 300)
 
-                                                                    $("#loading").modal("hide");
-                                                                    if (!$("#loading").hasClass('in')) {
-                                                                        clearInterval(it);
                                                                     }
-                                                                }, 300)
 
-                                                            }
+                                                                    loading.close = function () {
+
+                                                                        if (it != null) {
+                                                                            clearInterval(it);
+                                                                        }
+                                                                        it = setInterval(function () {
+
+                                                                            $("#loading").modal("hide");
+                                                                            if (!$("#loading").hasClass('in')) {
+                                                                                clearInterval(it);
+                                                                            }
+                                                                        }, 300)
+
+                                                                    }
 
 
 
 
         </script>
-
+        
+        <script>
+                    $('.collapse').on('shown.bs.collapse', function () {
+                       /* $(this).parent().find(".fa-angle-down").removeClass("fa-angle-down").addClass("fa-angle-up");*/
+                        $(this).parent().find(".fa-angle-down").css('transform', 'rotate(180deg)');
+                    }).on('hidden.bs.collapse', function () {
+                        /*$(this).parent().find(".fa-angle-up").removeClass("fa-angle-up").addClass("fa-angle-down");*/
+                        $(this).parent().find(".fa-angle-down").css('transform', 'rotate(0deg)');
+                    });
+        </script>
+        
     </body>
 
 </html>

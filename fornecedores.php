@@ -249,7 +249,7 @@
                                     <div class="form-group row">
                                         <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">CNPJ</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="fornecedor.cnpj.valor" required placeholder="00.000.000/0000-00" class="form-control cpf">
+                                            <input id="txtcnpj" type="text" ng-model="fornecedor.cnpj.valor" required placeholder="00.000.000/0000-00" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>

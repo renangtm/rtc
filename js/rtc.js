@@ -833,8 +833,6 @@ function equalize(obj, param, vect) {
     }
 }
 
-
-
 function privateXmlToJson(r, e) {
     for (var t = ["<", ">", "</", "/>"], l = "", a = {}, n = "", h = -1, i = !1, s = !1; e < r.length; e++) {
         for (var f = e, g = 0; g < t.length; g++) {
@@ -1099,6 +1097,10 @@ rtc.directive('inteiro', function () {
         }
     };
 })
+
+function formatTextArea(str) {
+    return str.split("\n").join(" <br> ");
+}
 
 rtc.directive('decimal', function ($parse) {
     return {
@@ -1681,7 +1683,7 @@ rtc.directive('calendario', function ($timeout) {
                 scope.prevMonth = function () {
                     var dt = new Date(parseFloat(scope.initDate + ""));
                     if (dt.getMonth() > 0) {
-                        dt.setMonth(dt.getMonth() - 1);
+                        dt.setMonth(dt.getMonth() - q);
                         dt.setDate(1);
                     } else {
                         dt.setYear(dt.getFullYear() - 1);

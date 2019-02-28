@@ -98,6 +98,8 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
     $scope.modos = ["Igual a", "Maior que", "Menor que"];
     $scope.mn = [0, 1, 2];
 
+    $scope.filhos = [];
+
     if (typeof rtc["relatorio"] !== 'undefined') {
 
         $scope.relatorio = rtc["relatorio"];
@@ -115,6 +117,18 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
 
     $scope.inverteGroup = function (campo) {
         campo.agrupado = !campo.agrupado;
+    }
+
+    $scope.detalhes = function (item) {
+
+
+        relatorioService.getFilhos(item, function (f) {
+
+            $scope.filhos = f.filhos;
+            $("#mdlFilhos").modal("show");
+
+        })
+
     }
 
     $scope.gerarRelatorio = function () {
@@ -1531,6 +1545,11 @@ rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoSe
 
     $scope.calcular = function () {
 
+        for (var i = 0; i < $scope.nota.produtos.length; i++) {
+            var p = $scope.nota.produtos[i];
+            p.valor_total = p.valor_unitario * p.quantidade;
+        }
+
         if ($scope.nota.calcular_valores) {
             notaService.calcularImpostosAutomaticamente($scope.nota, function (n) {
 
@@ -1983,6 +2002,8 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tr
             msg.erro("Cotacao sem status.");
             return;
         }
+        
+        p.observacao = formatTextArea(p.observacao);
 
         baseService.merge(p, function (r) {
             if (r.sucesso) {
@@ -2346,6 +2367,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
             msg.erro("Pedido sem status.");
             return;
         }
+        p.observacoes = formatTextArea(p.observacoes);
 
         baseService.merge(p, function (r) {
             if (r.sucesso) {
@@ -3627,7 +3649,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
 rtc.controller("crtLotes", function ($scope, loteService, baseService) {
 
 
-    $scope.lotes = createAssinc(loteService, 1, 3, 10);
+    $scope.lotes = createAssinc(loteService, 1, 10, 10);
     $scope.lotes.attList();
     assincFuncs(
             $scope.lotes,
@@ -4889,7 +4911,9 @@ rtc.controller("crtLogin", function ($scope, loginService) {
     $scope.senha = "";
     $scope.email = "";
     $scope.logar = function () {
+        
         loginService.login($scope.usuario, $scope.senha, function (r) {
+            
             if (r.usuario === null || !r.sucesso) {
                 msg.erro("Esse usuario nao existe");
             } else {

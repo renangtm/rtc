@@ -42,6 +42,14 @@ rtc.service('relatorioService', function ($http, $q) {
             falha: fn
         });
     }
+    this.getFilhos = function (item,fn) {
+        baseService($http, $q, {
+            o:item,
+            query: "$r->filhos=$o->getFilhos($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.relatorio = null;
     this.getCount = function(filtro,fn){
         baseService($http, $q, {

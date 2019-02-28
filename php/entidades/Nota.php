@@ -556,7 +556,7 @@ class Nota {
             $totp += $value->valor_total;
         }
 
-        if ($totv != $totp && $this->validar) {
+        if ((($totv > ($totp+0.1)) || ($totv < ($totp-0.1))) && $this->validar) {
 
             throw new Exception('Somatorio das parcelas difere do valor da nota Total:' . $totp . ', Somatorio: ' . $totv);
         }

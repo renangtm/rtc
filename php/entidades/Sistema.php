@@ -22,7 +22,7 @@ class Sistema {
         if($rtc->numero >= 3){
             
             $relatorios[] = new RelatorioFinanceiro($empresa);
-            
+            $relatorios[] = new RelatorioMovimento($empresa);
         }
         
         return $relatorios;
@@ -31,7 +31,7 @@ class Sistema {
     
     public static function getProdutosDoDia($con,$dia,$num,$empresa){
         
-        $dia = $dia-1;
+        $dia = $dia - 1;
         
         while($dia<0){
             $dia += $num;
@@ -411,7 +411,7 @@ class Sistema {
 
         foreach ($empresas as $key => $value) {
 
-            $prods = $value->getProdutos($con, 0, 500000, '', '');
+            $prods = $value->getProdutos($con, 0, 500000, 'categoria_produto.loja=true', '');
 
             foreach ($prods as $key2 => $value2) {
 

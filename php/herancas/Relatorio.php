@@ -31,7 +31,7 @@ class Relatorio {
 
     public function getCount($con) {
 
-        $query = "SELECT * FROM ($this->sql) k";
+        $query = "SELECT *,COUNT(*) FROM ($this->sql) k";
 
         $where = "";
         $groupby = "";
@@ -70,7 +70,8 @@ class Relatorio {
         }
 
         $query = "SELECT COUNT(*) FROM ($query) kk";
-
+        
+        
 
         $ps = $con->getConexao()->prepare($query);
         $ps->execute();
@@ -143,6 +144,7 @@ class Relatorio {
         }
 
         $query .= " LIMIT $x1, " . ($x2 - $x1);
+        
         
         $ps = mysqli_query($con->getConexao(), $query);
 

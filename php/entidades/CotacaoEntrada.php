@@ -455,7 +455,9 @@ class CotacaoEntrada {
                 
                 $html = Sistema::getHtml("visualizar-cotacao-entrada", $this);
 
-                $this->usuario->email->enviarEmail($this->fornecedor->email->filtro(Email::$VENDAS), "Cotacao de produtos", $html);
+                $this->empresa->email->enviarEmail($this->fornecedor->email->filtro(Email::$VENDAS), "Cotacao de produtos", $html);
+                $this->empresa->email->enviarEmail($this->empresa->email->filtro(Email::$COMPRAS), "Cotacao de produtos", $html);
+                
             } catch (Exception $ex) {
                 
             }

@@ -25,6 +25,9 @@
         <!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">-->
         <title>RTC (Reltrab Cliente) - WEB</title>
         <style>
+            .page-link:hover {
+                color:#fff !important;
+            }
         </style>
     </head>
 
@@ -97,19 +100,19 @@
                                                         <th data-ordem="produto.disponivel">Disp</th>
                                                         <th data-ordem="produto.transito">Trans</th>
                                                         <th data-ordem="produto.valor_base">Valor (R$)</th>
-                                                        <th data-ordem="produto.ativo">Principio ativo</th>
-                                                        <th width="150px">Acao</th>
+                                                        <th data-ordem="produto.ativo">Princ&iacute;pio ativo</th>
+                                                        <th width="180px">A&ccedil;&atilde;o</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr ng-repeat-start="produto in produtos.elementos">
-                                                        <td>{{produto[0].id}}</td>
+                                                        <td class="text-center">{{produto[0].id}}</td>
                                                         <td>{{produto[0].nome}}</td>
-                                                        <td>{{produto[0].classe_risco}}</td>
-                                                        <td>{{produto[0].estoque}}</td>
-                                                        <td>{{produto[0].disponivel}}</td>
-                                                        <td>{{produto[0].transito}}</td>
-                                                        <td>{{produto[0].valor_base}}</td>
+                                                        <td class="text-center">{{produto[0].classe_risco}}</td>
+                                                        <td class="text-center">{{produto[0].estoque}}</td>
+                                                        <td class="text-center">{{produto[0].disponivel}}</td>
+                                                        <td class="text-center">{{produto[0].transito}}</td>
+                                                        <td class="text-center">{{produto[0].valor_base}}</td>
                                                         <td>{{produto[0].ativo}}</td>
                                                         <th>
                                                             <div class="product-btn">
@@ -164,7 +167,7 @@
                                                                             <tr>
                                                                                 <td colspan="2">
 
-                                                                                    Indicacao de Uso:
+                                                                                    Indica&ccedil;&atilde;o de Uso:
                                                                                     <hr>
                                                                                     <div ng-repeat="rec in produto[0].receituario">
                                                                                         Cultura: <strong>{{rec.cultura.nome}}</strong>
@@ -220,8 +223,8 @@
                                                         <th>Disp</th>
                                                         <th>Trans</th>
                                                         <th>Valor (R$)</th>
-                                                        <th>Principio ativo</th>
-                                                        <th width="150px">Acao</th>
+                                                        <th>Princ&iacute;pio ativo</th>
+                                                        <th width="150px">A&ccedil;&atilde;o</th>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -231,7 +234,7 @@
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
                                                         <li class="page-item" ng-click="produtos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                        <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
                                                         <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Proximo</a></li>
                                                     </ul>
                                                 </nav>
@@ -282,7 +285,7 @@
                                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                         <a class="nav-item nav-link active" id="nav-prod-tab" data-toggle="tab" href="#nav-prod" role="tab" aria-controls="nav-prod" aria-selected="true">Produto</a>
                                         <a class="nav-item nav-link" id="nav-img-tab" data-toggle="tab" href="#nav-img" role="tab" aria-controls="nav-img" aria-selected="false">Imagem</a>
-                                        <a class="nav-item nav-link text-center" id="nav-uso-tab" data-toggle="tab" href="#nav-uso" role="tab" aria-controls="nav-uso" aria-selected="false">Indicacoes<br> de uso</a>
+                                        <a class="nav-item nav-link text-center" id="nav-uso-tab" data-toggle="tab" href="#nav-uso" role="tab" aria-controls="nav-uso" aria-selected="false">Indica&ccedil;&atilde;o<br> de uso</a>
                                     </div>
                                 </nav>
                                 <div class="tab-content" id="nav-tabContent">
@@ -345,8 +348,8 @@
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="txtqtdcaixa" class="col-3 col-lg-2 col-form-label text-left">Qtd Unidade</label>
-                                                <div class="col-9 col-lg-10">
+                                                <label for="txtqtdcaixa" class="col-4 col-lg-3 col-form-label text-left">Qtd Unidade</label>
+                                                <div class="col-9 col-lg-9">
                                                     <decimal model="produto.quantidade_unidade"></decimal>
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
@@ -382,7 +385,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Principio ativo</label>
+                                                <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Princ&iacute;pio ativo</label>
                                                 <div class="col-9 col-lg-9 text-left">
                                                     <input id="txtpativo" ng-model="produto.ativo" type="text" required placeholder="" class="form-control">
                                                     <div class="invalid-feedback">
@@ -391,7 +394,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Logistica</label>
+                                                <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Log&iacute;stica</label>
                                                 <div class="col-9 col-lg-9 text-left">
                                                     <select ng-model="produto.logistica" class="form-control" >
                                                         <option ng-repeat="l in logisticas" ng-value="l">{{l.nome}}</option>
@@ -417,9 +420,9 @@
                                             </div>
 
                                             <div class="form-group row">
-                                                <label for="txtpeso" class="col-3 col-lg-2 col-form-label text-left">Peso Bruto</label>
-                                                <div class="col-6 col-lg-6">
-                                                    <decimal model="produto.peso_bruto" style="padding:.377rem .75rem;"></decimal>               
+                                                <label for="txtpeso" class="col-4 col-lg-3 col-form-label text-left">Peso Bruto</label>
+                                                <div class="col-4 col-lg-4">
+                                                    <decimal model="produto.peso_bruto" style=""></decimal>               
                                                 </div>
                                                 <div class="col-4 col-lg-4" style="padding-top: 5px;">
                                                     <label class="custom-control custom-radio custom-control-inline">
@@ -510,7 +513,7 @@
                                         <div class="row">
                                             <div class="col-md-9">
                                                 <br>
-                                                Observacao:
+                                                Observa&ccedil;&atilde;o:
                                                 <hr>
                                                 <textarea ng-model="receituario.instrucoes" class="form-control" style="width:100%">
 
