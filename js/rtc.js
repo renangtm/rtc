@@ -1,4 +1,4 @@
-var projeto = "http://www.rtcagro.com.br/novo_rtc_web";
+var projeto = "http://192.168.18.121:888/novo_rtc_web";
 
 //@author Renan Goncalves Teixeira Miranda
 function DOMToJson(h) {
@@ -17,7 +17,7 @@ function DOMToJson(h) {
         }
         for (var j = 0; j < inner.length; j++) {
             if (c === inner[j]) {
-                k++;
+                //k++;
                 break;
             }
         }
@@ -1022,6 +1022,85 @@ rtc.service('uploadService', function ($http, $q) {
 
     }
 
+    var upStr = function (str, obj, fn) {
+
+        var f = function (bytes, buffer, offset, nome) {
+
+            var k = Math.min(offset + buffer, bytes.length);
+
+            if (k == offset) {
+
+                obj.arquivos[obj.arquivos.length] = projeto + "/php/uploads/" + nome;
+
+                if (obj.arquivos.length == (obj.qtdArquivos - obj.qtdFalhas)) {
+                    if (obj.qtdFalhas == 0) {
+                        fn(obj.arquivos, true);
+                    } else {
+                        fn(obj.arquivos, false);
+                    }
+
+                }
+
+                return;
+
+            }
+
+            var b = "";
+            for (var i = offset; i < k; i++)
+                b += String.fromCharCode(bytes[i]);
+
+
+            b = window.btoa(b);
+            baseService($http, $q, {
+                o: {nome: nome},
+                query: "Sistema::mergeArquivo($o->nome,'" + b + "')",
+                sucesso: function (r) {
+
+                    f(bytes, buffer, k, nome);
+
+                },
+                falha: function (r) {
+
+                    obj.qtdFalhas++;
+
+                    if (obj.qtdFalhas == obj.qtdArquivos) {
+
+                        fn(obj.arquivos, false);
+
+                    }
+
+                }
+
+            });
+
+            obj.atual++;
+
+            loading.setProgress(obj.atual * 100 / obj.total);
+
+        }
+
+        var toui8 = function (s) {
+            var s = unescape(encodeURIComponent(s));
+            var buf = new ArrayBuffer(s.length);
+            var vi = new Uint8Array(buf);
+            for (var i = 0; i < s.length; i++) {
+                vi[i] = s.charCodeAt(i);
+            }
+            return vi;
+        }
+
+        var bytes = toui8(str);
+        var ext = "txt";
+
+        var nome = "str_" + getRandom(40) + "." + ext;
+        var buffer = 3 * 1000;
+
+        obj.total += (bytes.length / buffer);
+
+        f(bytes, buffer, 0, nome);
+
+    }
+
 
     this.upload = function (arquivos, fn) {
 
@@ -1030,6 +1109,18 @@ rtc.service('uploadService', function ($http, $q) {
         for (var i = 0; i < arquivos.length; i++) {
 
             up(arquivos[i], obj, fn);
+
+        }
+
+    }
+
+    this.uploadStr = function (arquivos, fn) {
+
+        var obj = {total: 0, atual: 0, qtdArquivos: arquivos.length, arquivos: [], qtdFalhas: 0};
+
+        for (var i = 0; i < arquivos.length; i++) {
+
+            upStr(arquivos[i], obj, fn);
 
         }
 

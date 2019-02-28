@@ -14,53 +14,19 @@
 
 include("includes.php");
 
-class testeInterpretadorBooleano extends PHPUnit_Framework_TestCase {
+class testeBanner extends PHPUnit_Framework_TestCase {
 
     public function testSimple() {
        
         $con = new ConnectionFactory();
         
-        $banner = new Banner();
-        $banner->json = Utilidades::toJson($banner);
+        $empresa = new Empresa(1733);
         
-        $banner->campanha = new stdClass();
-        $banner->campanha->id = 2;
+        $banners = $empresa->getBanners($con, 0, 2);
         
-        $banner->empresa = new stdClass();
-        $banner->empresa->id = 85;
+        $banner = $banners[0];
         
-        $banner->merge($con);
-      
-        
-        $banner = new Banner();
-        $banner->json = Utilidades::toJson($banner);
-        
-        $banner->campanha = new stdClass();
-        $banner->campanha->id = 2;
-        
-        $banner->empresa = new stdClass();
-        $banner->empresa->id = 85;
-        
-        $banner->merge($con);
-        
-        $banner = new Banner();
-        $banner->json = Utilidades::toJson($banner);
-        
-        $banner->campanha = new stdClass();
-        $banner->campanha->id = 0;
-        
-        $banner->empresa = new stdClass();
-        $banner->empresa->id = 85;
-        
-        $banner->merge($con);
-        
-        
-        $empresa = new Empresa();
-        $empresa->id = 85;
-        
-        $banners = $empresa->getBanners($con, 0, 10);
-        
-        echo Utilidades::toJson($banners);
+        echo $banner->getHTML();
         
     }
 

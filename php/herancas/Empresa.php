@@ -280,10 +280,11 @@ class Empresa {
 
         $sql = "SELECT "
                 . "id,"
-                . "UNIX_TIMESTAMP(data_inicial),"
-                . "UNIX_TIMESTAMP(data_final),"
+                . "UNIX_TIMESTAMP(data_inicial)*1000,"
+                . "UNIX_TIMESTAMP(data_final)*1000,"
                 . "id_campanha,"
-                . "tipo "
+                . "tipo,"
+                . "json "
                 . "FROM banner WHERE id_empresa=$this->id ";
 
         if ($filtro !== "") {
@@ -305,7 +306,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $data_inicial, $data_final, $id_campanha, $tipo);
+        $ps->bind_result($id, $data_inicial, $data_final, $id_campanha, $tipo, $json);
 
         while ($ps->fetch()) {
 
@@ -315,7 +316,8 @@ class Empresa {
             $banner->data_final = $data_final;
             $banner->campanha = $id_campanha;
             $banner->tipo = $tipo;
-
+            $banner->json = $json;
+            
             $banners[] = $banner;
 
             if ($id_campanha > 0) {
@@ -343,6 +345,10 @@ class Empresa {
                         break;
                     }
                 }
+            }else{
+                
+                $banner->campanha = null;
+                
             }
         }
 
