@@ -262,6 +262,93 @@ class Empresa {
         return $filiais;
     }
 
+    public function getCountBanners($con, $filtro = "") {
+
+        $ps = $con->getConexao()->prepare("SELECT COUNT(*) FROM banner WHERE id_empresa=$this->id");
+        $ps->execute();
+        $ps->bind_result($qtd);
+
+        if ($ps->fetch()) {
+            $ps->close();
+            return $qtd;
+        }
+        $ps->close();
+        return 0;
+    }
+
+    public function getBanners($con, $x1, $x2, $filtro = "", $ordem = "") {
+
+        $sql = "SELECT "
+                . "id,"
+                . "UNIX_TIMESTAMP(data_inicial),"
+                . "UNIX_TIMESTAMP(data_final),"
+                . "id_campanha,"
+                . "tipo "
+                . "FROM banner WHERE id_empresa=$this->id ";
+
+        if ($filtro !== "") {
+
+            $sql .= "AND $filtro";
+        }
+
+        if ($ordem !== "") {
+
+            $sql .= "ORDER BY $ordem ";
+        }
+        $sql .= "LIMIT $x1, " . ($x2 - $x1);
+
+
+        $campanhas = "(-1";
+        $qtd_campanhas = 0;
+
+        $banners = array();
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id, $data_inicial, $data_final, $id_campanha, $tipo);
+
+        while ($ps->fetch()) {
+
+            $banner = new Banner();
+            $banner->id = $id;
+            $banner->data_inicial = $data_inicial;
+            $banner->data_final = $data_final;
+            $banner->campanha = $id_campanha;
+            $banner->tipo = $tipo;
+
+            $banners[] = $banner;
+
+            if ($id_campanha > 0) {
+
+                $campanhas .= ",$id_campanha";
+                $qtd_campanhas++;
+            }
+        }
+
+        $ps->close();
+
+        $campanhas .= ")";
+
+        $campanhas = $this->getCampanhas($con, 0, $qtd_campanhas, "campanha.id IN $campanhas", "");
+
+        foreach ($banners as $key => $banner) {
+
+            if ($banner->campanha > 0) {
+
+                foreach ($campanhas as $key2 => $campanha) {
+
+                    if ($banner->campanha === $campanha->id) {
+
+                        $banner->campanha = $campanha;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $banners;
+    }
+
     public function getCountBancos($con, $filtro = "") {
 
         $sql = "SELECT COUNT(*) FROM banco WHERE id_empresa=$this->id AND excluido=false ";

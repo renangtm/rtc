@@ -1,3 +1,95 @@
+rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, uploadService) {
+
+    $scope.banners = createAssinc(bannerService, 1, 3, 10);
+    $scope.banners.attList();
+    assincFuncs(
+            $scope.banners,
+            "banner",
+            ["id","data_inicial", "data_final", "tipo"]);
+
+    $scope.campanhas = createAssinc(campanhaService, 1, 10, 10);
+    $scope.campanhas.attList();
+    assincFuncs(
+            $scope.campanhas,
+            "campanha",
+            ["id", "nome", "inicio", "fim"]);
+
+    $scope.banner_novo = {};
+    $scope.banner = {};
+
+    $scope.data_atual = new Date().getTime();
+
+    $scope.tipos_banner = ["Frontal", "Lateral"];
+
+    $("#uploaderBanner").change(function () {
+
+        //-----
+
+    })
+
+    bannerService.getBanner(function (p) {
+        $scope.banner_novo = p.banner;
+    })
+
+    $scope.novoBanner = function () {
+        $scope.banner = angular.copy($scope.banner_novo);
+    }
+    
+    $scope.setCampanha = function(campanha){
+        
+        $scope.banner.campanha = campanha;
+        
+    }
+    
+    $scope.deleteCampanha = function(){
+        
+        $scope.banner.campanha = null;
+        
+    }
+
+    $scope.setBanner = function (banner) {
+
+        $scope.banner = banner;
+
+        bannerService.getJson($scope.banner, function (j) {
+
+            $scope.banner.json = j.json;
+
+        })
+
+    }
+
+    $scope.mergeBanner = function () {
+
+        if ($scope.banner.json == null) {
+            msg.erro("Realize o upload do arquivo");
+            return;
+        }
+
+        baseService.merge($scope.banner, function (r) {
+            if (r.sucesso) {
+                $scope.banner = r.o;
+
+                msg.alerta("Operacao efetuada com sucesso");
+
+            } else {
+                msg.erro("Problema ao efetuar operacao. ");
+            }
+        });
+
+    }
+    $scope.deleteBanner = function () {
+        baseService.delete($scope.banner, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.fornecedores.attList();
+            } else {
+                msg.erro("Problema ao efetuar operacao");
+            }
+        });
+    }
+
+})
 rtc.controller("crtRelatorio", function ($scope, relatorioService) {
 
     $scope.relatorios = [];
@@ -53,7 +145,7 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
                     var p = campo.possiveis[j];
 
                     if (p.selecionado) {
-                        
+
                         if (sub !== "") {
                             sub += " OR ";
                         }
@@ -63,7 +155,7 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
                 }
                 if (sub !== "") {
                     campo.filtro = "(" + sub + ") ";
-                }else{
+                } else {
                     campo.filtro = "";
                 }
             } else if (campo.tipo === 'T') {
@@ -74,7 +166,7 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
             } else if (campo.tipo === 'N') {
 
                 if (campo.numero !== 0) {
-                    
+
 
                     campo.filtro = "k." + campo.nome;
 
@@ -109,9 +201,9 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
         }
 
         $scope.relatorio.order = order;
-        
+
         relatorioService.relatorio = $scope.relatorio;
-        
+
         $scope.gerado = createAssinc(relatorioService, 1, 20, 1000);
 
         $("#mdlRelatorio").modal("show");
