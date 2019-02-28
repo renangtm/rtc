@@ -201,16 +201,25 @@
                                             <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#campanhas"><i class="fas fa-search"></i></a>
                                         </div>
                                         <div class="col" ng-if="banner.campanha !== null">
-                                            <a href="#" class="btn btn-outline-danger btnedit" data-toggle="modal"><i class="fas fa-times"></i></a>
+                                            <a href="#" class="btn btn-outline-danger btnedit" ng-click="deleteCampanha()"><i class="fas fa-times"></i></a>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <calendario inicio="banner.data_inicial" fim="banner.data_final" refresh="banner" botao="true" tempo="true"></calendario>
+                                        <div class="col">
+                                        <calendario inicio="banner.data_inicial" fim="banner.data_final" refresh="banner" botao="true" tempo="true" meses="1"></calendario>
+                                        </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">Tipo de Banner</label>
+                                        <div class="col">
+                                        <button type="button" ng-disabled="banner.json!==null" class="btn btn-outline-dark" onclick="$('#uploaderHTML').click()"><i class="fas fa-upload"></i>&nbsp Subir HTML</button>
+                                        <input type="file" id="uploaderHTML" style="display: none" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        
                                         <div class="col-9 col-lg-10">
-                                           <select ng-model="banner.tipo">
+                                            <label for="slTipo" class="col-3 col-lg-2 col-form-label text-left">Tipo de Banner</label>
+                                           <select ng-model="banner.tipo" id="slTipo" class="form-control">
                                                <option ng-repeat="t in tipos_banner" ng-value="$index" >{{t}}</option>
                                            </select>
                                         </div>
@@ -228,174 +237,47 @@
                     </div>
                 </div>
                 <!-- /.modal-content -->
-
+ti
                 <!-- /.modal-content EDIT --> 
-                <div class="modal fade in" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true" style="display: none;">
+                <div class="modal fade" id="campanhas" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Edite os dados de seu Fornecedor</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">×</span>
-                                </button>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Selecao de Campanha</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
-                                <form>
-                                    <div class="form-group row">
-                                        <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Nome</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtname" type="text" required placeholder="Agro Fauna Comercio De Insumos Ltda" class="form-control is-invalid">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="txtemail" class="col-3 col-lg-2 col-form-label text-left">Email</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtemail" type="email" required data-parsley-type="email" placeholder="elias@agrofauna.com.br" class="form-control">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">CPF/CNPJ</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" required data-parsley-type="email" placeholder="47.626.510/0001-32" class="form-control cnpj" >
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="txttel" class="col-3 col-lg-2 col-form-label text-left">Telefone</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txttel" type="text" required placeholder="(11)2324-2452" class="form-control sp_celphones">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endereço</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtend" type="text" required data-parsley-type="email" placeholder="Rua: Coutinho Cavalcante" class="form-control">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Número</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtendnum" type="text" required data-parsley-type="email" placeholder="00" class="form-control" data-parsley-id="5" aria-describedby="parsley-id-5">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="txtbairro" class="col-3 col-lg-2 col-form-label text-left">Bairro</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtbairro" type="text" required placeholder="Jardim Alto Alegnure" class="form-control">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="cidades" class="col-3 col-lg-2 col-form-label text-left">Cidade</label>
-                                        <div class="col-9 col-lg-10">
-                                            <select name="cidades" class="form-control"> 
-                                                <option value="estado">Selecione a Cidade</option> 
-                                                <option value="ac">Acre</option> 
-                                                <option value="al">Alagoas</option> 
-                                                <option value="am">Amazonas</option> 
-                                                <option value="ap">Amapá</option> 
-                                                <option value="ba">Bahia</option> 
-                                                <option value="ce">Ceará</option> 
-                                                <option value="df">Distrito Federal</option> 
-                                                <option value="es">Espírito Santo</option> 
-                                                <option value="go">Goiás</option> 
-                                                <option value="ma">Maranhão</option> 
-                                                <option value="mt">Mato Grosso</option> 
-                                                <option value="ms">Mato Grosso do Sul</option> 
-                                                <option value="mg">Minas Gerais</option> 
-                                                <option value="pa">Pará</option> 
-                                                <option value="pb">Paraíba</option> 
-                                                <option value="pr">Paraná</option> 
-                                                <option value="pe">Pernambuco</option> 
-                                                <option value="pi">Piauí</option> 
-                                                <option value="rj">Rio de Janeiro</option> 
-                                                <option value="rn">Rio Grande do Norte</option> 
-                                                <option value="ro">Rondônia</option> 
-                                                <option value="rs">Rio Grande do Sul</option> 
-                                                <option value="rr">Roraima</option> 
-                                                <option value="sc">Santa Catarina</option> 
-                                                <option value="se">Sergipe</option> 
-                                                <option value="sp" selected>São Jose do Rio Preto</option> 
-                                                <option value="to">Tocantins</option> 
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="estados" class="col-3 col-lg-2 col-form-label text-left">Estado</label>
-                                        <div class="col-9 col-lg-10">
-                                            <select name="estados" class="form-control"> 
-                                                <option value="estado">Selecione o Estado</option> 
-                                                <option value="ac">Acre</option> 
-                                                <option value="al">Alagoas</option> 
-                                                <option value="am">Amazonas</option> 
-                                                <option value="ap">Amapá</option> 
-                                                <option value="ba">Bahia</option> 
-                                                <option value="ce">Ceará</option> 
-                                                <option value="df">Distrito Federal</option> 
-                                                <option value="es">Espírito Santo</option> 
-                                                <option value="go">Goiás</option> 
-                                                <option value="ma">Maranhão</option> 
-                                                <option value="mt">Mato Grosso</option> 
-                                                <option value="ms">Mato Grosso do Sul</option> 
-                                                <option value="mg">Minas Gerais</option> 
-                                                <option value="pa">Pará</option> 
-                                                <option value="pb">Paraíba</option> 
-                                                <option value="pr">Paraná</option> 
-                                                <option value="pe">Pernambuco</option> 
-                                                <option value="pi">Piauí</option> 
-                                                <option value="rj">Rio de Janeiro</option> 
-                                                <option value="rn">Rio Grande do Norte</option> 
-                                                <option value="ro">Rondônia</option> 
-                                                <option value="rs">Rio Grande do Sul</option> 
-                                                <option value="rr">Roraima</option> 
-                                                <option value="sc">Santa Catarina</option> 
-                                                <option value="se">Sergipe</option> 
-                                                <option value="sp" selected>São Paulo</option> 
-                                                <option value="to">Tocantins</option> 
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="txtcep" class="col-3 col-lg-2 col-form-label text-left">CEP</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtcep" type="text" required placeholder="15055-300" class="form-control cep" maxlength="9">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
+                                <input type="text" class="form-control" id="filtroCampanhas" placeholder="Filtro">
+                                <hr>
+                                <table class="table table-striped table-bordered first">
+                                    <thead>
+                                    <th data-ordem="campanha.id">Cod.</th>
+                                    <th data-ordem="campanha.nome">Nome</th>
+                                    <th data-ordem="campanha.inicio">Inicio</th>
+                                    <th data-ordem="campanha.fim">Fim</th>
+                                    <th>Selecionar</th>
+                                    </thead>
+                                    <tr ng-repeat="c in campanhas.elementos">
+                                        <th>{{c[0].id}}</th>
+                                        <th>{{c[0].nome}}</th>
+                                        <th>{{c[0].inicio | data}}</th>
+                                        <th>{{c[0].fim | data}}</th>
+                                        <th><button class="btn btn-success" ng-click="setCampanha(c[0])" data-dismiss="modal" aria-label="Close"><i class="fa fa-info"></i></button></th>
+                                    </tr> 
+                                </table>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-end">
+                                            <li class="page-item" ng-click="campanhas.prev()"><a class="page-link" href="">Anterior</a></li>
+                                            <li class="page-item" ng-repeat="pg in campanhas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                            <li class="page-item" ng-click="campanhas.next()"><a class="page-link" href="">Próximo</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                                <button class="btn btn-primary" onclick="cadastrarProduto()">
-                                    <i class="fas fa-save"></i> &nbsp; Salvar
-                                </button>
+
                             </div>
                         </div>
                     </div>
@@ -409,11 +291,11 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de seu Fornecedor</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de seu Banner</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
-                                <p class="text-center"> Tem certeza de que deseja excluir este Fornecedor?</p>
+                                <p class="text-center"> Tem certeza de que deseja excluir este Banner?</p>
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-primary" ng-click="deleteFornecedor(fornecedor)">Sim</button>

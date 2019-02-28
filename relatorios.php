@@ -134,7 +134,7 @@ echo $relatorio;
                                                                     </table>
                                                                 </div>
                                                                 <div ng-if="campo.possiveis.length === 0 && campo.tipo === 'D'" style="position: relative">
-                                                                    <calendario botao="true" inicio="campo.inicio" fim="campo.fim" meses="1" tempo="false"></calendario>
+                                                                    <calendario botao="true" inicio="campo.inicio" fim="campo.fim" meses="1" tempo="true"></calendario>
                                                                 </div>
                                                             </td>
                                                             <td>

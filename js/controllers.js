@@ -12,7 +12,7 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
     assincFuncs(
             $scope.campanhas,
             "campanha",
-            ["id", "nome", "inicio", "fim"]);
+            ["id", "nome", "inicio", "fim"],"filtroCampanhas");
 
     $scope.banner_novo = {};
     $scope.banner = {};
@@ -21,11 +21,49 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
 
     $scope.tipos_banner = ["Frontal", "Lateral"];
 
-    $("#uploaderBanner").change(function () {
+    $("#uploaderHTML").change(function () {
 
-        //-----
+        var arquivos = $(this).prop("files");
 
-    })
+        for (var i = 0; i < arquivos.length; i++) {
+            var sp = arquivos[i].name.split(".");
+            if (sp[sp.length - 1] !== "html") {
+                msg.alerta("Arquivo: " + arquivos[i].name + ", invalido");
+                return;
+            }
+        }
+
+
+        uploadService.upload(arquivos, function (arqs, sucesso) {
+
+            if (!sucesso) {
+
+                msg.erro("Falha ao subir arquivo");
+
+            } else {
+
+                $scope.arquivos = arqs;
+
+                for (var i = 0; i < arquivos.length; i++) {
+                    var reader = new FileReader();
+                    reader["ii"] = i;
+                    reader.onload = function (arquivo) {
+
+                        var html = arquivo.target.result;
+                        
+                        var json = DOMToJson(html);
+
+                        document.write(JSON.stringify(json));
+
+                    };
+                    reader.readAsText(arquivos[i]);
+                }
+
+            }
+
+        })
+
+    });
 
     bannerService.getBanner(function (p) {
         $scope.banner_novo = p.banner;
