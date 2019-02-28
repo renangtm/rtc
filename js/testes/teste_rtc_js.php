@@ -17,6 +17,10 @@ and open the template in the editor.
 
         <script>
 
+
+            var xml = "<html><teste>1234</teste><teste1234>12344312</teste1234></html>";
+
+
             function DOMToJson(h) {
                 
                 h = h.split("\n").join("").split("\r").join("");
@@ -46,6 +50,7 @@ and open the template in the editor.
                         preCompile[preCompile.length - 1].valor += (c !== " ")?c:"<space>";                       
                     }
                 }
+
                 var refineCompile = [];
                 for (var i = 0; i < preCompile.length; i++) {
                     var p = preCompile[i];
@@ -87,6 +92,8 @@ and open the template in the editor.
                     if(e.tipo === 0){
                         if(elemento === null){
                             elemento = e;
+                        }else{
+                            pilha[pilha.length-1].filhos[pilha[pilha.length-1].filhos.length] = e;
                         }
                         pilha[pilha.length] = e;
                     }else if(e.tipo === 1){
