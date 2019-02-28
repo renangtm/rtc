@@ -52,8 +52,11 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
                         var html = arquivo.target.result;
                         
                         var json = DOMToJson(html);
+                        
+                        $scope.banner.json = JSON.stringify(json);
+                        
+                        msg.alerta("Upload efetuado com sucesso");
 
-                        document.write(JSON.stringify(json));
 
                     };
                     reader.readAsText(arquivos[i]);
@@ -103,7 +106,7 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
             msg.erro("Realize o upload do arquivo");
             return;
         }
-
+        document.write(paraJson($scope.banner));
         baseService.merge($scope.banner, function (r) {
             if (r.sucesso) {
                 $scope.banner = r.o;

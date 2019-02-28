@@ -30,6 +30,7 @@ function DOMToJson(h) {
             preCompile[preCompile.length - 1].valor += (c !== " ") ? c : "<space>";
         }
     }
+
     var refineCompile = [];
     for (var i = 0; i < preCompile.length; i++) {
         var p = preCompile[i];
@@ -48,7 +49,7 @@ function DOMToJson(h) {
             p.valor = p.valor.substr(1);
         }
         var k = p.valor.split(" ");
-        if (k.length > 1) {
+        if (k.length > 1 && p.tipo === 0) {
             if (k[0] === "!--" || k[0] === "?php" || k[0] === "?")
                 continue;
             p.valor = k[0];
@@ -71,13 +72,24 @@ function DOMToJson(h) {
         if (e.tipo === 0) {
             if (elemento === null) {
                 elemento = e;
+            } else {
+                pilha[pilha.length - 1].filhos[pilha[pilha.length - 1].filhos.length] = e;
             }
             pilha[pilha.length] = e;
         } else if (e.tipo === 1) {
             pilha[pilha.length - 1].filhos[pilha[pilha.length - 1].filhos.length] = e;
         } else if (e.tipo === -1) {
-            pilha[pilha.length - 1].fechamento = e;
-            pilha.length--;
+
+            var n = 1;
+
+            while (n <= pilha.length && pilha[pilha.length - n].valor !== e.valor)
+                n++;
+
+            if (n <= pilha.length) {
+                pilha[pilha.length - n].fechamento = e;
+                pilha.length -= n;
+            }
+
         }
     }
     return elemento;
