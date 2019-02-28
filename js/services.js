@@ -1,6 +1,39 @@
 var debuger = function (l) {
     alert(paraJson(l));
 }
+rtc.service('bannerService', function ($http, $q) {
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountBanners($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x1, x2, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x1: x1, x2: x2, ordem: ordem, filtro: filtro},
+            query: "$r->elementos=$empresa->getBanners($c,$o->x1,$o->x2,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getBanner = function (fn) {
+        baseService($http, $q, {
+            query: "$r->banner=new Banner()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getJson = function (banner, fn) {
+        baseService($http, $q, {
+            o: banner,
+            query: "$r->json=$o->getJson($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('relatorioService', function ($http, $q) {
     this.getRelatorios = function (fn) {
         baseService($http, $q, {

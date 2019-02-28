@@ -348,6 +348,11 @@ $rtc->numero--;
                             <a class="nav-link" href="campanhas.php" ><i class="fas fa-anchor"></i>Campanhas</a>
                         </li>
                     <?php } ?>
+                        <?php if ($rtc->numero === 3) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="banners.php" ><i class="fas fa-image"></i>Banners</a>
+                        </li>
+                    <?php } ?>
                     <li class="nav-item">
                         <a class="nav-link" href="fornecedores.php" ><i class="fas fa-industry"></i>Fornecedores</a>
                     </li>
