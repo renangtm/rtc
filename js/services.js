@@ -20,15 +20,15 @@ rtc.service('bannerService', function ($http, $q) {
     }
     this.getBanner = function (fn) {
         baseService($http, $q, {
-            query: "$r->banner=new Banner()",
+            query: "$r->banner=new Banner();$r->banner->empresa=$empresa",
             sucesso: fn,
             falha: fn
         });
     }
-    this.getJson = function (banner, fn) {
+    this.getHTML = function (banner,fn) {
         baseService($http, $q, {
-            o: banner,
-            query: "$r->json=$o->getJson($c)",
+            o:banner,
+            query: "$r->html=Utilidades::base64encode($o->getHTML())",
             sucesso: fn,
             falha: fn
         });

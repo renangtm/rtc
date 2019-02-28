@@ -98,10 +98,10 @@
                                                 <tbody>
                                                     <tr ng-repeat-start="banner in banners.elementos">
                                                         <td>{{banner[0].id}}</td>
-                                                        <td>{{banner[0].data_incial| data}}</td>
+                                                        <td>{{banner[0].data_inicial| data}}</td>
                                                         <td>{{banner[0].data_final| data}}</td>
                                                         <td>{{tipos_banner[banner[0].tipo]}}</td>
-                                                        <td>{{banner[0].campanha.nome}}</td>
+                                                        <td>{{(banner[0].campanha !== null)?banner[0].campanha.nome:'Sem campanha, provavelmente e um banner institucional'}}</td>
                                                         <th>
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setBanner(banner[0])" data-target="#demo{{banner[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
@@ -112,13 +112,9 @@
                                                     </tr>
                                                     <tr ng-repeat-end>
                                                         <td colspan="7" class="hiddenRow">
-                                                            <div class="accordian-body collapse" id="demo{{fornecedor[0].id}}">
-                                                                <div class="row mx-auto m-b-30">
-                                                                    <div class="col-md-12">
-                                                                        <table class="table table-bordered w-100">
-                                                                            HTML DO BANNER
-                                                                        </table>
-                                                                    </div>																
+                                                            <div class="accordian-body collapse" id="demo{{banner[0].id}}">
+                                                                <div class="row mx-auto m-b-30" id="html_{{banner[0].id}}">
+                                                                    															
                                                                 </div>	
                                                             </div> 
                                                         </td>
@@ -298,7 +294,7 @@ ti
                                 <p class="text-center"> Tem certeza de que deseja excluir este Banner?</p>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary" ng-click="deleteFornecedor(fornecedor)">Sim</button>
+                                <button class="btn btn-primary" ng-click="deleteBanner(banner)">Sim</button>
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Não</button>
                             </div>
                         </div>
