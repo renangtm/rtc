@@ -540,7 +540,7 @@
                                     <th><i class="fas fa-edit"></i> R$</th>
                                     </thead>
                                     <tr ng-repeat="prod in campanha.lista.elementos">
-                                        <th><button ng-click="addNumeracao(prod[0])" class="btn btn-default" style="width:23px;height:23px;padding:1px;display:inline;background-color:{{getNumeracaoCor(prod[0].numeracao)}};color:#FFFFFF">{{getNumeracaoAlfabetica(prod[0].numeracao)}}</button></th>
+                                        <th><button ng-click="addNumeracao(prod[0])" ng-right-click="removeNumeracao(prod[0])" class="btn btn-default" style="width:23px;height:23px;padding:1px;display:inline;background-color:{{getNumeracaoCor(prod[0].numeracao)}};color:#FFFFFF">{{getNumeracaoAlfabetica(prod[0].numeracao)}}</button></th>
                                         <th>{{prod[0].produto.id}} - {{prod[0].produto.nome}}</th>
                                         <th ng-if="prod[0].validade !== 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-{{prod[0].validade<0?'danger':'success'}}" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">{{(prod[0].validade > 0) ? (prod[0].validade | data_st) : 'Selecione'}}</strong></th>
                                         <th ng-if="prod[0].validade === 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-warning" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">------</strong></th>

@@ -3376,6 +3376,8 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     $scope.removeNumeracao = function (prod) {
 
         prod.numeracao--;
+        
+        prod.numeracao = Math.max(0,prod.numeracao);
 
         var c = prod.campanha.campanhas;
         var add = true;
