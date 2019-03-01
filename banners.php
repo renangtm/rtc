@@ -113,8 +113,10 @@
                                                     <tr ng-repeat-end>
                                                         <td colspan="7" class="hiddenRow">
                                                             <div class="accordian-body collapse" id="demo{{banner[0].id}}">
-                                                                <div class="row mx-auto m-b-30" id="html_{{banner[0].id}}">
-                                                                    															
+                                                                <div class="row mx-auto m-b-30">
+                                                                    <div style="{{banner[0].tipo===0?'width:70vw;height:22vw':'width:14vw;height:auto'}}" id="html_{{banner[0].id}}">
+                                                                        
+                                                                    </div>														
                                                                 </div>	
                                                             </div> 
                                                         </td>

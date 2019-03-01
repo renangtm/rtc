@@ -27,12 +27,12 @@
             a:hover {
                 color: #4aaf51;
             }
-            
+
             .product-sidebar-widget-title .fas {
                 transition: .3s transform ease-in-out;   
             }
 
-         
+
         </style>
     </head>
 
@@ -54,6 +54,22 @@
             $filtro = "ng-model='produtos.filtro[0].valor' ng-confirm='produtos.attList()'";
 
             include("menu.php");
+
+            $banners = $empresa->getBanners(new ConnectionFactory(),0, 10, 'banner.data_inicial <= CURRENT_TIMESTAMP AND banner.data_final >= CURRENT_TIMESTAMP');
+
+            $banners_frontais = array();
+            $banners_laterais = array();
+
+            foreach ($banners as $key => $banner) {
+                if($banner->tipo === 0){
+                    $banners_frontais[] = $banner->getHTML();
+                }else if($banner->tipo === 1){
+                    $banners_laterais[] = $banner->getHTML();
+                }
+            }
+            
+            
+            
             ?>
             <!-- ============================================================== -->
             <!-- end left sidebar -->
@@ -99,7 +115,17 @@
                                             <ol class="carousel-indicators">
                                                 <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active" style="cursor: pointer;"></li>
                                                 <li data-target="#carouselExampleIndicators" data-slide-to="1" style="cursor: pointer;"></li>
-                                                <li data-target="#carouselExampleIndicators" data-slide-to="2" style="cursor: pointer;"></li>
+                                                <?php
+                                                    $i = 2; //manter sempre proximo numero inteiro apos o <li data-slide-to> anterior
+
+                                                    for ($j = 0; $j < count($banners_frontais); $j++) {
+                                                ?>
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo ($j+$i); ?>" style="cursor: pointer;"></li>
+                                                <?php
+                                                
+                                                    }
+                                                    
+                                                ?>
                                             </ol>
                                             <div class="carousel-inner">
                                                 <div class="carousel-item active">
@@ -112,9 +138,17 @@
                                                         <img class="d-block w-100" src="assets/images/banner_conheca_projeto_novos_rumos_784x295.jpg" alt="Second slide">
                                                     </a>    
                                                 </div>
-                                                <div class="carousel-item">
-                                                    <img class="d-block w-100" src="assets/images/banner_784x295.jpg" alt="Third slide">
+                                                <?php
+                                                    for ($j = 0; $j < count($banners_frontais); $j++) {
+                                                ?>
+                                                <div class="carousel-item" style="height:22vw">
+                                                    <?php echo $banners_frontais[$j]; ?>
                                                 </div>
+                                                <?php
+                                                
+                                                    }
+                                                    
+                                                ?>
                                             </div>
                                             <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
                                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -150,11 +184,11 @@
 
 
                                                     <button ng-click="addCarrinho(produto, validade)" class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;position:relative;margin-left:2px;width:100%;margin-bottom:10px">
-                                                        
+
                                                         <div ng-if="validade.oferta" style="margin-bottom: 5px;">
                                                             <cronometro model="validade.restante"></cronometro>
                                                         </div>
-                                                            
+
                                                         <div ng-if="validade.validade !== 1000">
                                                             <span style="font-size: 14px;">Val: {{validade.validade| data_st}}</span>
                                                         </div>
@@ -167,7 +201,7 @@
                                                         <hr>
                                                         <i class="fas fa-shopping-cart"></i>&nbsp Comprar
 
-                                                        
+
                                                     </button>
 
 
@@ -202,7 +236,7 @@
                                     <!-- banner  -->
                                     <!-- ============================================================== -->
 
-                                    
+
 
 
                                     <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12" ng-repeat="produto in dividir(produtos.elementos, 2)[1]">
@@ -223,10 +257,10 @@
 
                                                     <button ng-click="addCarrinho(produto, validade)" class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;margin-left:2px;width:100%;margin-bottom:10px">
 
-                                                         <div ng-if="validade.oferta" style="margin-bottom: 5px;">
+                                                        <div ng-if="validade.oferta" style="margin-bottom: 5px;">
                                                             <cronometro model="validade.restante"></cronometro>
                                                         </div>
-                                                            
+
                                                         <div ng-if="validade.validade !== 1000">
                                                             <span style="font-size: 14px;">Val: {{validade.validade| data_st}}</span>
                                                         </div>
@@ -297,30 +331,30 @@
 
                                     <div class="product-sidebar-widget" ng-repeat="filtro in produtos.filtro">
                                         <h4 ng-if="filtro._classe === 'FiltroTextual'" class="product-sidebar-widget-title">Busca por filtro</h4>
-                                            <h4 ng-if="filtro._classe === 'FiltroOpcional'" class="product-sidebar-widget-title">
-                                                <a class="" data-toggle="collapse" href="#collapseExample_{{filtro.id}}" role="button" aria-expanded="false" aria-controls="collapseExample_{{filtro.id}}">
-                                                    {{filtro.nome}}<span class="fas ml-2 fa-angle-down"></span>
-                                                </a>
-                                            </h4>
+                                        <h4 ng-if="filtro._classe === 'FiltroOpcional'" class="product-sidebar-widget-title">
+                                            <a class="" data-toggle="collapse" href="#collapseExample_{{filtro.id}}" role="button" aria-expanded="false" aria-controls="collapseExample_{{filtro.id}}">
+                                                {{filtro.nome}}<span class="fas ml-2 fa-angle-down"></span>
+                                            </a>
+                                        </h4>
                                         <div class="form-group" ng-if="filtro._classe === 'FiltroTextual'">
                                             <div class="icon-addon addon-lg">
                                                 <input class="form-control form-control-lg" ng-model="filtro.valor" ng-confirm="produtos.attList()" type="search" placeholder="{{filtro.nome}}" aria-label="Search">
                                                 <label for="email" class="fa fa-search" rel="tooltip" title="email"></label>
                                             </div>
                                         </div>
-                                    <div ng-if="filtro._classe === 'FiltroOpcional'" class="collapse" id="collapseExample_{{filtro.id}}">
-                                        <div  class="custom-control custom-checkbox" ng-repeat="opcao in filtro.opcoes" style="{{opcao.quantidade===0?'text-decoration:line-through;color:DarkRed':''}}">
-                                            <button ng-if="opcao.selecionada === 0" ng-click="addLevel(opcao)" class="btn btn-default" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-adjust"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</button>
-                                            <button ng-if="opcao.selecionada === 1" ng-click="addLevel(opcao)" class="btn btn-success" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-check"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</button>
-                                            <button ng-if="opcao.selecionada === 2" ng-click="addLevel(opcao)" class="btn btn-danger" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-times"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</strong></button>
+                                        <div ng-if="filtro._classe === 'FiltroOpcional'" class="collapse" id="collapseExample_{{filtro.id}}">
+                                            <div  class="custom-control custom-checkbox" ng-repeat="opcao in filtro.opcoes" style="{{opcao.quantidade===0?'text-decoration:line-through;color:DarkRed':''}}">
+                                                <button ng-if="opcao.selecionada === 0" ng-click="addLevel(opcao)" class="btn btn-default" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-adjust"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</button>
+                                                <button ng-if="opcao.selecionada === 1" ng-click="addLevel(opcao)" class="btn btn-success" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-check"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</button>
+                                                <button ng-if="opcao.selecionada === 2" ng-click="addLevel(opcao)" class="btn btn-danger" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-times"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</strong></button>
 
+                                            </div>
                                         </div>
                                     </div>
-                                    </div>
-                                    
-                                    
-                                    
-                                    
+
+
+
+
                                     <div class="product-sidebar-widget">
                                         <button type="button" class="btn btn-outline-light" ng-click="resetarFiltro()">Resetar Filtro</button>
                                     </div>
@@ -372,21 +406,15 @@
                                 <!-- sidebar BANNER 300x250  -->
                                 <!-- ============================================================== -->
 
+                                <?php foreach($banners_laterais as $key=>$value){ ?>
                                 <div class="product-sidebar m-b-30">
                                     <div class="product-sidebar-widget p-0" style="margin-bottom: 0px">
-                                        <img alt="banner 300x250" src="assets/images/banner_300x250.jpg" style="width: 100%;">
+                                        <div style="width:14vw;height:auto">
+                                            <?php echo $value; ?>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <!-- ============================================================== -->
-                                <!-- sidebar BANNER 240x400  -->
-                                <!-- ============================================================== -->
-
-                                <div class="product-sidebar m-b-30">
-                                    <div class="product-sidebar-widget p-0" style="margin-bottom: 0px">
-                                        <img alt="banner 240x400" src="assets/images/banner_240x400.jpg" style="width: 100%;">
-                                    </div>
-                                </div>
+                                <?php } ?>
 
                             </div>
                         </div>
@@ -517,17 +545,17 @@
 
 
         </script>
-        
+
         <script>
                     $('.collapse').on('shown.bs.collapse', function () {
-                       /* $(this).parent().find(".fa-angle-down").removeClass("fa-angle-down").addClass("fa-angle-up");*/
+                        /* $(this).parent().find(".fa-angle-down").removeClass("fa-angle-down").addClass("fa-angle-up");*/
                         $(this).parent().find(".fa-angle-down").css('transform', 'rotate(180deg)');
                     }).on('hidden.bs.collapse', function () {
                         /*$(this).parent().find(".fa-angle-up").removeClass("fa-angle-up").addClass("fa-angle-down");*/
                         $(this).parent().find(".fa-angle-down").css('transform', 'rotate(0deg)');
                     });
         </script>
-        
+
     </body>
 
 </html>

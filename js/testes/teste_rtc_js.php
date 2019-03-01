@@ -18,7 +18,7 @@ and open the template in the editor.
         <script>
 
 
-            var xml = "<html><teste>1234</teste><teste1234>12344312</teste1234></html>";
+            var xml = "<html><teste>1234<teste111></teste><teste1234>12344312</teste1234></html>";
 
 
             function DOMToJson(h) {

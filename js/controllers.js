@@ -847,18 +847,6 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
         sistemaService.getMesesValidadeCurta(function (p) {
             produtoService.getValidades(p.meses_validade_curta, produto, function (v) {
                 produto.validades = v;
-                for (var i = 0; i < v.length; i++) {
-                    v[i].oferta = false;
-                    for (var j = 0; j < produto.ofertas.length; j++) {
-                        if (produto.ofertas[j].validade === v[i].validade) {
-                            v[i].oferta = true;
-                            var atual = new Date().getTime();
-                            v[i].restante = produto.ofertas[j].campanha.fim - atual;
-                            v[i].valor = produto.ofertas[j].valor;
-                            break;
-                        }
-                    }
-                }
             })
         });
     }

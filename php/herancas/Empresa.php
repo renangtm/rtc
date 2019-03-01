@@ -289,7 +289,7 @@ class Empresa {
 
         if ($filtro !== "") {
 
-            $sql .= "AND $filtro";
+            $sql .= "AND $filtro ";
         }
 
         if ($ordem !== "") {

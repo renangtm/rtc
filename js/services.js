@@ -25,9 +25,9 @@ rtc.service('bannerService', function ($http, $q) {
             falha: fn
         });
     }
-    this.getHTML = function (banner,fn) {
+    this.getHTML = function (banner, fn) {
         baseService($http, $q, {
-            o:banner,
+            o: banner,
             query: "$r->html=Utilidades::base64encode($o->getHTML())",
             sucesso: fn,
             falha: fn
@@ -42,16 +42,16 @@ rtc.service('relatorioService', function ($http, $q) {
             falha: fn
         });
     }
-    this.getFilhos = function (item,fn) {
+    this.getFilhos = function (item, fn) {
         baseService($http, $q, {
-            o:item,
+            o: item,
             query: "$r->filhos=$o->getFilhos($c)",
             sucesso: fn,
             falha: fn
         });
     }
     this.relatorio = null;
-    this.getCount = function(filtro,fn){
+    this.getCount = function (filtro, fn) {
         baseService($http, $q, {
             o: this.relatorio,
             query: "$r->qtd=$o->getCount($c)",
@@ -61,7 +61,7 @@ rtc.service('relatorioService', function ($http, $q) {
     }
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
         baseService($http, $q, {
-            o: {x0: x0, x1: x1, relatorio:this.relatorio},
+            o: {x0: x0, x1: x1, relatorio: this.relatorio},
             query: "$r->elementos=$o->relatorio->getItens($c,$o->x0,$o->x1)",
             sucesso: fn,
             falha: fn
@@ -1090,12 +1090,31 @@ rtc.service('produtoService', function ($http, $q) {
             lbl:
                     for (var i = 0; i < validades.length; i++) {
 
+                validades[i].oferta = false;
+
+
+
                 for (var j = 0; j < produto.ofertas.length; j++) {
 
-                    if (validades[i].validade === produto.ofertas[j].validade) {
+                    var is = validades[i].validade === produto.ofertas[j].validade;
+
+                    if (!is) {
+
+                        var diff1 = ((((((validades[i].validade - new Date().getTime()) / 1000) / 60) / 60) / 24) / 30);
+                        var diff2 = ((((((produto.ofertas[j].validade - new Date().getTime()) / 1000) / 60) / 60) / 24) / 30);
+
+                        is = diff1 > meses_validade_curta && diff2 > meses_validade_curta;
+
+                    }
+
+                    if (is) {
 
                         validades[i].valor = produto.ofertas[j].valor;
                         validades[i].limite = produto.ofertas[j].limite;
+                        validades[i].oferta = true;
+                        var atual = new Date().getTime();
+                        validades[i].restante = produto.ofertas[j].campanha.fim - atual;
+                        
                         continue lbl;
 
                     }
@@ -1285,7 +1304,7 @@ rtc.service('empresaService', function ($http, $q) {
             falha: fn
         });
     }
-    this.getParametrosEmissao = function(empresa,fn){
+    this.getParametrosEmissao = function (empresa, fn) {
         baseService($http, $q, {
             o: empresa,
             query: "$r->parametros_emissao = $o->getParametrosEmissao($c)",
@@ -1293,7 +1312,7 @@ rtc.service('empresaService', function ($http, $q) {
             falha: fn
         });
     }
-    this.setParametrosEmissao = function(pe,fn){
+    this.setParametrosEmissao = function (pe, fn) {
         baseService($http, $q, {
             o: pe,
             query: "$o->merge($c)",
