@@ -1021,7 +1021,7 @@ rtc.service('produtoService', function ($http, $q) {
 
         }
 
-        this.getLotes(produto, '', 'lote.validade', function (l) {
+        this.getLotes(produto, 'lote.quantidade_real>0', 'lote.validade', function (l) {
 
             var lotes = l.lotes;
 
