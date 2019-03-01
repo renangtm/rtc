@@ -36,23 +36,25 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             //return;
         }
 
-        $cidades = array();
-
-        $ps = $con->getConexao()->prepare("SELECT id,nome FROM cidade");
-        $ps->execute();
-        $ps->bind_result($id, $nome);
-        while ($ps->fetch()) {
-            $c = new Cidade();
-            $c->id = $id;
-            $c->nome = $nome;
-            $cidades[] = $c;
-        }
-        $ps->close();
 
         $filial = new Empresa(1733);
         $logistic = new Empresa(1735);
         
+        $fornecedores = $filial->getFornecedores($con,0,10000,'','');
         
+        foreach($fornecedores as $key=>$value){
+            
+            $copia = Utilidades::copyId0($value);
+            
+            $copia->endereco->id = 0;
+            $copia->email->id = 0;
+            $copia->telefones = array();
+            $copia->empresa = $logistic;
+            
+            $copia->merge($con);
+           
+            
+        }
 
        
     }
