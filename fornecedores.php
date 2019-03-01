@@ -331,12 +331,29 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col" style="padding-top: 5px;">
+                                        <div class="row">
+                                            <div class="col-md-3" style="text-align:center">
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="radio-inline" data-ng-value="true" data-ng-model="fornecedor.habilitado" class="custom-control-input"><span class="custom-control-label">Habilitado</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-3" style="text-align:center">
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="radio-inline" data-ng-value="false" data-ng-model="fornecedor.habilitado" checked="" class="custom-control-input"><span class="custom-control-label">Desabilitado</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="invalid-feedback">
+                                            Please provide a valid text.
+                                        </div>
+                                    </div>
                                     <div class="form-group row">
 
                                         <div class="col-md-10">
                                             Telefone
                                             <hr>
-                                            <input id="txttel" type="text" ng-model="telefone.numero" placeholder="" class="form-control sp_celphones" maxlength="9">
+                                            <input id="txttel" type="text" ng-model="telefone.numero" placeholder="" class="form-control" maxlength="12">
                                         </div>
 
                                         <div class="col-md-2">

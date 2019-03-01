@@ -21,6 +21,7 @@ class Estado {
 
         $this->id = 0;
         $this->excluido = false;
+        $this->sigla = "SP";
         
     }
 
