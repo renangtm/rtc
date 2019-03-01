@@ -63,7 +63,7 @@ class Banner {
         }
 
         if ($this->id == 0) {
-
+            
             $ps = $con->getConexao()->prepare("INSERT INTO banner(id_campanha,data_inicial,data_final,json,id_empresa,tipo) VALUES(" . (($this->campanha !== null) ? $this->campanha->id : 0) . ",FROM_UNIXTIME($this->data_inicial/1000),FROM_UNIXTIME($this->data_final/1000),'" . addslashes($this->json) . "',".$this->empresa->id.",$this->tipo)");
             $ps->execute();
             $this->id = $ps->insert_id;

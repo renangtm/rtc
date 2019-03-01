@@ -18,7 +18,7 @@ and open the template in the editor.
         <script>
 
 
-            var xml = "<html><teste>1234</teste><teste1234>12344312</teste1234></html>";
+            var xml = "<html><teste>1234<teste111></teste><teste1234>12344312</teste1234></html>";
 
 
             function DOMToJson(h) {
@@ -99,8 +99,17 @@ and open the template in the editor.
                     }else if(e.tipo === 1){
                         pilha[pilha.length-1].filhos[pilha[pilha.length-1].filhos.length] = e;
                     }else if(e.tipo === -1){
-                        pilha[pilha.length-1].fechamento = e;
-                        pilha.length--;
+                        
+                        var n = 1;
+                        
+                        while(n<=pilha.length && pilha[pilha.length-n].valor !== e.valor)
+                            n++;
+                        
+                        if(n<=pilha.length){
+                            pilha[pilha.length-n].fechamento = e;
+                            pilha.length -= n;
+                        }
+                        
                     }
                 }
                 return elemento;
