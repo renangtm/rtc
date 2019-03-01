@@ -125,7 +125,8 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
             msg.erro("Realize o upload do arquivo");
             return;
         }
- 
+        $scope.banner.html = "";
+        
         baseService.merge($scope.banner, function (r) {
             if (r.sucesso) {
                 $scope.banner = r.o;
@@ -140,6 +141,8 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
 
     }
     $scope.deleteBanner = function () {
+        $scope.banner.html = "";
+  
         baseService.delete($scope.banner, function (r) {
             if (r.sucesso) {
                 msg.alerta("Operacao efetuada com sucesso");
