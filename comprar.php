@@ -114,7 +114,7 @@
                                         <div id="carouselExampleIndicators" class="product-carousel carousel slide m-b-40" data-ride="carousel">
                                             <ol class="carousel-indicators">
                                                 <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active" style="cursor: pointer;"></li>
-                                                <li data-target="#carouselExampleIndicators" data-slide-to="1" style="cursor: pointer;"></li>
+                                                <li data-target="#carouselExampleIndicators" data-slide-to="3" style="cursor: pointer;"></li>
                                                 <?php
                                                     $i = 2; //manter sempre proximo numero inteiro apos o <li data-slide-to> anterior
 

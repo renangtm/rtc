@@ -4113,8 +4113,9 @@ rtc.controller("crtFornecedores", function ($scope, fornecedorService, categoria
                 equalize(d.documentos[i], "categoria", $scope.categorias_documento);
             }
         })
-
+ 
         equalize(fornecedor.endereco, "cidade", $scope.cidades);
+        
         if (typeof fornecedor.endereco.cidade !== 'undefined') {
             $scope.estado = fornecedor.endereco.cidade.estado;
         } else {
@@ -4125,7 +4126,7 @@ rtc.controller("crtFornecedores", function ($scope, fornecedorService, categoria
     }
 
     $scope.mergeFornecedor = function () {
-
+        
         if ($scope.fornecedor.endereco.cidade == null) {
             msg.erro("Fornecedor sem cidade.");
             return;
