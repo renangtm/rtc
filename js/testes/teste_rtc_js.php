@@ -69,7 +69,7 @@ and open the template in the editor.
                         p.valor = p.valor.substr(1);
                     }                   
                     var k = p.valor.split(" ");
-                    if(k.length > 1){                       
+                    if(k.length > 1 && p.tipo>0){                       
                         if(k[0] === "!--" || k[0] === "?php" || k[0] === "?")
                             continue;                       
                         p.valor = k[0];                      

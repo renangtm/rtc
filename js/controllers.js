@@ -1,4 +1,4 @@
-rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, uploadService) {
+rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, uploadService, baseService) {
 
     $scope.banners = createAssinc(bannerService, 1, 3, 10);
     $scope.banners.attList();
@@ -48,12 +48,32 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
                     var reader = new FileReader();
                     reader["ii"] = i;
                     reader.onload = function (arquivo) {
-
+                       
                         var html = arquivo.target.result;
-                        
+         
                         var json = DOMToJson(html);
+                        
+                        json = JSON.stringify(json);
+                        
+                        
+                        uploadService.uploadStr([json],function(arqs2,sucesso2){
+                            
+                            if(sucesso2){
+                                
+                                msg.alerta("Upload efetuado com sucesso");
+                                $scope.banner.json = arqs2[0];
+                                
+                            }else{
+                                
+                                msg.alerta("Falha ao subir banner");
+                                
+                            }
+                            
+                            
+                        })
+                        
+                        
 
-                        document.write(JSON.stringify(json));
 
                     };
                     reader.readAsText(arquivos[i]);
@@ -88,13 +108,15 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
     $scope.setBanner = function (banner) {
 
         $scope.banner = banner;
-
-        bannerService.getJson($scope.banner, function (j) {
-
-            $scope.banner.json = j.json;
-
+        banner.html = "";
+        bannerService.getHTML(banner,function(h){
+            
+            banner.html = window.atob(h.html);
+            
+            $("#html_"+banner.id).html(banner.html);
+            
         })
-
+        
     }
 
     $scope.mergeBanner = function () {
@@ -103,13 +125,15 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
             msg.erro("Realize o upload do arquivo");
             return;
         }
-
+        $scope.banner.html = "";
+        
         baseService.merge($scope.banner, function (r) {
             if (r.sucesso) {
                 $scope.banner = r.o;
 
                 msg.alerta("Operacao efetuada com sucesso");
-
+                $scope.banners.attList();
+                
             } else {
                 msg.erro("Problema ao efetuar operacao. ");
             }
@@ -117,10 +141,12 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
 
     }
     $scope.deleteBanner = function () {
+        $scope.banner.html = "";
+  
         baseService.delete($scope.banner, function (r) {
             if (r.sucesso) {
                 msg.alerta("Operacao efetuada com sucesso");
-                $scope.fornecedores.attList();
+                $scope.banners.attList();
             } else {
                 msg.erro("Problema ao efetuar operacao");
             }
@@ -821,18 +847,6 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
         sistemaService.getMesesValidadeCurta(function (p) {
             produtoService.getValidades(p.meses_validade_curta, produto, function (v) {
                 produto.validades = v;
-                for (var i = 0; i < v.length; i++) {
-                    v[i].oferta = false;
-                    for (var j = 0; j < produto.ofertas.length; j++) {
-                        if (produto.ofertas[j].validade === v[i].validade) {
-                            v[i].oferta = true;
-                            var atual = new Date().getTime();
-                            v[i].restante = produto.ofertas[j].campanha.fim - atual;
-                            v[i].valor = produto.ofertas[j].valor;
-                            break;
-                        }
-                    }
-                }
             })
         });
     }

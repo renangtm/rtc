@@ -280,15 +280,16 @@ class Empresa {
 
         $sql = "SELECT "
                 . "id,"
-                . "UNIX_TIMESTAMP(data_inicial),"
-                . "UNIX_TIMESTAMP(data_final),"
+                . "UNIX_TIMESTAMP(data_inicial)*1000,"
+                . "UNIX_TIMESTAMP(data_final)*1000,"
                 . "id_campanha,"
-                . "tipo "
+                . "tipo,"
+                . "json "
                 . "FROM banner WHERE id_empresa=$this->id ";
 
         if ($filtro !== "") {
 
-            $sql .= "AND $filtro";
+            $sql .= "AND $filtro ";
         }
 
         if ($ordem !== "") {
@@ -305,7 +306,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $data_inicial, $data_final, $id_campanha, $tipo);
+        $ps->bind_result($id, $data_inicial, $data_final, $id_campanha, $tipo, $json);
 
         while ($ps->fetch()) {
 
@@ -315,7 +316,9 @@ class Empresa {
             $banner->data_final = $data_final;
             $banner->campanha = $id_campanha;
             $banner->tipo = $tipo;
-
+            $banner->json = $json;
+            $banner->empresa= $this;
+            
             $banners[] = $banner;
 
             if ($id_campanha > 0) {
@@ -343,6 +346,10 @@ class Empresa {
                         break;
                     }
                 }
+            }else{
+                
+                $banner->campanha = null;
+                
             }
         }
 
@@ -1377,6 +1384,7 @@ class Empresa {
                 . "produto.id,"
                 . "produto.id_logistica,"
                 . "produto.id_universal,"
+                . "produto.imagem,"
                 . "produto.liquido,"
                 . "produto.quantidade_unidade,"
                 . "produto.habilitado,"
@@ -1456,7 +1464,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_pro, $id_log, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_pro, $id_log, $id_uni,$img_prod, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
 
 
@@ -1504,6 +1512,7 @@ class Empresa {
                 $pro->valor_base = $vb;
                 $pro->custo = $cus;
                 $pro->ativo = $ativo;
+                $pro->imagem = $img_prod;
                 $pro->concentracao = $conc;
                 $pro->peso_bruto = $pb;
                 $pro->peso_liquido = $pl;
