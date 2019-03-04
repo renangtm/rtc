@@ -207,23 +207,24 @@
         </div>
     </div>
 
-    <button type="button" class="btn btn-primary" id="cal_bt{{idUnico}}" ng-click="trocar()" ng-if="botao" style="z-index:100">
+    <button type="button" class="btn btn-primary" id="cal_bt{{idUnico}}" ng-click="trocar()" ng-if="botao" style="z-index:100;">
         <i class="fas fa-calendar" style="display:inline"></i>&nbsp 
           &nbsp
-          <div ng-if="!intervalo && !tempo" style="display:inline">
-              {{model | data_st}}
-          </div>
-          <div ng-if="!intervalo && tempo" style="display:inline">
-              {{model | data}}
-          </div>
-          
-          <div ng-if="intervalo && !tempo" style="display:inline">
-              De {{inicio | data_st}} ate {{fim | data_st}}
-          </div>
-          <div ng-if="intervalo && tempo" style="display:inline">
-              De {{inicio | data}} ate {{fim | data}}
-          </div>
-          
+
+            <div ng-if="!intervalo && !tempo && responsividade()" style="display:inline">
+                {{model | data_st}}
+            </div>
+            <div ng-if="!intervalo && tempo && responsividade()" style="display:inline">
+                {{model | data}}
+            </div>
+
+            <div ng-if="intervalo && !tempo && responsividade()" style="display:inline">
+                De {{inicio | data_st}} ate {{fim | data_st}}
+            </div>
+            <div ng-if="intervalo && tempo && responsividade()" style="display:inline">
+                De {{inicio | data}} ate {{fim | data}}
+            </div>
+
     </button>
     <button type="button" class="btn btn-danger" id="cal_2_bt{{idUnico}}" ng-click="trocar()" ng-if="botao && dsp" style="z-index:501;position:absolute;left:10px;top:10px">
         <i class="fas fa-times"></i>&nbsp Fechar

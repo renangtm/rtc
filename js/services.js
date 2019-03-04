@@ -1,6 +1,106 @@
 var debuger = function (l) {
     alert(paraJson(l));
 }
+rtc.service('gerenciadorService', function ($http, $q) {
+    var este = this;
+    this.gerenciador = null;
+    this.getGerenciador = function (fn) {
+        baseService($http, $q, {
+            query: "$r->gerenciador = new GerenciadorAtividade($empresa)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getInformacoesUsuario = function (usuario,fn) {
+        baseService($http, $q, {
+            o:{usuario:usuario},
+            query: "$r->email=$o->usuario->getEmail($c);$r->telefones=$o->usuario->getTelefones($c);$r->valor_comprado=$o->usuario->getValorComprado($c);$r->pontos=$o->usuario->getPontos($c);$r->logs=$o->usuario->getLogs($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getAtividadeUsuario = function (usuario,intervalo,fn) {
+        baseService($http, $q, {
+            o:{usuario:usuario,intervalo:intervalo},
+            query: "$r->pontos = $o->usuario->getAtividade($c,$o->intervalo)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getMaximoUsuariosOnline = function (gerenciador,fn) {
+        baseService($http, $q, {
+            o:gerenciador,
+            query: "$r->qtd=$o->getMaximoUsuariosOnline($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getTempo_Usuarios = function (gerenciador,intervalo,fn) {
+        baseService($http, $q, {
+            o:{gerenciador:gerenciador,intervalo:intervalo},
+            query: "$r->pontos=$o->gerenciador->getTempo_Usuarios($c,$o->intervalo)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCount = function (filtro,fn,gerenciador) {
+        baseService($http, $q, {
+            o:{gerenciador:(typeof gerenciador === 'undefined')?este.gerenciador:gerenciador,filtro:filtro},
+            query: "$r->qtd=$o->gerenciador->getQuantidadeUsuariosAtivos($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x1, x2, filtro, ordem, fn,gerenciador) {
+        baseService($http, $q, {
+            o:{gerenciador:(typeof gerenciador === 'undefined')?este.gerenciador:gerenciador,x1:x1,x2:x2,filtro:filtro,ordem:ordem},
+            query: "$r->elementos=$o->gerenciador->getUsuariosAtivos($c,$o->x1,$o->x2,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('atividadeService', function ($http, $q) {
+    this.sinal = function () {
+        baseService($http, $q, {
+            query: "$atv=new Atividade($usuario);$atv->merge($c)",
+            sucesso: function(r){},
+            falha: function(r){}
+        });
+    }
+    this.adcionarCarrinho = function (item) {
+        baseService($http, $q, {
+            o:{descricao:item.quantidade_comprada+" "+item.nome+" no carrinho"},
+            query: "$atv=new Atividade($usuario);$atv->descricao=$o->descricao;$atv->pontos=1;$atv->tipo=Atividade::$ADCIONAR_CARRINHO;$atv->merge($c)",
+            sucesso: function(r){},
+            falha: function(r){}
+        });
+    }
+    this.cliqueComum = function (descricao) {
+        baseService($http, $q, {
+            o:{descricao:descricao},
+            query: "$atv=new Atividade($usuario);$atv->descricao=$o->descricao;$atv->pontos=0.01;$atv->tipo=Atividade::$ITEM_MENU;$atv->merge($c)",
+            sucesso: function(r){},
+            falha: function(r){}
+        });
+    }
+    this.pesquisar = function (descricao) {
+        baseService($http, $q, {
+            o:{descricao:descricao},
+            query: "$atv=new Atividade($usuario);$atv->descricao=$o->descricao;$atv->pontos=0.02;$atv->tipo=Atividade::$PESQUISAR;$atv->merge($c)",
+            sucesso: function(r){},
+            falha: function(r){}
+        });
+    }
+    this.produto = function (produto) {
+        baseService($http, $q, {
+            o:{descricao:produto.id},
+            query: "$atv=new Atividade($usuario);$atv->descricao=$o->descricao;$atv->pontos=1;$atv->tipo=Atividade::$PRODUTO;$atv->merge($c)",
+            sucesso: function(r){},
+            falha: function(r){}
+        });
+    }
+})
 rtc.service('bannerService', function ($http, $q) {
     this.getCount = function (filtro, fn) {
         baseService($http, $q, {

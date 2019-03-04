@@ -359,6 +359,34 @@ function createFilterList(service, cols, rows, maxPage) {
 
 }
 
+function millisToTime(ms) {
+
+    var s = parseInt(ms / 1000);
+
+    var segundos = s % 60;
+    s -= segundos;
+    s /= 60;
+    var minutos = s % 60;
+    s -= minutos;
+    s /= 60;
+    var horas = s % 24;
+    s -= horas;
+    s /= 24;
+
+    var str = "";
+
+    if (s > 0) {
+        str += s + " Dias ";
+    }
+
+    str += horas + ":";
+    str += minutos + ":";
+    str += segundos;
+
+    return str;
+
+}
+
 function createAssinc(lista, cols, rows, maxPage) {
 
     var listar = {
@@ -1464,7 +1492,8 @@ rtc.directive('calendario', function ($timeout) {
             tempo: '=?',
             change: '&?',
             confirma: '&?',
-            refresh: '=?'
+            refresh: '=?',
+            maxWidth: '@?'
         },
         transclude: true,
         templateUrl: 'calendario.html',
@@ -1481,6 +1510,12 @@ rtc.directive('calendario', function ($timeout) {
 
                 scope.horas = [];
                 scope.minutos = [];
+
+                if (typeof scope.maxWidth === 'undefined') {
+
+                    scope.maxWidth = 800;
+
+                }
 
                 scope.botao = (typeof scope["botao"] === 'undefined') ? false : scope.botao;
                 scope.tem_confirma = scope.confirma !== undefined;
@@ -1503,6 +1538,23 @@ rtc.directive('calendario', function ($timeout) {
 
                 }
 
+                $(window).resize(function () {
+
+                    scope.$apply();
+
+                })
+
+                scope.responsividade = function () {
+
+                    var w = $(window).width();
+
+                    if (w < parseInt(scope.maxWidth + "")) {
+
+                        return false;
+                    }
+                    return true;
+
+                }
 
                 scope.hora_model = {hora: 12};
                 scope.minuto_model = {minuto: 10};
@@ -1870,3 +1922,166 @@ rtc.directive('ngRightClick', function ($parse) {
         });
     };
 });
+
+var scrolls = [];
+rtc.directive('grafico', function ($sce,$timeout) {
+    return {
+        restrict: 'E',
+        scope: {
+            eixoY: '@',
+            eixoX: '@',
+            pontos: '=',
+            decimal: '=',
+            maxBars: '=',
+            uniqueId:'=',
+            legenda:'=',
+            fixedMax:'=?'
+        },
+        templateUrl: 'grafico.html',
+        link: function (scope, element, attrs) {
+
+            function lk() {
+                
+                if(typeof scope.decimal === 'undefined'){
+                    
+                    scope.decimal = false;
+                    
+                }
+                
+                scope.pt = scope.pontos.length;
+                
+                if(typeof scope.maxBars !== 'undefined'){
+                    
+                    scope.pt = scope.maxBars;
+                    
+                }
+                
+                scope.np = parseInt(Math.max(1,scope.pt));
+                
+                
+                scope.ymark = [];
+                scope.scroll = 2;
+                
+                var a = null;
+                for(var i=0;i<scrolls.length;i++){
+                    if(scrolls[i].id === scope.uniqueId){
+                        a=scrolls[i];
+                        scope.scroll = a.valor;
+                    }
+                }
+                
+                if(a === null){
+                    a = {id:scope.uniqueId,valor:scope.scroll};
+                    scrolls[scrolls.length] = a;
+                }
+                
+                scope.spacing = 0.5;
+                scope.max = 0;
+                var setMax = false;
+                scope.min = 0;
+                var setMin = false;
+                var stoped = true;
+                
+               
+                
+                $(document).mouseup(function(){
+                    
+                    stoped = true;
+                    
+                })
+                
+                scope.addScroll = function(){
+                    
+                    stoped = false;
+                    var fn = function(){
+                        if(scope.scroll+2 > 3){
+                            stoped = true;
+                            return;
+                        }
+                        scope.scroll+=2;
+                        a.valor = scope.scroll;
+                        if(!stoped){
+                            $timeout(fn,20);
+                        }
+                    }
+                   
+                    fn();
+                }
+                
+                scope.removeScroll = function(){
+                    stoped = false;
+                    var fn = function(){
+                        
+                        scope.scroll-=2;
+                        a.valor = scope.scroll;
+                        if(!stoped){
+                            $timeout(fn,20);
+                        }
+                    }
+                    fn();
+                }
+                
+
+                for (var i = 0; i < scope.pontos.length; i++) {
+                    
+                    scope.pontos[i].numero = i;
+                    scope.pontos[i].nome = $sce.trustAsHtml(scope.pontos[i].nome);
+                    
+                    if (scope.pontos[i].valor > scope.max || !setMax) {
+                        scope.max = scope.pontos[i].valor;
+                        setMax = true;
+                    }
+                    if (scope.pontos[i].valor < scope.min || !setMin) {
+                        scope.min = scope.pontos[i].valor;
+                        setMin = true;
+                    }
+                }
+                
+                if(typeof scope["fixedMax"] !== 'undefined'){
+                    
+                    scope.max = scope.fixedMax;
+                    
+                }
+
+             
+                var itv = Math.abs(scope.max) / Math.min(scope.pontos.length,12);
+                
+                if(!scope.decimal){
+                    
+                    itv = Math.ceil(itv);
+                    
+                }
+
+                if (itv === 0) {
+                    scope.ymark = [0];
+                } else {
+
+                    for (var i = scope.min,j=0; i <= scope.max; i += itv,j++) {
+                        scope.ymark[scope.ymark.length] = {valor:i,numero:j};
+                    }
+
+                }
+                
+                scope.percent = function(ponto){
+                    
+                    var x = ponto.valor;
+                    
+                    
+                    return ((x-scope.min)/(scope.max-scope.min))*100;
+                    
+                }
+
+            }
+            
+            lk();
+            
+            scope.$watchCollection(function(){return scope.pontos;},function(){
+                
+                lk();
+                
+            },true)
+
+
+        }
+    };
+})
