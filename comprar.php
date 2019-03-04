@@ -407,9 +407,9 @@
                                 <!-- ============================================================== -->
 
                                 <?php foreach($banners_laterais as $key=>$value){ ?>
-                                <div class="product-sidebar m-b-30">
-                                    <div class="product-sidebar-widget p-0" style="margin-bottom: 0px">
-                                        <div style="width:14vw;height:auto">
+                                <div class="">
+                                    <div class="" style="margin-bottom: 0px">
+                                        <div style="">
                                             <?php echo $value; ?>
                                         </div>
                                     </div>
