@@ -1,3 +1,196 @@
+rtc.controller("crtGerenciador", function ($scope, $interval, gerenciadorService) {
+
+    $scope.ativos = null;
+    $scope.gerenciadorUsuarios = null;
+    $scope.gerenciadorEstat = null;
+
+    $scope.qtdAcessos = 0;
+    $scope.maximoUsuariosOnline = 0;
+    $scope.pontosGrafico = [];
+    $scope.intervaloEstat = 3600000; //1 hora inicialmente;
+
+    $scope.pontosGraficoInfoUsu = [];
+    $scope.intervaloInfoUsu = 3600000;
+    $scope.selecionado = null;
+    $scope.informacoes = null;
+
+
+    $scope.selecionar = function (atv) {
+
+        $scope.selecionado = atv;
+        $scope.attInfoUsu();
+
+    }
+
+    gerenciadorService.getGerenciador(function (g) {
+
+        $scope.gerenciadorUsuarios = g.gerenciador;
+        $scope.gerenciadorEstat = angular.copy(g.gerenciador);
+
+        gerenciadorService.gerenciador = $scope.gerenciadorUsuarios;
+
+        $scope.ativos = createAssinc(gerenciadorService, 1, 10, 10);
+        $scope.ativos["posload"] = function (els) {
+
+            if ($scope.selecionado === null) {
+                $scope.selecionar(els[0]);
+            } else {
+                for (var i = 0; i < els.length; i++) {
+                    if (els[i].id === $scope.selecionado.id) {
+                        $scope.selecionado = els[i];
+                    }
+                }
+            }
+
+        }
+        $scope.ativos.attList();
+        assincFuncs(
+                $scope.ativos,
+                "a",
+                ["u.id", "u.nome", "e.id", "e.nome", "e.cnpj"]);
+
+        $scope.attEstat();
+
+    })
+
+    $scope.reduzirIntervaloEstat = function () {
+
+        $scope.intervaloEstat = parseInt($scope.intervaloEstat / 2);
+
+        $scope.attEstat();
+
+    }
+
+    $scope.attUsuarios = function () {
+
+        $scope.ativos.attList();
+        $scope.attInfoUsu();
+
+    }
+
+    $scope.attInfoUsu = function () {
+
+        gerenciadorService.getAtividadeUsuario($scope.selecionado, $scope.intervaloInfoUsu, function (p) {
+
+            $scope.pontosGraficoInfoUsu = [];
+
+            for (var i = 0; i < p.pontos.length; i++) {
+
+                var momento = $scope.intervaloInfoUsu * i + $scope.gerenciadorUsuarios.periodo_inicial;
+                var momentoFinal = momento + $scope.intervaloInfoUsu;
+                var titulo = toTime(momento).split(" ")[1] + " a " + toTime(momentoFinal).split(" ")[1];
+
+                $scope.pontosGraficoInfoUsu[$scope.pontosGraficoInfoUsu.length] = {nome: titulo, valor: p.pontos[i]};
+
+            }
+
+
+        })
+
+        gerenciadorService.getInformacoesUsuario($scope.selecionado, function (inf) {
+
+            $scope.informacoes = inf;
+            $scope.informacoes.logs = createList($scope.informacoes.logs, 1, 5, "log.descricao");
+
+        })
+
+
+    }
+
+    $scope.reduzirIntervaloInfoUsu = function () {
+
+        $scope.intervaloEstat = parseInt($scope.intervaloInfoUsu / 2);
+
+        $scope.attInfoUsu();
+
+    }
+
+    $scope.aumentarIntervaloInfoUsu = function () {
+
+        $scope.intervaloEstatInfoUsu = parseInt($scope.intervaloEstat * 2);
+
+        $scope.attInfoUsu();
+
+    }
+
+    $scope.aumentarIntervaloEstat = function () {
+
+        $scope.intervaloEstat = Math.min(parseInt($scope.intervaloEstat * 2), 86400000);
+
+        $scope.attEstat();
+
+    }
+
+    $scope.attEstat = function () {
+
+        gerenciadorService.getCount('', function (r) {
+            $scope.qtdAcessos = r.qtd;
+        }, $scope.gerenciadorEstat);
+
+        gerenciadorService.getMaximoUsuariosOnline($scope.gerenciadorEstat, function (r) {
+            $scope.maximoUsuariosOnline = r.qtd;
+        })
+
+        gerenciadorService.getTempo_Usuarios($scope.gerenciadorEstat, $scope.intervaloEstat, function (p) {
+
+            $scope.pontosGrafico = [];
+
+            for (var i = 0; i < p.pontos.length; i++) {
+
+                var momento = $scope.intervaloEstat * i + $scope.gerenciadorEstat.periodo_inicial;
+                var momentoFinal = momento + $scope.intervaloEstat;
+                var titulo = toTime(momento).split(" ").join("<br>") + " a " + toTime(momentoFinal).split(" ")[1];
+
+                $scope.pontosGrafico[$scope.pontosGrafico.length] = {nome: titulo, valor: p.pontos[i]};
+
+            }
+
+
+        })
+
+    }
+
+
+
+    $interval(function () {
+
+        $scope.ativos.attList();
+        $scope.attEstat();
+        $scope.attInfoUsu();
+
+    }, 30000);
+
+});
+
+
+rtc.controller("crtAtividade", function ($scope, $timeout, $interval, atividadeService) {
+
+    atividadeService.sinal();
+
+    $interval(function () {
+        atividadeService.sinal();
+    }, 60000);
+
+    $(document).click(function (e) {
+
+        var x = e.clientX;
+        var y = e.clientY;
+
+        atividadeService.cliqueComum("Clique (" + x + "," + y + ")");
+
+    })
+
+
+    $(document).find("input[type=search]").each(function () {
+        $(this).change(function () {
+            atividadeService.pesquisar("Digitou: "+$(this).val());
+        })
+    })
+
+
+
+});
+
 rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, uploadService, baseService) {
 
     $scope.banners = createAssinc(bannerService, 1, 3, 10);
@@ -5,14 +198,14 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
     assincFuncs(
             $scope.banners,
             "banner",
-            ["id","data_inicial", "data_final", "tipo"]);
+            ["id", "data_inicial", "data_final", "tipo"]);
 
     $scope.campanhas = createAssinc(campanhaService, 1, 10, 10);
     $scope.campanhas.attList();
     assincFuncs(
             $scope.campanhas,
             "campanha",
-            ["id", "nome", "inicio", "fim"],"filtroCampanhas");
+            ["id", "nome", "inicio", "fim"], "filtroCampanhas");
 
     $scope.banner_novo = {};
     $scope.banner = {};
@@ -48,31 +241,31 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
                     var reader = new FileReader();
                     reader["ii"] = i;
                     reader.onload = function (arquivo) {
-                       
+
                         var html = arquivo.target.result;
-         
+
                         var json = DOMToJson(html);
-                        
+
                         json = JSON.stringify(json);
-                        
-                        
-                        uploadService.uploadStr([json],function(arqs2,sucesso2){
-                            
-                            if(sucesso2){
-                                
+
+
+                        uploadService.uploadStr([json], function (arqs2, sucesso2) {
+
+                            if (sucesso2) {
+
                                 msg.alerta("Upload efetuado com sucesso");
                                 $scope.banner.json = arqs2[0];
-                                
-                            }else{
-                                
+
+                            } else {
+
                                 msg.alerta("Falha ao subir banner");
-                                
+
                             }
-                            
-                            
+
+
                         })
-                        
-                        
+
+
 
 
                     };
@@ -92,31 +285,31 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
     $scope.novoBanner = function () {
         $scope.banner = angular.copy($scope.banner_novo);
     }
-    
-    $scope.setCampanha = function(campanha){
-        
+
+    $scope.setCampanha = function (campanha) {
+
         $scope.banner.campanha = campanha;
-        
+
     }
-    
-    $scope.deleteCampanha = function(){
-        
+
+    $scope.deleteCampanha = function () {
+
         $scope.banner.campanha = null;
-        
+
     }
 
     $scope.setBanner = function (banner) {
 
         $scope.banner = banner;
         banner.html = "";
-        bannerService.getHTML(banner,function(h){
-            
+        bannerService.getHTML(banner, function (h) {
+
             banner.html = window.atob(h.html);
-            
-            $("#html_"+banner.id).html(banner.html);
-            
+
+            $("#html_" + banner.id).html(banner.html);
+
         })
-        
+
     }
 
     $scope.mergeBanner = function () {
@@ -126,14 +319,14 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
             return;
         }
         $scope.banner.html = "";
-        
+
         baseService.merge($scope.banner, function (r) {
             if (r.sucesso) {
                 $scope.banner = r.o;
 
                 msg.alerta("Operacao efetuada com sucesso");
                 $scope.banners.attList();
-                
+
             } else {
                 msg.erro("Problema ao efetuar operacao. ");
             }
@@ -142,7 +335,7 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
     }
     $scope.deleteBanner = function () {
         $scope.banner.html = "";
-  
+
         baseService.delete($scope.banner, function (r) {
             if (r.sucesso) {
                 msg.alerta("Operacao efetuada com sucesso");
@@ -2054,7 +2247,7 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tr
             msg.erro("Cotacao sem status.");
             return;
         }
-        
+
         p.observacao = formatTextArea(p.observacao);
 
         baseService.merge(p, function (r) {
@@ -3376,8 +3569,8 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     $scope.removeNumeracao = function (prod) {
 
         prod.numeracao--;
-        
-        prod.numeracao = Math.max(0,prod.numeracao);
+
+        prod.numeracao = Math.max(0, prod.numeracao);
 
         var c = prod.campanha.campanhas;
         var add = true;
@@ -4115,9 +4308,9 @@ rtc.controller("crtFornecedores", function ($scope, fornecedorService, categoria
                 equalize(d.documentos[i], "categoria", $scope.categorias_documento);
             }
         })
- 
+
         equalize(fornecedor.endereco, "cidade", $scope.cidades);
-        
+
         if (typeof fornecedor.endereco.cidade !== 'undefined') {
             $scope.estado = fornecedor.endereco.cidade.estado;
         } else {
@@ -4128,7 +4321,7 @@ rtc.controller("crtFornecedores", function ($scope, fornecedorService, categoria
     }
 
     $scope.mergeFornecedor = function () {
-        
+
         if ($scope.fornecedor.endereco.cidade == null) {
             msg.erro("Fornecedor sem cidade.");
             return;
@@ -4966,9 +5159,9 @@ rtc.controller("crtLogin", function ($scope, loginService) {
     $scope.senha = "";
     $scope.email = "";
     $scope.logar = function () {
-        
+
         loginService.login($scope.usuario, $scope.senha, function (r) {
-            
+
             if (r.usuario === null || !r.sucesso) {
                 msg.erro("Esse usuario nao existe");
             } else {
