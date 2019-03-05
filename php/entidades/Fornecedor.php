@@ -23,6 +23,7 @@ class Fornecedor {
     public $empresa;
     public $inscricao_estadual;
     public $habilitado;
+    public $codigo;
 
     function __construct() {
 
@@ -35,6 +36,7 @@ class Fornecedor {
         $this->empresa = null;
         $this->habilitado = false;
         $this->email = new Email("");
+        $this->codigo = 0;
     }
 
     public function setDocumentos($docs, $con) {
@@ -90,16 +92,32 @@ class Fornecedor {
     }
 
     public function merge($con) {
+        
+        if($this->codigo === 0){
+            
+            $ps = $con->getConexao()->prepare("SELECT MAX(codigo)+1 FROM fornecedor WHERE id_empresa=".$this->empresa->id);
+            $ps->execute();
+            $ps->bind_result($idn);
+            
+            if($ps->fetch()){
+                
+                $this->codigo = $idn;
+                
+            }
+            
+            $ps->close();
+            
+        }
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO fornecedor(nome,cnpj,excluido,id_empresa,inscricao_estadual,habilitado) VALUES('" . addslashes($this->nome) . "','" . $this->cnpj->valor . "',false," . $this->empresa->id . ",'$this->inscricao_estadual',".($this->habilitado?"true":"false").")");
+            $ps = $con->getConexao()->prepare("INSERT INTO fornecedor(nome,cnpj,excluido,id_empresa,inscricao_estadual,habilitado,codigo) VALUES('" . addslashes($this->nome) . "','" . $this->cnpj->valor . "',false," . $this->empresa->id . ",'$this->inscricao_estadual',".($this->habilitado?"true":"false").",$this->codigo)");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE fornecedor SET nome = '" . addslashes($this->nome) . "', cnpj='" . $this->cnpj->valor . "',excluido=false, id_empresa=" . $this->empresa->id . ", inscricao_estadual='$this->inscricao_estadual', habilitado=".($this->habilitado?"true":"false")." WHERE id = " . $this->id);
+            $ps = $con->getConexao()->prepare("UPDATE fornecedor SET nome = '" . addslashes($this->nome) . "', cnpj='" . $this->cnpj->valor . "',excluido=false, id_empresa=" . $this->empresa->id . ", inscricao_estadual='$this->inscricao_estadual', habilitado=".($this->habilitado?"true":"false").",codigo=$this->codigo WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
         }

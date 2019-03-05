@@ -43,6 +43,8 @@ class Produto {
     public $sistema_lotes;
     public $nota_usuario;
     
+    public $codigo;
+    
     function __construct() {
 
         $this->id = 0;
@@ -71,6 +73,7 @@ class Produto {
         $this->nota_usuario = 5;
         $this->ncm = "000000";
         $this->unidade = "Ob";
+        $this->codigo = 0;
         
     }
 
@@ -91,16 +94,32 @@ class Produto {
             $ps->close();
             
         }
+        
+        if($this->codigo === 0){
+            
+            $ps = $con->getConexao()->prepare("SELECT MAX(codigo)+1 FROM produto WHERE id_empresa=".$this->empresa->id);
+            $ps->execute();
+            $ps->bind_result($idn);
+            
+            if($ps->fetch()){
+                
+                $this->codigo = $idn;
+                
+            }
+            
+            $ps->close();
+            
+        }
 
         if ($this->id == 0) {
             
-            $ps = $con->getConexao()->prepare("INSERT INTO produto(id_universal,nome,id_categoria,liquido,quantidade_unidade,excluido,habilitado,id_empresa,valor_base,custo,peso_bruto,peso_liquido,estoque,disponivel,transito,grade,unidade,ncm,lucro_consignado,ativo,concentracao,classe_risco,fabricante,imagem,id_logistica,sistema_lotes,nota_usuario) VALUES($this->id_universal,'" . addslashes($this->nome) . "'," . $this->categoria->id . "," . ($this->liquido ? "true" : "false") . ",$this->quantidade_unidade,false," . ($this->habilitado ? "true" : "false") . "," . $this->empresa->id . ",$this->valor_base,$this->custo,$this->peso_bruto,$this->peso_liquido,$this->estoque,$this->disponivel,$this->transito,'" . $this->grade->str . "','" . addslashes($this->unidade) . "','" . addslashes($this->ncm) . "',$this->lucro_consignado,'$this->ativo','$this->concentracao','$this->classe_risco','$this->fabricante','$this->imagem'," . ($this->logistica !== null ? $this->logistica->id : 0) . ",".($this->sistema_lotes?"true":"false").",$this->nota_usuario)");
+            $ps = $con->getConexao()->prepare("INSERT INTO produto(id_universal,nome,id_categoria,liquido,quantidade_unidade,excluido,habilitado,id_empresa,valor_base,custo,peso_bruto,peso_liquido,estoque,disponivel,transito,grade,unidade,ncm,lucro_consignado,ativo,concentracao,classe_risco,fabricante,imagem,id_logistica,sistema_lotes,nota_usuario,codigo) VALUES($this->id_universal,'" . addslashes($this->nome) . "'," . $this->categoria->id . "," . ($this->liquido ? "true" : "false") . ",$this->quantidade_unidade,false," . ($this->habilitado ? "true" : "false") . "," . $this->empresa->id . ",$this->valor_base,$this->custo,$this->peso_bruto,$this->peso_liquido,$this->estoque,$this->disponivel,$this->transito,'" . $this->grade->str . "','" . addslashes($this->unidade) . "','" . addslashes($this->ncm) . "',$this->lucro_consignado,'$this->ativo','$this->concentracao','$this->classe_risco','$this->fabricante','$this->imagem'," . ($this->logistica !== null ? $this->logistica->id : 0) . ",".($this->sistema_lotes?"true":"false").",$this->nota_usuario,$this->codigo)");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE produto SET nome = '" . addslashes($this->nome) . "', id_universal=$this->id_universal, id_categoria=" . $this->categoria->id . ",liquido=" . ($this->liquido ? "true" : "false") . ", id_empresa=" . $this->empresa->id . ", valor_base=" . $this->valor_base . ",custo=$this->custo,peso_bruto=$this->peso_bruto,peso_liquido=$this->peso_liquido,estoque=$this->estoque,disponivel=$this->disponivel,transito=$this->transito,excluido=false,habilitado=" . ($this->habilitado ? "true" : "false") . ",grade='" . $this->grade->str . "',unidade='" . addslashes($this->unidade) . "',ncm='" . addslashes($this->ncm) . "',quantidade_unidade=$this->quantidade_unidade,lucro_consignado=$this->lucro_consignado, ativo='$this->ativo', concentracao='$this->concentracao',classe_risco='$this->classe_risco',fabricante='$this->fabricante',imagem='$this->imagem', id_logistica=" . ($this->logistica !== null ? $this->logistica->id : 0) . ",sistema_lotes=".($this->sistema_lotes?"true":"false").",nota_usuario=$this->nota_usuario WHERE id = " . $this->id);
+            $ps = $con->getConexao()->prepare("UPDATE produto SET nome = '" . addslashes($this->nome) . "', id_universal=$this->id_universal, id_categoria=" . $this->categoria->id . ",liquido=" . ($this->liquido ? "true" : "false") . ", id_empresa=" . $this->empresa->id . ", valor_base=" . $this->valor_base . ",custo=$this->custo,peso_bruto=$this->peso_bruto,peso_liquido=$this->peso_liquido,estoque=$this->estoque,disponivel=$this->disponivel,transito=$this->transito,excluido=false,habilitado=" . ($this->habilitado ? "true" : "false") . ",grade='" . $this->grade->str . "',unidade='" . addslashes($this->unidade) . "',ncm='" . addslashes($this->ncm) . "',quantidade_unidade=$this->quantidade_unidade,lucro_consignado=$this->lucro_consignado, ativo='$this->ativo', concentracao='$this->concentracao',classe_risco='$this->classe_risco',fabricante='$this->fabricante',imagem='$this->imagem', id_logistica=" . ($this->logistica !== null ? $this->logistica->id : 0) . ",sistema_lotes=".($this->sistema_lotes?"true":"false").",nota_usuario=$this->nota_usuario, codigo=$this->codigo WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
         }
