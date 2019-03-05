@@ -119,8 +119,9 @@ class GerenciadorAtividade {
     }
 
     public function getMaximoUsuariosOnline($con) {
-
-        $ps = $con->getConexao()->prepare("SELECT MAX(z.qtd) FROM (SELECT COUNT(*) as 'qtd' FROM (SELECT a1.id FROM atividade_usuario a1 LEFT JOIN atividade_usuario a2 ON ABS(UNIX_TIMESTAMP(a1.momento)-UNIX_TIMESTAMP(a2.momento))<=" . self::$TIME_SINAL . "/1000 AND a1.momento > FROM_UNIXTIME($this->periodo_inicial/1000) AND a1.momento < FROM_UNIXTIME($this->periodo_final/1000) AND a2.momento > FROM_UNIXTIME($this->periodo_inicial/1000) AND a2.momento < FROM_UNIXTIME($this->periodo_final/1000) GROUP BY a1.id,a2.id_usuario) k GROUP BY k.id) z");
+        
+        
+        $ps = $con->getConexao()->prepare("SELECT MAX(l.tt) FROM (SELECT COUNT(*) as 'tt' FROM (SELECT ROUND(UNIX_TIMESTAMP(a1.momento)/70) as 'm' FROM atividade_usuario a1 WHERE a1.momento > FROM_UNIXTIME($this->periodo_inicial/1000) AND a1.momento < FROM_UNIXTIME($this->periodo_final/1000) GROUP BY ROUND(UNIX_TIMESTAMP(a1.momento)/70),a1.id_usuario) k GROUP BY k.m) l");
         $ps->execute();
         $ps->bind_result($qtd);
         if ($ps->fetch()) {
