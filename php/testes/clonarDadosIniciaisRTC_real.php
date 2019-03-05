@@ -1407,7 +1407,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         }
 
         */
-        
+        /*
         $filial = new Empresa(1733);
         $matriz = new Empresa(1734);
         
@@ -1746,6 +1746,9 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             $ps->execute();
             $ps->close();
         }
+        
+        */
+        
     }
 
 }

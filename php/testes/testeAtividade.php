@@ -22,7 +22,7 @@ class testeAtividade extends PHPUnit_Framework_TestCase {
         
         $g = new GerenciadorAtividade(new Empresa(1733));
         
-        echo Utilidades::toJson($g->getTempo_Usuarios($con, 1600000));
+        echo Utilidades::toJson($g->getMaximoUsuariosOnline($con));
         
     }
 

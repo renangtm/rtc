@@ -33,7 +33,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         if (true) {
 
             //retire para realmente executar o script
-            return;
+            //return;
         }
 
         $cidades = array();
@@ -99,7 +99,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         
         //------------
-        /*
+        
         $g = new Getter($filial);
 
         $fornecedores_cnpj = array();
@@ -110,7 +110,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         $nota = new Nota();
 
-        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,IFNULL(n.P_OBSERV1,'') like '%Cancel%',n.P_CODCLI,UNIX_TIMESTAMP(n.P_DATAMOV)*1000,n.P_ATIVIDAD,IFNULL(n.P_NUMCHEC,0),IFNULL(t.CNPJ,'123456'),UNIX_TIMESTAMP(IFNULL(p.VENCTO,n.P_DATAMOV))*1000,IFNULL(p.VALOR,n.P_VALOR) FROM db_agrofauna_filial17.CADPED n INNER JOIN db_agrofauna_filial17.FATFCLIE c ON c.CODCLI=n.P_CODCLI LEFT JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO LEFT JOIN db_agrofauna_filial17.PARCFIC p ON p.FICHA=n.P_NRCONTRO WHERE n.P_DATAMOV > '2014-19-02' AND n.P_NRCONTRO > 23615");
+        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,IFNULL(n.P_OBSERV1,'') like '%Cancel%',n.P_CODCLI,UNIX_TIMESTAMP(n.P_DATAMOV)*1000,n.P_ATIVIDAD,IFNULL(n.P_NUMCHEC,0),IFNULL(t.CNPJ,'123456'),UNIX_TIMESTAMP(IFNULL(p.VENCTO,n.P_DATAMOV))*1000,IFNULL(p.VALOR,n.P_VALOR) FROM db_agrofauna_filial17.CADPED n INNER JOIN db_agrofauna_filial17.FATFCLIE c ON c.CODCLI=n.P_CODCLI LEFT JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO LEFT JOIN db_agrofauna_filial17.PARCFIC p ON p.FICHA=n.P_NRCONTRO WHERE n.P_DATAMOV > '2019-12-21' AND n.P_NRCONTRO > 23615");
         $ps->execute();
         $ps->bind_result($ficha, $cancelada, $cod, $data, $es, $nf, $cnpj_transportadora, $vencimento, $valor);
         while ($ps->fetch()) {
@@ -190,7 +190,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         $produtos = array();
 
-        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,p.QTDPRO,p.VALUNI,p.NATOPE,pi.F_DESCRICA,pi.F_CODPROD FROM db_agrofauna_filial17.CADPED n INNER JOIN db_agrofauna_filial17.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna_filial17.COMFPFIC p ON p.CONTRO=n.P_NRCONTRO INNER JOIN db_agrofauna_filial17.PRODUTO pi ON pi.F_CODPROD=p.CODPRO WHERE n.P_DATAMOV > '2014-19-02'");
+        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,p.QTDPRO,p.VALUNI,p.NATOPE,pi.F_DESCRICA,pi.F_CODPROD FROM db_agrofauna_filial17.CADPED n INNER JOIN db_agrofauna_filial17.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna_filial17.COMFPFIC p ON p.CONTRO=n.P_NRCONTRO INNER JOIN db_agrofauna_filial17.PRODUTO pi ON pi.F_CODPROD=p.CODPRO WHERE n.P_DATAMOV > '2019-12-21'");
         $ps->execute();
         $ps->bind_result($ficha, $qtd, $val, $cfop, $nom, $id);
         while ($ps->fetch()) {
@@ -239,7 +239,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             $value->merge($con);
             echo "Inserida a NFE de ficha $value->ficha";
         }
-        */
+        
         //------------------------------------------------------- MATRIZ
 
         $g = new Getter($matriz);
@@ -252,7 +252,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         $nota = new Nota();
 
-        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,IFNULL(n.P_OBSERV1,'') like '%Cancel%',n.P_CODCLI,UNIX_TIMESTAMP(n.P_DATAMOV)*1000,n.P_ATIVIDAD,IFNULL(n.P_NUMCHEC,0),IFNULL(t.CNPJ,'123456'),UNIX_TIMESTAMP(IFNULL(p.VENCTO,n.P_DATAMOV))*1000,IFNULL(p.VALOR,n.P_VALOR) FROM db_agrofauna.CADPED n INNER JOIN db_agrofauna.FATFCLIE c ON c.CODCLI=n.P_CODCLI LEFT JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO LEFT JOIN db_agrofauna.PARCFIC p ON p.FICHA=n.P_NRCONTRO WHERE n.P_DATAMOV > '2016-19-02'");
+        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,IFNULL(n.P_OBSERV1,'') like '%Cancel%',n.P_CODCLI,UNIX_TIMESTAMP(n.P_DATAMOV)*1000,n.P_ATIVIDAD,IFNULL(n.P_NUMCHEC,0),IFNULL(t.CNPJ,'123456'),UNIX_TIMESTAMP(IFNULL(p.VENCTO,n.P_DATAMOV))*1000,IFNULL(p.VALOR,n.P_VALOR) FROM db_agrofauna.CADPED n INNER JOIN db_agrofauna.FATFCLIE c ON c.CODCLI=n.P_CODCLI LEFT JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO LEFT JOIN db_agrofauna.PARCFIC p ON p.FICHA=n.P_NRCONTRO WHERE n.P_DATAMOV > '2019-12-21'");
         $ps->execute();
         $ps->bind_result($ficha, $cancelada, $cod, $data, $es, $nf, $cnpj_transportadora, $vencimento, $valor);
         while ($ps->fetch()) {
@@ -331,7 +331,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         $produtos = array();
 
-        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,p.QTDPRO,p.VALUNI,p.NATOPE,pi.F_DESCRICA,pi.F_CODPROD FROM db_agrofauna.CADPED n INNER JOIN db_agrofauna.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna.COMFPFIC p ON p.CONTRO=n.P_NRCONTRO INNER JOIN db_agrofauna.PRODUTO pi ON pi.F_CODPROD=p.CODPRO WHERE n.P_DATAMOV > '2016-19-02'");
+        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,p.QTDPRO,p.VALUNI,p.NATOPE,pi.F_DESCRICA,pi.F_CODPROD FROM db_agrofauna.CADPED n INNER JOIN db_agrofauna.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna.COMFPFIC p ON p.CONTRO=n.P_NRCONTRO INNER JOIN db_agrofauna.PRODUTO pi ON pi.F_CODPROD=p.CODPRO WHERE n.P_DATAMOV > '2019-12-21'");
         $ps->execute();
         $ps->bind_result($ficha, $qtd, $val, $cfop, $nom, $id);
         while ($ps->fetch()) {

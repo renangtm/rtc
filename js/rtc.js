@@ -1,4 +1,4 @@
-var projeto = "http://192.168.18.121:888/novo_rtc_web";
+var projeto = "http://www.rtcagro.com.br/novo_rtc_web";
 
 //@author Renan Goncalves Teixeira Miranda
 function DOMToJson(h) {
