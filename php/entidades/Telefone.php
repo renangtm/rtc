@@ -23,6 +23,23 @@ class Telefone {
         $this->numero = $str;
         $this->excluido = false;
         
+        
+        
+        if(strpos($this->numero, "-") === false){
+            $ddd = "";
+            $num = "";
+            if(strlen($str) <= 9){
+                $num  = substr($str,0,ceil(strlen($str)/2));
+                $num  .=  "-".substr($str,ceil(strlen($str)/2),strlen($str));
+            }else{
+                $ddd= "(".substr($str,0,2).")";
+                $str = substr($str,2);
+                $num  = substr($str,0,ceil(strlen($str)/2));
+                $num .= "-".substr($str,ceil(strlen($str)/2),strlen($str));
+            }
+            $this->numero = $ddd.$num;
+        }
+        
     }
 
     public function merge($con) {

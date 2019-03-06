@@ -192,6 +192,7 @@ class PedidoEntrada {
                 . "produto_pedido_entrada.influencia_estoque,"
                 . "produto_pedido_entrada.influencia_transito,"
                 . "produto.id,"
+                . "produto.codigo,"
                 . "produto.id_logistica,"
                 . "produto.classe_risco,"
                 . "produto.fabricante,"
@@ -257,7 +258,7 @@ class PedidoEntrada {
 
 
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $valor,$ie,$it, $id_pro,$id_log,$classe_risco,$fabricante,$imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro,$ativo,$conc,$sistema_lotes,$nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms,$id_empresa,$is_logistica,$nome_empresa,$inscricao_empresa,$consigna,$aceitou_contrato,$juros_mensal,$cnpj,$numero_endereco,$id_endereco,$rua,$bairro,$cep,$id_cidade,$nome_cidade,$id_estado,$nome_estado,$id_email,$endereco_email,$senha_email,$id_telefone,$numero_telefone);
+        $ps->bind_result($id, $quantidade, $valor,$ie,$it, $id_pro,$cod_pro,$id_log,$classe_risco,$fabricante,$imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro,$ativo,$conc,$sistema_lotes,$nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms,$id_empresa,$is_logistica,$nome_empresa,$inscricao_empresa,$consigna,$aceitou_contrato,$juros_mensal,$cnpj,$numero_endereco,$id_endereco,$rua,$bairro,$cep,$id_cidade,$nome_cidade,$id_estado,$nome_estado,$id_email,$endereco_email,$senha_email,$id_telefone,$numero_telefone);
 
         $retorno = array();
 
@@ -267,6 +268,7 @@ class PedidoEntrada {
             $p = new Produto();
             $p->logistica = $id_log;
             $p->id = $id_pro;
+            $p->codigo = $cod_pro;
             $p->classe_risco = $classe_risco;
             $p->fabricante = $fabricante;
             $p->imagem = $imagem;

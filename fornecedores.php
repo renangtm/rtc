@@ -87,7 +87,7 @@
                                             <table id="clientes" class="table table-striped table-bordered first">
                                                 <thead>
                                                     <tr>
-                                                        <th data-ordem="fornecedor.id">Cod.</th>
+                                                        <th data-ordem="fornecedor.codigo">Cod.</th>
                                                         <th data-ordem="fornecedor.nome">Nome</th>
                                                         <th data-ordem="fornecedor.email_fornecedor.endereco">Email</th>
                                                         <th data-ordem="fornecedor.cnpj">CNPJ</th>
@@ -98,7 +98,7 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr ng-repeat-start="fornecedor in fornecedores.elementos">
-                                                        <td>{{fornecedor[0].id}}</td>
+                                                        <td>{{fornecedor[0].codigo}}</td>
                                                         <td>{{fornecedor[0].nome}}</td>
                                                         <td><email entidade="Fornecedor" atributo="fornecedor[0].email" senha="false" alterar="false"></email></td>
                                                 <td>{{fornecedor[0].cnpj.valor}}</td>
@@ -232,6 +232,15 @@
                             </div>
                             <div class="modal-body">
                                 <form id="add-form" ng-submit="mergeFornecedor()" parsley-validate>
+                                    <div class="form-group row">
+                                        <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Codigo</label>
+                                        <div class="col-9 col-lg-10">
+                                            <input id="txtname" type="number" ng-model="fornecedor.codigo">
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group row">
                                         <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Nome</label>
                                         <div class="col-9 col-lg-10">

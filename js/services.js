@@ -66,7 +66,7 @@ rtc.service('atividadeService', function ($http, $q) {
             query: "$atv=new Atividade($usuario);$atv->merge($c)",
             sucesso: function(r){},
             falha: function(r){}
-        });
+        },null,false,true);
     }
     this.adcionarCarrinho = function (item) {
         baseService($http, $q, {
@@ -74,7 +74,7 @@ rtc.service('atividadeService', function ($http, $q) {
             query: "$atv=new Atividade($usuario);$atv->descricao=$o->descricao;$atv->pontos=1;$atv->tipo=Atividade::$ADCIONAR_CARRINHO;$atv->merge($c)",
             sucesso: function(r){},
             falha: function(r){}
-        });
+        },null,false,true);
     }
     this.cliqueComum = function (descricao) {
         baseService($http, $q, {
@@ -82,7 +82,7 @@ rtc.service('atividadeService', function ($http, $q) {
             query: "$atv=new Atividade($usuario);$atv->descricao=$o->descricao;$atv->pontos=0.01;$atv->tipo=Atividade::$ITEM_MENU;$atv->merge($c)",
             sucesso: function(r){},
             falha: function(r){}
-        });
+        },null,false,true);
     }
     this.pesquisar = function (descricao) {
         baseService($http, $q, {
@@ -90,7 +90,7 @@ rtc.service('atividadeService', function ($http, $q) {
             query: "$atv=new Atividade($usuario);$atv->descricao=$o->descricao;$atv->pontos=0.02;$atv->tipo=Atividade::$PESQUISAR;$atv->merge($c)",
             sucesso: function(r){},
             falha: function(r){}
-        });
+        },null,false,true);
     }
     this.produto = function (produto) {
         baseService($http, $q, {
@@ -98,7 +98,7 @@ rtc.service('atividadeService', function ($http, $q) {
             query: "$atv=new Atividade($usuario);$atv->descricao=$o->descricao;$atv->pontos=1;$atv->tipo=Atividade::$PRODUTO;$atv->merge($c)",
             sucesso: function(r){},
             falha: function(r){}
-        });
+        },true);
     }
 })
 rtc.service('bannerService', function ($http, $q) {

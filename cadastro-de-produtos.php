@@ -93,7 +93,7 @@
                                             <table id="clientes" class="table table-striped table-bordered first">
                                                 <thead>
                                                     <tr>
-                                                        <th data-ordem="produto.id">Cod.</th>
+                                                        <th data-ordem="produto.codigo">Cod.</th>
                                                         <th data-ordem="produto.nome">Nome</th>
                                                         <th data-ordem="produto.classe_risco">Cl</th>
                                                         <th data-ordem="produto.estoque">Qtd</th>
@@ -106,7 +106,7 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr ng-repeat-start="produto in produtos.elementos">
-                                                        <td class="text-center">{{produto[0].id}}</td>
+                                                        <td class="text-center">{{produto[0].codigo}}</td>
                                                         <td>{{produto[0].nome}}</td>
                                                         <td class="text-center">{{produto[0].classe_risco}}</td>
                                                         <td class="text-center">{{produto[0].estoque}}</td>
@@ -294,6 +294,15 @@
                                         <!-- form produto -->
                                         <form id="add-form" ng-submit="mergeProduto()" parsley-validate>
                                             <div class="form-group row">
+                                                <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Codigo</label>
+                                                <div class="col-9 col-lg-10">
+                                                    <input id="txtname" ng-model="produto.codigo" type="number" class="form-control">
+                                                    <div class="invalid-feedback">
+                                                        Please provide a valid text.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
                                                 <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Nome</label>
                                                 <div class="col-9 col-lg-10">
                                                     <input id="txtname" ng-model="produto.nome" type="text" required data-parsley-type="email" placeholder="" class="form-control">
@@ -388,6 +397,14 @@
                                                 <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Princ&iacute;pio ativo</label>
                                                 <div class="col-9 col-lg-9 text-left">
                                                     <input id="txtpativo" ng-model="produto.ativo" type="text" required placeholder="" class="form-control">
+                                                    <div class="invalid-feedback">
+                                                        Please provide a valid text.
+                                                    </div>
+                                                </div>
+                                            </div><div class="form-group row">
+                                                <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Concentracao</label>
+                                                <div class="col-9 col-lg-9 text-left">
+                                                    <input id="txtpativo" ng-model="produto.concentracao" type="text" required placeholder="" class="form-control">
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>

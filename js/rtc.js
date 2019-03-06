@@ -763,23 +763,30 @@ function fix(str, n) {
 var ids = [];
 var id = 0;
 
-function baseService(http, q, obj, get, cancel) {
+var teste = false;
+
+function baseService(http, q, obj, get, cancel,noloading) {
 
     var idt = ++id;
 
+    if(typeof noloading === 'undefined'){
+        
+        noloading = false;
+        
+    }
 
     var p = q.defer();
 
-    if (get == 2) {
+    if (teste) {
 
-        document.write("c=" + obj.query.split("&").join("<e>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("<e>")) : ""));
+        document.write("&o=" + paraJson(obj.o).split("&").join("<e>").split("+").join("<m>").split("%").join("<p>").split("(").join("<lp>").split(")").join("<rp>").split("-").join("<mi>"));
 
     }
 
     http({
         url: 'php/controler/crt.php',
         method: ((get == null) ? "POST" : "GET"),
-        data: "c=" + obj.query.split("&").join("<e>").split("+").join("<m>").split("%").join("<p>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("<e>").split("+").join("<m>").split("%").join("<p>")) : ""),
+        data: "c=" + obj.query.split("&").join("<e>").split("+").join("<m>").split("%").join("<p>").split("(").join("<lp>").split(")").join("<rp>").split("-").join("<mi>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("<e>").split("+").join("<m>").split("%").join("<p>").split("(").join("<lp>").split(")").join("<rp>").split("-").join("<mi>")) : ""),
         timeout: p.promise,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (exx) {
 
@@ -791,12 +798,12 @@ function baseService(http, q, obj, get, cancel) {
                 m = ids[i];
             }
         }
-        if (m == 0) {
+        if (m == 0 && !noloading) {
             loading.close();
         }
 
         if (typeof obj["sucesso"] !== 'undefined') {
-            obj.sucesso(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&").split("<m>").join("+").split("<p>").join("%")));
+            obj.sucesso(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&").split("<m>").join("+").split("<p>").join("%").split("<lp>").join("(").split("<rp>").join(")").split("<mi>").join("-")));
         }
 
 
@@ -810,12 +817,12 @@ function baseService(http, q, obj, get, cancel) {
                 m = ids[i];
             }
         }
-        if (m == 0) {
+        if (m == 0 && !noloading) {
             loading.close();
         }
 
         if (typeof obj["falha"] !== 'undefined') {
-            obj.falha(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&").split("<m>").join("+").split("<p>").join("%")));
+            obj.falha(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&").split("<m>").join("+").split("<p>").join("%").split("<lp>").join("(").split("<rp>").join(")").split("<mi>").join("-")));
         }
 
     })
@@ -827,7 +834,7 @@ function baseService(http, q, obj, get, cancel) {
         }
     }
 
-    if (m == 0) {
+    if (m == 0 && !noloading) {
         loading.show();
     }
 
