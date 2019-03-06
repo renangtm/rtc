@@ -88,7 +88,7 @@
                                             <table id="transportadoras" class="table table-striped table-bordered first">
                                                 <thead>
                                                     <tr>
-                                                        <th data-ordem="transportadora.id">Cod.</th>
+                                                        <th data-ordem="transportadora.codigo">Cod.</th>
                                                         <th data-ordem="transportadora.razao_social">Raz Soc.</th>
                                                         <th data-ordem="transportadora.nome_fantasia">Nom Fant</th>
                                                         <th data-ordem="transportadora.despacho">Despacho</th>
@@ -100,7 +100,7 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr ng-repeat-start="transportadora in transportadoras.elementos">
-                                                        <td>{{transportadora[0].id}}</td>
+                                                        <td>{{transportadora[0].codigo}}</td>
                                                         <td>{{transportadora[0].razao_social}}</td>
                                                         <td>{{transportadora[0].nome_fantasia}}</td>
                                                         <td>{{transportadora[0].despacho}}</td>
@@ -238,6 +238,15 @@
                             </div>
                             <div class="modal-body">
                                 <form id="add-form" ng-submit="mergeTransportadora()" parsley-validate>
+                                    <div class="form-group row">
+                                        <label for="txtname" class="col-3 col-lg-3 col-form-label text-left">Codigo</label>
+                                        <div class="col-9 col-lg-9">
+                                            <input id="txtname" type="number" ng-model="transportadora.codigo" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group row">
                                         <label for="txtname" class="col-3 col-lg-3 col-form-label text-left">Razão Social</label>
                                         <div class="col-9 col-lg-9">
@@ -760,7 +769,7 @@
                                         </tr>
                                     </thead>
                                     <tr ng-repeat="frete in fretes">
-                                        <td>{{frete.transportadora.id}}</td>
+                                        <td>{{frete.transportadora.codigo}}</td>
                                         <td>{{frete.transportadora.razao_social}}</td>
                                         <td>{{frete.transportadora.despacho}} R$</td>
                                         <td>{{frete.valor| decimal}} R$</td>

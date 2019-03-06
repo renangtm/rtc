@@ -90,7 +90,7 @@
                                             <table id="clientes" class="table table-striped table-bordered first">
                                                 <thead>
                                                     <tr>
-                                                        <th data-ordem="cliente.id">Cod.</th>
+                                                        <th data-ordem="cliente.codigo">Cod.</th>
                                                         <th data-ordem="cliente.razao_social">Raz Soc.</th>
                                                         <th data-ordem="cliente.nome_fantasia">Nom Fant</th>
                                                         <th data-ordem="cliente.inscricao_estadual">IE</th>
@@ -103,7 +103,7 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr ng-repeat-start="cliente in clientes.elementos">
-                                                        <td class="text-center">{{cliente[0].id}}</td>
+                                                        <td class="text-center">{{cliente[0].codigo}}</td>
                                                         <td>{{cliente[0].razao_social}}</td>
                                                         <td>{{cliente[0].nome_fantasia}}</td>
                                                         <td>{{cliente[0].inscricao_estadual}}</td>
@@ -245,6 +245,15 @@
                             </div>
                             <div class="modal-body">
                                 <form id="add-form" ng-submit="mergeCliente()" parsley-validate>
+                                    <div class="form-group row">
+                                        <label for="txtname" class="col-3 col-lg-3 col-form-label text-left">Codigo</label>
+                                        <div class="col-9 col-lg-9">
+                                            <input id="txtname" type="number" ng-model="cliente.codigo">
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group row">
                                         <label for="txtname" class="col-3 col-lg-3 col-form-label text-left">Razão social</label>
                                         <div class="col-9 col-lg-9">

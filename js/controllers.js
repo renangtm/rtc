@@ -702,7 +702,7 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
     assincFuncs(
             $scope.transportadoras,
             "transportadora",
-            ["id", "razao_social"], "filtroTransportadoras");
+            ["codigo", "razao_social"], "filtroTransportadoras");
 
 
     $scope.pedidos = [];
@@ -1675,28 +1675,28 @@ rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoSe
     assincFuncs(
             $scope.produtos,
             "produto",
-            ["id", "nome", "disponivel"], "filtroProdutos");
+            ["codigo", "nome", "disponivel"], "filtroProdutos");
 
     $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 4);
     $scope.transportadoras.attList();
     assincFuncs(
             $scope.transportadoras,
             "transportadora",
-            ["id", "razao_social"], "filtroTransportadoras");
+            ["codigo", "razao_social"], "filtroTransportadoras");
 
     $scope.clientes = createAssinc(clienteService, 1, 3, 4);
     $scope.clientes.attList();
     assincFuncs(
             $scope.clientes,
             "cliente",
-            ["id", "razao_social"], "filtroClientes");
+            ["codigo", "razao_social"], "filtroClientes");
 
     $scope.fornecedores = createAssinc(fornecedorService, 1, 3, 4);
     $scope.fornecedores.attList();
     assincFuncs(
             $scope.fornecedores,
             "fornecedor",
-            ["id", "nome"], "filtroFornecedores");
+            ["codigo", "nome"], "filtroFornecedores");
 
 
 
@@ -2096,21 +2096,21 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tr
     assincFuncs(
             $scope.produtos,
             "produto",
-            ["id", "nome", "disponivel"], "filtroProdutos");
+            ["codigo", "nome", "disponivel"], "filtroProdutos");
 
     $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 4);
     $scope.transportadoras.attList();
     assincFuncs(
             $scope.transportadoras,
             "transportadora",
-            ["id", "razao_social"], "filtroTransportadoras");
+            ["codigo", "razao_social"], "filtroTransportadoras");
 
     $scope.fornecedores = createAssinc(fornecedorService, 1, 3, 4);
     $scope.fornecedores.attList();
     assincFuncs(
             $scope.fornecedores,
             "fornecedor",
-            ["id", "nome"], "filtroFornecedores");
+            ["codigo", "nome"], "filtroFornecedores");
 
 
     $scope.status_cotacao = [];
@@ -2468,21 +2468,21 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
     assincFuncs(
             $scope.produtos,
             "produto",
-            ["id", "nome", "disponivel"], "filtroProdutos");
+            ["codigo", "nome", "disponivel"], "filtroProdutos");
 
     $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 4);
     $scope.transportadoras.attList();
     assincFuncs(
             $scope.transportadoras,
             "transportadora",
-            ["id", "razao_social"], "filtroTransportadoras");
+            ["codigo", "razao_social"], "filtroTransportadoras");
 
     $scope.fornecedores = createAssinc(fornecedorService, 1, 3, 4);
     $scope.fornecedores.attList();
     assincFuncs(
             $scope.fornecedores,
             "fornecedor",
-            ["id", "nome"], "filtroFornecedores");
+            ["codigo", "nome"], "filtroFornecedores");
 
 
     $scope.meses_validade_curta = 3;
@@ -2815,21 +2815,21 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
     assincFuncs(
             $scope.produtos,
             "produto",
-            ["id", "nome", "disponivel"], "filtroProdutos");
+            ["codigo", "nome", "disponivel"], "filtroProdutos");
 
     $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 4);
     $scope.transportadoras.attList();
     assincFuncs(
             $scope.transportadoras,
             "transportadora",
-            ["id", "razao_social"], "filtroTransportadoras");
+            ["codigo", "razao_social"], "filtroTransportadoras");
 
     $scope.clientes = createAssinc(clienteService, 1, 3, 4);
     $scope.clientes.attList();
     assincFuncs(
             $scope.clientes,
             "cliente",
-            ["id", "razao_social"], "filtroClientes");
+            ["codigo", "razao_social"], "filtroClientes");
 
 
     $scope.meses_validade_curta = 3;
@@ -3356,7 +3356,7 @@ rtc.controller("crtListaPreco", function ($scope, listaPrecoProdutoService, list
     assincFuncs(
             $scope.produtos,
             "produto",
-            ["id", "nome", "estoque", "disponivel", "transito", "valor_base", "ativo", "classe_risco"]);
+            ["codigo", "nome", "estoque", "disponivel", "transito", "valor_base", "ativo", "classe_risco"]);
 
     $scope.culturas = createAssinc(listaPrecoCulturaService, 1, 3, 5);
     $scope.culturas.attList();
@@ -3429,7 +3429,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     assincFuncs(
             $scope.produtos,
             "produto",
-            ["id", "nome", "estoque", "disponivel"], "filtroProdutos");
+            ["codigo", "nome", "estoque", "disponivel"], "filtroProdutos");
 
     $scope.agora = new Date().getTime();
     $scope.campanha = {inicio: $scope.agora, fim: $scope.agora, id: 0};
@@ -4202,7 +4202,7 @@ rtc.controller("crtFornecedores", function ($scope, fornecedorService, categoria
     assincFuncs(
             $scope.fornecedores,
             "fornecedor",
-            ["id", "nome", "email_fornecedor.endereco", "cnpj", "inscricao_estadual", "habilitado"]);
+            ["codigo", "nome", "email_fornecedor.endereco", "cnpj", "inscricao_estadual", "habilitado"]);
 
     $scope.fornecedor_novo = {};
     $scope.fornecedor = {};
@@ -4392,14 +4392,14 @@ rtc.controller("crtTransportadoras", function ($scope, clienteService, transport
     assincFuncs(
             $scope.transportadoras,
             "transportadora",
-            ["id", "razao_social", "nome_fantasia", "despacho", "cnpj", "inscricao_estadual", "habilitada"]);
+            ["codigo", "razao_social", "nome_fantasia", "despacho", "cnpj", "inscricao_estadual", "habilitada"]);
 
     $scope.clientes = createAssinc(clienteService, 1, 3, 4);
     $scope.clientes.attList();
     assincFuncs(
             $scope.clientes,
             "cliente",
-            ["id", "razao_social"], "filtroClientes");
+            ["codigo", "razao_social"], "filtroClientes");
 
     $scope.transportadora_novo = {};
     $scope.transportadora = {};
@@ -4722,7 +4722,7 @@ rtc.controller("crtClientes", function ($scope, clienteService, categoriaCliente
     assincFuncs(
             $scope.clientes,
             "cliente",
-            ["id", "razao_social", "nome_fantasia", "inscricao_estadual", "cnpj", "cpf", "limite_credito", "termino_limite"]);
+            ["codigo", "razao_social", "nome_fantasia", "inscricao_estadual", "cnpj", "cpf", "limite_credito", "termino_limite"]);
 
     $scope.cliente_novo = {};
     $scope.cliente = {};
@@ -4922,7 +4922,7 @@ rtc.controller("crtProdutos", function ($scope, culturaService, sistemaService, 
     assincFuncs(
             $scope.produtos,
             "produto",
-            ["id", "nome", "estoque", "disponivel", "transito", "valor_base", "ativo", "classe_risco"]);
+            ["codigo", "nome", "estoque", "disponivel", "transito", "valor_base", "ativo", "classe_risco"]);
 
     $scope.produto = {};
     $scope.produto_novo = {};

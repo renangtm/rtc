@@ -99,7 +99,7 @@ $id_empresa = $_GET['empresa'];
                                 <label for="">Fornecedor</label>
                                 <div class="form-row">
                                     <div class="col-2">
-                                        <input type="text" ng-model="cotacao.fornecedor.id" class="form-control" placeholder="Cod." value="9" disabled>
+                                        <input type="text" ng-model="cotacao.fornecedor.codigo" class="form-control" placeholder="Cod." value="9" disabled>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" ng-model="cotacao.fornecedor.nome" class="form-control" placeholder="Nome do fornecedor" value="" disabled="">
@@ -136,7 +136,7 @@ $id_empresa = $_GET['empresa'];
                                 </thead>
                                 <tbody>
                                     <tr ng-repeat="prod in cotacao.produtos">
-                                        <td>{{prod.produto.id}}</td>
+                                        <td>{{prod.produto.codigo}}</td>
                                         <td colspan="3">{{prod.produto.nome}}</td>
                                         <td>{{prod.produto.unidade}} / {{prod.produto.quantidade_unidade}}</td>
                                         <td ng-if="!cotacao.tratar_em_litros" class="text-center" width="100px">{{prod.quantidade}}</td>
@@ -302,12 +302,12 @@ $id_empresa = $_GET['empresa'];
                             <hr>
                             <table class="table table-striped table-bordered first">
                                 <thead>
-                                <th data-ordem="fornecedor.id">Cod.</th>
+                                <th data-ordem="fornecedor.codigo">Cod.</th>
                                 <th data-ordem="fornecedor.nome">Nome</th>
                                 <th>Selecionar</th>
                                 </thead>
                                 <tr ng-repeat="f in fornecedores.elementos">
-                                    <th>{{f[0].id}}</th>
+                                    <th>{{f[0].codigo}}</th>
                                     <th>{{f[0].nome}}</th>
                                     <th><button class="btn btn-success" ng-click="setFornecedor(f[0])"><i class="fa fa-info"></i></button></th>
                                 </tr> 
@@ -346,12 +346,12 @@ $id_empresa = $_GET['empresa'];
                             <hr>
                             <table class="table table-striped table-bordered first">
                                 <thead>
-                                <th data-ordem="produto.id">Cod.</th>
+                                <th data-ordem="produto.codigo">Cod.</th>
                                 <th data-ordem="produto.nome">Produto</th>
                                 <th>Selecionar</th>
                                 </thead>
                                 <tr ng-repeat="produt in produtos.elementos">
-                                    <th>{{produt[0].id}}</th>
+                                    <th>{{produt[0].codigo}}</th>
                                     <th>{{produt[0].nome}}</th>
                                     <th><button class="btn btn-success" ng-click="addProduto(produt[0])"><i class="fa fa-info"></i></button></th>
                                 </tr>

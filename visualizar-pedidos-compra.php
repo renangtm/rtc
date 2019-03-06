@@ -183,7 +183,7 @@
                                         <label for="">Fornecedor</label>
                                         <div class="form-row">
                                             <div class="col-2">
-                                                <input type="text" ng-model="pedido.fornecedor.id" class="form-control" placeholder="Cod." value="9" disabled>
+                                                <input type="text" ng-model="pedido.fornecedor.codigo" class="form-control" placeholder="Cod." value="9" disabled>
                                             </div>
                                             <div class="col-md-8">
                                                 <input type="text" ng-model="pedido.fornecedor.nome" class="form-control" placeholder="Nome do fornecedor" value="" disabled="">
@@ -198,7 +198,7 @@
                                         <label for="">Transportadora</label>
                                         <div class="form-row">
                                             <div class="col-2">
-                                                <input type="text" class="form-control" placeholder="Cod." ng-model="pedido.transportadora.id" disabled>
+                                                <input type="text" class="form-control" placeholder="Cod." ng-model="pedido.transportadora.codigo" disabled>
                                             </div>
                                             <div class="col-5">
                                                 <input type="text" class="form-control" ng-model="pedido.transportadora.razao_social" placeholder="Nome da Transportadora" disabled>
@@ -250,7 +250,7 @@
                                         </thead>
                                         <tbody>
                                             <tr ng-repeat="prod in pedido.produtos">
-                                                <td>{{prod.produto.id}}</td>
+                                                <td>{{prod.produto.codigo}}</td>
                                                 <td>{{prod.produto.nome}}</td>
                                                 <td>{{prod.produto.unidade}} / {{prod.produto.quantidade_unidade}}</td>
                                                 <td class="text-center" width="100px">{{prod.quantidade}}</td>
@@ -401,12 +401,12 @@
                                 <hr>
                                 <table class="table table-striped table-bordered first">
                                     <thead>
-                                    <th data-ordem="fornecedor.id">Cod.</th>
+                                    <th data-ordem="fornecedor.codigo">Cod.</th>
                                     <th data-ordem="fornecedor.nome">Nome</th>
                                     <th>Selecionar</th>
                                     </thead>
                                     <tr ng-repeat="f in fornecedores.elementos">
-                                        <th>{{f[0].id}}</th>
+                                        <th>{{f[0].codigo}}</th>
                                         <th>{{f[0].nome}}</th>
                                         <th><button class="btn btn-success" ng-click="setFornecedor(f[0])"><i class="fa fa-info"></i></button></th>
                                     </tr> 
@@ -441,12 +441,12 @@
                                 <hr>
                                 <table class="table table-striped table-bordered first">
                                     <thead>
-                                    <th data-ordem="transportadora.id">Cod.</th>
+                                    <th data-ordem="transportadora.codigo">Cod.</th>
                                     <th data-ordem="transportadora.razao_social">Nome</th>
                                     <th>Selecionar</th>
                                     </thead>
                                     <tr ng-repeat="trans in transportadoras.elementos">
-                                        <th>{{trans[0].id}}</th>
+                                        <th>{{trans[0].codigo}}</th>
                                         <th>{{trans[0].razao_social}}</th>
                                         <th><button class="btn btn-success" ng-click="setTransportadora(trans[0])"><i class="fa fa-info"></i></button></th>
                                     </tr> 
@@ -485,14 +485,14 @@
                                 <hr>
                                 <table class="table table-striped table-bordered first">
                                     <thead>
-                                    <th data-ordem="produto.id">Cod.</th>
+                                    <th data-ordem="produto.codigo">Cod.</th>
                                     <th data-ordem="produto.nome">Produto</th>
                                     <th data-ordem="produto.disponivel">Disponivel</th>
                                     <th data-ordem="produto.valor_base">Valor</th>
                                     <th>Selecionar</th>
                                     </thead>
                                     <tr ng-repeat="produt in produtos.elementos">
-                                        <th>{{produt[0].id}}</th>
+                                        <th>{{produt[0].codigo}}</th>
                                         <th>{{produt[0].nome}}</th>
                                         <th>{{produt[0].disponivel}}</th>
                                         <th>{{produt[0].valor_base}}</th>

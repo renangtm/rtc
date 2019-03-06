@@ -128,7 +128,7 @@
                                                 <tbody>
                                                     <tr ng-repeat-start="lote in lotes.elementos">
                                                         <td class="text-center">{{lote[0].id}}</td>
-                                                        <td>{{lote[0].produto.id}} - {{lote[0].produto.nome}}</td>
+                                                        <td>{{lote[0].produto.codigo}} - {{lote[0].produto.nome}}</td>
                                                         <td class="text-center">{{lote[0].quantidade_real}}</td>
                                                         <td class="text-center">{{lote[0].validade| data}}</td>
                                                         <td class="text-center">{{lote[0].numero}}</td>
@@ -307,7 +307,7 @@
                                         </tr>
                                     </thead>
                                     <tr ng-repeat="l in lotes_cadastro">
-                                        <td>{{l.produto.id}}</td>
+                                        <td>{{l.produto.codigo}}</td>
                                         <td>{{l.produto.nome}}</td>
                                         <td><input type="text" class="form-control" ng-model="l.validade_texto"></td>
                                         <td><input type="text" class="form-control" ng-model="l.codigo_fabricante"></td>
