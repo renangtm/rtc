@@ -26,6 +26,7 @@ class Transportadora {
     public $inscricao_estadual;
     public $habilitada;
     public $tabela;
+    public $codigo;
     
     function __construct() {
 
@@ -38,19 +39,37 @@ class Transportadora {
         $this->empresa = null;
         $this->excluida = false;
         $this->habilitada = true;
+        $this->codigo = 0;
+        
     }
 
     public function merge($con) {
         
+        if($this->codigo === 0){
+            
+            $ps = $con->getConexao()->prepare("SELECT MAX(codigo)+1 FROM transportadora WHERE id_empresa=".$this->empresa->id);
+            $ps->execute();
+            $ps->bind_result($idn);
+            
+            if($ps->fetch()){
+                
+                $this->codigo = $idn;
+                
+            }
+            
+            $ps->close();
+            
+        }
+        
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO transportadora(razao_social,nome_fantasia,inscricao_estadual,despacho,id_empresa,cnpj,excluida,habilitada) VALUES('" . addslashes($this->razao_social) . "','" . addslashes($this->nome_fantasia) . "','" . addslashes($this->inscricao_estadual) . "',$this->despacho," . $this->empresa->id . ",'" . addslashes($this->cnpj->valor) . "',false," . ($this->habilitada ? "true" : "false") . ")");
+            $ps = $con->getConexao()->prepare("INSERT INTO transportadora(razao_social,nome_fantasia,inscricao_estadual,despacho,id_empresa,cnpj,excluida,habilitada,codigo) VALUES('" . addslashes($this->razao_social) . "','" . addslashes($this->nome_fantasia) . "','" . addslashes($this->inscricao_estadual) . "',$this->despacho," . $this->empresa->id . ",'" . addslashes($this->cnpj->valor) . "',false," . ($this->habilitada ? "true" : "false") . ",$this->codigo)");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE transportadora SET razao_social='" . addslashes($this->razao_social) . "', nome_fantasia='" . addslashes($this->nome_fantasia) . "', inscricao_estadual='" . addslashes($this->inscricao_estadual) . "', despacho=$this->despacho, id_empresa=" . $this->empresa->id . ", cnpj='" . addslashes($this->cnpj->valor) . "', excluida=false, habilitada=" . ($this->habilitada ? "true" : "false") . " WHERE id = " . $this->id);
+            $ps = $con->getConexao()->prepare("UPDATE transportadora SET razao_social='" . addslashes($this->razao_social) . "', nome_fantasia='" . addslashes($this->nome_fantasia) . "', inscricao_estadual='" . addslashes($this->inscricao_estadual) . "', despacho=$this->despacho, id_empresa=" . $this->empresa->id . ", cnpj='" . addslashes($this->cnpj->valor) . "', excluida=false, habilitada=" . ($this->habilitada ? "true" : "false") . ", codigo=$this->codigo WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
         }
