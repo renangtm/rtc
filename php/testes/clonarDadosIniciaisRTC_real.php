@@ -1750,7 +1750,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         */
         
         $ids = array();
-        $ps = $this->getConexao()->prepare("SELECT P_NRCONTRO,P_DATAMOV FROM db_agrofauna.CADPED WHERE P_DATAMOV>'2017-01-01'");
+        $ps = $this->getConexao()->prepare("SELECT P_NRCONTRO,P_DATAMOV FROM db_agrofauna_filial17.CADPED");
         $ps->execute();
         $ps->bind_result($id,$data);
         while($ps->fetch()){
@@ -1760,18 +1760,19 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         
         foreach($ids as $key=>$value){
             
-            $t = explode('-', $value);
+            $t = explode($value,'-');
             
             if(count($t)===3){
-                if(intval($t[0])>2020){
+                if(intval($t[0])>2021){
                     continue;
                 }
             }
-            
-            $ps = $con->getConexao()->prepare("UPDATE nota SET data_emissao='$value' WHERE ficha=$key AND id_empresa=1734");
+           
+            $ps = $con->getConexao()->prepare("UPDATE nota SET data_emissao='$value' WHERE ficha=$key AND id_empresa=1733");
             $ps->execute();
             $ps->close();
             
+         
             
         }
         

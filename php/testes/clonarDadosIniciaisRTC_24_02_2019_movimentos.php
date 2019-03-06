@@ -241,7 +241,6 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             if (!isset($vencimentos[$value->ficha][$p])) {
                 continue;
             }
--
 
 
             $value->vencimento = new stdClass();
