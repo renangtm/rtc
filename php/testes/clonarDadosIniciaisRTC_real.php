@@ -1749,6 +1749,32 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         
         */
         
+        $ids = array();
+        $ps = $this->getConexao()->prepare("SELECT P_NRCONTRO,P_DATAMOV FROM db_agrofauna.CADPED WHERE P_DATAMOV>'2017-01-01'");
+        $ps->execute();
+        $ps->bind_result($id,$data);
+        while($ps->fetch()){
+            $ids[$id] = $data;
+        }
+        $ps->close();
+        
+        foreach($ids as $key=>$value){
+            
+            $t = explode('-', $value);
+            
+            if(count($t)===3){
+                if(intval($t[0])>2020){
+                    continue;
+                }
+            }
+            
+            $ps = $con->getConexao()->prepare("UPDATE nota SET data_emissao='$value' WHERE ficha=$key AND id_empresa=1734");
+            $ps->execute();
+            $ps->close();
+            
+            
+        }
+        
     }
 
 }
