@@ -1860,7 +1860,7 @@ class Empresa {
                 . "INNER JOIN cidade cidade_transportadora ON endereco_transportadora.id_cidade=cidade_transportadora.id "
                 . "INNER JOIN estado estado_transportadora ON estado_transportadora.id=cidade_transportadora.id_estado "
                 . "INNER JOIN email email_transportadora ON email_transportadora.id_entidade = transportadora.id AND email_transportadora.tipo_entidade='TRA' "
-                . "WHERE nota.id_empresa = $this->id ";
+                . "WHERE nota.id_empresa = $this->id AND nota.excluida=false ";
 
         if ($filtro != "") {
 
