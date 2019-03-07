@@ -30,7 +30,7 @@ class RTC {
         }
 
         $this->numero = $numero;
-        $this->nome = "RTC v$numero";
+        $this->nome = "RTC m$numero";
         $this->permissoes = $permissoes;
 
         if ($permissoes === "ALL") {
