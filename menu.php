@@ -402,7 +402,7 @@ foreach ($possiveis as $key => $value) {
                     <li class="nav-item">
                         <a class="nav-link" href="visualizar-pedidos-compra.php"><button class="btn btn-warning" onmousedown="tutorial('Pedido de compra','Aqui é onde ficam seus pedidos de compra, com o seu fornecedor, também é enviado um email de confirmação de pedido após a conclusão do mesmo, o pedido gera interferência no estoque e é a partir dele que a entrada de NFe vai acontecer')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks"></i>Pedidos de Compra</a>
                     </li>
-<?php if ($rtc->numero >= 2) { ?>
+<?php if ($rtc->numero >= 3) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="entrada_nota.php"><button class="btn btn-warning" onmousedown="tutorial('Entrada de Nota','Aqui é onde você da a entrada nas suas notas, aqui ocorre relação com o pedido de compra para que as alterações de estoque sejam computadas de forma integra, sem depender da nota do fornecedor, portanto é necessário sempre um pedido de compra para dar entrada em uma NFe')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-code"></i>Entrada NFe</a>
                         </li>

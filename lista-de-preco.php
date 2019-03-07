@@ -111,75 +111,7 @@
                                     <div class="card-body">
                                         <div class="table-responsive" style="overflow-x:hidden">
                                             <div class="product-btn m-b-20">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <button class="btn btn-{{cultura==null?'default':'danger'}}" ng-click="setCultura(null)"><i class="fas fa-times"></i>&nbsp Deselecionar cultura</button>
-                                                        <input type="text" class="form-control" id="filtroCultura">
-                                                        <hr>
-                                                        <table id="cr" class="table table-striped table-bordered first selectable">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th data-ordem="cultura.id">Cod.</th>
-                                                                    <th data-ordem="cultura.nome">Nome</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr ng-repeat="cult in culturas.elementos" ng-click="setCultura(cult[0])" class="{{(cult[0].id == cultura.id)?'selected':''}}">
-                                                                    <td>{{cult[0].id}}</td>
-                                                                    <td>{{cult[0].nome}}</td>
-                                                                </tr>
-                                                            </tbody>
-                                                            <tfoot>
-                                                            <th>Cod.</th>
-                                                            <th>Nome</th>
-                                                            </tfoot>
-                                                        </table>
-                                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                            <nav aria-label="Page navigation example">
-                                                                <ul class="pagination justify-content-end">
-                                                                    <li class="page-item" ng-click="culturas.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                                    <li class="page-item" ng-repeat="pg in culturas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                                    <li class="page-item" ng-click="culturas.next()"><a class="page-link" href="">Próximo</a></li>
-                                                                </ul>
-                                                            </nav>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-
-                                                        <button class="btn btn-{{praga==null?'default':'danger'}}" ng-click="setPraga(null)"><i class="fas fa-times"></i>&nbsp Deselecionar praga</button>
-                                                        <input type="text" class="form-control" id="filtroPraga">
-                                                        <hr>
-                                                        <table id="pr" class="table table-striped table-bordered first selectable">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th data-ordem="praga.id">Cod.</th>
-                                                                    <th data-ordem="praga.nome">Nome</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr ng-repeat="pra in pragas.elementos" ng-click="setPraga(pra[0])" class="{{(pra[0].id == praga.id)?'selected':''}}">
-                                                                    <td>{{pra[0].id}}</td>
-                                                                    <td>{{pra[0].nome}}</td>
-                                                                </tr>
-                                                            </tbody>
-                                                            <tfoot>
-                                                            <th>Cod.</th>
-                                                            <th>Nome</th>
-                                                            </tfoot>
-                                                        </table>
-                                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                            <nav aria-label="Page navigation example">
-                                                                <ul class="pagination justify-content-end">
-                                                                    <li class="page-item" ng-click="pragas.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                                    <li class="page-item" ng-repeat="pg in pragas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                                    <li class="page-item" ng-click="pragas.next()"><a class="page-link" href="">Próximo</a></li>
-                                                                </ul>
-                                                            </nav>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <button class="btn btn-{{produto==null?'default':'danger'}}" ng-click="setProduto(null)"><i class="fas fa-times"></i>&nbsp Deselecionar produto</button>
+                                                <button class="btn btn-{{produto==null?'default':'danger'}}" ng-click="setProduto(null)"><i class="fas fa-times"></i>&nbsp Deselecionar produto</button>
                                             <hr>
                                             <table id="clientes" class="table table-striped table-bordered first selectable">
                                                 <thead>
@@ -263,7 +195,76 @@
                                                         <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Próximo</a></li>
                                                     </ul>
                                                 </nav>
+                                            </div><hr>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <button class="btn btn-{{cultura==null?'default':'danger'}}" ng-click="setCultura(null)"><i class="fas fa-times"></i>&nbsp Deselecionar cultura</button>
+                                                        <input type="text" class="form-control" id="filtroCultura">
+                                                        <hr>
+                                                        <table id="cr" class="table table-striped table-bordered first selectable">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th data-ordem="cultura.id">Cod.</th>
+                                                                    <th data-ordem="cultura.nome">Nome</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr ng-repeat="cult in culturas.elementos" ng-click="setCultura(cult[0])" class="{{(cult[0].id == cultura.id)?'selected':''}}">
+                                                                    <td>{{cult[0].id}}</td>
+                                                                    <td>{{cult[0].nome}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                            <tfoot>
+                                                            <th>Cod.</th>
+                                                            <th>Nome</th>
+                                                            </tfoot>
+                                                        </table>
+                                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                                            <nav aria-label="Page navigation example">
+                                                                <ul class="pagination justify-content-end">
+                                                                    <li class="page-item" ng-click="culturas.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                                    <li class="page-item" ng-repeat="pg in culturas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                                                    <li class="page-item" ng-click="culturas.next()"><a class="page-link" href="">Próximo</a></li>
+                                                                </ul>
+                                                            </nav>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+
+                                                        <button class="btn btn-{{praga==null?'default':'danger'}}" ng-click="setPraga(null)"><i class="fas fa-times"></i>&nbsp Deselecionar praga</button>
+                                                        <input type="text" class="form-control" id="filtroPraga">
+                                                        <hr>
+                                                        <table id="pr" class="table table-striped table-bordered first selectable">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th data-ordem="praga.id">Cod.</th>
+                                                                    <th data-ordem="praga.nome">Nome</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr ng-repeat="pra in pragas.elementos" ng-click="setPraga(pra[0])" class="{{(pra[0].id == praga.id)?'selected':''}}">
+                                                                    <td>{{pra[0].id}}</td>
+                                                                    <td>{{pra[0].nome}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                            <tfoot>
+                                                            <th>Cod.</th>
+                                                            <th>Nome</th>
+                                                            </tfoot>
+                                                        </table>
+                                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                                            <nav aria-label="Page navigation example">
+                                                                <ul class="pagination justify-content-end">
+                                                                    <li class="page-item" ng-click="pragas.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                                    <li class="page-item" ng-repeat="pg in pragas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                                                    <li class="page-item" ng-click="pragas.next()"><a class="page-link" href="">Próximo</a></li>
+                                                                </ul>
+                                                            </nav>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
+                                            
 
                                         </div>
                                     </div>

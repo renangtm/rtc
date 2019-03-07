@@ -17,6 +17,15 @@ class RTC {
     public $numero;
     public $nome;
     public $permissoes;
+    
+    public function temPermissao($str){
+        foreach($this->permissoes as $key=>$value){
+            if($value->nome===$str){
+                return true;
+            }
+        }
+        return false;
+    }
 
     function __construct($numero = 0, $permissoes = 0) {
 
