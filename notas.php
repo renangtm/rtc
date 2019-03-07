@@ -808,6 +808,7 @@
                                 var it = null;
 
                                 loading.show = function () {
+                                   
                                     if (it != null) {
                                         clearInterval(it);
                                     }
@@ -821,7 +822,7 @@
                                 }
 
                                 loading.close = function () {
-
+                                   
                                     if (it != null) {
                                         clearInterval(it);
                                     }
