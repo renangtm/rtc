@@ -129,7 +129,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         $vencimentos = array();
 
-        $ps = $con->getConexao()->prepare("SELECT vencimento.id,nota.ficha FROM vencimento INNER JOIN nota ON nota.id=vencimento.id_nota WHERE nota.id_empresa=$filial->id");
+        $ps = $con->getConexao()->prepare("SELECT vencimento.id,nota.ficha FROM vencimento INNER JOIN nota ON nota.id=vencimento.id_nota WHERE nota.id_empresa=$filial->id AND nota.excluida=false");
         $ps->execute();
         $ps->bind_result($id, $ficha);
         while ($ps->fetch()) {
@@ -216,7 +216,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
         $vencimentos = array();
 
-        $ps = $con->getConexao()->prepare("SELECT vencimento.id,nota.ficha FROM vencimento INNER JOIN nota ON nota.id=vencimento.id_nota WHERE nota.id_empresa=$matriz->id");
+        $ps = $con->getConexao()->prepare("SELECT vencimento.id,nota.ficha FROM vencimento INNER JOIN nota ON nota.id=vencimento.id_nota WHERE nota.id_empresa=$matriz->id AND nota.excluida=false");
         $ps->execute();
         $ps->bind_result($id, $ficha);
         while ($ps->fetch()) {
@@ -241,7 +241,6 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             if (!isset($vencimentos[$value->ficha][$p])) {
                 continue;
             }
-
 
 
             $value->vencimento = new stdClass();

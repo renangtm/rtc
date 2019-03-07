@@ -117,13 +117,21 @@ class Usuario {
         
     }
 
-    public function temPermissao($nome,$tipo){
+    public function temPermissao($p){
         
         foreach($this->permissoes as $key=>$value){
             
-            if($value->nome == $nome){
+            if($value->nome == $p->nome){
                 
-                return $value->$tipo === true;
+                if($p->in && !$value->in){
+                    return false;
+                }else if($p->del && !$value->del){
+                    return false;
+                }else if($p->alt && !$value->alt){
+                    return false;
+                }else if($p->cons && !$value->cons){
+                    return false;
+                }
                 
             }
             

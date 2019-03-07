@@ -55,21 +55,19 @@
 
             include("menu.php");
 
-            $banners = $empresa->getBanners(new ConnectionFactory(),0, 10, 'banner.data_inicial <= CURRENT_TIMESTAMP AND banner.data_final >= CURRENT_TIMESTAMP');
+            $b = Sistema::getBanners(new ConnectionFactory());
 
             $banners_frontais = array();
             $banners_laterais = array();
-
-            foreach ($banners as $key => $banner) {
-                if($banner->tipo === 0){
-                    $banners_frontais[] = $banner->getHTML();
-                }else if($banner->tipo === 1){
-                    $banners_laterais[] = $banner->getHTML();
-                }
+            
+            if(isset($b[0])){
+                $banners_frontais = $b[0];
             }
             
-            
-            
+            if(isset($b[1])){
+                $banners_laterais = $b[1];
+            }
+
             ?>
             <!-- ============================================================== -->
             <!-- end left sidebar -->
@@ -116,15 +114,13 @@
                                                 <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active" style="cursor: pointer;"></li>
                                                 <li data-target="#carouselExampleIndicators" data-slide-to="1" style="cursor: pointer;"></li>
                                                 <?php
-                                                    $i = 2; //manter sempre proximo numero inteiro apos o <li data-slide-to> anterior
+                                                $i = 2; //manter sempre proximo numero inteiro apos o <li data-slide-to> anterior
 
-                                                    for ($j = 0; $j < count($banners_frontais); $j++) {
-                                                ?>
-                                                <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo ($j+$i); ?>" style="cursor: pointer;"></li>
-                                                <?php
-                                                
-                                                    }
-                                                    
+                                                for ($j = 0; $j < count($banners_frontais); $j++) {
+                                                    ?>
+                                                    <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo ($j + $i); ?>" style="cursor: pointer;"></li>
+                                                    <?php
+                                                }
                                                 ?>
                                             </ol>
                                             <div class="carousel-inner">
@@ -139,15 +135,13 @@
                                                     </a>    
                                                 </div>
                                                 <?php
-                                                    for ($j = 0; $j < count($banners_frontais); $j++) {
-                                                ?>
-                                                <div class="carousel-item" style="height:22vw">
-                                                    <?php echo $banners_frontais[$j]; ?>
-                                                </div>
-                                                <?php
-                                                
-                                                    }
-                                                    
+                                                for ($j = 0; $j < count($banners_frontais); $j++) {
+                                                    ?>
+                                                    <div class="carousel-item" style="height:22vw">
+                                                        <?php echo $banners_frontais[$j]; ?>
+                                                    </div>
+                                                    <?php
+                                                }
                                                 ?>
                                             </div>
                                             <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -406,14 +400,14 @@
                                 <!-- sidebar BANNER 300x250  -->
                                 <!-- ============================================================== -->
 
-                                <?php foreach($banners_laterais as $key=>$value){ ?>
-                                <div class="">
-                                    <div class="" style="margin-bottom: 0px">
-                                        <div style="">
-                                            <?php echo $value; ?>
+                                <?php foreach ($banners_laterais as $key => $value) { ?>
+                                    <div class="">
+                                        <div class="" style="margin-bottom: 0px">
+                                            <div style="">
+                                                <?php echo $value; ?>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
                                 <?php } ?>
 
                             </div>

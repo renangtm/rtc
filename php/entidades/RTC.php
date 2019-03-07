@@ -18,6 +18,15 @@ class RTC {
     public $nome;
     public $permissoes;
 
+    public function temPermissao($str) {
+        foreach ($this->permissoes as $key => $value) {
+            if ($value->nome === $str) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function __construct($numero = 0, $permissoes = 0) {
 
         self::$RTCS[] = $this;
@@ -26,41 +35,34 @@ class RTC {
 
             $this->permissoes = array();
             return;
-            
         }
 
         $this->numero = $numero;
-        $this->nome = "RTC v$numero";
+        $this->nome = "RTC m$numero";
         $this->permissoes = $permissoes;
 
-        if ($permissoes === "ALL") {
 
-            $this->permissoes = Utilidades::copy(Sistema::getPermissoes());
-            
-        } else{
-
-            foreach (self::$RTCS as $key => $rtc) {
-                if ($rtc === $this)
-                    continue;  
-                if ($rtc->numero > $this->numero) {
-                    foreach ($this->permissoes as $key2 => $permissao) {
-                        if($permissao->clonada===true)continue;
-                        $p = Utilidades::copy($permissao);
-                        $p->clonada = true;
-                        $rtc->permissoes[] = $p;
-                    }
-                } else {
-                    foreach ($rtc->permissoes as $key2 => $permissao) {
-                        if($permissao->clonada===true)continue;
-                        $p = Utilidades::copy($permissao);
-                        $p->clonada = true;
-                        $this->permissoes[] = $p;
-                    }
+        foreach (self::$RTCS as $key => $rtc) {
+            if ($rtc === $this)
+                continue;
+            if ($rtc->numero > $this->numero) {
+                foreach ($this->permissoes as $key2 => $permissao) {
+                    if ($permissao->clonada === true)
+                        continue;
+                    $p = Utilidades::copy($permissao);
+                    $p->clonada = true;
+                    $rtc->permissoes[] = $p;
+                }
+            } else {
+                foreach ($rtc->permissoes as $key2 => $permissao) {
+                    if ($permissao->clonada === true)
+                        continue;
+                    $p = Utilidades::copy($permissao);
+                    $p->clonada = true;
+                    $this->permissoes[] = $p;
                 }
             }
         }
-        
-        
     }
 
 }

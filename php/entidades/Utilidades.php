@@ -974,7 +974,7 @@ class Utilidades {
 
         $usuario->email = new Email("renan.miranda@agrofauna.com.br");
         $usuario->email->senha = "5hynespt";
-        $usuario->permissoes = Sistema::getPermissoesIniciais();
+        
 
         $usuario->merge(new ConnectionFactory());
 

@@ -370,7 +370,7 @@ foreach ($possiveis as $key => $value) {
                     <li class="nav-item" ng-repeat="relatorio in relatorios">
                         <a class="nav-link" href="relatorios.php?rel={{relatorio.id}}" ><button class="btn btn-warning" onmousedown="tutorial('Relatorios','Essa é uma parte destinada a geração de relatorios, você pode solicitar o relatório que desejar para a equipe da Agrofauna Técnologia.')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-paper-plane"></i>{{relatorio.nome}}</a>
                     </li>
-<?php if ($empresa->is_logistica) { ?>
+<?php if ($empresa->tipo_empresa) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="produto-cliente-logistic.php"><button class="btn btn-warning" onmousedown="tutorial('Produtos Logistic','Aqui é onde a empresa de armazenamento, ve os produtos de seus clientes, com respectivos estoques que estão armazenados no armazén')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-camera"></i>Produtos cliente Logistic</a>
                         </li>
@@ -402,7 +402,7 @@ foreach ($possiveis as $key => $value) {
                     <li class="nav-item">
                         <a class="nav-link" href="visualizar-pedidos-compra.php"><button class="btn btn-warning" onmousedown="tutorial('Pedido de compra','Aqui é onde ficam seus pedidos de compra, com o seu fornecedor, também é enviado um email de confirmação de pedido após a conclusão do mesmo, o pedido gera interferência no estoque e é a partir dele que a entrada de NFe vai acontecer')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks"></i>Pedidos de Compra</a>
                     </li>
-<?php if ($rtc->numero >= 2) { ?>
+<?php if ($rtc->numero >= 3) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="entrada_nota.php"><button class="btn btn-warning" onmousedown="tutorial('Entrada de Nota','Aqui é onde você da a entrada nas suas notas, aqui ocorre relação com o pedido de compra para que as alterações de estoque sejam computadas de forma integra, sem depender da nota do fornecedor, portanto é necessário sempre um pedido de compra para dar entrada em uma NFe')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-code"></i>Entrada NFe</a>
                         </li>

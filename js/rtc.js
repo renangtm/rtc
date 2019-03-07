@@ -769,17 +769,17 @@ function baseService(http, q, obj, get, cancel,noloading) {
 
     var idt = ++id;
 
-    if(typeof noloading === 'undefined'){
+    if(noloading !== true){
         
         noloading = false;
         
     }
-
+    
     var p = q.defer();
 
     if (teste) {
 
-        document.write("&o=" + paraJson(obj.o).split("&").join("<e>").split("+").join("<m>").split("%").join("<p>").split("(").join("<lp>").split(")").join("<rp>").split("-").join("<mi>"));
+        document.write("<hr><xmp>c=" + obj.query.split("&").join("<e>").split("+").join("<m>").split("%").join("<p>").split("(").join("<lp>").split(")").join("<rp>").split("-").join("<mi>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("<e>").split("+").join("<m>").split("%").join("<p>").split("(").join("<lp>").split(")").join("<rp>").split("-").join("<mi>")) : "")+"</xmp>");
 
     }
 
@@ -789,7 +789,7 @@ function baseService(http, q, obj, get, cancel,noloading) {
         data: "c=" + obj.query.split("&").join("<e>").split("+").join("<m>").split("%").join("<p>").split("(").join("<lp>").split(")").join("<rp>").split("-").join("<mi>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("<e>").split("+").join("<m>").split("%").join("<p>").split("(").join("<lp>").split(")").join("<rp>").split("-").join("<mi>")) : ""),
         timeout: p.promise,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (exx) {
-
+        
         var m = 0;
         for (var i = 0; i < ids.length; i++) {
             if (ids[i] == idt) {
@@ -803,6 +803,7 @@ function baseService(http, q, obj, get, cancel,noloading) {
         }
 
         if (typeof obj["sucesso"] !== 'undefined') {
+           
             obj.sucesso(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&").split("<m>").join("+").split("<p>").join("%").split("<lp>").join("(").split("<rp>").join(")").split("<mi>").join("-")));
         }
 
@@ -846,8 +847,8 @@ function baseService(http, q, obj, get, cancel,noloading) {
     }
     requests = [];
 
-    ids[ids.length] = idt;
-    requests[requests.length] = p;
+    if(!noloading)ids[ids.length] = idt;
+    if(!noloading)requests[requests.length] = p;
 
 }
 

@@ -16,8 +16,9 @@ class Logistica extends Empresa {
     function __construct() {
 
         parent::__construct();
-
-        $this->is_logistica = true;
+        
+        $this->permissoes_especiais[] = array(Sistema::P_PRODUTO_CLIENTE());
+        
     }
 
     public function getCountProdutoClienteLogistic($con, $filtro = "") {
@@ -228,7 +229,7 @@ class Logistica extends Empresa {
                 . "produto_campanha.limite,"
                 . "produto_campanha.valor, "
                 . "empresa.id,"
-                . "empresa.is_logistica,"
+                . "empresa.tipo_empresa,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -260,7 +261,7 @@ class Logistica extends Empresa {
                 . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
 
         $ps->execute();
-        $ps->bind_result($id, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
@@ -274,12 +275,7 @@ class Logistica extends Empresa {
                 $campanhas[$id]->parcelas = $parcelas;
                 $campanhas[$id]->cliente_expression = $cliente;
 
-                $empresa = new Empresa();
-
-                if ($is_logistica == 1) {
-
-                    $empresa = new Logistica();
-                }
+                $empresa = Sistema::getEmpresa($tipo_empresa);
 
                 $empresa->id = $id_empresa;
                 $empresa->cnpj = new CNPJ($cnpj);
@@ -387,7 +383,7 @@ class Logistica extends Empresa {
                 . "categoria_produto.icms_normal,"
                 . "categoria_produto.icms, "
                 . "empresa.id,"
-                . "empresa.is_logistica,"
+                . "empresa.tipo_empresa,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -437,7 +433,7 @@ class Logistica extends Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $numero_lote, $rua_lote, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro,$cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $numero_lote, $rua_lote, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro,$cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $lotes = array();
 
@@ -447,12 +443,7 @@ class Logistica extends Empresa {
 
             if (!isset($produtos[$id_pro])) {
 
-                $empresa = new Empresa();
-
-                if ($is_logistica == 1) {
-
-                    $empresa = new Logistica();
-                }
+                $empresa = Sistema::getEmpresa($tipo_empresa);
 
                 $empresa->id = $id_empresa;
                 $empresa->cnpj = new CNPJ($cnpj);

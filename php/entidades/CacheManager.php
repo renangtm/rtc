@@ -13,9 +13,20 @@
  */
 class CacheManager {
 
-    private static $TIME = 720000; //12 minutos;
+    private static $TIME = 720000;
+    //12 minutos por default;
 
-    public function getCache($nome) {
+    private $tempo;
+
+    function __construct($tempo = 0) {
+        if ($tempo === 0) {
+            $this->tempo = self::$TIME;
+        } else {
+            $this->tempo = $tempo;
+        }
+    }
+
+    public function getCache($nome, $json = true) {
 
         $agora = round(microtime(true) * 1000);
 
@@ -39,7 +50,7 @@ class CacheManager {
 
         $tm = doubleval(file_get_contents($q));
 
-        if (($agora - $tm) > self::$TIME) {
+        if (($agora - $tm) > $this->tempo) {
 
             unlink($f);
             unlink($q);
@@ -50,15 +61,21 @@ class CacheManager {
         $conteudo = file_get_contents($f);
         $conteudo = mb_convert_encoding($conteudo, "UTF-8", "UTF-8");
 
-
-        $obj = Utilidades::fromJson($conteudo);
-
+        if ($json) {
+            $obj = Utilidades::fromJson($conteudo);
+        } else {
+            $obj = $conteudo;
+        }
         return $obj;
     }
 
-    public function setCache($nome, $valor) {
+    public function setCache($nome, $valor, $json = true) {
 
-        $str = Utilidades::toJson($valor);
+        $str = $valor;
+
+        if ($json) {
+            $str = Utilidades::toJson($valor);
+        }
 
         $agora = round(microtime(true) * 1000);
 

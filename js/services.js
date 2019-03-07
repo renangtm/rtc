@@ -137,7 +137,7 @@ rtc.service('bannerService', function ($http, $q) {
 rtc.service('relatorioService', function ($http, $q) {
     this.getRelatorios = function (fn) {
         baseService($http, $q, {
-            query: "$r->relatorios=Sistema::getRelatorios($empresa)",
+            query: "$r->relatorios=Sistema::getRelatorios($empresa,$usuario)",
             sucesso: fn,
             falha: fn
         });

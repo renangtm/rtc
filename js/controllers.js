@@ -1013,7 +1013,8 @@ rtc.controller("crtEmpresa", function ($scope, empresaService) {
     })
 
     $scope.setEmpresa = function () {
-
+        
+        loading.show();
         empresaService.setEmpresa($scope.empresa, function (r) {
 
             if (r.sucesso) {
@@ -1957,12 +1958,13 @@ rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoSe
 
             $scope.nota.vencimentos = [];
             $scope.nota.produtos = [];
-
+           
             formaPagamentoService.getFormasPagamento($scope.nota, function (f) {
-
+                
                 $scope.formas_pagamento = f.formas;
                 $scope.nota.forma_pagamento = $scope.formas_pagamento[0];
-
+                loading.close();
+                
             });
 
             $scope.calcular();
@@ -2706,7 +2708,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
         }
 
         pedidoEntradaService.getProdutos(pedido, function (p) {
-
+           
             pedido.produtos = p.produtos;
             equalize(pedido, "status", $scope.status_pedido);
 

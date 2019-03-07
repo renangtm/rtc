@@ -66,7 +66,7 @@ class PedidoEntrada {
                 . "produto_campanha.limite,"
                 . "produto_campanha.valor, "
                 . "empresa.id,"
-                . "empresa.is_logistica,"
+                . "empresa.tipo_empresa,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -98,7 +98,7 @@ class PedidoEntrada {
                 . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
 
         $ps->execute();
-        $ps->bind_result($id,$camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa,$is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id,$camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa,$tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
@@ -113,13 +113,7 @@ class PedidoEntrada {
                 $campanhas[$id]->parcelas = $parcelas;
                 $campanhas[$id]->cliente_expression = $cliente;
 
-                $empresa = new Empresa();
-                
-                if($is_logistica==1){
-                    
-                    $empresa = new Logistica();
-                    
-                }
+                $empresa = Sistema::getEmpresa($tipo_empresa);
                 
                 $empresa->id = $id_empresa;
                 $empresa->cnpj = new CNPJ($cnpj);
@@ -224,7 +218,7 @@ class PedidoEntrada {
                 . "categoria_produto.icms_normal,"
                 . "categoria_produto.icms,"
                 . "empresa.id,"
-                . "empresa.is_logistica,"
+                . "empresa.tipo_empresa,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -258,7 +252,7 @@ class PedidoEntrada {
 
 
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $valor,$ie,$it, $id_pro,$cod_pro,$id_log,$classe_risco,$fabricante,$imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro,$ativo,$conc,$sistema_lotes,$nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms,$id_empresa,$is_logistica,$nome_empresa,$inscricao_empresa,$consigna,$aceitou_contrato,$juros_mensal,$cnpj,$numero_endereco,$id_endereco,$rua,$bairro,$cep,$id_cidade,$nome_cidade,$id_estado,$nome_estado,$id_email,$endereco_email,$senha_email,$id_telefone,$numero_telefone);
+        $ps->bind_result($id, $quantidade, $valor,$ie,$it, $id_pro,$cod_pro,$id_log,$classe_risco,$fabricante,$imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro,$ativo,$conc,$sistema_lotes,$nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms,$id_empresa,$tipo_empresa,$nome_empresa,$inscricao_empresa,$consigna,$aceitou_contrato,$juros_mensal,$cnpj,$numero_endereco,$id_endereco,$rua,$bairro,$cep,$id_cidade,$nome_cidade,$id_estado,$nome_estado,$id_email,$endereco_email,$senha_email,$id_telefone,$numero_telefone);
 
         $retorno = array();
 
@@ -309,13 +303,7 @@ class PedidoEntrada {
             $p->categoria->icms_normal = $cat_icms_normal;
             $p->categoria->ipi = $cat_ipi;
             
-            $empresa = new Empresa();
-            
-            if($is_logistica==1){
-                
-                $empresa = new Logistica();
-                
-            }
+            $empresa = Sistema::getEmpresa($tipo_empresa);
             
             $empresa->id = $id_empresa;
             $empresa->cnpj = new CNPJ($cnpj);

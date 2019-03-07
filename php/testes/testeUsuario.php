@@ -40,8 +40,6 @@ class testeUsuario extends PHPUnit_Framework_TestCase {
         
         $usuario->email = new Email("teserewfdwefd");
         
-        $usuario->permissoes = Sistema::getPermissoesIniciais();
-        
         $usuario->merge(new ConnectionFactory());
         
         $usuario->merge(new ConnectionFactory());

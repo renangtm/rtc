@@ -12,70 +12,413 @@
  * @author Renan
  */
 class Sistema {
-  
-    public static function getRelatorios($empresa){
-        
-        $rtc = $empresa->getRTC(new ConnectionFactory());
-        
-        $relatorios = array();
-        
-        if($rtc->numero >= 3){
-            
-            $relatorios[] = new RelatorioFinanceiro($empresa);
-            $relatorios[] = new RelatorioMovimento($empresa);
-        }
-        
-        return $relatorios;
-        
+
+    public static function P_PEDIDO_ENTRADA() {
+        return new Permissao(1, "pedido_entrada");
     }
-    
-    public static function getProdutosDoDia($con,$dia,$num,$empresa){
-        
+
+    public static function P_PRODUTO() {
+        return new Permissao(2, "produto");
+    }
+
+    public static function P_COTACAO() {
+        return new Permissao(3, "cotacao");
+    }
+
+    public static function P_TRANSPORTADORA() {
+        return new Permissao(4, "transportadora");
+    }
+
+    public static function P_CLIENTE() {
+        return new Permissao(5, "cliente");
+    }
+
+    public static function P_NOTA() {
+        return new Permissao(6, "nota");
+    }
+
+    public static function P_LOTE() {
+        return new Permissao(7, "lote");
+    }
+
+    public static function P_TABELA() {
+        return new Permissao(8, "tabela");
+    }
+
+    public static function P_CAMPANHA() {
+        return new Permissao(9, "campanha");
+    }
+
+    public static function P_GRUPO_CIDADE() {
+        return new Permissao(10, "grupo_cidades");
+    }
+
+    public static function P_BANCO() {
+        return new Permissao(11, "banco");
+    }
+
+    public static function P_MOVIMENTO() {
+        return new Permissao(12, "movimento");
+    }
+
+    public static function P_CATEGORIA_PRODUTO() {
+        return new Permissao(14, "categoria_produto");
+    }
+
+    public static function P_CATEGORIA_CLIENTE() {
+        return new Permissao(15, "categoria_cliente");
+    }
+
+    public static function P_CATEGORIA_DOCUMENTO() {
+        return new Permissao(16, "categoria_documento");
+    }
+
+    public static function P_FORNECEDOR() {
+        return new Permissao(17, "fonecedor");
+    }
+
+    public static function P_CFG() {
+        return new Permissao(18, "cfg");
+    }
+
+    public static function P_CONFIGURACAO_EMPRESA() {
+        return new Permissao(19, "configuracao_empresa");
+    }
+
+    public static function P_CULTURA() {
+        return new Permissao(20, "cultura");
+    }
+
+    public static function P_PRAGA() {
+        return new Permissao(21, "praga");
+    }
+
+    public static function P_LISTA_PRECO() {
+        return new Permissao(23, "lista_preco");
+    }
+
+    public static function P_SEPARACAO() {
+        return new Permissao(25, "separacao");
+    }
+
+    public static function P_LOGO() {
+        return new Permissao(27, "logo");
+    }
+
+    public static function P_GERENCIADOR() {
+        return new Permissao(28, "gerenciador");
+    }
+
+    public static function P_BANNERS() {
+        return new Permissao(29, "banners");
+    }
+
+    public static function P_RELATORIO_FINANCEIRO() {
+        return new Permissao(30, "RelatorioFinanceiro");
+    }
+
+    public static function P_RELATORIO_MOVIMENTO() {
+        return new Permissao(31, "RelatorioMovimento");
+    }
+
+    public static function P_ENTRADA_NFE() {
+        return new Permissao(32, "entrada nfe");
+    }
+
+    public static function P_PRODUTO_CLIENTE() {
+        return new Permissao(33, "produto cliente");
+    }
+
+    public static function P_PEDIDO_SAIDA() {
+        return new Permissao(34, "pedido saida");
+    }
+
+    public static function getEmpresa($tipo) {
+
+        $empresa = null;
+        if ($tipo === 0) {
+            $empresa = new EmpresaAgricola();
+        } else if ($tipo === 1) {
+            $empresa = new Logistica();
+        }
+
+        if ($empresa !== null) {
+
+            $empresa->tipo_empresa = $tipo;
+        }
+
+        return $empresa;
+    }
+
+    public static function getRelatorios($empresa, $usuario) {
+
+        $relatorios[] = new RelatorioFinanceiro($empresa);
+        $relatorios[] = new RelatorioMovimento($empresa);
+
+        $permitidos = array();
+
+        foreach ($relatorios as $key => $value) {
+            $p = new Permissao(0, get_class($value));
+            $p->m("C");
+            if ($usuario->temPermissao($p)) {
+                $permitidos[] = $value;
+            }
+        }
+
+        return $permitidos;
+    }
+
+    public static function getProdutosDoDia($con, $dia, $num, $empresa) {
+
         $dia = $dia - 1;
-        
-        while($dia<0){
+
+        while ($dia < 0) {
             $dia += $num;
         }
-        
-        $dia = $dia%$num;
-        
+
+        $dia = $dia % $num;
+
         $classes = array();
         $ps = $con->getConexao()->prepare("SELECT id,classificacao_saida FROM produto WHERE id_empresa=$empresa->id AND produto.disponivel > 0");
         $ps->execute();
-        $ps->bind_result($id,$classe);
-        while($ps->fetch()){
-            if(!isset($classes[$classe])){
+        $ps->bind_result($id, $classe);
+        while ($ps->fetch()) {
+            if (!isset($classes[$classe])) {
                 $classes[$classe] = array();
             }
             $classes[$classe][] = $id;
         }
         $ps->close();
-        
+
         $produtos = "(-1";
-        
-        
-        foreach($classes as $key=>$classe){
-            
-            $fat = floor(count($classe)/$num);
-            $rst = count($classe)%$num;
-            
-            for($i=$fat*$dia;$i<$fat*($dia+1);$i++){
-                $produtos .= ",".$classe[$i];
+
+
+        foreach ($classes as $key => $classe) {
+
+            $fat = floor(count($classe) / $num);
+            $rst = count($classe) % $num;
+
+            for ($i = $fat * $dia; $i < $fat * ($dia + 1); $i++) {
+                $produtos .= "," . $classe[$i];
             }
-            
-            if($dia<$rst){
-                
-                $produtos .= ",".$classe[$fat*$num+$dia];
-                
+
+            if ($dia < $rst) {
+
+                $produtos .= "," . $classe[$fat * $num + $dia];
             }
-            
         }
-        
+
         $produtos .= ")";
-        
-        
-        return $empresa->getProdutos($con,0,10000000,"produto.id IN $produtos","");
-        
+
+
+        return $empresa->getProdutos($con, 0, 10000000, "produto.id IN $produtos", "");
+    }
+
+    public static function getBanners($con) {
+
+        $cm = new CacheManager(3600000);
+        //1 hora de cahce de banners
+
+        $cache = $cm->getCache("cbanner",false);
+
+        if ($cache === null) {
+
+            $empresas = array();
+
+            $sql = "SELECT "
+                    . "banner.id,"
+                    . "UNIX_TIMESTAMP(banner.data_inicial)*1000,"
+                    . "UNIX_TIMESTAMP(banner.data_final)*1000,"
+                    . "banner.id_campanha,"
+                    . "banner.tipo,"
+                    . "banner.json,"
+                    . "empresa.id,"
+                    . "empresa.tipo_empresa,"
+                    . "empresa.nome,"
+                    . "empresa.inscricao_estadual,"
+                    . "empresa.consigna,"
+                    . "empresa.aceitou_contrato,"
+                    . "empresa.juros_mensal,"
+                    . "empresa.cnpj,"
+                    . "endereco.numero,"
+                    . "endereco.id,"
+                    . "endereco.rua,"
+                    . "endereco.bairro,"
+                    . "endereco.cep,"
+                    . "cidade.id,"
+                    . "cidade.nome,"
+                    . "estado.id,"
+                    . "estado.sigla,"
+                    . "email.id,"
+                    . "email.endereco,"
+                    . "email.senha,"
+                    . "telefone.id,"
+                    . "telefone.numero "
+                    . "FROM banner "
+                    . "INNER JOIN empresa ON banner.id_empresa=empresa.id "
+                    . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
+                    . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
+                    . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
+                    . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
+                    . "INNER JOIN estado ON cidade.id_estado = estado.id "
+                    . "WHERE empresa.vende_para_fora=true AND banner.data_inicial<=CURRENT_TIMESTAMP AND banner.data_final>=CURRENT_TIMESTAMP";
+
+            $campanhas = "(-1";
+            $qtd_campanhas = 0;
+
+            $banners = array();
+
+            $ps = $con->getConexao()->prepare($sql);
+            $ps->execute();
+            $ps->bind_result($id, $data_inicial, $data_final, $id_campanha, $tipo, $json, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+
+            while ($ps->fetch()) {
+
+                $banner = new Banner();
+                $banner->id = $id;
+                $banner->data_inicial = $data_inicial;
+                $banner->data_final = $data_final;
+                $banner->campanha = $id_campanha;
+                $banner->tipo = $tipo;
+                $banner->json = $json;
+
+                if (!isset($empresas[$id_empresa])) {
+
+                    $empresa = Sistema::getEmpresa($tipo_empresa);
+
+                    $empresa->id = $id_empresa;
+                    $empresa->cnpj = new CNPJ($cnpj);
+                    $empresa->inscricao_estadual = $inscricao_empresa;
+                    $empresa->nome = $nome_empresa;
+                    $empresa->aceitou_contrato = $aceitou_contrato;
+                    $empresa->juros_mensal = $juros_mensal;
+                    $empresa->consigna = $consigna;
+
+                    $endereco = new Endereco();
+                    $endereco->id = $id_endereco;
+                    $endereco->rua = $rua;
+                    $endereco->bairro = $bairro;
+                    $endereco->cep = new CEP($cep);
+                    $endereco->numero = $numero_endereco;
+
+                    $cidade = new Cidade();
+                    $cidade->id = $id_cidade;
+                    $cidade->nome = $nome_cidade;
+
+                    $estado = new Estado();
+                    $estado->id = $id_estado;
+                    $estado->sigla = $nome_estado;
+
+                    $cidade->estado = $estado;
+
+                    $endereco->cidade = $cidade;
+
+                    $empresa->endereco = $endereco;
+
+                    $email = new Email($endereco_email);
+                    $email->id = $id_email;
+                    $email->senha = $senha_email;
+
+                    $empresa->email = $email;
+
+                    $telefone = new Telefone($numero_telefone);
+                    $telefone->id = $id_telefone;
+
+                    $empresa->telefone = $telefone;
+                    
+                    $empresas[$id_empresa] = $empresa;
+                    
+                }
+                
+                $banner->empresa = $empresas[$id_empresa];
+
+                $banners[] = $banner;
+
+                if ($id_campanha > 0) {
+
+                    $campanhas .= ",$id_campanha";
+                    $qtd_campanhas++;
+                }
+            }
+
+            $ps->close();
+
+            $campanhas .= ")";
+
+            $camps = array();
+            
+            foreach($empresas as $key=>$empresa){
+                
+                $temp = $empresa->getCampanhas($con, 0, $qtd_campanhas, "campanha.id IN $campanhas", "");
+            
+                foreach($temp as $key2=>$value){
+                    $camps[] = $value;
+                }
+                
+            }
+            
+            $retorno = array();
+            
+            $campanhas = $camps;
+            
+            foreach ($banners as $key => $banner) {
+                
+                if(!isset($retorno[$banner->tipo])){
+                    
+                    $retorno[$banner->tipo] = array();
+                    
+                }
+
+                if ($banner->campanha > 0) {
+
+                    foreach ($campanhas as $key2 => $campanha) {
+
+                        if ($banner->campanha === $campanha->id) {
+
+                            $banner->campanha = $campanha;
+                            break;
+                        }
+                    }
+                } else {
+
+                    $banner->campanha = null;
+                }
+                
+                $retorno[$banner->tipo][] = $banner->getHTML();
+                
+            }
+            
+            $strCache = "";
+            
+            foreach($retorno as $key=>$value){
+                $strCache .= "[[[divisao]]]$key{{{";
+                foreach($value as $key2=>$value2){
+                    $strCache .= "$value2;;;";
+                }
+            }
+            
+            $cm->setCache("cbanner",$strCache,false);
+            return $retorno;
+        } else {
+            
+            $retorno = array();
+            $l = explode("[[[divisao]]]",$cache);
+           
+            foreach($l as $key=>$value){
+                if($value === "")continue;
+                
+                $k = explode("{{{",$value);
+                $n = intval($k[0]);
+                $retorno[$n] = array();
+                $s = explode(";;;",$k[1]);
+                foreach($s as $key2=>$value2){
+                    if($value2==="")continue;
+                    $retorno[$n][] = $value2;
+                }
+            }
+            
+            return $retorno;
+        }
     }
 
     public static function finalizarCompraParceiros($con, $pedido, $empresa) {
@@ -322,7 +665,7 @@ class Sistema {
 
         $ps = $con->getConexao()->prepare("SELECT "
                 . "empresa.id,"
-                . "empresa.is_logistica,"
+                . "empresa.tipo_empresa,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -351,16 +694,11 @@ class Sistema {
                 . "INNER JOIN estado ON cidade.id_estado = estado.id "
                 . "WHERE empresa.vende_para_fora = true");
         $ps->execute();
-        $ps->bind_result($id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
-            $empresa = new Empresa();
-
-            if ($is_logistica == 1) {
-
-                $empresa = new Logistica();
-            }
+            $empresa = Sistema::getEmpresa($tipo_empresa);
 
             $empresa->id = $id_empresa;
             $empresa->cnpj = new CNPJ($cnpj);
@@ -495,22 +833,16 @@ class Sistema {
 
         if ($empresa->cnpj->valor !== $cnpj_empresa->valor) {
 
-            if ($empresa->is_logistica) {
-
-                $ps = $con->getConexao()->prepare("SELECT empresa.id FROM empresa INNER JOIN produto ON produto.id_empresa=empresa.id WHERE produto.id_logistica=$empresa->id AND empresa.cnpj='" . $cnpj_empresa->valor . "'");
-                $ps->execute();
-                $ps->bind_result($ide);
-                if ($ps->fetch()) {
-                    $id_empresa = $ide;
-                } else {
-                    $ps->close();
-                    throw new Exception('A Nota nao e dessa empresa, e nem de uma afiliada');
-                }
-                $ps->close();
+            $ps = $con->getConexao()->prepare("SELECT empresa.id FROM empresa INNER JOIN produto ON produto.id_empresa=empresa.id WHERE produto.id_logistica=$empresa->id AND empresa.cnpj='" . $cnpj_empresa->valor . "'");
+            $ps->execute();
+            $ps->bind_result($ide);
+            if ($ps->fetch()) {
+                $id_empresa = $ide;
             } else {
-
-                throw new Exception('A Nota nao e dessa empresa');
+                $ps->close();
+                throw new Exception('A Nota nao e dessa empresa, e nem de uma afiliada');
             }
+            $ps->close();
         }
 
         $escolhido = -1;
@@ -765,9 +1097,9 @@ class Sistema {
         $servico = realpath('../micro_servicos_java');
         $servico .= "/$nome.jar";
         $comando = "java -jar \"$servico\"";
-              
+
         if ($parametros !== null) {
-            $comando .= " \"".$parametros."\"";
+            $comando .= " \"" . $parametros . "\"";
         } else {
             $comando .= " 200";
         }
@@ -781,22 +1113,21 @@ class Sistema {
         $caminho = realpath("../uploads");
         $arquivo = "etiqueta_" . round(microtime(true) * 1000) . ".pdf";
         $caminho_completo = $caminho . "/$arquivo";
-        
-        
-        
+
+
+
         $request = new stdClass();
         $request->arquivo = $caminho_completo;
         $request->etiquetas = $etiquetas;
 
         $final_request = Utilidades::toJson($request);
         $final_request = addslashes($final_request);
-        
+
         $resp = Utilidades::fromJson(self::getMicroServicoJava('GeradorEtiqueta', $final_request));
-      
+
         if (!$resp->sucesso) {
 
             throw new Exception('falha');
-            
         } else {
 
             return $arquivo;
@@ -986,54 +1317,56 @@ class Sistema {
     public static function getRTCS() {
         RTC::$RTCS = array();
         return array(new RTC(1, array(
-                new Permissao(5, "cliente"),
-                new Permissao(17, "fonecedor"),
-                new Permissao(4, "transportadora"),
-                new Permissao(3, "cotacao"),
-                new Permissao(13, "pedido_saida"),
-                new Permissao(25, "pedido_entrada"),
-                new Permissao(27, "logo"),
-                new Permissao(2, "produto"))
+                Sistema::P_CLIENTE(),
+                Sistema::P_FORNECEDOR(),
+                Sistema::P_TRANSPORTADORA(),
+                Sistema::P_COTACAO(),
+                Sistema::P_PEDIDO_SAIDA(),
+                Sistema::P_PEDIDO_ENTRADA(),
+                Sistema::P_LOGO(),
+                Sistema::P_PRODUTO())
             ), new RTC(2, array(
-                new Permissao(23, "lista_preco"),
-                new Permissao(9, "campanha"))
+                Sistema::P_CAMPANHA())
             ), new RTC(3, array(
-                new Permissao(8, "tabela"),
-                new Permissao(10, "grupo_cidades"))
-            ), new RTC(4, "ALL")
-        );
+                Sistema::P_CAMPANHA(),
+                Sistema::P_GRUPO_CIDADE(),
+                Sistema::P_CFG(),
+                Sistema::P_TABELA())
+            ), new RTC(4, array(
+                Sistema::P_NOTA(),
+                Sistema::P_ENTRADA_NFE()
+                    )), new RTC(5, array(
+                Sistema::P_BANCO(),
+                Sistema::P_RELATORIO_FINANCEIRO(),
+                Sistema::P_RELATORIO_MOVIMENTO(),
+                Sistema::P_MOVIMENTO()
+                    )), new RTC(6, array(
+                Sistema::P_LOTE(),
+                Sistema::P_SEPARACAO(),
+                Sistema::P_TABELA()
+                    )), new RTC(7, array(
+                Sistema::P_GERENCIADOR()
+        )));
     }
 
-    public static function getPermissoes() {
+    public static function getPermissoes($empresa = null) {
 
         $perms = array();
 
-        $perms[] = new Permissao(1, "pedido_entrada");
-        $perms[] = new Permissao(2, "produto");
-        $perms[] = new Permissao(3, "cotacao");
-        $perms[] = new Permissao(4, "transportadora");
-        $perms[] = new Permissao(5, "cliente");
-        $perms[] = new Permissao(6, "nota");
-        $perms[] = new Permissao(7, "lote");
-        $perms[] = new Permissao(8, "tabela");
-        $perms[] = new Permissao(9, "campanha");
-        $perms[] = new Permissao(10, "grupo_cidades");
-        $perms[] = new Permissao(11, "banco");
-        $perms[] = new Permissao(12, "movimento");
-        $perms[] = new Permissao(13, "pedido_saida");
-        $perms[] = new Permissao(14, "categoria_produto");
-        $perms[] = new Permissao(15, "categoria_cliente");
-        $perms[] = new Permissao(16, "categoria_documento");
-        $perms[] = new Permissao(17, "fonecedor");
-        $perms[] = new Permissao(18, "cfg");
-        $perms[] = new Permissao(19, "configuracao_empresa");
-        $perms[] = new Permissao(20, "cultura");
-        $perms[] = new Permissao(21, "praga");
-        $perms[] = new Permissao(23, "lista_preco");
-        $perms[] = new Permissao(24, "configuracao_empresa");
-        $perms[] = new Permissao(25, "separacao");
-        $perms[] = new Permissao(26, "pedido_entrada");
-        $perms[] = new Permissao(27, "logo");
+        if ($empresa !== null) {
+            $rtc = $empresa->getRTC(new ConnectionFactory());
+            foreach ($rtc->permissoes as $key => $value) {
+                $perms[] = $value;
+            }
+
+            foreach ($empresa->permissoes_especiais as $key => $value) {
+                if ($key < $rtc->numero) {
+                    foreach ($value as $key2 => $value2) {
+                        $perms[] = $value2;
+                    }
+                }
+            }
+        }
 
         return $perms;
     }
@@ -1074,24 +1407,6 @@ class Sistema {
         $sts[] = new StatusCotacaoEntrada(4, "Cancelada", true);
 
         return $sts;
-    }
-
-    public static function getPermissoesIniciais() {
-
-        $perms = array();
-
-        $perms[] = new Permissao(1, "pedido_entrada", true, true, true, true);
-        $perms[] = new Permissao(2, "produto", true, true, true, true);
-        $perms[] = new Permissao(3, "cotacao", true, true, true, true);
-        $perms[] = new Permissao(4, "transportadora", true, true, true, true);
-        $perms[] = new Permissao(5, "cliente", true, true, true, true);
-        $perms[] = new Permissao(7, "lote", true, true, true, true);
-        $perms[] = new Permissao(13, "pedido_saida", true, true, true, true);
-        $perms[] = new Permissao(17, "fonecedor", true, true, true, true);
-        $perms[] = new Permissao(18, "cfg", true, true, true, true);
-        $perms[] = new Permissao(19, "configuracao_empresa", true, true, true, true);
-
-        return $perms;
     }
 
     public static function getCategoriaProduto($con) {
@@ -1167,6 +1482,7 @@ class Sistema {
                 . "email_usu.endereco,"
                 . "email_usu.senha,"
                 . "empresa.id,"
+                . "empresa.tipo,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -1203,7 +1519,7 @@ class Sistema {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $usuarios = array();
 
@@ -1238,7 +1554,7 @@ class Sistema {
             $usuario->endereco = $end;
 
 
-            $empresa = new Empresa();
+            $empresa = Sistema::getEmpresa($tipo_empresa);
             $empresa->id = $id_empresa;
             $empresa->cnpj = new CNPJ($cnpj);
             $empresa->inscricao_estadual = $inscricao_empresa;
@@ -1306,13 +1622,22 @@ class Sistema {
         }
         $ps->close();
 
-        $permissoes = Sistema::getPermissoes();
+        if (count($usuarios) === 0) {
+
+            return null;
+        }
+
+        foreach ($usuarios as $key => $value) {
+            $value->permissoes = Sistema::getPermissoes($value->empresa);
+        }
 
         $ps = $con->getConexao()->prepare("SELECT id_usuario, id_permissao,incluir,deletar,alterar,consultar FROM usuario_permissao WHERE id_usuario IN ($in_usu)");
         $ps->execute();
         $ps->bind_result($id_usuario, $id_permissao, $incluir, $deletar, $alterar, $consultar);
 
         while ($ps->fetch()) {
+
+            $permissoes = $usuarios[$id_usuario]->permissoes;
 
             $p = null;
 
@@ -1386,7 +1711,7 @@ class Sistema {
 
         $ps = $con->getConexao()->prepare("SELECT "
                 . "empresa.id,"
-                . "empresa.is_logistica,"
+                . "empresa.tipo_empresa,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -1413,21 +1738,16 @@ class Sistema {
                 . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
                 . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
                 . "INNER JOIN estado ON cidade.id_estado = estado.id "
-                . "WHERE empresa.is_logistica=true");
+                . "WHERE empresa.tipo_empresa=1");
         $ps->execute();
 
         $empresas = array();
         $empresas_id = array();
-        $ps->bind_result($id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
-            $empresa = new Empresa();
-
-            if ($is_logistica == 1) {
-
-                $empresa = new Logistica();
-            }
+            $empresa = Sistema::getEmpresa($tipo_empresa);
 
             $empresa->id = $id_empresa;
             $empresa->cnpj = new CNPJ($cnpj);
@@ -1514,7 +1834,7 @@ class Sistema {
                 . "email_usu.endereco,"
                 . "email_usu.senha,"
                 . "empresa.id,"
-                . "empresa.is_logistica,"
+                . "empresa.tipo_empresa,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -1551,7 +1871,7 @@ class Sistema {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa, $is_logistica, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $usuarios = array();
 
@@ -1585,13 +1905,7 @@ class Sistema {
 
             $usuario->endereco = $end;
 
-
-            $empresa = new Empresa();
-
-            if ($is_logistica == 1) {
-
-                $empresa = new Logistica();
-            }
+            $empresa = Sistema::getEmpresa($tipo_empresa);
 
             $empresa->id = $id_empresa;
             $empresa->cnpj = new CNPJ($cnpj);
@@ -1660,13 +1974,17 @@ class Sistema {
         }
         $ps->close();
 
-        $permissoes = Sistema::getPermissoes();
+        foreach ($usuarios as $key => $value) {
+            $value->permissoes = Sistema::getPermissoes($value->empresa);
+        }
 
         $ps = $con->getConexao()->prepare("SELECT id_usuario, id_permissao,incluir,deletar,alterar,consultar FROM usuario_permissao WHERE id_usuario IN ($in_usu)");
         $ps->execute();
         $ps->bind_result($id_usuario, $id_permissao, $incluir, $deletar, $alterar, $consultar);
 
         while ($ps->fetch()) {
+
+            $permissoes = $usuarios[$id_usuario]->permissoes;
 
             $p = null;
 
@@ -1703,6 +2021,7 @@ class Sistema {
 
             $u = $real[0];
 
+            $u->empresa->getRTC($con);
             $ses->set("usuario", $u);
             $ses->set("empresa", $u->empresa);
 

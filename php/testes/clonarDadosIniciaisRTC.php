@@ -202,7 +202,7 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
 
 
           $lo = new Empresa();
-          $lo->is_logistica = true;
+          $lo->tipo_empresa = true;
           $lo->cnpj = new CNPJ("47626510001708");
           $lo->inscricao_estadual = "796.512.644.111";
           $lo->nome = "Agro Fauna Filial";
