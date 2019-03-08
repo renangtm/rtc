@@ -42,14 +42,23 @@ class Usuario {
 
     public function merge($con) {
 
+
+        $ps = $con->getConexao()->prepare("SELECT id FROM usuario WHERE (cpf='" . $this->cpf->valor . "') AND id <> $this->id AND id_empresa=".$this->empresa->id);
+        $ps->execute();
+        $ps->bind_result($id);
+        if ($ps->fetch()) {
+            $ps->close();
+            throw new Exception("Ja existe um usuario com os mesmos dados $id");
+        }
+        $ps->close();
+
         if ($this->id == 0) {
-            $ps = $con->getConexao()->prepare("INSERT INTO usuario(login,senha,nome,cpf,excluido,id_empresa,rg) VALUES('" . addslashes($this->login) . "','" . addslashes($this->senha) . "','" . addslashes($this->nome) . "','" . $this->cpf->valor . "',false," . $this->empresa->id . ",'".addslashes($this->rg->valor)."')");
+            $ps = $con->getConexao()->prepare("INSERT INTO usuario(login,senha,nome,cpf,excluido,id_empresa,rg) VALUES('" . addslashes($this->login) . "','" . addslashes($this->senha) . "','" . addslashes($this->nome) . "','" . $this->cpf->valor . "',false," . $this->empresa->id . ",'" . addslashes($this->rg->valor) . "')");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
-
-            $ps = $con->getConexao()->prepare("UPDATE usuario SET login='" . addslashes($this->login) . "',senha='" . addslashes($this->senha) . "', nome = '" . addslashes($this->nome) . "', cpf='" . $this->cpf->valor . "',excluido=false, id_empresa=" . $this->empresa->id . ",rg='".addslashes($this->rg->valor)."' WHERE id = " . $this->id);
+            $ps = $con->getConexao()->prepare("UPDATE usuario SET login='" . addslashes($this->login) . "',senha='" . addslashes($this->senha) . "', nome = '" . addslashes($this->nome) . "', cpf='" . $this->cpf->valor . "',excluido=false, id_empresa=" . $this->empresa->id . ",rg='" . addslashes($this->rg->valor) . "' WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
         }
@@ -81,7 +90,11 @@ class Usuario {
             $ps->execute();
             $ps->close();
         }
-        
+
+        $ps = $con->getConexao()->prepare("DELETE FROM usuario_permissao WHERE id_usuario=$this->id AND incluir=false AND deletar=false AND alterar=false AND consultar=false");
+        $ps->execute();
+        $ps->close();
+
         $tels = array();
         $ps = $con->getConexao()->prepare("SELECT id,numero FROM telefone WHERE tipo_entidade='USU' AND id_entidade=$this->id AND excluido=false");
         $ps->execute();
@@ -108,39 +121,34 @@ class Usuario {
         foreach ($this->telefones as $key => $value) {
 
             $value->merge($con);
-            
+
             $ps = $con->getConexao()->prepare("UPDATE telefone SET tipo_entidade='USU', id_entidade=$this->id WHERE id=" . $value->id);
             $ps->execute();
             $ps->close();
-
         }
-        
     }
 
-    public function temPermissao($p){
-        
-        foreach($this->permissoes as $key=>$value){
-            
-            if($value->nome == $p->nome){
-                
-                if($p->in && !$value->in){
+    public function temPermissao($p) {
+
+        foreach ($this->permissoes as $key => $value) {
+
+            if ($value->nome == $p->nome) {
+
+                if ($p->in && !$value->in) {
                     return false;
-                }else if($p->del && !$value->del){
+                } else if ($p->del && !$value->del) {
                     return false;
-                }else if($p->alt && !$value->alt){
+                } else if ($p->alt && !$value->alt) {
                     return false;
-                }else if($p->cons && !$value->cons){
+                } else if ($p->cons && !$value->cons) {
                     return false;
                 }
-                
             }
-            
         }
-        
-        return false;
-        
+
+        return true;
     }
-    
+
     public function delete($con) {
 
         $ps = $con->getConexao()->prepare("UPDATE usuario SET excluido = true WHERE id = " . $this->id);

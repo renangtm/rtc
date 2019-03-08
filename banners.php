@@ -196,7 +196,7 @@
                                             <input type="text" ng-model="banner.campanha.nome" class="form-control" placeholder="Nome da campanha" value="" disabled="">
                                         </div>
                                         <div class="col">
-                                            <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#campanhas"><i class="fas fa-search"></i></a>
+                                            <a href="#" class="btn btn-outline-light btnedit" ng-click="campanhas.attList()" data-toggle="modal" data-target="#campanhas"><i class="fas fa-search"></i></a>
                                         </div>
                                         <div class="col" ng-if="banner.campanha !== null">
                                             <a href="#" class="btn btn-outline-danger btnedit" ng-click="deleteCampanha()"><i class="fas fa-times"></i></a>

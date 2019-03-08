@@ -14,10 +14,10 @@ $o = null;
 if (isset($_POST['o'])) {
 
 
-    $o = Utilidades::fromJson(str_replace(array("<m>", "<e>", "<p>","Infinity","NaN","<lp>","<rp>","<mi>"), array("+", "&", "%","0","0","(",")","-"), $_POST['o']));
+    $o = Utilidades::fromJson(Utilidades::base64decodeSPEC($_POST['o']));
 } else if (isset($_GET['o'])) {
 
-    $o = Utilidades::fromJson(str_replace(array("<m>", "<e>", "<p>","Infinity","NaN","<lp>","<rp>","<mi>"), array("+", "&", "%","0","0","(",")","-"), $_GET['o']));
+    $o = Utilidades::fromJson(Utilidades::base64decodeSPEC($_GET['o']));
 }
 
 
@@ -26,10 +26,10 @@ $codigo = "";
 
 if (isset($_POST['c'])) {
 
-    $codigo = str_replace(array("<m>", "<e>", "<p>","Infinity","NaN","<lp>","<rp>","<mi>"), array("+", "&", "%","0","0","(",")","-"), $_POST['c']);
+    $codigo = Utilidades::base64decodeSPEC($_POST['c']);
 } else if (isset($_GET['c'])) {
 
-    $codigo = str_replace(array("<m>", "<e>", "<p>","Infinity","NaN","<lp>","<rp>","<mi>"), array("+", "&", "%","0","0","(",")","-"), $_GET['c']);
+    $codigo = Utilidades::base64decodeSPEC($_GET['c']);
 } else {
 
     exit;
@@ -45,4 +45,4 @@ $r->sucesso = true;
 
 eval('try{ ' . $codigo . '; }catch(Exception $ex){$r->sucesso = false;$r->mensagem=$ex->getMessage();}');
 
-echo str_replace(array("<m>", "<e>", "<p>","Infinity","NaN"), array("+", "&", "%","0","0"), Utilidades::toJson($r));
+echo Utilidades::base64encodeSPEC(Utilidades::toJson($r));

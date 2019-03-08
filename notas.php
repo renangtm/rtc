@@ -229,7 +229,7 @@
                                                 <input type="text" ng-model="nota.cliente.razao_social" class="form-control" placeholder="Nome do cliente" value="" disabled="">
                                             </div>
                                             <div class="col">
-                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#clientes"><i class="fas fa-search"></i></a>
+                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" ng-click="clientes.attList()" data-target="#clientes"><i class="fas fa-search"></i></a>
                                             </div>
                                         </div>
                                     </div>
@@ -243,7 +243,7 @@
                                                 <input type="text" ng-model="nota.fornecedor.nome" class="form-control" placeholder="Nome do fornecedor" value="" disabled="">
                                             </div>
                                             <div class="col">
-                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#fornecedores"><i class="fas fa-search"></i></a>
+                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" ng-click="fornecedores.attList()" data-target="#fornecedores"><i class="fas fa-search"></i></a>
                                             </div>
                                         </div>
                                     </div>
@@ -258,7 +258,7 @@
                                                 <input type="text" class="form-control" ng-model="nota.transportadora.razao_social" placeholder="Nome da Transportadora" disabled>
                                             </div>
                                             <div class="col">
-                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#transportadoras"><i class="fas fa-search"></i></a>
+                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" ng-click="transportadoras.attList()" data-target="#transportadoras"><i class="fas fa-search"></i></a>
                                             </div>
                                         </div>
                                     </div>

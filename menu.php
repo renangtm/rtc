@@ -326,17 +326,17 @@ foreach ($possiveis as $key => $value) {
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
 <?php echo $empresa->nome; ?>
                     </li>
-                        <?php if ($rtc->numero >= 2) { ?>
+                        <?php if ($usuario->temPermissao(Sistema::P_CONFIGURACAO_EMPRESA()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="configuracao-empresa.php" ><button class="btn btn-warning" onmousedown="tutorial('Configuracao da Empresa','Aqui é onde você cadastra os dados da sua empresa, para que o sistema deixe algumas coisas automaticas para você, caso você tenha o modulo de emissão de nota também ira cadastrar o seu certificado digitao aqui')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-compass"></i>Config. Empresa</a>
                         </li>         
 <?php } ?>
-                    <?php if ($rtc->numero >= 2) { ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_CFG()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="cfg.php" ><button class="btn btn-warning" onmousedown="tutorial('CFG','Aqui é onde você cria novos usuarios para a sua empresa, atribui autorizações e retira')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-user mr-2"></i>Colaboradores</a>
                         </li>         
 <?php } ?>
-                    <?php if ($rtc->numero === 3) { ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_CONFIGURACAO_EMPRESA()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="lista-de-preco.php" ><button class="btn btn-warning" onmousedown="tutorial('Lista de preço','Esta é uma pagina de consulta para que você consiga fazer o seu receituario, contem todas as relações de praga, produto e cultura')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-clipboard-list"></i>Receituario</a>
                         </li>

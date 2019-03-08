@@ -94,7 +94,7 @@ class Empresa {
         }
 
         $r = 1;
-    
+
         $ps = $con->getConexao()->prepare("SELECT rtc FROM empresa WHERE id=$this->id");
         $ps->execute();
         $ps->bind_result($rtc);
@@ -1288,8 +1288,10 @@ class Empresa {
 
         $ps->close();
 
-        foreach($usuarios as $key=>$value){
-            $value->permissoes = Sistema::getPermissoes($value->empresa);
+        foreach ($usuarios as $key => $value) {
+            foreach ($value as $key2 => $value2) {
+                $value2->permissoes = Sistema::getPermissoes($value2->empresa);
+            }
         }
 
         $ps = $con->getConexao()->prepare("SELECT id_usuario, id_permissao,incluir,deletar,alterar,consultar FROM usuario_permissao WHERE id_usuario IN ($in_usu)");
@@ -1298,30 +1300,28 @@ class Empresa {
 
         while ($ps->fetch()) {
 
-            $permissoes = $usuarios[$id_usuario]->permissoes;
-            
-            $p = null;
-
-            foreach ($permissoes as $key => $perm) {
-                if ($perm->id == $id_permissao) {
-                    $p = $perm;
-                    break;
-                }
-            }
-
-            if ($p == null) {
-
-                continue;
-            }
-
-            $p->alt = $alterar == 1;
-            $p->in = $incluir == 1;
-            $p->del = $deletar == 1;
-            $p->cons = $consultar == 1;
-
             foreach ($usuarios[$id_usuario] as $key => $usu) {
 
-                $usu->permissoes[] = $p;
+                $permissoes = $usu->permissoes;
+
+                $p = null;
+
+                foreach ($permissoes as $key => $perm) {
+                    if ($perm->id == $id_permissao) {
+                        $p = $perm;
+                        break;
+                    }
+                }
+
+                if ($p == null) {
+
+                    continue;
+                }
+
+                $p->alt = $alterar == 1;
+                $p->in = $incluir == 1;
+                $p->del = $deletar == 1;
+                $p->cons = $consultar == 1;
             }
         }
 
@@ -2939,9 +2939,11 @@ class Empresa {
         }
 
         $ps->close();
-        
-        foreach($usuarios as $key=>$value){
-            $value->permissoes = Sistema::getPermissoes($value->empresa);
+
+        foreach ($usuarios as $key => $value) {
+            foreach ($value as $key2 => $value2) {
+                $value2->permissoes = Sistema::getPermissoes($value2->empresa);
+            }
         }
 
         $ps = $con->getConexao()->prepare("SELECT id_usuario, id_permissao,incluir,deletar,alterar,consultar FROM usuario_permissao WHERE id_usuario IN ($in_usu)");
@@ -2950,30 +2952,28 @@ class Empresa {
 
         while ($ps->fetch()) {
 
-            $permissoes = $usuarios[$id_usuario]->permissoes;
-            
-            $p = null;
-
-            foreach ($permissoes as $key => $perm) {
-                if ($perm->id == $id_permissao) {
-                    $p = $perm;
-                    break;
-                }
-            }
-
-            if ($p == null) {
-
-                continue;
-            }
-
-            $p->alt = $alterar == 1;
-            $p->in = $incluir == 1;
-            $p->del = $deletar == 1;
-            $p->cons = $consultar == 1;
-
             foreach ($usuarios[$id_usuario] as $key => $usu) {
 
-                $usu->permissoes[] = $p;
+                $permissoes = $usu->permissoes;
+
+                $p = null;
+
+                foreach ($permissoes as $key => $perm) {
+                    if ($perm->id == $id_permissao) {
+                        $p = $perm;
+                        break;
+                    }
+                }
+
+                if ($p == null) {
+
+                    continue;
+                }
+
+                $p->alt = $alterar == 1;
+                $p->in = $incluir == 1;
+                $p->del = $deletar == 1;
+                $p->cons = $consultar == 1;
             }
         }
 
@@ -3214,7 +3214,6 @@ class Empresa {
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
 
 
-
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
         $ps->bind_result($id_cotacao, $obs, $frete, $data, $em_litros, $id_status, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_for, $cod_for, $nom_for, $cnpj_for, $hab, $ie, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for);
@@ -3358,40 +3357,39 @@ class Empresa {
         }
         $ps->close();
 
-        foreach($usuarios as $key=>$value){
-            $value->permissoes = Sistema::getPermissoes($value->empresa);
+        foreach ($usuarios as $key => $value) {
+            foreach ($value as $key2 => $value2) {
+                $value2->permissoes = Sistema::getPermissoes($value2->empresa);
+            }
         }
-        
+
         $ps = $con->getConexao()->prepare("SELECT id_usuario, id_permissao,incluir,deletar,alterar,consultar FROM usuario_permissao WHERE id_usuario IN ($in_usu)");
         $ps->execute();
         $ps->bind_result($id_usuario, $id_permissao, $incluir, $deletar, $alterar, $consultar);
 
         while ($ps->fetch()) {
-            
-            $permissoes = $usuarios[$id_usuario]->permissoes;
-
-            $p = null;
-
-            foreach ($permissoes as $key => $perm) {
-                if ($perm->id == $id_permissao) {
-                    $p = $perm;
-                    break;
-                }
-            }
-
-            if ($p == null) {
-
-                continue;
-            }
-
-            $p->alt = $alterar == 1;
-            $p->in = $incluir == 1;
-            $p->del = $deletar == 1;
-            $p->cons = $consultar == 1;
-
             foreach ($usuarios[$id_usuario] as $key => $usu) {
+                
+                $permissoes = $usu->permissoes;
 
-                $usu->permissoes[] = $p;
+                $p = null;
+
+                foreach ($permissoes as $key => $perm) {
+                    if ($perm->id == $id_permissao) {
+                        $p = $perm;
+                        break;
+                    }
+                }
+
+                if ($p == null) {
+
+                    continue;
+                }
+
+                $p->alt = $alterar == 1;
+                $p->in = $incluir == 1;
+                $p->del = $deletar == 1;
+                $p->cons = $consultar == 1;
             }
         }
 
@@ -4437,8 +4435,8 @@ class Empresa {
             $v[$id_entidade]->telefones[] = $telefone;
         }
         $ps->close();
-        
-        foreach($usuarios as $key=>$value){
+
+        foreach ($usuarios as $key => $value) {
             $value->permissoes = Sistema::getPermissoes($value->empresa);
         }
 
@@ -4447,14 +4445,14 @@ class Empresa {
         $ps->bind_result($id_usuario, $id_permissao, $incluir, $deletar, $alterar, $consultar);
 
         while ($ps->fetch()) {
-            
+
             $permissoes = $usuarios[$id_usuario]->permissoes;
 
             $p = null;
 
             foreach ($permissoes as $key => $perm) {
                 if ($perm->id == $id_permissao) {
-                    $p = Utilidades::copy($perm);
+                    $p = $perm;
                     break;
                 }
             }
@@ -4468,8 +4466,6 @@ class Empresa {
             $p->in = $incluir == 1;
             $p->del = $deletar == 1;
             $p->cons = $consultar == 1;
-
-            $usuarios[$id_usuario]->permissoes[] = $p;
         }
 
         $ps->close();
