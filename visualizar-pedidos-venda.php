@@ -189,7 +189,7 @@
                                                 <input type="text" ng-model="pedido.cliente.razao_social" class="form-control" placeholder="Nome do cliente" value="" disabled="">
                                             </div>
                                             <div class="col">
-                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#clientes" ng-disabled="!pedido.status.altera"><i class="fas fa-search"></i></a>
+                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" ng-click="clientes.attList()" data-target="#clientes" ng-disabled="!pedido.status.altera"><i class="fas fa-search"></i></a>
                                             </div>
                                         </div>
                                     </div>
@@ -223,7 +223,7 @@
                                                 <input type="text" class="form-control" ng-model="pedido.transportadora.razao_social" placeholder="Nome da Transportadora" disabled>
                                             </div>
                                             <div class="col">
-                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#transportadoras" ng-disabled="!pedido.status.altera"><i class="fas fa-search"></i></a>
+                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" ng-click="transportadoras.attList()" data-target="#transportadoras" ng-disabled="!pedido.status.altera"><i class="fas fa-search"></i></a>
                                             </div>
                                             <div class="form-inline col-4">
                                                 <label for="" style="margin-left: 25px;margin-right: 10px;">Frete R$</label>

@@ -188,6 +188,15 @@ rtc.service('compraParceiroService', function ($http, $q) {
         });
     }
 })
+rtc.service('permissaoService', function ($http, $q) {
+    this.getPermissoes = function (fn) {
+        baseService($http, $q, {
+            query: "$r->permissoes=Sistema::getPermissoes($empresa)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('usuarioService', function ($http, $q) {
     this.getRTC = function (fn) {
         baseService($http, $q, {
@@ -1423,7 +1432,7 @@ rtc.service('empresaService', function ($http, $q) {
     this.setEmpresa = function (empresa, fn) {
         baseService($http, $q, {
             o: empresa,
-            query: "$empresa=$o;$ses->set('empresa',$empresa)",
+            query: "$r->usuario=Sistema::getUsuario(\"usuario.cpf='\".$usuario->cpf->valor.\"' AND usuario.id_empresa=$o->id\");$r->aceito=$r->usuario!==null",
             sucesso: fn,
             falha: fn
         });

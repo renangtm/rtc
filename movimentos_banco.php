@@ -259,7 +259,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
-                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#vencimentos"><i class="fas fa-search"></i></a>
+                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" ng-click="notas.attList()" data-target="#vencimentos"><i class="fas fa-search"></i></a>
                                             </div>
                                         </div>
                                     </div>
@@ -273,7 +273,7 @@
                                                 <input type="text" ng-model="movimento.banco.nome" class="form-control" placeholder="Nome do banco" value="" disabled="">
                                             </div>
                                             <div class="col-md-2">
-                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#bancos"><i class="fas fa-search"></i></a>
+                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" ng-click="bancos.attList()" data-target="#bancos"><i class="fas fa-search"></i></a>
                                             </div>
                                         </div>
                                     </div>

@@ -395,7 +395,7 @@
                                         <div class="col-md-10">
                                             Telefone
                                             <hr>
-                                            <input id="txttel" type="text" ng-model="telefone.numero" placeholder="" class="form-control sp_celphones" maxlength="9">
+                                            <input id="txttel" type="text" ng-model="telefone.numero" placeholder="" class="form-control">
                                         </div>
 
                                         <div class="col-md-2">

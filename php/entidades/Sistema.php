@@ -1326,9 +1326,12 @@ class Sistema {
                 Sistema::P_LOGO(),
                 Sistema::P_PRODUTO())
             ), new RTC(2, array(
-                Sistema::P_CAMPANHA())
-            ), new RTC(3, array(
                 Sistema::P_CAMPANHA(),
+                Sistema::P_CATEGORIA_CLIENTE(),
+                Sistema::P_CATEGORIA_PRODUTO(),
+                Sistema::P_CATEGORIA_DOCUMENTO(),
+                Sistema::P_CONFIGURACAO_EMPRESA())
+            ), new RTC(3, array(
                 Sistema::P_GRUPO_CIDADE(),
                 Sistema::P_CFG(),
                 Sistema::P_TABELA())
@@ -1342,8 +1345,7 @@ class Sistema {
                 Sistema::P_MOVIMENTO()
                     )), new RTC(6, array(
                 Sistema::P_LOTE(),
-                Sistema::P_SEPARACAO(),
-                Sistema::P_TABELA()
+                Sistema::P_SEPARACAO()
                     )), new RTC(7, array(
                 Sistema::P_GERENCIADOR()
         )));
@@ -1356,13 +1358,13 @@ class Sistema {
         if ($empresa !== null) {
             $rtc = $empresa->getRTC(new ConnectionFactory());
             foreach ($rtc->permissoes as $key => $value) {
-                $perms[] = $value;
+                $perms[] = Utilidades::copy($value);
             }
 
             foreach ($empresa->permissoes_especiais as $key => $value) {
                 if ($key < $rtc->numero) {
                     foreach ($value as $key2 => $value2) {
-                        $perms[] = $value2;
+                        $perms[] = Utilidades::copy($value2);
                     }
                 }
             }
@@ -1482,7 +1484,7 @@ class Sistema {
                 . "email_usu.endereco,"
                 . "email_usu.senha,"
                 . "empresa.id,"
-                . "empresa.tipo,"
+                . "empresa.tipo_empresa,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
                 . "empresa.consigna,"
@@ -1515,7 +1517,6 @@ class Sistema {
                 . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
                 . "INNER JOIN estado ON cidade.id_estado = estado.id "
                 . "WHERE " . $filtro;
-
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
@@ -1642,7 +1643,7 @@ class Sistema {
             $p = null;
 
             foreach ($permissoes as $key => $perm) {
-                if ($perm->id == $id_permissao) {
+                if ($perm->id === $id_permissao) {
                     $p = $perm;
                     break;
                 }
@@ -1653,12 +1654,11 @@ class Sistema {
                 continue;
             }
 
-            $p->alt = $alterar;
-            $p->in = $incluir;
-            $p->del = $deletar;
-            $p->cons = $consultar;
+            $p->alt = $alterar==1;
+            $p->in = $incluir==1;
+            $p->del = $deletar==1;
+            $p->cons = $consultar==1;
 
-            $usuarios[$id_usuario]->permissoes[] = $p;
         }
 
         $ps->close();
@@ -2000,12 +2000,12 @@ class Sistema {
                 continue;
             }
 
-            $p->alt = $alterar;
-            $p->in = $incluir;
-            $p->del = $deletar;
-            $p->cons = $consultar;
+            $p->alt = $alterar==1;
+            $p->in = $incluir==1;
+            $p->del = $deletar==1;
+            $p->cons = $consultar==1;
 
-            $usuarios[$id_usuario]->permissoes[] = $p;
+      
         }
 
         $ps->close();

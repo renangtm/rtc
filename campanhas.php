@@ -252,7 +252,7 @@
                                     <hr>
                                     <div class="form-group row" style="padding: 15px;">
                                         <br>
-                                        <button class="btn btn-primary m-b-20" type="button" onclick="$('#produtos').modal('show')"><i class="fa fa-plus-circle"></i>&nbsp; Adicionar produto</button>
+                                        <button class="btn btn-primary m-b-20" type="button" ng-click="produtos.attList()" onclick="$('#produtos').modal('show')"><i class="fa fa-plus-circle"></i>&nbsp; Adicionar produto</button>
                                         <br>
 
                                         <table class="table table-striped table-bordered first">

@@ -456,7 +456,7 @@ function createAssinc(lista, cols, rows, maxPage) {
         }
     }
 
-    listar.attList();
+   
 
     return listar;
 
@@ -760,36 +760,99 @@ function fix(str, n) {
 
 }
 
+function encode64SPEC(val) {
+
+    var chrArr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#";
+
+    var res = "";
+
+    for (var i = 0; i < val.length; i += 3) {
+        var k = 0;
+
+        var u = 0;
+        for (; u < 3 && (i + u) < val.length; u++)
+            k = k << 8 | val.charCodeAt(i + u);
+        for (var a = u; a < 3; a++)
+            k = k << 8;
+
+        for (var j = 0; j < 4; j++) {
+            if (j > u) {
+                res += "*";
+            } else {
+                res += chrArr.charAt((((k >> ((3 - j) * 6)) & 63)));
+            }
+        }
+    }
+
+    return res;
+
+}
+
+function decode64SPEC(val) {
+
+    var chrArr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#";
+    var invMap = {};
+    for (var i = 0; i < chrArr.length; i++) {
+        invMap["c" + chrArr.charCodeAt(i)] = i;
+    }
+   
+    var res = "";
+
+    for (var i = 0; i < val.length; i += 4) {
+        var k = 0;
+
+        var x = 0;
+        for (var u = 0; u < 4 && (i + u) < val.length; u++) {
+
+            if (val.charAt(i + u) != '*') {
+                if (typeof invMap["c" + val.charCodeAt(i + u)] === 'undefined') {
+                    return "";
+                }
+                k = k << 6 | invMap["c" + val.charCodeAt(i + u)];
+                x += 6;
+            } else {
+                k = k << 6;
+            }
+        }
+
+        for (var j = 0; j < 3 && x >= 8; j++, x -= 8) {
+            res += String.fromCharCode((k >> (2 - j) * 8) & 255);
+        }
+    }
+
+    return res;
+}
+
 var ids = [];
 var id = 0;
 
 var teste = false;
 
-function baseService(http, q, obj, get, cancel,noloading) {
+function baseService(http, q, obj, get, cancel, noloading) {
 
     var idt = ++id;
 
-    if(noloading !== true){
-        
+    if (noloading !== true) {
+
         noloading = false;
-        
+
     }
-    
+
     var p = q.defer();
 
     if (teste) {
 
-        document.write("<hr><xmp>c=" + obj.query.split("&").join("<e>").split("+").join("<m>").split("%").join("<p>").split("(").join("<lp>").split(")").join("<rp>").split("-").join("<mi>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("<e>").split("+").join("<m>").split("%").join("<p>").split("(").join("<lp>").split(")").join("<rp>").split("-").join("<mi>")) : "")+"</xmp>");
+        document.write("c=" + encode64SPEC(obj.query) + ((typeof obj["o"] !== 'undefined') ? ("&o=" + encode64SPEC(paraJson(obj.o))) : "")+"<hr>");
 
     }
 
     http({
         url: 'php/controler/crt.php',
         method: ((get == null) ? "POST" : "GET"),
-        data: "c=" + obj.query.split("&").join("<e>").split("+").join("<m>").split("%").join("<p>").split("(").join("<lp>").split(")").join("<rp>").split("-").join("<mi>") + ((typeof obj["o"] !== 'undefined') ? ("&o=" + paraJson(obj.o).split("&").join("<e>").split("+").join("<m>").split("%").join("<p>").split("(").join("<lp>").split(")").join("<rp>").split("-").join("<mi>")) : ""),
+        data: "c=" + encode64SPEC(obj.query) + ((typeof obj["o"] !== 'undefined') ? ("&o=" + encode64SPEC(paraJson(obj.o))) : ""),
         timeout: p.promise,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (exx) {
-        
+       
         var m = 0;
         for (var i = 0; i < ids.length; i++) {
             if (ids[i] == idt) {
@@ -803,8 +866,8 @@ function baseService(http, q, obj, get, cancel,noloading) {
         }
 
         if (typeof obj["sucesso"] !== 'undefined') {
-           
-            obj.sucesso(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&").split("<m>").join("+").split("<p>").join("%").split("<lp>").join("(").split("<rp>").join(")").split("<mi>").join("-")));
+            
+            obj.sucesso(paraObjeto(decode64SPEC(exx.data)));
         }
 
 
@@ -823,7 +886,7 @@ function baseService(http, q, obj, get, cancel,noloading) {
         }
 
         if (typeof obj["falha"] !== 'undefined') {
-            obj.falha(paraObjeto(JSON.stringify(exx.data).split("<e>").join("&").split("<m>").join("+").split("<p>").join("%").split("<lp>").join("(").split("<rp>").join(")").split("<mi>").join("-")));
+            obj.falha(paraObjeto(decode64SPEC(exx.data)));
         }
 
     })
@@ -847,8 +910,10 @@ function baseService(http, q, obj, get, cancel,noloading) {
     }
     requests = [];
 
-    if(!noloading)ids[ids.length] = idt;
-    if(!noloading)requests[requests.length] = p;
+    if (!noloading)
+        ids[ids.length] = idt;
+    if (!noloading)
+        requests[requests.length] = p;
 
 }
 
@@ -1932,7 +1997,7 @@ rtc.directive('ngRightClick', function ($parse) {
 });
 
 var scrolls = [];
-rtc.directive('grafico', function ($sce,$timeout) {
+rtc.directive('grafico', function ($sce, $timeout) {
     return {
         restrict: 'E',
         scope: {
@@ -1941,100 +2006,100 @@ rtc.directive('grafico', function ($sce,$timeout) {
             pontos: '=',
             decimal: '=',
             maxBars: '=',
-            uniqueId:'=',
-            legenda:'=',
-            fixedMax:'=?'
+            uniqueId: '=',
+            legenda: '=',
+            fixedMax: '=?'
         },
         templateUrl: 'grafico.html',
         link: function (scope, element, attrs) {
 
             function lk() {
-                
-                if(typeof scope.decimal === 'undefined'){
-                    
+
+                if (typeof scope.decimal === 'undefined') {
+
                     scope.decimal = false;
-                    
+
                 }
-                
+
                 scope.pt = scope.pontos.length;
-                
-                if(typeof scope.maxBars !== 'undefined'){
-                    
+
+                if (typeof scope.maxBars !== 'undefined') {
+
                     scope.pt = scope.maxBars;
-                    
+
                 }
-                
-                scope.np = parseInt(Math.max(1,scope.pt));
-                
-                
+
+                scope.np = parseInt(Math.max(1, scope.pt));
+
+
                 scope.ymark = [];
                 scope.scroll = 2;
-                
+
                 var a = null;
-                for(var i=0;i<scrolls.length;i++){
-                    if(scrolls[i].id === scope.uniqueId){
-                        a=scrolls[i];
+                for (var i = 0; i < scrolls.length; i++) {
+                    if (scrolls[i].id === scope.uniqueId) {
+                        a = scrolls[i];
                         scope.scroll = a.valor;
                     }
                 }
-                
-                if(a === null){
-                    a = {id:scope.uniqueId,valor:scope.scroll};
+
+                if (a === null) {
+                    a = {id: scope.uniqueId, valor: scope.scroll};
                     scrolls[scrolls.length] = a;
                 }
-                
+
                 scope.spacing = 0.5;
                 scope.max = 0;
                 var setMax = false;
                 scope.min = 0;
                 var setMin = false;
                 var stoped = true;
-                
-               
-                
-                $(document).mouseup(function(){
-                    
+
+
+
+                $(document).mouseup(function () {
+
                     stoped = true;
-                    
+
                 })
-                
-                scope.addScroll = function(){
-                    
+
+                scope.addScroll = function () {
+
                     stoped = false;
-                    var fn = function(){
-                        if(scope.scroll+2 > 3){
+                    var fn = function () {
+                        if (scope.scroll + 2 > 3) {
                             stoped = true;
                             return;
                         }
-                        scope.scroll+=2;
+                        scope.scroll += 2;
                         a.valor = scope.scroll;
-                        if(!stoped){
-                            $timeout(fn,20);
+                        if (!stoped) {
+                            $timeout(fn, 20);
                         }
                     }
-                   
+
                     fn();
                 }
-                
-                scope.removeScroll = function(){
+
+                scope.removeScroll = function () {
                     stoped = false;
-                    var fn = function(){
-                        
-                        scope.scroll-=2;
+                    var fn = function () {
+
+                        scope.scroll -= 2;
                         a.valor = scope.scroll;
-                        if(!stoped){
-                            $timeout(fn,20);
+                        if (!stoped) {
+                            $timeout(fn, 20);
                         }
                     }
                     fn();
                 }
-                
+
 
                 for (var i = 0; i < scope.pontos.length; i++) {
-                    
+
                     scope.pontos[i].numero = i;
                     scope.pontos[i].nome = $sce.trustAsHtml(scope.pontos[i].nome);
-                    
+
                     if (scope.pontos[i].valor > scope.max || !setMax) {
                         scope.max = scope.pontos[i].valor;
                         setMax = true;
@@ -2044,50 +2109,52 @@ rtc.directive('grafico', function ($sce,$timeout) {
                         setMin = true;
                     }
                 }
-                
-                if(typeof scope["fixedMax"] !== 'undefined'){
-                    
+
+                if (typeof scope["fixedMax"] !== 'undefined') {
+
                     scope.max = scope.fixedMax;
-                    
+
                 }
 
-             
-                var itv = Math.abs(scope.max) / Math.min(scope.pontos.length,12);
-                
-                if(!scope.decimal){
-                    
+
+                var itv = Math.abs(scope.max) / Math.min(scope.pontos.length, 12);
+
+                if (!scope.decimal) {
+
                     itv = Math.ceil(itv);
-                    
+
                 }
 
                 if (itv === 0) {
                     scope.ymark = [0];
                 } else {
 
-                    for (var i = scope.min,j=0; i <= scope.max; i += itv,j++) {
-                        scope.ymark[scope.ymark.length] = {valor:i,numero:j};
+                    for (var i = scope.min, j = 0; i <= scope.max; i += itv, j++) {
+                        scope.ymark[scope.ymark.length] = {valor: i, numero: j};
                     }
 
                 }
-                
-                scope.percent = function(ponto){
-                    
+
+                scope.percent = function (ponto) {
+
                     var x = ponto.valor;
-                    
-                    
-                    return ((x-scope.min)/(scope.max-scope.min))*100;
-                    
+
+
+                    return ((x - scope.min) / (scope.max - scope.min)) * 100;
+
                 }
 
             }
-            
+
             lk();
-            
-            scope.$watchCollection(function(){return scope.pontos;},function(){
-                
+
+            scope.$watchCollection(function () {
+                return scope.pontos;
+            }, function () {
+
                 lk();
-                
-            },true)
+
+            }, true)
 
 
         }

@@ -160,7 +160,7 @@ $id_empresa = $_GET['empresa'];
                                         <td></td>
                                         <td>
                                             <div class="product-btn">
-                                                <a href="#" class="btn btn-outline-light btnaddprod" ng-click="cotacoes.attList()" data-title="addproduto" data-toggle="modal" data-target="#produtos"><i class="fas fa-plus-circle"></i></a>
+                                                <a href="#" class="btn btn-outline-light btnaddprod" ng-click="produtos.attList()" data-title="addproduto" data-toggle="modal" data-target="#produtos"><i class="fas fa-plus-circle"></i></a>
                                             </div>
                                         </td>
 

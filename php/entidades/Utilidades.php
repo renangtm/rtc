@@ -199,7 +199,7 @@ class Utilidades {
 
     public static function fromJson($str) {
 
-        $js = json_decode($str);
+        $js = json_decode(utf8_decode($str));
 
         return self::getObject($js);
     }
@@ -1693,6 +1693,68 @@ class Utilidades {
         $fornecedor->merge(new ConnectionFactory());
 
         return $fornecedor;
+    }
+    
+    public static function base64encodeSPEC($val) {
+
+        $chrArr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#";
+
+        $res = "";
+
+        for ($i = 0; $i < strlen($val); $i += 3) {
+            $k = 0;
+
+            $u = 0;
+            for (; $u < 3 && ($i + $u) < strlen($val); $u++)
+                $k = $k << 8 | ord($val{$i + $u});
+            for ($a = $u; $a < 3; $a++)
+                $k = $k << 8;
+
+            for ($j = 0; $j < 4; $j++) {
+                if ($j > $u) {
+                    $res .= "*";
+                } else {
+                    $res .= $chrArr{((($k >> ((3 - $j) * 6)) & 63))};
+                }
+            }
+        }
+
+        return $res;
+    }
+
+    public static function base64decodeSPEC($val) {
+
+        $chrArr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#";
+
+        for ($i = 0; $i < strlen($chrArr); $i++) {
+            $invMap[$chrArr{$i}] = $i;
+        }
+
+        $res = "";
+
+        for ($i = 0; $i < strlen($val); $i += 4) {
+            $k = 0;
+
+            $x = 0;
+            for ($u = 0; $u < 4 && ($i + $u) < strlen($val); $u++) {
+
+                if ($val{$i + $u} != '*') {
+                    if (!isset($invMap[$val{$i + $u}])) {
+                        return "";
+                    }
+                    $k = $k << 6 | $invMap[$val{$i + $u}];
+                    $x += 6;
+                } else {
+                    $k = $k << 6;
+                }
+            }
+
+            for ($j = 0; $j < 3 && $x >= 8; $j++, $x -= 8) {
+                $res .= chr(($k >> (2 - $j) * 8) & 255);
+            }
+        }
+
+        return $res;
     }
 
     public static function base64encode($val) {
