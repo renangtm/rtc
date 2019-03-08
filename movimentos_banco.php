@@ -107,13 +107,13 @@
                                                         <td>{{mov[0].valor}}</td>
                                                         <td>{{mov[0].juros}}</td>
                                                         <td>{{mov[0].descontos}}</td>
-                                                        <td>{{mov[0].data | data}}</td>
+                                                        <td>{{mov[0].data| data}}</td>
                                                         <td>{{mov[0].banco.nome}}</td>
                                                         <td>{{mov[0].saldo_anterior}}</td>
-                                                        <td style="{{(((mov[0].valor+mov[0].juros-mov[0].descontos)*(mov[0].operacao.debito?-1:1))<0)?'color:Red':'color:Green'}}">{{((mov[0].valor+mov[0].juros-mov[0].descontos)*(mov[0].operacao.debito?-1:1))>0?'+':''}}{{(mov[0].valor+mov[0].juros-mov[0].descontos)*(mov[0].operacao.debito?-1:1)}}</td>
+                                                        <td style="{{(((mov[0].valor + mov[0].juros - mov[0].descontos) * (mov[0].operacao.debito ? -1 : 1)) < 0) ? 'color:Red' : 'color:Green'}}">{{((mov[0].valor + mov[0].juros - mov[0].descontos) * (mov[0].operacao.debito ? -1 : 1)) > 0 ? '+' : ''}}{{(mov[0].valor + mov[0].juros - mov[0].descontos) * (mov[0].operacao.debito ? -1 : 1)}}</td>
                                                         <td>{{mov[0].operacao.nome}}</td>
                                                         <td>{{mov[0].historico.nome}}</td>
-                                                       <th>
+                                                        <th>
                                                             <div class="product-btn">                
                                                                 <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setMovimento(mov[0])" data-toggle="modal" data-target="#add"><i class="fas fa-info"></i></a>
                                                                 <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setMovimento(mov[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
@@ -238,7 +238,7 @@
                                             <option ng-repeat="o in operacoes" ng-value="o">{{o.nome}} - {{o.debito?'Debito':'Credito'}}</option>
                                         </select>
                                     </div>
-                                    <div ng-if="movimento.estorno>0" style="color:Orange">
+                                    <div ng-if="movimento.estorno > 0" style="color:Orange">
                                         <strong>Estorno do movimento {{movimento.estorno}}</strong>
                                     </div>
                                     <div class="form-group">
@@ -255,7 +255,7 @@
                                                     DD/MM/AAAA
                                                 </div>
                                                 <div ng-if="movimento.vencimento !== null">
-                                                    {{movimento.vencimento.data | data}}
+                                                    {{movimento.vencimento.data| data}}
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
@@ -278,11 +278,11 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-light" data-dismiss="modal" ng-if="movimento.id===0">Fechar</button>
-                                        <button class="btn btn-primary" ng-if="movimento.id===0">
+                                        <button type="button" class="btn btn-light" data-dismiss="modal" ng-if="movimento.id === 0">Fechar</button>
+                                        <button class="btn btn-primary" ng-if="movimento.id === 0">
                                             <i class="fas fa-plus-circle"></i> &nbsp; Incluir
                                         </button>
-                                        <button type="button" class="btn btn-light" ng-if="movimento.id!==0">
+                                        <button type="button" class="btn btn-light" ng-if="movimento.id !== 0">
                                             <i class="fas fa-stop"></i> &nbsp; Nao e possivel alterar um movimento, somente deletar e incluir
                                         </button>
                                     </div>
@@ -292,9 +292,9 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- /.modal-content -->
-                
+
                 <div class="modal fade" id="vencimentos" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -333,9 +333,9 @@
                                                             </thead>
                                                             <tr ng-repeat="venc in not[0].vencimentos" style="{{venc.movimento !== null ? 'color:Green':'color:Red'}}">
                                                                 <th>{{venc.valor}} R$</th>
-                                                                <th>{{venc.data | data}}</th>
+                                                                <th>{{venc.data| data}}</th>
                                                                 <th>{{venc.movimento !== null ? 'Sim':'Nao'}}</th>
-                                                                <th><button class="btn btn-success" ng-click="setVencimento(venc)" ng-disabled="venc.movimento!==null"><i class="fas fa-info"></i></button></th>
+                                                                <th><button class="btn btn-success" ng-click="setVencimento(venc)" ng-disabled="venc.movimento !== null"><i class="fas fa-info"></i></button></th>
                                                             </tr>
                                                         </table>
                                                     </div>																	
@@ -361,8 +361,8 @@
                         </div>
                     </div>
                 </div>
-                
-                
+
+
                 <div class="modal fade" id="bancos" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -403,7 +403,7 @@
                     </div>
                 </div>
 
-                
+
                 <!-- /.modal-content DELETE --> 
                 <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
@@ -422,130 +422,114 @@
                         </div>
                     </div>
                 </div>
-               <!-- /.modal-content LOADING --> 
-            <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                        </div>
-                        <div class="modal-body text-center">
+                <!-- /.modal-content LOADING --> 
+                <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
-                            <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                            <br>
-                            <h3 style="margin-top:20px;">Carregando as informações...</h3>
+                <!-- jquery 3.3.1 -->
+                <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+                <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
+                <script src="assets/libs/js/form-mask.js"></script>
+                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
-                        </div>
-                        <div class="modal-footer">
-                        </div>
-                    </div>
-                </div>
-            </div>
+                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+                <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+                <!-- slimscroll js -->
+                <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+                <!-- main js -->
+                <script src="assets/libs/js/main-js.js"></script>
+                <!-- chart chartist js -->
+                <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
+                <!-- sparkline js -->
+                <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+                <!-- morris js -->
+                <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
+                <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
+                <!-- chart c3 js -->
+                <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
+                <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+                <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
+                <script src="assets/libs/js/dashboard-ecommerce.js"></script>
+                <!-- parsley js -->
+                <script src="assets/vendor/parsley/parsley.js"></script>
 
+                <!-- Optional JavaScript -->
+                <script>
 
-            <!-- jquery 3.3.1 -->
-            <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-            <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
-            <script src="assets/libs/js/form-mask.js"></script>
-            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+                                               var l = $('#loading');
+                                                            l.hide();
 
-            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-            <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-            <!-- slimscroll js -->
-            <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-            <!-- main js -->
-            <script src="assets/libs/js/main-js.js"></script>
-            <!-- chart chartist js -->
-            <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
-            <!-- sparkline js -->
-            <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
-            <!-- morris js -->
-            <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
-            <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
-            <!-- chart c3 js -->
-            <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
-            <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
-            <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
-            <script src="assets/libs/js/dashboard-ecommerce.js"></script>
-            <!-- parsley js -->
-            <script src="assets/vendor/parsley/parsley.js"></script>
+                                                            
+                                                            var x = 0;
+                                                            var y = 0;
+                                                                
+                                                            $(document).mousemove(function (e) {
+                                                                
+                                                                x = e.clientX;
+                                                                y = e.clientY;
+                                                                
+                                                                var s = $(this).scrollTop();
 
-            <!-- Optional JavaScript -->
-            <script>
+                                                                l.offset({top: (y + s), left: x});
 
-                                var sh = false;
-                                var it = null;
+                                                            })
 
-                                loading.show = function () {
-                                    if (it != null) {
-                                        clearInterval(it);
-                                    }
-                                    it = setInterval(function () {
-                                        $("#loading").modal("show");
-                                        if ($("#loading").hasClass('in')) {
-                                            clearInterval(it);
-                                        }
-                                    }, 300)
+                                                            var sh = false;
+                                                            var it = null;
 
-                                }
+                                                            loading.show = function () {
+                                                                l.show();
+                                                                var s = $(document).scrollTop();
 
-                                loading.close = function () {
-
-                                    if (it != null) {
-                                        clearInterval(it);
-                                    }
-                                    it = setInterval(function () {
-                                        $("#loading").modal("hide");
-                                        if (!$("#loading").hasClass('in')) {
-                                            clearInterval(it);
-                                        }
-                                    }, 300)
-
-                                }
-                    
-                                            $(document).ready(function () {
-                                                $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
-                                                $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                                                $('.btndel').tooltip({title: "Deletar", placement: "top"});
-                                            });
-                                            $(document).ready(function () {
-                                                $('#clientes').DataTable({
-                                                    "language": {//Altera o idioma do DataTable para o português do Brasil
-                                                        "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
-                                                    },
-                                                });
-
-                                                $.getJSON('estados_cidades.json', function (data) {
-                                                    var items = [];
-                                                    var options = '<option value="">escolha um estado</option>';
-                                                    $.each(data, function (key, val) {
-                                                        options += '<option value="' + val.nome + '">' + val.nome + '</option>';
-                                                    });
-                                                    $("#estados").html(options);
-
-                                                    $("#estados").change(function () {
-
-                                                        var options_cidades = '';
-                                                        var str = "";
-
-                                                        $("#estados option:selected").each(function () {
-                                                            str += $(this).text();
-                                                        });
-
-                                                        $.each(data, function (key, val) {
-                                                            if (val.nome == str) {
-                                                                $.each(val.cidades, function (key_city, val_city) {
-                                                                    options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
-                                                                });
+                                                                l.offset({top: (y + s), left: x});
+                                                                
                                                             }
-                                                        });
-                                                        $("#cidades").html(options_cidades);
 
-                                                    }).change();
+                                                            loading.close = function () {
+                                                                l.hide();
+                                                            }
 
+                                                $(document).ready(function () {
+                                                    $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                                                    $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                                                    $('.btndel').tooltip({title: "Deletar", placement: "top"});
                                                 });
-                                            });
+                                                $(document).ready(function () {
+                                                    $('#clientes').DataTable({
+                                                        "language": {//Altera o idioma do DataTable para o português do Brasil
+                                                            "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
+                                                        },
+                                                    });
+
+                                                    $.getJSON('estados_cidades.json', function (data) {
+                                                        var items = [];
+                                                        var options = '<option value="">escolha um estado</option>';
+                                                        $.each(data, function (key, val) {
+                                                            options += '<option value="' + val.nome + '">' + val.nome + '</option>';
+                                                        });
+                                                        $("#estados").html(options);
+
+                                                        $("#estados").change(function () {
+
+                                                            var options_cidades = '';
+                                                            var str = "";
+
+                                                            $("#estados option:selected").each(function () {
+                                                                str += $(this).text();
+                                                            });
+
+                                                            $.each(data, function (key, val) {
+                                                                if (val.nome == str) {
+                                                                    $.each(val.cidades, function (key_city, val_city) {
+                                                                        options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
+                                                                    });
+                                                                }
+                                                            });
+                                                            $("#cidades").html(options_cidades);
+
+                                                        }).change();
+
+                                                    });
+                                                });
 
                 </script>
 

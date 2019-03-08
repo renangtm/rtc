@@ -25,7 +25,7 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
 
         ob_implicit_flush();
 
-        $address = 'www.rtcagro.com.br';
+        $address = 'www.tratordecompras.com.br';
         $service_port = 10000;
 
         if (($sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) === false) {

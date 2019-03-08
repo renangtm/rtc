@@ -137,13 +137,13 @@
                                                                             <td><?php
                                                                                 $str = "?>{{usuari[0].senha}}<?php";
                                                                                 echo md5($str);
-                                                                             ?></td>
+                                                                                ?></td>
                                                                         </tr>
-                                                                         <tr>
+                                                                        <tr>
                                                                             <td>CPF:</td>
                                                                             <td>{{usuari[0].cpf.valor}}</td>
                                                                         </tr>
-                                                                         <tr>
+                                                                        <tr>
                                                                             <td>RG:</td>
                                                                             <td>{{usuari[0].rg.valor}}</td>
                                                                         </tr>
@@ -265,15 +265,15 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                               
+
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle">
-                                    <div ng-if="usuario.id===0">
+                                    <div ng-if="usuario.id === 0">
                                         <i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Adicione
                                     </div>
-                                    <div ng-if="usuario.id>0">
+                                    <div ng-if="usuario.id > 0">
                                         <i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere
                                     </div>
-                                    
+
                                 </h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">×</span>
@@ -460,86 +460,70 @@
                 <!-- /.modal-content --> 
 
                 <!-- /.modal-content LOADING --> 
-            <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                        </div>
-                        <div class="modal-body text-center">
+                <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
-                            <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                            <br>
-                            <h3 style="margin-top:20px;">Carregando as informações...</h3>
+                <!-- jquery 3.3.1 -->
+                <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+                <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
+                <script src="assets/libs/js/form-mask.js"></script>
+                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
-                        </div>
-                        <div class="modal-footer">
-                        </div>
-                    </div>
-                </div>
-            </div>
+                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+                <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+                <!-- slimscroll js -->
+                <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+                <!-- main js -->
+                <script src="assets/libs/js/main-js.js"></script>
+                <!-- chart chartist js -->
+                <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
+                <!-- sparkline js -->
+                <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+                <!-- morris js -->
+                <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
+                <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
+                <!-- chart c3 js -->
+                <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
+                <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+                <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
+                <script src="assets/libs/js/dashboard-ecommerce.js"></script>
+                <!-- parsley js -->
+                <script src="assets/vendor/parsley/parsley.js"></script>
 
+                <!-- Optional JavaScript -->
+                <script>
 
-            <!-- jquery 3.3.1 -->
-            <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-            <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
-            <script src="assets/libs/js/form-mask.js"></script>
-            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+                                           var l = $('#loading');
+                                                            l.hide();
 
-            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-            <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-            <!-- slimscroll js -->
-            <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-            <!-- main js -->
-            <script src="assets/libs/js/main-js.js"></script>
-            <!-- chart chartist js -->
-            <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
-            <!-- sparkline js -->
-            <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
-            <!-- morris js -->
-            <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
-            <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
-            <!-- chart c3 js -->
-            <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
-            <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
-            <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
-            <script src="assets/libs/js/dashboard-ecommerce.js"></script>
-            <!-- parsley js -->
-            <script src="assets/vendor/parsley/parsley.js"></script>
+                                                            
+                                                            var x = 0;
+                                                            var y = 0;
+                                                                
+                                                            $(document).mousemove(function (e) {
+                                                                
+                                                                x = e.clientX;
+                                                                y = e.clientY;
+                                                                
+                                                                var s = $(this).scrollTop();
 
-            <!-- Optional JavaScript -->
-            <script>
+                                                                l.offset({top: (y + s), left: x});
 
-                                var sh = false;
-                                var it = null;
+                                                            })
 
-                                loading.show = function () {
-                                    if (it != null) {
-                                        clearInterval(it);
-                                    }
-                                    it = setInterval(function () {
-                                        $("#loading").modal("show");
-                                        if ($("#loading").hasClass('in')) {
-                                            clearInterval(it);
-                                        }
-                                    }, 300)
+                                                            var sh = false;
+                                                            var it = null;
 
-                                }
+                                                            loading.show = function () {
+                                                                l.show();
+                                                                var s = $(document).scrollTop();
 
-                                loading.close = function () {
+                                                                l.offset({top: (y + s), left: x});
+                                                                
+                                                            }
 
-                                    if (it != null) {
-                                        clearInterval(it);
-                                    }
-                                    it = setInterval(function () {
-                                        $("#loading").modal("hide");
-                                        if (!$("#loading").hasClass('in')) {
-                                            clearInterval(it);
-                                        }
-                                    }, 300)
-
-                                }
+                                                            loading.close = function () {
+                                                                l.hide();
+                                                            }
 
                                             $(document).ready(function () {
                                                 $('.btninfo').tooltip({title: "Mais informacoes", placement: "top"});

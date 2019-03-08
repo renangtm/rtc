@@ -203,12 +203,12 @@
                                         </div>
                                         <div ng-if="pedido.logistica === null" style="color:SteelBlue">
                                             <div class="form-row" style="margin-top: 10px;">
-                                            Pedido normal feito com estoque da <?php echo $empresa->nome; ?>
+                                                Pedido normal feito com estoque da <?php echo $empresa->nome; ?>
                                             </div>
                                         </div>
                                         <div ng-if="pedido.logistica !== null" style="color:Orange">
-                                             <div class="form-row" style="margin-top: 10px;">
-                                            Pedido feito por meio do {{pedido.logistica.nome}}
+                                            <div class="form-row" style="margin-top: 10px;">
+                                                Pedido feito por meio do {{pedido.logistica.nome}}
                                             </div>
                                         </div>
                                     </div>
@@ -334,7 +334,7 @@
                                             <div class="form-inline col-3" style="margin-left: 40px;">
                                                 <a href="#" ng-disabled="!pedido.status.altera" class="btn btn-primary" data-title="calcFrete" data-toggle="modal" ng-click="getFretes()" data-target="#calcFrete" ng-if="calculoPronto()">Calcular Frete</a>
                                             </div>
-                           
+
                                         </div>
                                     </div>
                                     <hr>
@@ -343,7 +343,7 @@
                                             <div class="form-inline" style="margin-right: 20px;">
                                                 <label for="">Forma de pagamento</label>
                                             </div>
-                                             <div class="form-inline" style="margin-left: 40px;">
+                                            <div class="form-inline" style="margin-left: 40px;">
                                                 <select ng-disabled="!pedido.status.altera" class="form-control" id="ped" ng-model="pedido.forma_pagamento">    
                                                     <option ng-value="forma_pagamento" ng-repeat="forma_pagamento in formas_pagamento">{{forma_pagamento.nome}}</option>
                                                 </select>
@@ -356,15 +356,15 @@
                                                 <label for="" style="margin-left: 25px;margin-right: 10px;">Parcelas:</label>
                                                 <input ng-disabled="!pedido.status.altera" type="number" class="form-control col-5" ng-model="pedido.parcelas" ng-confirm="atualizaCustos()" placeholder="1" min="0" max="90" value="1">
                                             </div>
-                                            
+
                                         </div>
                                         <div class="form-row m-t-20">
                                             <div class="form-inline col-3" style="margin-left: 200px;">
                                                 <a href="#" class="btn btn-outline-success" data-title="cobranca" data-toggle="modal" ng-click="gerarCobranca()" data-target="#cobranca"><i class="fas fa-money-bill-alt"></i>&nbsp;&nbspGerar cobrança</a>
                                             </div>
-                              
+
                                         </div>
-                                    
+
                                     </div>
                                     <hr>
                                     <div class="form-group">
@@ -378,7 +378,7 @@
                                             <div class="form-inline col-3" style="">
                                                 <a href="#" class="btn btn-outline-success" data-title="logs" data-toggle="modal" ng-click="getLogs()" data-target="#logs"><i class="fas fa-clipboard-list"></i>&nbsp;Logs do pedido</a>
                                             </div>
-                                           
+
                                         </div>
                                     </div>					
                                 </form>
@@ -749,26 +749,7 @@
                 </div>
             </div>
             <!-- /.modal-content LOADING --> 
-            <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                        </div>
-                        <div class="modal-body text-center">
-
-                            <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                            <br>
-                            <h3 style="margin-top:20px;">Carregando as informações...</h3>
-
-                        </div>
-                        <div class="modal-footer">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
             <!-- jquery 3.3.1 -->
             <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
@@ -800,34 +781,37 @@
             <!-- Optional JavaScript -->
             <script>
 
+                                                        var l = $('#loading');
+                                                        l.hide();
+
+
+                                                        var x = 0;
+                                                        var y = 0;
+
+                                                        $(document).mousemove(function (e) {
+
+                                                            x = e.clientX;
+                                                            y = e.clientY;
+
+                                                            var s = $(this).scrollTop();
+
+                                                            l.offset({top: (y + s), left: x});
+
+                                                        })
+
                                                         var sh = false;
                                                         var it = null;
 
                                                         loading.show = function () {
-                                                            if (it != null) {
-                                                                clearInterval(it);
-                                                            }
-                                                            it = setInterval(function () {
-                                                                $("#loading").modal("show");
-                                                                if ($("#loading").hasClass('in')) {
-                                                                    clearInterval(it);
-                                                                }
-                                                            }, 300)
+                                                            l.show();
+                                                            var s = $(document).scrollTop();
+
+                                                            l.offset({top: (y + s), left: x});
 
                                                         }
 
                                                         loading.close = function () {
-
-                                                            if (it != null) {
-                                                                clearInterval(it);
-                                                            }
-                                                            it = setInterval(function () {
-                                                                $("#loading").modal("hide");
-                                                                if (!$("#loading").hasClass('in')) {
-                                                                    clearInterval(it);
-                                                                }
-                                                            }, 300)
-
+                                                            l.hide();
                                                         }
 
                                                         $(document).ready(function () {

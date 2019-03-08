@@ -200,10 +200,10 @@
                                             </div>
                                             <br>
                                         </div>
-                                       
+
                                     </div>
                                     <div class="form-row" style="position:relative;height:30px">			
-                             
+
                                         <input class="custom-control-input" id="chk1" style="display: inline-block;position:absolute;top:0px;left:5px" type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="cotacao.tratar_em_litros">
                                         <label class="custom-control-label" style="cursor:pointer;" for="chk1"><strong style="position:absolute;top:0px;left:27px">Tratar em litros/kilos com o fornecedor ao inves de embalagem</strong></label>
 
@@ -302,7 +302,7 @@
                 <!-- /.modal-content --> 				
 
                 <!-- /.modal-content TRANSPORTADORAS --> 
-                
+
 
                 <!-- /.modal-content DELETE --> 
                 <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
@@ -540,26 +540,7 @@
                 </div>
             </div>
             <!-- /.modal-content LOADING --> 
-            <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                        </div>
-                        <div class="modal-body text-center">
-
-                            <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                            <br>
-                            <h3 style="margin-top:20px;">Carregando as informações...</h3>
-
-                        </div>
-                        <div class="modal-footer">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
             <!-- jquery 3.3.1 -->
             <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
@@ -591,35 +572,38 @@
             <!-- Optional JavaScript -->
             <script>
 
-                                var sh = false;
-                                var it = null;
+                                                        var l = $('#loading');
+                                                            l.hide();
 
-                                loading.show = function () {
-                                    if (it != null) {
-                                        clearInterval(it);
-                                    }
-                                    it = setInterval(function () {
-                                        $("#loading").modal("show");
-                                        if ($("#loading").hasClass('in')) {
-                                            clearInterval(it);
-                                        }
-                                    }, 300)
+                                                            
+                                                            var x = 0;
+                                                            var y = 0;
+                                                                
+                                                            $(document).mousemove(function (e) {
+                                                                
+                                                                x = e.clientX;
+                                                                y = e.clientY;
+                                                                
+                                                                var s = $(this).scrollTop();
 
-                                }
+                                                                l.offset({top: (y + s), left: x});
 
-                                loading.close = function () {
+                                                            })
 
-                                    if (it != null) {
-                                        clearInterval(it);
-                                    }
-                                    it = setInterval(function () {
-                                        $("#loading").modal("hide");
-                                        if (!$("#loading").hasClass('in')) {
-                                            clearInterval(it);
-                                        }
-                                    }, 300)
+                                                            var sh = false;
+                                                            var it = null;
 
-                                }
+                                                            loading.show = function () {
+                                                                l.show();
+                                                                var s = $(document).scrollTop();
+
+                                                                l.offset({top: (y + s), left: x});
+                                                                
+                                                            }
+
+                                                            loading.close = function () {
+                                                                l.hide();
+                                                            }
 
                                                         $(document).ready(function () {
                                                             $('.btnvis').tooltip({title: "Visualizar", placement: "top"});

@@ -57,7 +57,7 @@
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="page-header">
-                                    <h2 class="pageheader-title" style="display: inline">Gerenciador do RTC</h2> <span style="position:fixed;z-index:1000;right:20px;" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
+                                    <h2 class="pageheader-title" style="display: inline">Gerenciador do RTC</h2> 
 
                                     <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
                                     <div class="page-breadcrumb">
@@ -688,7 +688,7 @@
                 </div>
                 <!-- /.modal-content --> 
 
-
+                <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
                 <!-- jquery 3.3.1 -->
                 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
@@ -720,38 +720,38 @@
                 <!-- Optional JavaScript -->
                 <script>
 
-                                            var l = $('#loading');
-                                            l.hide();
+                                           var l = $('#loading');
+                                                            l.hide();
 
-                                            var sh = false;
-                                            var it = null;
+                                                            
+                                                            var x = 0;
+                                                            var y = 0;
+                                                                
+                                                            $(document).mousemove(function (e) {
+                                                                
+                                                                x = e.clientX;
+                                                                y = e.clientY;
+                                                                
+                                                                var s = $(this).scrollTop();
 
-                                            loading.show = function () {
-                                                if (it != null) {
-                                                    clearInterval(it);
-                                                }
-                                                it = setInterval(function () {
-                                                    l.show();
+                                                                l.offset({top: (y + s), left: x});
 
-                                                    clearInterval(it);
+                                                            })
 
-                                                }, 300)
+                                                            var sh = false;
+                                                            var it = null;
 
-                                            }
+                                                            loading.show = function () {
+                                                                l.show();
+                                                                var s = $(document).scrollTop();
 
-                                            loading.close = function () {
+                                                                l.offset({top: (y + s), left: x});
+                                                                
+                                                            }
 
-                                                if (it != null) {
-                                                    clearInterval(it);
-                                                }
-                                                it = setInterval(function () {
-                                                    l.hide();
-
-                                                    clearInterval(it);
-
-                                                }, 300)
-
-                                            }
+                                                            loading.close = function () {
+                                                                l.hide();
+                                                            }
 
 
 

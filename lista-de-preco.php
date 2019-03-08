@@ -112,90 +112,90 @@
                                         <div class="table-responsive" style="overflow-x:hidden">
                                             <div class="product-btn m-b-20">
                                                 <button class="btn btn-{{produto==null?'default':'danger'}}" ng-click="setProduto(null)"><i class="fas fa-times"></i>&nbsp Deselecionar produto</button>
-                                            <hr>
-                                            <table id="clientes" class="table table-striped table-bordered first selectable">
-                                                <thead>
-                                                    <tr>
-                                                        <th data-ordem="produto.id">Cod.</th>
-                                                        <th data-ordem="produto.nome">Nome</th>
-                                                        <th data-ordem="produto.disponivel">Disponivel</th>
-                                                        <th data-ordem="produto.transito">Transito</th>
-                                                        <th data-ordem="produto.valor_base">Valor</th>
-                                                        <th data-ordem="produto.ativo">Ativo</th>
-                                                        <th width="150px">Ofertas</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr ng-repeat-start="produt in produtos.elementos" class="{{(produt[0].id == produto.id)?'selected':''}}">
-                                                        <td ng-click="setProduto(produt[0])">{{produt[0].id}}</td>
-                                                        <td ng-click="setProduto(produt[0])">{{produt[0].nome}}</td>
-                                                        <td ng-click="setProduto(produt[0])">{{produt[0].disponivel}}</td>
-                                                        <td ng-click="setProduto(produt[0])">{{produt[0].transito}}</td>
-                                                        <td ng-click="setProduto(produt[0])">{{produt[0].valor_base}}</td>
-                                                        <td ng-click="setProduto(produt[0])">{{produt[0].ativo}}</td>
-                                                        <td>
-                                                            <div class="product-btn">
-                                                                <a href="#" style="color:#FFFFFF;background-color:{{produt[0].ofertas.length>0?'DarkOrange':'LightGray'}}" class="btn btn-outline-light btninfo" data-toggle="collapse" data-target="#demo{{produt[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr ng-repeat-end>
-                                                        <td colspan="7" class="hiddenRow">
-                                                            <div class="accordian-body collapse" id="demo{{produt[0].id}}">
-                                                                <div class="row mx-auto m-b-30">
-                                                                    <div class="col">
-                                                                        <br>
-                                                                        <strong>Ofertas:</strong>
-                                                                        <hr>
-                                                                        <table id="clientes" class="table table-striped table-bordered first selectable">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th>Valor</th>
-                                                                                    <th>Validade</th>
-                                                                                    <th>Inicio</th>
-                                                                                    <th>Fim</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                <tr ng-repeat="o in produt[0].ofertas">
-                                                                                    <td>{{o.valor}} R$</td>
-                                                                                    <td ng-if="o.validade !== 1000">{{o.validade | data}}</td>
-                                                                                    <td ng-if="o.validade === 1000">------</td>
-                                                                                    <td>{{o.campanha.inicio | data}}</td>
-                                                                                    <td>{{o.campanha.fim | data}}</td>
-                                                                                </tr>
-                                                                            </tbody>
-                                                                        </table>
+                                                <hr>
+                                                <table id="clientes" class="table table-striped table-bordered first selectable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th data-ordem="produto.id">Cod.</th>
+                                                            <th data-ordem="produto.nome">Nome</th>
+                                                            <th data-ordem="produto.disponivel">Disponivel</th>
+                                                            <th data-ordem="produto.transito">Transito</th>
+                                                            <th data-ordem="produto.valor_base">Valor</th>
+                                                            <th data-ordem="produto.ativo">Ativo</th>
+                                                            <th width="150px">Ofertas</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat-start="produt in produtos.elementos" class="{{(produt[0].id == produto.id)?'selected':''}}">
+                                                            <td ng-click="setProduto(produt[0])">{{produt[0].id}}</td>
+                                                            <td ng-click="setProduto(produt[0])">{{produt[0].nome}}</td>
+                                                            <td ng-click="setProduto(produt[0])">{{produt[0].disponivel}}</td>
+                                                            <td ng-click="setProduto(produt[0])">{{produt[0].transito}}</td>
+                                                            <td ng-click="setProduto(produt[0])">{{produt[0].valor_base}}</td>
+                                                            <td ng-click="setProduto(produt[0])">{{produt[0].ativo}}</td>
+                                                            <td>
+                                                                <div class="product-btn">
+                                                                    <a href="#" style="color:#FFFFFF;background-color:{{produt[0].ofertas.length>0?'DarkOrange':'LightGray'}}" class="btn btn-outline-light btninfo" data-toggle="collapse" data-target="#demo{{produt[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr ng-repeat-end>
+                                                            <td colspan="7" class="hiddenRow">
+                                                                <div class="accordian-body collapse" id="demo{{produt[0].id}}">
+                                                                    <div class="row mx-auto m-b-30">
+                                                                        <div class="col">
+                                                                            <br>
+                                                                            <strong>Ofertas:</strong>
+                                                                            <hr>
+                                                                            <table id="clientes" class="table table-striped table-bordered first selectable">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th>Valor</th>
+                                                                                        <th>Validade</th>
+                                                                                        <th>Inicio</th>
+                                                                                        <th>Fim</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <tr ng-repeat="o in produt[0].ofertas">
+                                                                                        <td>{{o.valor}} R$</td>
+                                                                                        <td ng-if="o.validade !== 1000">{{o.validade| data}}</td>
+                                                                                        <td ng-if="o.validade === 1000">------</td>
+                                                                                        <td>{{o.campanha.inicio| data}}</td>
+                                                                                        <td>{{o.campanha.fim| data}}</td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
 
-                                                                    </div>																
-                                                                </div>	
-                                                            </div> 
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <th>Cod.</th>
-                                                        <th>Nome</th>
-                                                        <th>Disponivel</th>
-                                                        <th>Transito</th>
-                                                        <th>Valor</th>
-                                                        <th>Ativo</th>
-                                                        <th width="150px">Ofertas</th>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
+                                                                        </div>																
+                                                                    </div>	
+                                                                </div> 
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>Cod.</th>
+                                                            <th>Nome</th>
+                                                            <th>Disponivel</th>
+                                                            <th>Transito</th>
+                                                            <th>Valor</th>
+                                                            <th>Ativo</th>
+                                                            <th width="150px">Ofertas</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
 
-                                            <!-- paginação  -->
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="produtos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Próximo</a></li>
-                                                    </ul>
-                                                </nav>
-                                            </div><hr>
+                                                <!-- paginação  -->
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                                    <nav aria-label="Page navigation example">
+                                                        <ul class="pagination justify-content-end">
+                                                            <li class="page-item" ng-click="produtos.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                            <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                                            <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Próximo</a></li>
+                                                        </ul>
+                                                    </nav>
+                                                </div><hr>
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <button class="btn btn-{{cultura==null?'default':'danger'}}" ng-click="setCultura(null)"><i class="fas fa-times"></i>&nbsp Deselecionar cultura</button>
@@ -264,7 +264,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
 
                                         </div>
                                     </div>
@@ -683,27 +683,8 @@
                     </div>
                 </div>
                 <!-- /.modal-content --> 
-<!-- /.modal-content LOADING --> 
-                <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                    <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                            </div>
-                            <div class="modal-body text-center">
-                                
-                                <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                                <br>
-                                <h3 style="margin-top:20px;">Carregando as informações...</h3>
-
-                            </div>
-                            <div class="modal-footer">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                <!-- /.modal-content LOADING --> 
+                <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
                 <!-- jquery 3.3.1 -->
                 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
@@ -734,79 +715,82 @@
 
                 <!-- Optional JavaScript -->
                 <script>
-                    
-                    var sh = false;
-                    var it = null;
-                    
-                    loading.show = function(){
-                        if(it != null){
-                            clearInterval(it);
-                        }
-                        it = setInterval(function(){
-                            $("#loading").modal("show");
-                            if($("#loading").hasClass('in')){
-                                clearInterval(it);
-                            }
-                        },300)
-                        
-                    }
-                    
-                    loading.close = function(){
-                        
-                        if(it != null){
-                            clearInterval(it);
-                        }
-                        it = setInterval(function(){
-                            $("#loading").modal("hide");
-                            if(!$("#loading").hasClass('in')){
-                                clearInterval(it);
-                            }
-                        },300)
-                                
-                    }
-                    
-                                            $(document).ready(function () {
-                                                $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
-                                                $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                                                $('.btndel').tooltip({title: "Deletar", placement: "top"});
-                                            });
-                                            $(document).ready(function () {
-                                                $('#clientes').DataTable({
-                                                    "language": {//Altera o idioma do DataTable para o português do Brasil
-                                                        "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
-                                                    },
-                                                });
 
-                                                $.getJSON('estados_cidades.json', function (data) {
-                                                    var items = [];
-                                                    var options = '<option value="">escolha um estado</option>';
-                                                    $.each(data, function (key, val) {
-                                                        options += '<option value="' + val.nome + '">' + val.nome + '</option>';
-                                                    });
-                                                    $("#estados").html(options);
+                                                var l = $('#loading');
+                                                            l.hide();
 
-                                                    $("#estados").change(function () {
+                                                            
+                                                            var x = 0;
+                                                            var y = 0;
+                                                                
+                                                            $(document).mousemove(function (e) {
+                                                                
+                                                                x = e.clientX;
+                                                                y = e.clientY;
+                                                                
+                                                                var s = $(this).scrollTop();
 
-                                                        var options_cidades = '';
-                                                        var str = "";
+                                                                l.offset({top: (y + s), left: x});
 
-                                                        $("#estados option:selected").each(function () {
-                                                            str += $(this).text();
-                                                        });
+                                                            })
 
-                                                        $.each(data, function (key, val) {
-                                                            if (val.nome == str) {
-                                                                $.each(val.cidades, function (key_city, val_city) {
-                                                                    options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
-                                                                });
+                                                            var sh = false;
+                                                            var it = null;
+
+                                                            loading.show = function () {
+                                                                l.show();
+                                                                var s = $(document).scrollTop();
+
+                                                                l.offset({top: (y + s), left: x});
+                                                                
                                                             }
-                                                        });
-                                                        $("#cidades").html(options_cidades);
 
-                                                    }).change();
+                                                            loading.close = function () {
+                                                                l.hide();
+                                                            }
 
+                                                $(document).ready(function () {
+                                                    $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                                                    $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                                                    $('.btndel').tooltip({title: "Deletar", placement: "top"});
                                                 });
-                                            });
+                                                $(document).ready(function () {
+                                                    $('#clientes').DataTable({
+                                                        "language": {//Altera o idioma do DataTable para o português do Brasil
+                                                            "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
+                                                        },
+                                                    });
+
+                                                    $.getJSON('estados_cidades.json', function (data) {
+                                                        var items = [];
+                                                        var options = '<option value="">escolha um estado</option>';
+                                                        $.each(data, function (key, val) {
+                                                            options += '<option value="' + val.nome + '">' + val.nome + '</option>';
+                                                        });
+                                                        $("#estados").html(options);
+
+                                                        $("#estados").change(function () {
+
+                                                            var options_cidades = '';
+                                                            var str = "";
+
+                                                            $("#estados option:selected").each(function () {
+                                                                str += $(this).text();
+                                                            });
+
+                                                            $.each(data, function (key, val) {
+                                                                if (val.nome == str) {
+                                                                    $.each(val.cidades, function (key_city, val_city) {
+                                                                        options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
+                                                                    });
+                                                                }
+                                                            });
+                                                            $("#cidades").html(options_cidades);
+
+                                                        }).change();
+
+                                                    });
+                                                });
 
                 </script>
 

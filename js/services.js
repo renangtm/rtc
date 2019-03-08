@@ -1344,6 +1344,13 @@ rtc.service('sistemaService', function ($http, $q) {
             falha: fn
         });
     }
+    this.getMarketings = function (fn) {
+        baseService($http, $q, {
+            query: "$r->marketings=Sistema::getMarketings($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getPedidoEntradaSemelhante = function (xml, fn) {
         baseService($http, $q, {
             o: {xml: xml},
@@ -1405,6 +1412,22 @@ rtc.service('empresaService', function ($http, $q) {
             sucesso: fn,
             falha: fn
         }, null, true);
+    }
+    this.setMarketing = function (empresa,mkt,fn) {
+        baseService($http, $q, {
+            o:{empresa:empresa,mkt:mkt},
+            query: "$o->empresa->setMarketing($c,$o->mkt)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getMarketing = function (empresa,fn) {
+        baseService($http, $q, {
+            o:empresa,
+            query: "$r->marketing=$o->getMarketing($c)",
+            sucesso: fn,
+            falha: fn
+        });
     }
     this.getFiliais = function (fn) {
         baseService($http, $q, {

@@ -176,10 +176,10 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle">
-                                    <div ng-if="banco.id===0">
+                                    <div ng-if="banco.id === 0">
                                         <i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Adicione os dados de seu Banco
                                     </div>
-                                    <div ng-if="banco.id>0">
+                                    <div ng-if="banco.id > 0">
                                         <i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere os dados de seu Banco
                                     </div>
                                 </h5>
@@ -267,28 +267,9 @@
                     </div>
                 </div>
                 <!-- /.modal-content -->
-                
-<!-- /.modal-content LOADING --> 
-                <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                    <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                            </div>
-                            <div class="modal-body text-center">
-                                
-                                <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                                <br>
-                                <h3 style="margin-top:20px;">Carregando as informações...</h3>
 
-                            </div>
-                            <div class="modal-footer">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                <!-- /.modal-content LOADING --> 
+                <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
                 <!-- jquery 3.3.1 -->
                 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
@@ -319,43 +300,46 @@
 
                 <!-- Optional JavaScript -->
                 <script>
-                    
-                    var sh = false;
-                    var it = null;
-                    
-                    loading.show = function(){
-                        if(it != null){
-                            clearInterval(it);
-                        }
-                        it = setInterval(function(){
-                            $("#loading").modal("show");
-                            if($("#loading").hasClass('in')){
-                                clearInterval(it);
-                            }
-                        },300)
-                        
-                    }
-                    
-                    loading.close = function(){
-                        
-                        if(it != null){
-                            clearInterval(it);
-                        }
-                        it = setInterval(function(){
-                            $("#loading").modal("hide");
-                            if(!$("#loading").hasClass('in')){
-                                clearInterval(it);
-                            }
-                        },300)
-                                
-                    }
+
+                                            var l = $('#loading');
+                                            l.hide();
+
+
+                                            var x = 0;
+                                            var y = 0;
+
+                                            $(document).mousemove(function (e) {
+
+                                                x = e.clientX;
+                                                y = e.clientY;
+
+                                                var s = $(this).scrollTop();
+
+                                                l.offset({top: (y + s), left: x});
+
+                                            })
+
+                                            var sh = false;
+                                            var it = null;
+
+                                            loading.show = function () {
+                                                l.show();
+                                                var s = $(document).scrollTop();
+
+                                                l.offset({top: (y + s), left: x});
+
+                                            }
+
+                                            loading.close = function () {
+                                                l.hide();
+                                            }
 
                                             $(document).ready(function () {
                                                 $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
                                                 $('.btnedit').tooltip({title: "Editar", placement: "top"});
                                                 $('.btndel').tooltip({title: "Deletar", placement: "top"});
                                             });
-                                            
+
 
                 </script>
 

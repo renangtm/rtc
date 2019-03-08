@@ -183,7 +183,7 @@ rtc.controller("crtAtividade", function ($scope, $timeout, $interval, atividadeS
 
     $(document).find("input[type=search]").each(function () {
         $(this).change(function () {
-            atividadeService.pesquisar("Digitou: "+$(this).val());
+            atividadeService.pesquisar("Digitou: " + $(this).val());
         })
     })
 
@@ -540,7 +540,7 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
 
 
 })
-rtc.controller("crtEmpresaConfig", function ($scope, empresaService, cidadeService, baseService, uploadService) {
+rtc.controller("crtEmpresaConfig", function ($scope, empresaService,sistemaService, cidadeService, baseService, uploadService) {
 
     $scope.empresa = null;
     $scope.filiais = [];
@@ -548,6 +548,10 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, cidadeServi
     $scope.estados = [];
     $scope.cidades = [];
     $scope.estado = null;
+    $scope.marketings = [];
+    $scope.marketing = null;
+
+    
 
     $("#uploaderCertificadoDigital").change(function () {
 
@@ -595,6 +599,13 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, cidadeServi
 
     })
 
+    $scope.setMarketing = function(mkt){
+        
+        $scope.marketing=mkt;
+        
+        
+    }
+
     empresaService.getEmpresa(function (r) {
 
 
@@ -613,6 +624,24 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, cidadeServi
             }
 
         })
+        
+        sistemaService.getMarketings(function(r){
+            
+            $scope.marketings = r.marketings;
+            
+            empresaService.getMarketing($scope.empresa,function(m){
+            
+                $scope.marketing = m.marketing;
+                
+                if($scope.marketing !== null){
+                    equalize($scope, "marketing", $scope.marketings);
+                }
+                $scope.marketings[$scope.marketings.length] = null;
+            })
+            
+        })
+        
+        
 
 
         empresaService.getParametrosEmissao($scope.empresa, function (e) {
@@ -642,6 +671,19 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, cidadeServi
             if (r.sucesso) {
 
                 $scope.empresa = r.o;
+               
+               empresaService.setMarketing($scope.empresa,$scope.marketing,function(rr){
+                   
+                   
+               })
+               
+                equalize($scope.empresa.endereco, "cidade", $scope.cidades);
+                if (typeof $scope.empresa.endereco.cidade !== 'undefined') {
+                    $scope.estado = $scope.empresa.endereco.cidade.estado;
+                } else {
+                    $scope.empresa.endereco.cidade = $scope.cidades[0];
+                    $scope.estado = $scope.empresa.endereco.cidade.estado;
+                }
 
                 baseService.merge($scope.parametros_emissao, function (rr) {
                     if (rr.sucesso) {
@@ -1012,16 +1054,16 @@ rtc.controller("crtEmpresa", function ($scope, empresaService) {
     })
 
     $scope.setEmpresa = function () {
-        
+
         loading.show();
         empresaService.setEmpresa($scope.empresa, function (r) {
             loading.close();
-           
+
             if (r.sucesso) {
-                if(r.aceito){
+                if (r.aceito) {
                     location.reload();
-                }else{
-                    msg.alerta("Voce nao tem acesso a empresa "+$scope.empresa.nome);
+                } else {
+                    msg.alerta("Voce nao tem acesso a empresa " + $scope.empresa.nome);
                 }
             }
 
@@ -1287,7 +1329,7 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, usuarioService, permis
     $scope.setUsuario = function (usuario) {
 
         $scope.usuario = usuario;
-        
+
 
         var dv = $("#dvUsuarios");
         var tr = $("#tr_" + $scope.usuario.id);
@@ -1311,7 +1353,7 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, usuarioService, permis
             msg.erro("Usuario sem cidade.");
             return;
         }
-   
+
         baseService.merge($scope.usuario, function (r) {
             if (r.sucesso) {
                 $scope.usuario = r.o;
@@ -1321,7 +1363,7 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, usuarioService, permis
                 $scope.usuarios.attList();
 
             } else {
-                msg.erro("Problema ao efetuar operacao. "+r.mensagem);
+                msg.erro("Problema ao efetuar operacao. " + r.mensagem);
             }
         });
 
@@ -1485,7 +1527,7 @@ rtc.controller("crtMovimentos", function ($scope, movimentoService, sistemaServi
             ["id", "valor", "juros", "descontos", "data", "banco.nome", "saldo_anterior", "operacao.nome", "historico.nome"]);
 
     $scope.bancos = createAssinc(bancoService, 1, 3, 10);
-    
+
     assincFuncs(
             $scope.bancos,
             "banco",
@@ -1494,7 +1536,7 @@ rtc.controller("crtMovimentos", function ($scope, movimentoService, sistemaServi
 
     notaService.filtro_base = "nota.emitida=true AND nota.cancelada=false";
     $scope.notas = createAssinc(notaService, 1, 10, 10);
-   
+
     assincFuncs(
             $scope.notas,
             "nota",
@@ -1649,28 +1691,28 @@ rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoSe
             ["ficha", "numero", "transportadora.razao_social", "saida", "data_emissao", "cliente.razao_social", "fornecedor.nome"]);
 
     $scope.produtos = createAssinc(produtoService, 1, 3, 4);
-    
+
     assincFuncs(
             $scope.produtos,
             "produto",
             ["codigo", "nome", "disponivel"], "filtroProdutos");
 
     $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 4);
-    
+
     assincFuncs(
             $scope.transportadoras,
             "transportadora",
             ["codigo", "razao_social"], "filtroTransportadoras");
 
     $scope.clientes = createAssinc(clienteService, 1, 3, 4);
-    
+
     assincFuncs(
             $scope.clientes,
             "cliente",
             ["codigo", "razao_social"], "filtroClientes");
 
     $scope.fornecedores = createAssinc(fornecedorService, 1, 3, 4);
-   
+
     assincFuncs(
             $scope.fornecedores,
             "fornecedor",
@@ -1935,13 +1977,13 @@ rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoSe
 
             $scope.nota.vencimentos = [];
             $scope.nota.produtos = [];
-           
+
             formaPagamentoService.getFormasPagamento($scope.nota, function (f) {
-                
+
                 $scope.formas_pagamento = f.formas;
                 $scope.nota.forma_pagamento = $scope.formas_pagamento[0];
                 loading.close();
-                
+
             });
 
             $scope.calcular();
@@ -2071,7 +2113,7 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tr
     }
 
     $scope.produtos = createAssinc(produtoService, 1, 3, 4);
-    
+
     assincFuncs(
             $scope.produtos,
             "produto",
@@ -2079,7 +2121,7 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tr
 
 
     $scope.fornecedores = createAssinc(fornecedorService, 1, 3, 4);
-    
+
     assincFuncs(
             $scope.fornecedores,
             "fornecedor",
@@ -2437,21 +2479,21 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
             ["id", "fornecedor.nome", "id_status", "frete", "prazo", "data"]);
 
     $scope.produtos = createAssinc(produtoService, 1, 3, 4);
-    
+
     assincFuncs(
             $scope.produtos,
             "produto",
             ["codigo", "nome", "disponivel"], "filtroProdutos");
 
     $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 4);
-    
+
     assincFuncs(
             $scope.transportadoras,
             "transportadora",
             ["codigo", "razao_social"], "filtroTransportadoras");
 
     $scope.fornecedores = createAssinc(fornecedorService, 1, 3, 4);
-    
+
     assincFuncs(
             $scope.fornecedores,
             "fornecedor",
@@ -2679,7 +2721,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
         }
 
         pedidoEntradaService.getProdutos(pedido, function (p) {
-           
+
             pedido.produtos = p.produtos;
             equalize(pedido, "status", $scope.status_pedido);
 
@@ -2784,21 +2826,21 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
             ["id", "cliente.razao_social", "data", "frete", "id_status", "usuario.nome"]);
 
     $scope.produtos = createAssinc(produtoService, 1, 3, 4);
-    
+
     assincFuncs(
             $scope.produtos,
             "produto",
             ["codigo", "nome", "disponivel"], "filtroProdutos");
 
     $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 4);
-    
+
     assincFuncs(
             $scope.transportadoras,
             "transportadora",
             ["codigo", "razao_social"], "filtroTransportadoras");
 
     $scope.clientes = createAssinc(clienteService, 1, 3, 4);
-    
+
     assincFuncs(
             $scope.clientes,
             "cliente",
@@ -3205,7 +3247,7 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
             produtoService.filtro_base = "produto.id_logistica=" + $scope.pedido.logistica.id;
             transportadoraService.empresa = $scope.pedido.logistica;
         }
-        
+
 
 
         if ($scope.pedido.id === 0) {
@@ -3222,9 +3264,9 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
             return;
 
         }
-        
+
         pedidoService.getProdutos(pedido, function (p) {
-            
+
             pedido.produtos = p.produtos;
             equalize(pedido, "status", $scope.status_pedido);
 
@@ -5130,10 +5172,10 @@ rtc.controller("crtLogin", function ($scope, loginService) {
     $scope.senha = "";
     $scope.email = "";
     $scope.logar = function () {
-        
+
         loginService.login($scope.usuario, $scope.senha, function (r) {
-            
-        
+
+
             if (r.usuario === null || !r.sucesso) {
                 msg.erro("Esse usuario nao existe");
             } else {

@@ -700,26 +700,7 @@
 
 
                 <!-- /.modal-content LOADING --> 
-                <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                    <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                            </div>
-                            <div class="modal-body text-center">
-
-                                <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                                <br>
-                                <h3 style="margin-top:20px;">Carregando as informações...</h3>
-
-                            </div>
-                            <div class="modal-footer">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
                 <!-- jquery 3.3.1 -->
                 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
@@ -751,56 +732,38 @@
                 <!-- Optional JavaScript -->
                 <script>
 
-                                            $(document).ready(function () {
-                                                $(document).on({
-                                                    'show.bs.modal': function () {
-                                                        var zIndex = 1040 + (10 * $('.modal:visible').length);
-                                                        $(this).css('z-index', zIndex);
-                                                        setTimeout(function () {
-                                                            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
-                                                        }, 0);
-                                                    },
-                                                    'hidden.bs.modal': function () {
-                                                        if ($('.modal:visible').length > 0) {
-                                                            // restore the modal-open class to the body element, so that scrolling works
-                                                            // properly after de-stacking a modal.
-                                                            setTimeout(function () {
-                                                                $(document.body).addClass('modal-open');
-                                                            }, 0);
-                                                        }
-                                                    }
-                                                }, '.modal');
-                                            });
+                                           var l = $('#loading');
+                                                            l.hide();
 
-                                            var sh = false;
-                                            var it = null;
+                                                            
+                                                            var x = 0;
+                                                            var y = 0;
+                                                                
+                                                            $(document).mousemove(function (e) {
+                                                                
+                                                                x = e.clientX;
+                                                                y = e.clientY;
+                                                                
+                                                                var s = $(this).scrollTop();
 
-                                            loading.show = function () {
-                                                if (it != null) {
-                                                    clearInterval(it);
-                                                }
-                                                it = setInterval(function () {
-                                                    $("#loading").modal("show");
-                                                    if ($("#loading").hasClass('in')) {
-                                                        clearInterval(it);
-                                                    }
-                                                }, 300)
+                                                                l.offset({top: (y + s), left: x});
 
-                                            }
+                                                            })
 
-                                            loading.close = function () {
+                                                            var sh = false;
+                                                            var it = null;
 
-                                                if (it != null) {
-                                                    clearInterval(it);
-                                                }
-                                                it = setInterval(function () {
-                                                    $("#loading").modal("hide");
-                                                    if (!$("#loading").hasClass('in')) {
-                                                        clearInterval(it);
-                                                    }
-                                                }, 300)
+                                                            loading.show = function () {
+                                                                l.show();
+                                                                var s = $(document).scrollTop();
 
-                                            }
+                                                                l.offset({top: (y + s), left: x});
+                                                                
+                                                            }
+
+                                                            loading.close = function () {
+                                                                l.hide();
+                                                            }
 
                                             $(document).on('keyup', '.txtsuf', function () {
                                                 $(this).mask('000000000');

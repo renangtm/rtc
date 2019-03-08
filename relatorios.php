@@ -197,198 +197,182 @@ echo $relatorio;
                                                         <!-- --->
 
                                                     </td>
- </tr>
-                                                </table>
-                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                    <div style="display: inline-block" class="page-item" ng-repeat="pg in gerado.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></div>
-                                                </div>
+                                                </tr>
+                                            </table>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                                <div style="display: inline-block" class="page-item" ng-repeat="pg in gerado.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></div>
+                                            </div>
 
                                         </div>
 
                                     </div>
-                                                </div>
-                                            </div>
+                                </div>
+                            </div>
 
 
-                                            <div class="modal fade" style="overflow-y:scroll" id="mdlFilhos" tabindex="-1" role="dialog" aria-labelledby="mdlFilhos" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg">
-                                                    <div class="modal-content" >
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-sitemap fa-3x"></i>&nbsp;&nbsp;&nbsp;Elementos Separados</h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <table class="table table-striped table-bordered first">
-                                                                <thead>
-                                                                <th ng-repeat="c in filhos[0].campos">{{c.titulo}}</th>
-                                                                </thead>
-                                                                <tr ng-repeat="item in filhos">
-                                                                    <th ng-repeat="c in item.valores_campos track by $index">{{c}}</th>
-                                                                </tr>
-                                                               
-                                                            </table>
+                            <div class="modal fade" style="overflow-y:scroll" id="mdlFilhos" tabindex="-1" role="dialog" aria-labelledby="mdlFilhos" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content" >
+                                        <div class="modal-header">
+                                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-sitemap fa-3x"></i>&nbsp;&nbsp;&nbsp;Elementos Separados</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <table class="table table-striped table-bordered first">
+                                                <thead>
+                                                <th ng-repeat="c in filhos[0].campos">{{c.titulo}}</th>
+                                                </thead>
+                                                <tr ng-repeat="item in filhos">
+                                                    <th ng-repeat="c in item.valores_campos track by $index">{{c}}</th>
+                                                </tr>
+
+                                            </table>
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>	
+                        <!-- ============================================================== -->
+                        <!-- footer -->
+                        <!-- ============================================================== -->
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="copyright">
+                                    <p>Copyright © 2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ============================================================== -->
+                        <!-- end footer -->
+                        <!-- ============================================================== -->
+                    </div>
+                    <!-- ============================================================== -->
+                    <!-- end wrapper  -->
+                    <!-- ============================================================== -->
+                </div>
+                <!-- ============================================================== -->
+                <!-- end main wrapper  -->
+                <!-- ============================================================== -->
+
+                <!-- /.modal-content ADD --> 
+
+                <!-- /.modal-content -->
+
+                <!-- /.modal-content EDIT --> 
+
+                <!-- /.modal-content --> 				
+
+
+
+                <!-- /.modal-content DELETE --> 
+
+                <!-- /.modal-content --> 
+
+                <!-- /.modal-content LOADING --> 
+                <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
+
+                <!-- jquery 3.3.1 -->
+                <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+                <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
+                <script src="assets/libs/js/form-mask.js"></script>
+                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+
+                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+                <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+                <!-- slimscroll js -->
+                <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+                <!-- main js -->
+                <script src="assets/libs/js/main-js.js"></script>
+                <!-- chart chartist js -->
+                <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
+                <!-- sparkline js -->
+                <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+                <!-- morris js -->
+                <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
+                <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
+                <!-- chart c3 js -->
+                <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
+                <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+                <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
+                <script src="assets/libs/js/dashboard-ecommerce.js"></script>
+                <!-- parsley js -->
+                <script src="assets/vendor/parsley/parsley.js"></script>
+
+                <!-- Optional JavaScript -->
+                <script>
+
+                                                                                   var l = $('#loading');
+                                                            l.hide();
+
                                                             
+                                                            var x = 0;
+                                                            var y = 0;
+                                                                
+                                                            $(document).mousemove(function (e) {
+                                                                
+                                                                x = e.clientX;
+                                                                y = e.clientY;
+                                                                
+                                                                var s = $(this).scrollTop();
 
-                                                        </div>
+                                                                l.offset({top: (y + s), left: x});
 
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                            })
 
-                                        </div>	
-                                        <!-- ============================================================== -->
-                                        <!-- footer -->
-                                        <!-- ============================================================== -->
+                                                            var sh = false;
+                                                            var it = null;
 
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="copyright">
-                                                    <p>Copyright © 2018 - Agro Fauna Tecnologia. Todos os direitos reservados.</p>
-                                                </div>
-                                            </div>
-                                        </div>
+                                                            loading.show = function () {
+                                                                l.show();
+                                                                var s = $(document).scrollTop();
 
-                                        <!-- ============================================================== -->
-                                        <!-- end footer -->
-                                        <!-- ============================================================== -->
-                                    </div>
-                                    <!-- ============================================================== -->
-                                    <!-- end wrapper  -->
-                                    <!-- ============================================================== -->
-                                </div>
-                                <!-- ============================================================== -->
-                                <!-- end main wrapper  -->
-                                <!-- ============================================================== -->
+                                                                l.offset({top: (y + s), left: x});
+                                                                
+                                                            }
 
-                                <!-- /.modal-content ADD --> 
-
-                                <!-- /.modal-content -->
-
-                                <!-- /.modal-content EDIT --> 
-
-                                <!-- /.modal-content --> 				
+                                                            loading.close = function () {
+                                                                l.hide();
+                                                            }
 
 
 
-                                <!-- /.modal-content DELETE --> 
-
-                                <!-- /.modal-content --> 
-
-                                <!-- /.modal-content LOADING --> 
-                                <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                                    <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                            </div>
-                                            <div class="modal-body text-center">
-
-                                                <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                                                <br>
-                                                <h3 style="margin-top:20px;">Carregando as informações...</h3>
-
-                                            </div>
-                                            <div class="modal-footer">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                                                                    $(document).ready(function () {
+                                                                                        $(document).on({
+                                                                                            'show.bs.modal': function () {
+                                                                                                var zIndex = 1040 + (10 * $('.modal:visible').length);
+                                                                                                $(this).css('z-index', zIndex);
+                                                                                                setTimeout(function () {
+                                                                                                    $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+                                                                                                }, 0);
+                                                                                            },
+                                                                                            'hidden.bs.modal': function () {
+                                                                                                if ($('.modal:visible').length > 0) {
+                                                                                                    // restore the modal-open class to the body element, so that scrolling works
+                                                                                                    // properly after de-stacking a modal.
+                                                                                                    setTimeout(function () {
+                                                                                                        $(document.body).addClass('modal-open');
+                                                                                                    }, 0);
+                                                                                                }
+                                                                                            }
+                                                                                        }, '.modal');
+                                                                                    });
 
 
-                                <!-- jquery 3.3.1 -->
-                                <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-                                <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
-                                <script src="assets/libs/js/form-mask.js"></script>
-                                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-
-                                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-                                <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-                                <!-- slimscroll js -->
-                                <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-                                <!-- main js -->
-                                <script src="assets/libs/js/main-js.js"></script>
-                                <!-- chart chartist js -->
-                                <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
-                                <!-- sparkline js -->
-                                <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
-                                <!-- morris js -->
-                                <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
-                                <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
-                                <!-- chart c3 js -->
-                                <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
-                                <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
-                                <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
-                                <script src="assets/libs/js/dashboard-ecommerce.js"></script>
-                                <!-- parsley js -->
-                                <script src="assets/vendor/parsley/parsley.js"></script>
-
-                                <!-- Optional JavaScript -->
-                                <script>
-
-                                                                            var sh = false;
-                                                                            var it = null;
-
-                                                                            loading.show = function () {
-                                                                                if (it != null) {
-                                                                                    clearInterval(it);
-                                                                                }
-                                                                                it = setInterval(function () {
-                                                                                    $("#loading").modal("show");
-                                                                                    if ($("#loading").hasClass('in')) {
-                                                                                        clearInterval(it);
-                                                                                    }
-                                                                                }, 300)
-
-                                                                            }
-
-                                                                            loading.close = function () {
-
-                                                                                if (it != null) {
-                                                                                    clearInterval(it);
-                                                                                }
-                                                                                it = setInterval(function () {
-                                                                                    $("#loading").modal("hide");
-                                                                                    if (!$("#loading").hasClass('in')) {
-                                                                                        clearInterval(it);
-                                                                                    }
-                                                                                }, 300)
-
-                                                                            }
+                                                                                    $(document).ready(function () {
+                                                                                        $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                                                                                        $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                                                                                        $('.btndel').tooltip({title: "Deletar", placement: "top"});
+                                                                                    });
 
 
+                </script>
 
-                                                                            $(document).ready(function () {
-                                                                                $(document).on({
-                                                                                    'show.bs.modal': function () {
-                                                                                        var zIndex = 1040 + (10 * $('.modal:visible').length);
-                                                                                        $(this).css('z-index', zIndex);
-                                                                                        setTimeout(function () {
-                                                                                            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
-                                                                                        }, 0);
-                                                                                    },
-                                                                                    'hidden.bs.modal': function () {
-                                                                                        if ($('.modal:visible').length > 0) {
-                                                                                            // restore the modal-open class to the body element, so that scrolling works
-                                                                                            // properly after de-stacking a modal.
-                                                                                            setTimeout(function () {
-                                                                                                $(document.body).addClass('modal-open');
-                                                                                            }, 0);
-                                                                                        }
-                                                                                    }
-                                                                                }, '.modal');
-                                                                            });
+                </body>
 
-
-                                                                            $(document).ready(function () {
-                                                                                $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
-                                                                                $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                                                                                $('.btndel').tooltip({title: "Deletar", placement: "top"});
-                                                                            });
-
-
-                                </script>
-
-                                </body>
-
-                                </html>
+                </html>

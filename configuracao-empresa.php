@@ -102,7 +102,7 @@
                                                     <email entidade="Empresa" atributo="empresa.email" senha="true" alterar="true"></email>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="form-group row">
                                                 <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Inscricao Estadual</label>
                                                 <div class="col-md-4">
@@ -189,7 +189,7 @@
                                                 </div>
                                             </div>
                                             <hr>
-                                             <div class="form-group row">
+                                            <div class="form-group row">
                                                 <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Juros Mensal %</label>
                                                 <div class="col-md-4">
                                                     <decimal model="empresa.juros_mensal"></decimal>
@@ -216,7 +216,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                             <div class="form-group row">
+                                            <div class="form-group row">
                                                 <label for="txtname" class="col-4 col-lg-2 col-form-label text-left">Lote NFe</label>
                                                 <div class="col-md-3">
                                                     <inteiro model="parametros_emissao.lote"></inteiro>
@@ -225,23 +225,39 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <hr>
                                             <div class="form-group row">
-                                                <div class="col-md-2">Certificado</div>
                                                 <div class="col-md-3">
-                                                    <button type="button" onclick="$('#uploaderCertificadoDigital').click()" class="btn btn-outline-{{parametros_emissao.certificado===''?'danger':'success'}}"><i class="fas fa-key"></i>&nbsp Certificado Digital NFe A1</button>
-                                                    <input type="file" id="uploaderCertificadoDigital" style="display:none">
+
+                                                    Marketing Contrada:
+                                                    
+
+                                                </div>
+                                                <div class="col-md-3">
+
+                                                   
+                                                    <input type="radio" class="form-control" name="rdContrato" ng-repeat="mkt in marketings" ng-model="marketing" ng-value="mkt" value="{{mkt===null?'Sem contrato':mkt.nome}}">
+
                                                 </div>
                                             </div>
-                                            <div class="form-group row">
-                                                <label for="txtname" class="col-4 col-lg-2 col-form-label text-left">Senha</label>
-                                                <div class="col-md-3">
-                                                    <input id="txtname" type="password" ng-model="parametros_emissao.senha_certificado" required data-parsley-type="email" placeholder="" class="form-control">
-                                                    <div class="invalid-feedback">
-                                                        Please provide a valid text.
+                                            <?php if ($usuario->temPermissao(Sistema::P_NOTA()->m("A"))) { ?>
+                                                <hr>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">Certificado</div>
+                                                    <div class="col-md-3">
+                                                        <button type="button" onclick="$('#uploaderCertificadoDigital').click()" class="btn btn-outline-{{parametros_emissao.certificado===''?'danger':'success'}}"><i class="fas fa-key"></i>&nbsp Certificado Digital NFe A1</button>
+                                                        <input type="file" id="uploaderCertificadoDigital" style="display:none">
                                                     </div>
                                                 </div>
-                                            </div>
+                                                <div class="form-group row">
+                                                    <label for="txtname" class="col-4 col-lg-2 col-form-label text-left">Senha</label>
+                                                    <div class="col-md-3">
+                                                        <input id="txtname" type="password" ng-model="parametros_emissao.senha_certificado" required data-parsley-type="email" placeholder="" class="form-control">
+                                                        <div class="invalid-feedback">
+                                                            Please provide a valid text.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php } ?>
                                             <hr>
                                             <button class="btn btn-sucess"><i class="fas fa-check"></i>&nbsp Confirmar Alteracoes</button>
                                         </form>
@@ -276,24 +292,18 @@
             <!-- ============================================================== -->
 
 
+            <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
+
             <!-- jquery 3.3.1 -->
             <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
             <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
             <script src="assets/libs/js/form-mask.js"></script>
-
-            <!-- bootstap bundle js -->
             <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-            <!-- datatables js -->
-            <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-            <script src="assets/vendor/datatables/js/dataTables.bootstrap4.min.js"></script>
-            <script src="../../../../../cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
-            <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-            <script src="assets/vendor/datatables/js/data-table.js"></script>
 
+            <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+            <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
             <!-- slimscroll js -->
             <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-            <!-- multi-select js -->
-            <script src="assets/vendor/multi-select/js/jquery.multi-select.js"></script>
             <!-- main js -->
             <script src="assets/libs/js/main-js.js"></script>
             <!-- chart chartist js -->
@@ -313,7 +323,34 @@
 
             <!-- Optional JavaScript -->
             <script>
-                                                    $('#my-select, #pre-selected-options').multiSelect()
+
+                                                        var l = $('#loading');
+                                                        l.hide();
+                                                        var x = 0;
+                                                        var y = 0;
+                                                        $(document).mousemove(function (e) {
+
+                                                        x = e.clientX;
+                                                        y = e.clientY;
+                                                        var s = $(this).scrollTop();
+                                                        l.offset({top: (y + s), left: x});
+                                                        })
+
+                                                                var sh = false;
+                                                        var it = null;
+                                                        loading.show = function () {
+                                                        l.show();
+                                                        var s = $(document).scrollTop();
+                                                        l.offset({top: (y + s), left: x});
+                                                        }
+
+                                                        loading.close = function () {
+                                                        l.hide();
+                                                        }
+            </script>
+            <!-- Optional JavaScript -->
+            <script>
+                $('#my-select, #pre-selected-options').mu                            ltiSelect()
             </script>
             <script>
                         $('#callbacks').multiSelect({
@@ -324,101 +361,101 @@
                         alert("Deselect value: " + values);
                         }
                 });
-            </script>
-            <script>
-                $('#keep-order').multiSelect({ keepOrder: true });
-            </script>
-            <script>
-                $('#public-methods').multiSelect();
-                $('#select-all').click(function() {
-                $('#public-methods').multiSelect('select_all');
-                return false;
-                });
-                $('#deselect-all').click(function() {
-                $('#public-methods').multiSelect('deselect_all');
-                return false;
-                });
-                $('#select-100').click(function() {
-                $('#public-methods').multiSelect('select', ['elem_0', 'elem_1'..., 'elem_99']);
-                return false;
-                });
-                $('#deselect-100').click(function() {
-                $('#public-methods').multiSelect('deselect', ['elem_0', 'elem_1'..., 'elem_99']);
-                return false;
-                });
-                $('#refresh').on('click', function() {
-                $('#public-methods').multiSelect('refresh');
-                return false;
-                });
-                $('#add-option').on('click', function() {
-                $('#public-methods').multiSelect('addOption', { value: 42, text: 'test 42', index: 0 });
-                return false;
-                });
-            </script>
-            <script>
-                $('#optgroup').multiSelect({ selectableOptgroup: true });
-            </script>
-            <script>
-                $('#disabled-attribute').multiSelect();
-            </script>
-            <script>
-                $('#custom-headers').multiSelect({
-                selectableHeader: "<div class='custom-header'>Selectable items</div>",
-                        selectionHeader: "<div class='custom-header'>Selection items</div>",
-                        selectableFooter: "<div class='custom-header'>Selectable footer</div>",
-                        selectionFooter: "<div class='custom-header'>Selection footer</div>"
-                });
-            </script>
-            <script>
-                $(document).ready(function() {
-                $('#fornecedor').DataTable({
-                "language":{ //Altera o idioma do DataTable para o português do Brasil
-                "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
-                },
-                });
-                $.getJSON('estados_cidades.json', function (data) {
-                var items = [];
-                var options = '<option value="">escolha um estado</option>';
-                $.each(data, function (key, val) {
-                options += '<option value="' + val.nome + '">' + val.nome + '</option>';
-                });
-                $("#estados").html(options);
-                $("#estados").change(function () {
+                                        </scri                            pt>
+                                            <script>
+$('#keep-order').multiSelect({ keepOrder: true });
+                         < /scri                                    pt>
+<script>
+$('#public-methods').multiSelect();
+$('#select-all').click(function() {
+$('#public-methods').multiSelect('select_all');
+return false;
+});
+$('#deselect-a l l').click(function() {
+$('#public-methods').multiSelect('deselect_all');
+return false;
+});
+$('#select-100').click(function() {
+$('#public-methods').multiSelect('select', ['elem_0', 'elem_1'..., 'elem_99']);
+return false;
+});
+$('#deselect-100').click(function() {
+$('#public-methods').multiSelect('deselect', ['elem_0', 'elem_1'..., 'elem_99']);
+return false;
+});
+$ ( '#refresh').on('click', function() {
+$('#public-methods').multiSelect('refresh');
+return false;
+});
+$('#add-option').on('click', function() {
+$('#public-methods').multiSelect('addO p tion', { value: 42, text: 'te s t 42',   index: 0 });
+return false;
+});
+                        </                                            script>
+                        <script>
+$('#optgroup').multiSelect({ selectableOptgroup: true });
+                            </                                                        script>
+                            <script>
+$('#disabled-attribute').mul                                                                tiSelect();
+                    </script>
+                    <script>
+                        $('#custom-headers').mu                                                                    ltiSelect({
+                        selectableHeader: "<div class='custom-header'>Selectable it                                                                    ems</div>",
+                                selec t ionHea d er: "<div class='custom-header'>Selection it                                                    ems</div>",
+                                selectableFooter: "<div class='custom-header'>Selectable foo                                                                    ter</div>",
+                                selectionFooter: "<div class='custom-header'>Selection fo                                                        oter</div>"
+                        });
+                    </script>
+                    <script>
+                        $(d                                                                        ocument).ready(function() {
+                        $                                                                        ('#fornecedor').DataTable({
+                        "language":{ //Altera o idioma do DataTable                                                                         para o português do Brasil
+                        "url": "https://cdn.datatables.net/plug-ins/1.10.12/i                                                                            18n/Portuguese-Brasil.json"
+                        },
+                        });
+                        $.getJSON('estados_cidad                                                                    es.json', function (data) {
+                        var items = [];
+                        var options = '<option value="">e                                                            scolha um estado</option>';
+                        $.each(data, function (key, val) {
+                        options += '<option value="' + val.nome + '">                                                                        ' + val.nome + '</option>';
+                        });
+                        $                                                                        ("#estados").html(options);
+                        $("#esta                                                                    dos").change(function () {
 
-                var options_cidades = '';
-                var str = "";
-                $("#estados option:selected").each(function () {
-                str += $(this).text();
-                });
-                $.each(data, function (key, val) {
-                if (val.nome == str) {
-                $.each(val.cidades, function (key_city, val_city) {
-                options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
-                });
-                }
-                });
-                $("#cidades").html(options_cidades);
-                }).change();
-                });
-                });
-            </script>
-            <script>
+                        var options_cidades = '';
+                        var str = "";
+                        $("#estados option:se                                                            lected").each(function () {
+                        str += $(this).text();
+                        });
+                        $.each(data, function (key, val) {
+                        if (val.nome == str) {
+                        $.each(val.cidades, func                                                            tion (key_city, val_city) {
+                        options_cidades += '<option value="' + val_city + '">                                                                        ' + val_city + '</option>';
+                        });
+                        }
+                        });
+                        $("#cidad                                                                            es").html(options_cidades);
+                        }).change();
+                        });
+                        });
+                    </script>
+                    <script>
 
-                $('.newbtn').bind("click", function () {
-                $('#pic').click();
-                });
-                function readURL(input) {
-                if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                $('#blah')
-                        .attr('src', e.target.result);
-                };
-                reader.readAsDataURL(input.files[0]);
-                }
-                }
-            </script>
+                        $('.newbtn').bind("click", function () {
+                        $('                                                                    #pic').click();
+                        });
+                        function r                                                                eadURL(input) {
+                        if (input.files && in                                                        put.files[0]) {
+                        var reader = ne                                                        w FileReader();
+                        reader.onload = function (e) {
+                        $('#blah')
+                                .attr('src', e.target.result);
+                        };
+                        reader.readAsDataURL(i                                                                    nput.files[0]);
+                        }
+                        }
+                    </script>
 
-    </body>
+            </body>
 
-</html>
+        </html>

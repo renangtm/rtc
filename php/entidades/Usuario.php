@@ -129,7 +129,7 @@ class Usuario {
     }
 
     public function temPermissao($p) {
-
+        
         foreach ($this->permissoes as $key => $value) {
 
             if ($value->nome == $p->nome) {
@@ -142,11 +142,15 @@ class Usuario {
                     return false;
                 } else if ($p->cons && !$value->cons) {
                     return false;
+                }else{
+                    return true;
                 }
+                
             }
+            
         }
 
-        return true;
+        return false;
     }
 
     public function delete($con) {
