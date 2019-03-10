@@ -20,7 +20,8 @@ class EmpresaAgricola extends Empresa {
         $this->permissoes_especiais[] = array(
             Sistema::P_LISTA_PRECO(),
             Sistema::P_CULTURA(),
-            Sistema::P_PRAGA());
+            Sistema::P_PRAGA(),
+            Sistema::P_PARAMETRROS_TECNICOS_PRODUTO());
         
     }
 

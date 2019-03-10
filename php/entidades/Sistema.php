@@ -133,6 +133,10 @@ class Sistema {
         return new Permissao(34, "pedido saida");
     }
 
+    public static function P_PARAMETRROS_TECNICOS_PRODUTO() {
+        return new Permissao(35, "parametros agricolas cadastro de produto");
+    }
+
     public static function getEmpresa($tipo) {
 
         $empresa = null;
@@ -140,17 +144,17 @@ class Sistema {
             $empresa = new EmpresaAgricola();
         } else if ($tipo === 1) {
             $empresa = new Logistica();
-        }else if ($tipo === 2) {
+        } else if ($tipo === 2) {
             $empresa = new Marketing();
-        }else if ($tipo === 3) {
+        } else if ($tipo === 3) {
             $empresa = new Virtual();
-        }else if ($tipo === 4) {
+        } else if ($tipo === 4) {
             $empresa = new Leiloes();
-        }else if ($tipo === 5) {
+        } else if ($tipo === 5) {
             $empresa = new Administracao();
-        }else if ($tipo === 6) {
+        } else if ($tipo === 6) {
             $empresa = new Agronomia();
-        }else if ($tipo === 7) {
+        } else if ($tipo === 7) {
             $empresa = new Empresa();
         }
 
@@ -231,7 +235,7 @@ class Sistema {
         $cm = new CacheManager(3600000);
         //1 hora de cahce de banners
 
-        $cache = $cm->getCache("cbanner",false);
+        $cache = $cm->getCache("cbanner", false);
 
         if ($cache === null) {
 
@@ -337,11 +341,10 @@ class Sistema {
                     $telefone->id = $id_telefone;
 
                     $empresa->telefone = $telefone;
-                    
+
                     $empresas[$id_empresa] = $empresa;
-                    
                 }
-                
+
                 $banner->empresa = $empresas[$id_empresa];
 
                 $banners[] = $banner;
@@ -358,27 +361,25 @@ class Sistema {
             $campanhas .= ")";
 
             $camps = array();
-            
-            foreach($empresas as $key=>$empresa){
-                
+
+            foreach ($empresas as $key => $empresa) {
+
                 $temp = $empresa->getCampanhas($con, 0, $qtd_campanhas, "campanha.id IN $campanhas", "");
-            
-                foreach($temp as $key2=>$value){
+
+                foreach ($temp as $key2 => $value) {
                     $camps[] = $value;
                 }
-                
             }
-            
+
             $retorno = array();
-            
+
             $campanhas = $camps;
-            
+
             foreach ($banners as $key => $banner) {
-                
-                if(!isset($retorno[$banner->tipo])){
-                    
+
+                if (!isset($retorno[$banner->tipo])) {
+
                     $retorno[$banner->tipo] = array();
-                    
                 }
 
                 if ($banner->campanha > 0) {
@@ -395,40 +396,41 @@ class Sistema {
 
                     $banner->campanha = null;
                 }
-                
+
                 $retorno[$banner->tipo][] = $banner->getHTML();
-                
             }
-            
+
             $strCache = "";
-            
-            foreach($retorno as $key=>$value){
+
+            foreach ($retorno as $key => $value) {
                 $strCache .= "[[[divisao]]]$key{{{";
-                foreach($value as $key2=>$value2){
+                foreach ($value as $key2 => $value2) {
                     $strCache .= "$value2;;;";
                 }
             }
-            
-            $cm->setCache("cbanner",$strCache,false);
+
+            $cm->setCache("cbanner", $strCache, false);
             return $retorno;
         } else {
-            
+
             $retorno = array();
-            $l = explode("[[[divisao]]]",$cache);
-           
-            foreach($l as $key=>$value){
-                if($value === "")continue;
-                
-                $k = explode("{{{",$value);
+            $l = explode("[[[divisao]]]", $cache);
+
+            foreach ($l as $key => $value) {
+                if ($value === "")
+                    continue;
+
+                $k = explode("{{{", $value);
                 $n = intval($k[0]);
                 $retorno[$n] = array();
-                $s = explode(";;;",$k[1]);
-                foreach($s as $key2=>$value2){
-                    if($value2==="")continue;
+                $s = explode(";;;", $k[1]);
+                foreach ($s as $key2 => $value2) {
+                    if ($value2 === "")
+                        continue;
                     $retorno[$n][] = $value2;
                 }
             }
-            
+
             return $retorno;
         }
     }
@@ -662,6 +664,110 @@ class Sistema {
         return $pedidos;
     }
 
+    public static function getRemessasDeLote($con, $ids, $filtro = "", $ordem = "") {
+
+        $produtos = "(0";
+
+        foreach ($ids as $key => $value) {
+            $produtos .= ",$value";
+        }
+
+        $produtos .= ")";
+
+        $sql = "SELECT "
+                . "lote.id,"
+                . "lote.numero,"
+                . "lote.rua,"
+                . "lote.altura,"
+                . "UNIX_TIMESTAMP(lote.validade)*1000,"
+                . "UNIX_TIMESTAMP(lote.data_entrada)*1000,"
+                . "lote.grade,"
+                . "lote.quantidade_inicial,"
+                . "lote.quantidade_real,"
+                . "lote.codigo_fabricante,"
+                . "GROUP_CONCAT(retirada.retirada separator ';'),"
+                . "lote.id_produto "
+                . "FROM lote "
+                . "LEFT JOIN retirada ON lote.id=retirada.id_lote "
+                . "WHERE lote.id_produto IN $produtos AND lote.excluido = false ";
+
+        if ($filtro != "") {
+
+            $sql .= "AND $filtro ";
+        }
+
+        $sql .= "GROUP BY lote.id ";
+
+        if ($ordem != "") {
+
+            $sql .= "ORDER BY $ordem ";
+        }
+
+        $remessas = array();
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id, $numero, $rua, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_produto);
+
+        while ($ps->fetch()) {
+
+            $lote = new Lote();
+            $lote->id = $id;
+            $lote->numero = $numero;
+            $lote->rua = $rua;
+            $lote->altura = $altura;
+            $lote->validade = $validade;
+            $lote->entrada = $entrada;
+            $lote->quantidade_inicial = $quantidade_inicial;
+            $lote->grade = new Grade($grade);
+            $lote->quantidade_real = $quantidade_real;
+            $lote->produto = null;
+            $lote->codigo_fabricante = $codigo_fabricante;
+
+            if ($retirada != null) {
+
+                $rets = explode(';', $retirada);
+
+                foreach ($rets as $key => $value) {
+
+                    $ret = explode(',', $value);
+                    foreach ($ret as $key => $value) {
+
+                        $ret[$key] = intval($ret[$key]);
+                    }
+
+                    $lote->retiradas[] = $ret;
+                }
+            }
+            
+            if(!isset($remessas[$id_produto])){
+                $remessas[$id_produto] = array();
+            }
+            
+            $remessas[$id_produto][] = $lote;
+            
+        }
+        
+        $retorno = array();
+        
+        foreach($remessas as $key=>$value){
+            
+            $remessa = new stdClass();
+            $remessa->id_produto = $key;
+            $remessa->lotes = array();
+            
+            foreach($value as $key2=>$value2){
+                $remessa->lotes[] = $value2;
+            }
+            
+            $retorno[] = $remessa;
+            
+        }
+        
+        return $retorno;
+        
+    }
+
     public static function getCompraParceiros($con) {
 
         $cm = new CacheManager();
@@ -757,11 +863,22 @@ class Sistema {
 
         $ps->close();
 
+        $categorias_loja = "(0";
+        $categorias = Sistema::getCategoriaProduto();
+
+        foreach ($categorias as $key => $value) {
+            if ($value->loja) {
+                $categorias_loja .= ",$value->id";
+            }
+        }
+
+        $categorias_loja .= ")";
+
         $produtos = array();
 
         foreach ($empresas as $key => $value) {
 
-            $prods = $value->getProdutos($con, 0, 500000, 'categoria_produto.loja=true', '');
+            $prods = $value->getProdutos($con, 0, 500000, 'produto.id_categoria IN ' . $categorias_loja, '');
 
             foreach ($prods as $key2 => $value2) {
 
@@ -1305,11 +1422,11 @@ class Sistema {
 
         return 7;
     }
-    
-    public static function getMarketings($con){
-        
+
+    public static function getMarketings($con) {
+
         $mkts = array();
-        
+
         $ps = $con->getConexao()->prepare("SELECT "
                 . "empresa.id,"
                 . "empresa.tipo_empresa,"
@@ -1341,7 +1458,7 @@ class Sistema {
                 . "INNER JOIN estado ON cidade.id_estado = estado.id "
                 . "WHERE empresa.tipo_empresa=2");
         $ps->execute();
-     
+
         $ps->bind_result($id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
@@ -1394,7 +1511,6 @@ class Sistema {
         $ps->close();
 
         return $mkts;
-        
     }
 
     public static function getCategoriaDocumentos() {
@@ -1514,30 +1630,90 @@ class Sistema {
         return $sts;
     }
 
-    public static function getCategoriaProduto($con) {
+    public static function CATP_AGRICOLA() {
 
-        $cats = array();
+        $cat = new CategoriaProduto();
+        $cat->nome = "Agricola";
+        $cat->id = 1164;
+        $cat->base_calculo = 60;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
 
-        $ps = $con->getConexao()->prepare("SELECT id, nome,base_calculo,ipi,icms_normal,icms FROM categoria_produto WHERE excluida=false");
-        $ps->execute();
-        $ps->bind_result($id, $nome, $base_calculo, $ipi, $icms_normal, $icms);
+    public static function CATP_AGRICOLA_IMPORTADO() {
 
-        while ($ps->fetch()) {
+        $cat = new CategoriaProduto();
+        $cat->nome = "Agricola Importado";
+        $cat->id = 1165;
+        $cat->base_calculo = 100;
+        $cat->icms_normal = false;
+        $cat->icms = 4;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
 
-            $cat = new CategoriaProduto();
-            $cat->id = $id;
-            $cat->nome = $nome;
-            $cat->base_calculo = $base_calculo;
-            $cat->ipi = $ipi;
-            $cat->icms_norma = $icms_normal;
-            $cat->icms = $icms;
+    public static function CATP_AGRICOLA_FORA_LINHA() {
 
-            $cats[] = $cat;
+        $cat = new CategoriaProduto();
+        $cat->nome = "Agricola Fora de Linha";
+        $cat->id = 2;
+        $cat->base_calculo = 60;
+        $cat->parametros_agricolas = true;
+        $cat->loja = false;
+        return $cat;
+    }
+
+    public static function CATP_OBJETO() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Objeto";
+        $cat->id = 1166;
+        $cat->base_calculo = 100;
+        $cat->parametros_agricolas = false;
+        $cat->loja = false;
+        return $cat;
+    }
+
+    public static function CATP_ABSTRATO() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Abstrato";
+        $cat->id = 4;
+        $cat->base_calculo = 100;
+        $cat->parametros_agricolas = false;
+        $cat->desconta_estoque = false;
+        $cat->loja = false;
+        $cat->abstrato = true;
+
+        return $cat;
+    }
+
+    public static function getCategoriaProduto($empresa = null, $id = -1) {
+
+        $ret = array(Sistema::CATP_OBJETO(), Sistema::CATP_ABSTRATO());
+
+        if ($empresa === null) {
+
+            $ret[] = Sistema::CATP_AGRICOLA();
+            $ret[] = Sistema::CATP_AGRICOLA_FORA_LINHA();
+            $ret[] = Sistema::CATP_AGRICOLA_IMPORTADO();
+        } else {
+            $ret[] = Sistema::CATP_AGRICOLA();
+            $ret[] = Sistema::CATP_AGRICOLA_FORA_LINHA();
+            $ret[] = Sistema::CATP_AGRICOLA_IMPORTADO();
         }
-
-        $ps->close();
-
-        return $cats;
+        if ($id < 0) {
+            return $ret;
+        } else {
+            foreach ($ret as $key => $value) {
+                if ($value->id === $id) {
+                    return $value;
+                }
+            }
+            return null;
+        }
     }
 
     public static function getEstados($con) {
@@ -1757,11 +1933,10 @@ class Sistema {
                 continue;
             }
 
-            $p->alt = $alterar==1;
-            $p->in = $incluir==1;
-            $p->del = $deletar==1;
-            $p->cons = $consultar==1;
-
+            $p->alt = $alterar == 1;
+            $p->in = $incluir == 1;
+            $p->del = $deletar == 1;
+            $p->cons = $consultar == 1;
         }
 
         $ps->close();
@@ -2103,12 +2278,10 @@ class Sistema {
                 continue;
             }
 
-            $p->alt = $alterar==1;
-            $p->in = $incluir==1;
-            $p->del = $deletar==1;
-            $p->cons = $consultar==1;
-
-      
+            $p->alt = $alterar == 1;
+            $p->in = $incluir == 1;
+            $p->del = $deletar == 1;
+            $p->cons = $consultar == 1;
         }
 
         $ps->close();

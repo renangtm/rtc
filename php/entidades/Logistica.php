@@ -25,7 +25,6 @@ class Logistica extends Empresa {
 
         $sql = "SELECT COUNT(*) "
                 . "FROM produto "
-                . "INNER JOIN categoria_produto ON categoria_produto.id=produto.id_categoria "
                 . "INNER JOIN empresa ON empresa.id=produto.id_empresa "
                 . "WHERE produto.id_logistica=$this->id ";
 
@@ -54,11 +53,10 @@ class Logistica extends Empresa {
                 . "produto.nome, "
                 . "produto.estoque, "
                 . "produto.disponivel, "
+                . "produto.id_categoria, "
                 . "produto.transito, "
-                . "categoria_produto.nome, "
                 . "CONCAT(CONCAT(empresa.id,'-'),empresa.nome) "
                 . "FROM produto "
-                . "INNER JOIN categoria_produto ON categoria_produto.id=produto.id_categoria "
                 . "INNER JOIN empresa ON empresa.id=produto.id_empresa "
                 . "WHERE produto.id_logistica=$this->id ";
 
@@ -77,7 +75,7 @@ class Logistica extends Empresa {
         $ps = $con->getConexao()->prepare($sql);
 
         $ps->execute();
-        $ps->bind_result($id, $nome, $estoque, $disponivel, $transito, $categoria, $empresa);
+        $ps->bind_result($id, $nome, $estoque, $disponivel, $transito, $cat_id, $empresa);
 
         $empresas = array();
 
@@ -90,7 +88,8 @@ class Logistica extends Empresa {
                 $p = new ProdutoClienteLogistic();
                 $p->id = $id;
                 $p->nome = $nome;
-                $p->categoria = $categoria;
+                $categoria = Sistema::getCategoriaProduto(null,$cat_id);
+                $p->categoria = $categoria->nome;
 
                 $produtos[$id] = $p;
             }
@@ -376,12 +375,7 @@ class Logistica extends Empresa {
                 . "produto.lucro_consignado,"
                 . "produto.ativo,"
                 . "produto.concentracao,"
-                . "categoria_produto.id,"
-                . "categoria_produto.nome,"
-                . "categoria_produto.base_calculo,"
-                . "categoria_produto.ipi,"
-                . "categoria_produto.icms_normal,"
-                . "categoria_produto.icms, "
+                . "produto.id_categoria,"
                 . "empresa.id,"
                 . "empresa.tipo_empresa,"
                 . "empresa.nome,"
@@ -407,7 +401,6 @@ class Logistica extends Empresa {
                 . "FROM lote "
                 . "LEFT JOIN retirada ON lote.id=retirada.id_lote "
                 . "INNER JOIN produto ON lote.id_produto=produto.id "
-                . "INNER JOIN categoria_produto ON categoria_produto.id=produto.id_categoria "
                 . "INNER JOIN empresa ON empresa.id = produto.id_empresa "
                 . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
                 . "INNER JOIN email ON email.id_entidade = empresa.id AND email.tipo_entidade='EMP' "
@@ -433,7 +426,7 @@ class Logistica extends Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $numero_lote, $rua_lote, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro,$cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $numero_lote, $rua_lote, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro,$cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $lotes = array();
 
@@ -518,14 +511,7 @@ class Logistica extends Empresa {
                     $oferta->produto = $p;
                 }
 
-                $p->categoria = new CategoriaProduto();
-
-                $p->categoria->id = $cat_id;
-                $p->categoria->nome = $cat_nom;
-                $p->categoria->base_calculo = $cat_bs;
-                $p->categoria->icms = $cat_icms;
-                $p->categoria->icms_normal = $cat_icms_normal;
-                $p->categoria->ipi = $cat_ipi;
+                $p->categoria = Sistema::getCategoriaProduto(null,$cat_id);
 
                 $produtos[$id_pro] = $p;
             }

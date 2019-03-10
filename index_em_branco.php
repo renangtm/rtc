@@ -5,13 +5,13 @@
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        
+
         <script src="js/angular.min.js"></script>
         <script src="js/rtc.js"></script>
         <script src="js/filters.js"></script>
         <script src="js/services.js"></script>
         <script src="js/controllers.js"></script>    
-        
+
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
         <link href="assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
@@ -23,8 +23,8 @@
         <link rel="stylesheet" href="assets/vendor/charts/c3charts/c3.css">
         <link rel="stylesheet" href="assets/vendor/fonts/flag-icon-css/flag-icon.min.css">
         <title>RTC (Reltrab Cliente) - WEB</title>
-        
-        
+
+
     </head>
 
     <body>
@@ -35,7 +35,7 @@
             <!-- ============================================================== -->
             <!-- navbar -->
             <!-- ============================================================== -->
-            
+
             <!-- ============================================================== -->
             <!-- end navbar -->
             <!-- ============================================================== -->
@@ -104,9 +104,16 @@
         <!-- ============================================================== -->
         <!-- Optional JavaScript -->
         <!-- jquery 3.3.1 -->
+        <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
+
+        <!-- jquery 3.3.1 -->
         <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-        <!-- bootstap bundle js -->
+        <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
+        <script src="assets/libs/js/form-mask.js"></script>
         <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+
+        <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+        <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
         <!-- slimscroll js -->
         <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
         <!-- main js -->
@@ -123,6 +130,45 @@
         <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
         <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
         <script src="assets/libs/js/dashboard-ecommerce.js"></script>
+        <!-- parsley js -->
+        <script src="assets/vendor/parsley/parsley.js"></script>
+
+        <!-- Optional JavaScript -->
+        <script>
+
+            var l = $('#loading');
+            l.hide();
+
+
+            var x = 0;
+            var y = 0;
+
+            $(document).mousemove(function (e) {
+
+                x = e.clientX;
+                y = e.clientY;
+
+                var s = $(this).scrollTop();
+
+                l.offset({top: (y + s), left: x});
+
+            })
+
+            var sh = false;
+            var it = null;
+
+            loading.show = function () {
+                l.show();
+                var s = $(document).scrollTop();
+
+                l.offset({top: (y + s), left: x});
+
+            }
+
+            loading.close = function () {
+                l.hide();
+            }
+        </script>
     </body>
 
 </html>

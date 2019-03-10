@@ -222,12 +222,7 @@ class Pedido {
                 . "produto.concentracao,"
                 . "produto.sistema_lotes,"
                 . "produto.nota_usuario,"
-                . "categoria_produto.id,"
-                . "categoria_produto.nome,"
-                . "categoria_produto.base_calculo,"
-                . "categoria_produto.ipi,"
-                . "categoria_produto.icms_normal,"
-                . "categoria_produto.icms,"
+                . "produto.id_categoria,"
                 . "empresa.id,"
                 . "empresa.tipo_empresa,"
                 . "empresa.nome,"
@@ -252,7 +247,6 @@ class Pedido {
                 . "telefone.numero"
                 . " FROM produto_pedido_saida "
                 . "INNER JOIN produto ON produto_pedido_saida.id_produto=produto.id "
-                . "INNER JOIN categoria_produto ON categoria_produto.id=produto.id_categoria "
                 . "INNER JOIN empresa ON produto.id_empresa=empresa.id "
                 . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
                 . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
@@ -262,7 +256,7 @@ class Pedido {
                 . " WHERE produto_pedido_saida.id_pedido=$this->id");
 
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro,$cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc,$sistema_lote,$nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro,$cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc,$sistema_lote,$nota_usuario, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
@@ -306,14 +300,7 @@ class Pedido {
                 $oferta->produto = $p;
             }
 
-            $p->categoria = new CategoriaProduto();
-
-            $p->categoria->id = $cat_id;
-            $p->categoria->nome = $cat_nom;
-            $p->categoria->base_calculo = $cat_bs;
-            $p->categoria->icms = $cat_icms;
-            $p->categoria->icms_normal = $cat_icms_normal;
-            $p->categoria->ipi = $cat_ipi;
+            $p->categoria = Sistema::getCategoriaProduto(null, $cat_id);
 
             $empresa = Sistema::getEmpresa($tipo_empresa);
 

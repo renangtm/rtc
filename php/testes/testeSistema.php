@@ -93,11 +93,9 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         //echo Utilidades::toJson($produtos);
         
-        $t = new Empresa(1733);
+        $pd = Sistema::getCompraParceiros($con);
         
-        $mkt = $t->getMarketing($con);
         
-        echo Utilidades::toJson($mkt);
         
     }
 

@@ -47,7 +47,7 @@ class Empresa {
         $this->tipo_empresa = false;
         $this->permissoes_especiais = array();
 
-        if ($id > 0 & $cf !== null) {
+        if ($id > 0 && $cf !== null) {
 
             $ps = $cf->getConexao()->prepare("SELECT empresa.nome,empresa.cnpj,endereco.id,endereco.rua,endereco.bairro,endereco.cep,endereco.numero,cidade.id,cidade.nome,estado.id,estado.sigla FROM empresa INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' INNER JOIN cidade ON cidade.id=endereco.id_cidade INNER JOIN estado ON estado.id=cidade.id_estado WHERE empresa.id=$id");
             $ps->execute();
@@ -77,6 +77,12 @@ class Empresa {
             }
             $ps->close();
         }
+    }
+    
+    public function getEmpresasClientes($con){
+        
+        return array();
+        
     }
 
     public function setRTC($con, $rtc) {
@@ -898,16 +904,10 @@ class Empresa {
                 . "produto.concentracao,"
                 . "produto.sistema_lotes,"
                 . "produto.nota_usuario,"
-                . "categoria_produto.id,"
-                . "categoria_produto.nome,"
-                . "categoria_produto.base_calculo,"
-                . "categoria_produto.ipi,"
-                . "categoria_produto.icms_normal,"
-                . "categoria_produto.icms "
+                . "produto.id_categoria "
                 . "FROM lote "
                 . "LEFT JOIN retirada ON lote.id=retirada.id_lote "
                 . "INNER JOIN produto ON lote.id_produto=produto.id "
-                . "INNER JOIN categoria_produto ON categoria_produto.id=produto.id_categoria "
                 . "WHERE produto.id_empresa = $this->id AND lote.excluido = false ";
 
         if ($filtro != "") {
@@ -927,7 +927,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $numero, $rua, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
+        $ps->bind_result($id, $numero, $rua, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id);
 
         $lotes = array();
 
@@ -972,14 +972,7 @@ class Empresa {
                     $oferta->produto = $p;
                 }
 
-                $p->categoria = new CategoriaProduto();
-
-                $p->categoria->id = $cat_id;
-                $p->categoria->nome = $cat_nom;
-                $p->categoria->base_calculo = $cat_bs;
-                $p->categoria->icms = $cat_icms;
-                $p->categoria->icms_normal = $cat_icms_normal;
-                $p->categoria->ipi = $cat_ipi;
+                $p->categoria = Sistema::getCategoriaProduto(null, $cat_id);
 
                 $p->empresa = $this;
 
@@ -1513,12 +1506,7 @@ class Empresa {
                 . "produto.lucro_consignado,"
                 . "produto.ativo,"
                 . "produto.concentracao,"
-                . "categoria_produto.id,"
-                . "categoria_produto.nome,"
-                . "categoria_produto.base_calculo,"
-                . "categoria_produto.ipi,"
-                . "categoria_produto.icms_normal,"
-                . "categoria_produto.icms,"
+                . "produto.id_categoria,"
                 . "empresa.id,"
                 . "empresa.tipo_empresa,"
                 . "empresa.nome,"
@@ -1558,7 +1546,6 @@ class Empresa {
         $sql .= ") campanha "
                 . "INNER JOIN produto_campanha ON campanha.id = produto_campanha.id_campanha "
                 . "INNER JOIN produto ON produto.id = produto_campanha.id_produto "
-                . "INNER JOIN categoria_produto ON categoria_produto.id=produto.id_categoria "
                 . "INNER JOIN empresa ON produto.id_empresa=empresa.id "
                 . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
                 . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
@@ -1575,7 +1562,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_pro, $cod_pro, $id_log, $id_uni, $img_prod, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_pro, $cod_pro, $id_log, $id_uni, $img_prod, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
 
 
@@ -1636,14 +1623,7 @@ class Empresa {
                 $pro->ncm = $ncm;
                 $pro->lucro_consignado = $lucro;
 
-                $pro->categoria = new CategoriaProduto();
-
-                $pro->categoria->id = $cat_id;
-                $pro->categoria->nome = $cat_nom;
-                $pro->categoria->base_calculo = $cat_bs;
-                $pro->categoria->icms = $cat_icms;
-                $pro->categoria->icms_normal = $cat_icms_normal;
-                $pro->categoria->ipi = $cat_ipi;
+                $pro->categoria = Sistema::getCategoriaProduto(null,$cat_id);
 
                 $empresa = Sistema::getEmpresa($tipo_empresa);
 
@@ -3682,14 +3662,8 @@ class Empresa {
                 . "produto.concentracao,"
                 . "produto.sistema_lotes,"
                 . "produto.nota_usuario,"
-                . "categoria_produto.id,"
-                . "categoria_produto.nome,"
-                . "categoria_produto.base_calculo,"
-                . "categoria_produto.ipi,"
-                . "categoria_produto.icms_normal,"
-                . "categoria_produto.icms "
+                . "produto.id_categoria "
                 . "FROM produto "
-                . "INNER JOIN categoria_produto ON categoria_produto.id=produto.id_categoria "
                 . "WHERE produto.id_empresa = $this->id AND produto.excluido = false ";
 
 
@@ -3710,7 +3684,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms);
+        $ps->bind_result($id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id);
 
         while ($ps->fetch()) {
 
@@ -3750,14 +3724,7 @@ class Empresa {
                 $oferta->produto = $p;
             }
 
-            $p->categoria = new CategoriaProduto();
-
-            $p->categoria->id = $cat_id;
-            $p->categoria->nome = $cat_nom;
-            $p->categoria->base_calculo = $cat_bs;
-            $p->categoria->icms = $cat_icms;
-            $p->categoria->icms_normal = $cat_icms_normal;
-            $p->categoria->ipi = $cat_ipi;
+            $p->categoria = Sistema::getCategoriaProduto(null,$cat_id);
 
             $p->empresa = $this;
 
@@ -3776,7 +3743,7 @@ class Empresa {
 
     public function getCountProdutos($con, $filtro = "") {
 
-        $sql = "SELECT COUNT(*) FROM produto INNER JOIN categoria_produto ON categoria_produto.id=produto.id_categoria WHERE produto.id_empresa=$this->id AND produto.excluido=false ";
+        $sql = "SELECT COUNT(*) FROM produto WHERE produto.id_empresa=$this->id AND produto.excluido=false ";
 
         if ($filtro != "") {
 
@@ -3954,12 +3921,7 @@ class Empresa {
                 . "produto.concentracao,"
                 . "produto.sistema_lotes,"
                 . "produto.nota_usuario,"
-                . "categoria_produto.id,"
-                . "categoria_produto.nome,"
-                . "categoria_produto.base_calculo,"
-                . "categoria_produto.ipi,"
-                . "categoria_produto.icms_normal,"
-                . "categoria_produto.icms,"
+                . "produto.id_categoria,"
                 . "receituario.id, "
                 . "receituario.instrucoes,"
                 . "cultura.id,"
@@ -3967,7 +3929,6 @@ class Empresa {
                 . "praga.id,"
                 . "praga.nome "
                 . "FROM produto "
-                . "INNER JOIN categoria_produto ON categoria_produto.id=produto.id_categoria "
                 . "INNER JOIN receituario ON receituario.id_produto=produto.id "
                 . "INNER JOIN praga ON receituario.id_praga = praga.id "
                 . "INNER JOIN cultura ON receituario.id_cultura = cultura.id "
@@ -3994,7 +3955,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pro, $cod_pro, $id_log, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id, $cat_nom, $cat_bs, $cat_ipi, $cat_icms_normal, $cat_icms, $rec_id, $rec_ins, $cul_id, $cul_nom, $prag_id, $prag_nom);
+        $ps->bind_result($id_pro, $cod_pro, $id_log, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id, $rec_id, $rec_ins, $cul_id, $cul_nom, $prag_id, $prag_nom);
 
         while ($ps->fetch()) {
 
@@ -4029,14 +3990,7 @@ class Empresa {
                 $oferta->produto = $p;
             }
 
-            $p->categoria = new CategoriaProduto();
-
-            $p->categoria->id = $cat_id;
-            $p->categoria->nome = $cat_nom;
-            $p->categoria->base_calculo = $cat_bs;
-            $p->categoria->icms = $cat_icms;
-            $p->categoria->icms_normal = $cat_icms_normal;
-            $p->categoria->ipi = $cat_ipi;
+            $p->categoria = Sistema::getCategoriaProduto(null,$cat_id);
 
             $p->empresa = $this;
 

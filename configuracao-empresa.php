@@ -229,14 +229,16 @@
                                                 <div class="col-md-3">
 
                                                     Marketing Contrada:
-                                                    
+                                                   
 
                                                 </div>
                                                 <div class="col-md-3">
 
-                                                   
-                                                    <input type="radio" class="form-control" name="rdContrato" ng-repeat="mkt in marketings" ng-model="marketing" ng-value="mkt" value="{{mkt===null?'Sem contrato':mkt.nome}}">
-
+                                                     <div ng-repeat="mkt in marketings">
+                                                         <input type="checkbox" ng-click="setMarketing(mkt)" ng-checked="mkt===marketing" id="{{(mkt!==null)?'mkt_'+mkt.id:'sep'}}">
+                                                         &nbsp<label for="{{(mkt!==null)?'mkt_'+mkt.id:'sep'}}">{{(mkt!==null)?mkt.nome:'Sem empresa de mkt'}}</label>
+                                                     </div>
+                                                         
                                                 </div>
                                             </div>
                                             <?php if ($usuario->temPermissao(Sistema::P_NOTA()->m("A"))) { ?>
@@ -324,138 +326,32 @@
             <!-- Optional JavaScript -->
             <script>
 
-                                                        var l = $('#loading');
-                                                        l.hide();
-                                                        var x = 0;
-                                                        var y = 0;
-                                                        $(document).mousemove(function (e) {
+                                                                var l = $('#loading');
+                                                                l.hide();
+                                                                var x = 0;
+                                                                var y = 0;
+                                                                $(document).mousemove(function (e) {
 
-                                                        x = e.clientX;
-                                                        y = e.clientY;
-                                                        var s = $(this).scrollTop();
-                                                        l.offset({top: (y + s), left: x});
-                                                        })
+                                                                    x = e.clientX;
+                                                                    y = e.clientY;
+                                                                    var s = $(this).scrollTop();
+                                                                    l.offset({top: (y + s), left: x});
+                                                                })
 
                                                                 var sh = false;
-                                                        var it = null;
-                                                        loading.show = function () {
-                                                        l.show();
-                                                        var s = $(document).scrollTop();
-                                                        l.offset({top: (y + s), left: x});
-                                                        }
+                                                                var it = null;
+                                                                loading.show = function () {
+                                                                    l.show();
+                                                                    var s = $(document).scrollTop();
+                                                                    l.offset({top: (y + s), left: x});
+                                                                }
 
-                                                        loading.close = function () {
-                                                        l.hide();
-                                                        }
+                                                                loading.close = function () {
+                                                                    l.hide();
+                                                                }
             </script>
-            <!-- Optional JavaScript -->
-            <script>
-                $('#my-select, #pre-selected-options').mu                            ltiSelect()
-            </script>
-            <script>
-                        $('#callbacks').multiSelect({
-                afterSelect: function(values) {
-                alert("Select value: " + values);
-                },
-                        afterDeselect: function(values) {
-                        alert("Deselect value: " + values);
-                        }
-                });
-                                        </scri                            pt>
-                                            <script>
-$('#keep-order').multiSelect({ keepOrder: true });
-                         < /scri                                    pt>
-<script>
-$('#public-methods').multiSelect();
-$('#select-all').click(function() {
-$('#public-methods').multiSelect('select_all');
-return false;
-});
-$('#deselect-a l l').click(function() {
-$('#public-methods').multiSelect('deselect_all');
-return false;
-});
-$('#select-100').click(function() {
-$('#public-methods').multiSelect('select', ['elem_0', 'elem_1'..., 'elem_99']);
-return false;
-});
-$('#deselect-100').click(function() {
-$('#public-methods').multiSelect('deselect', ['elem_0', 'elem_1'..., 'elem_99']);
-return false;
-});
-$ ( '#refresh').on('click', function() {
-$('#public-methods').multiSelect('refresh');
-return false;
-});
-$('#add-option').on('click', function() {
-$('#public-methods').multiSelect('addO p tion', { value: 42, text: 'te s t 42',   index: 0 });
-return false;
-});
-                        </                                            script>
-                        <script>
-$('#optgroup').multiSelect({ selectableOptgroup: true });
-                            </                                                        script>
-                            <script>
-$('#disabled-attribute').mul                                                                tiSelect();
-                    </script>
-                    <script>
-                        $('#custom-headers').mu                                                                    ltiSelect({
-                        selectableHeader: "<div class='custom-header'>Selectable it                                                                    ems</div>",
-                                selec t ionHea d er: "<div class='custom-header'>Selection it                                                    ems</div>",
-                                selectableFooter: "<div class='custom-header'>Selectable foo                                                                    ter</div>",
-                                selectionFooter: "<div class='custom-header'>Selection fo                                                        oter</div>"
-                        });
-                    </script>
-                    <script>
-                        $(d                                                                        ocument).ready(function() {
-                        $                                                                        ('#fornecedor').DataTable({
-                        "language":{ //Altera o idioma do DataTable                                                                         para o português do Brasil
-                        "url": "https://cdn.datatables.net/plug-ins/1.10.12/i                                                                            18n/Portuguese-Brasil.json"
-                        },
-                        });
-                        $.getJSON('estados_cidad                                                                    es.json', function (data) {
-                        var items = [];
-                        var options = '<option value="">e                                                            scolha um estado</option>';
-                        $.each(data, function (key, val) {
-                        options += '<option value="' + val.nome + '">                                                                        ' + val.nome + '</option>';
-                        });
-                        $                                                                        ("#estados").html(options);
-                        $("#esta                                                                    dos").change(function () {
 
-                        var options_cidades = '';
-                        var str = "";
-                        $("#estados option:se                                                            lected").each(function () {
-                        str += $(this).text();
-                        });
-                        $.each(data, function (key, val) {
-                        if (val.nome == str) {
-                        $.each(val.cidades, func                                                            tion (key_city, val_city) {
-                        options_cidades += '<option value="' + val_city + '">                                                                        ' + val_city + '</option>';
-                        });
-                        }
-                        });
-                        $("#cidad                                                                            es").html(options_cidades);
-                        }).change();
-                        });
-                        });
-                    </script>
-                    <script>
 
-                        $('.newbtn').bind("click", function () {
-                        $('                                                                    #pic').click();
-                        });
-                        function r                                                                eadURL(input) {
-                        if (input.files && in                                                        put.files[0]) {
-                        var reader = ne                                                        w FileReader();
-                        reader.onload = function (e) {
-                        $('#blah')
-                                .attr('src', e.target.result);
-                        };
-                        reader.readAsDataURL(i                                                                    nput.files[0]);
-                        }
-                        }
-                    </script>
+    </body>
 
-            </body>
-
-        </html>
+</html>

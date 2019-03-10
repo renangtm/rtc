@@ -11,49 +11,49 @@ rtc.service('gerenciadorService', function ($http, $q) {
             falha: fn
         });
     }
-    this.getInformacoesUsuario = function (usuario,fn) {
+    this.getInformacoesUsuario = function (usuario, fn) {
         baseService($http, $q, {
-            o:{usuario:usuario},
+            o: {usuario: usuario},
             query: "$r->email=$o->usuario->getEmail($c);$r->telefones=$o->usuario->getTelefones($c);$r->valor_comprado=$o->usuario->getValorComprado($c);$r->pontos=$o->usuario->getPontos($c);$r->logs=$o->usuario->getLogs($c)",
             sucesso: fn,
             falha: fn
         });
     }
-    this.getAtividadeUsuario = function (usuario,intervalo,fn) {
+    this.getAtividadeUsuario = function (usuario, intervalo, fn) {
         baseService($http, $q, {
-            o:{usuario:usuario,intervalo:intervalo},
+            o: {usuario: usuario, intervalo: intervalo},
             query: "$r->pontos = $o->usuario->getAtividade($c,$o->intervalo)",
             sucesso: fn,
             falha: fn
         });
     }
-    this.getMaximoUsuariosOnline = function (gerenciador,fn) {
+    this.getMaximoUsuariosOnline = function (gerenciador, fn) {
         baseService($http, $q, {
-            o:gerenciador,
+            o: gerenciador,
             query: "$r->qtd=$o->getMaximoUsuariosOnline($c)",
             sucesso: fn,
             falha: fn
         });
     }
-    this.getTempo_Usuarios = function (gerenciador,intervalo,fn) {
+    this.getTempo_Usuarios = function (gerenciador, intervalo, fn) {
         baseService($http, $q, {
-            o:{gerenciador:gerenciador,intervalo:intervalo},
+            o: {gerenciador: gerenciador, intervalo: intervalo},
             query: "$r->pontos=$o->gerenciador->getTempo_Usuarios($c,$o->intervalo)",
             sucesso: fn,
             falha: fn
         });
     }
-    this.getCount = function (filtro,fn,gerenciador) {
+    this.getCount = function (filtro, fn, gerenciador) {
         baseService($http, $q, {
-            o:{gerenciador:(typeof gerenciador === 'undefined')?este.gerenciador:gerenciador,filtro:filtro},
+            o: {gerenciador: (typeof gerenciador === 'undefined') ? este.gerenciador : gerenciador, filtro: filtro},
             query: "$r->qtd=$o->gerenciador->getQuantidadeUsuariosAtivos($c,$o->filtro)",
             sucesso: fn,
             falha: fn
         });
     }
-    this.getElementos = function (x1, x2, filtro, ordem, fn,gerenciador) {
+    this.getElementos = function (x1, x2, filtro, ordem, fn, gerenciador) {
         baseService($http, $q, {
-            o:{gerenciador:(typeof gerenciador === 'undefined')?este.gerenciador:gerenciador,x1:x1,x2:x2,filtro:filtro,ordem:ordem},
+            o: {gerenciador: (typeof gerenciador === 'undefined') ? este.gerenciador : gerenciador, x1: x1, x2: x2, filtro: filtro, ordem: ordem},
             query: "$r->elementos=$o->gerenciador->getUsuariosAtivos($c,$o->x1,$o->x2,$o->filtro,$o->ordem)",
             sucesso: fn,
             falha: fn
@@ -64,71 +64,74 @@ rtc.service('atividadeService', function ($http, $q) {
     this.sinal = function () {
         baseService($http, $q, {
             query: "$atv=new Atividade($usuario);$atv->merge($c)",
-            sucesso: function(r){},
-            falha: function(r){}
-        },null,false,true);
+            sucesso: function (r) {},
+            falha: function (r) {}
+        }, null, false, true);
     }
     this.adcionarCarrinho = function (item) {
         baseService($http, $q, {
-            o:{descricao:item.quantidade_comprada+" "+item.nome+" no carrinho"},
+            o: {descricao: item.quantidade_comprada + " " + item.nome + " no carrinho"},
             query: "$atv=new Atividade($usuario);$atv->descricao=$o->descricao;$atv->pontos=1;$atv->tipo=Atividade::$ADCIONAR_CARRINHO;$atv->merge($c)",
-            sucesso: function(r){},
-            falha: function(r){}
-        },null,false,true);
+            sucesso: function (r) {},
+            falha: function (r) {}
+        }, null, false, true);
     }
     this.cliqueComum = function (descricao) {
         baseService($http, $q, {
-            o:{descricao:descricao},
+            o: {descricao: descricao},
             query: "$atv=new Atividade($usuario);$atv->descricao=$o->descricao;$atv->pontos=0.01;$atv->tipo=Atividade::$ITEM_MENU;$atv->merge($c)",
-            sucesso: function(r){},
-            falha: function(r){}
-        },null,false,true);
+            sucesso: function (r) {},
+            falha: function (r) {}
+        }, null, false, true);
     }
     this.pesquisar = function (descricao) {
         baseService($http, $q, {
-            o:{descricao:descricao},
+            o: {descricao: descricao},
             query: "$atv=new Atividade($usuario);$atv->descricao=$o->descricao;$atv->pontos=0.02;$atv->tipo=Atividade::$PESQUISAR;$atv->merge($c)",
-            sucesso: function(r){},
-            falha: function(r){}
-        },null,false,true);
+            sucesso: function (r) {},
+            falha: function (r) {}
+        }, null, false, true);
     }
     this.produto = function (produto) {
         baseService($http, $q, {
-            o:{descricao:produto.id},
+            o: {descricao: produto.id},
             query: "$atv=new Atividade($usuario);$atv->descricao=$o->descricao;$atv->pontos=1;$atv->tipo=Atividade::$PRODUTO;$atv->merge($c)",
-            sucesso: function(r){},
-            falha: function(r){}
-        },true);
+            sucesso: function (r) {},
+            falha: function (r) {}
+        }, true);
     }
 })
 rtc.service('bannerService', function ($http, $q) {
+    this.empresa = null;
+    var este = this;
     this.getCount = function (filtro, fn) {
         baseService($http, $q, {
-            o: {filtro: filtro},
-            query: "$r->qtd=$empresa->getCountBanners($c,$o->filtro)",
+            o: {filtro: filtro, empresa: este.empresa},
+            query: "$r->qtd=$o->empresa->getCountBanners($c,$o->filtro)",
             sucesso: fn,
             falha: fn
         });
     }
     this.getElementos = function (x1, x2, filtro, ordem, fn) {
         baseService($http, $q, {
-            o: {x1: x1, x2: x2, ordem: ordem, filtro: filtro},
-            query: "$r->elementos=$empresa->getBanners($c,$o->x1,$o->x2,$o->filtro,$o->ordem)",
+            o: {x1: x1, x2: x2, ordem: ordem, filtro: filtro, empresa: este.empresa},
+            query: "$r->elementos=$o->empresa->getBanners($c,$o->x1,$o->x2,$o->filtro,$o->ordem)",
             sucesso: fn,
             falha: fn
         });
     }
     this.getBanner = function (fn) {
         baseService($http, $q, {
-            query: "$r->banner=new Banner();$r->banner->empresa=$empresa",
+            o: {empresa: este.empresa},
+            query: "$r->banner=new Banner();$r->banner->empresa=$o->empresa",
             sucesso: fn,
             falha: fn
         });
     }
     this.getHTML = function (banner, fn) {
         baseService($http, $q, {
-            o: banner,
-            query: "$r->html=Utilidades::base64encode($o->getHTML())",
+            o: {banner: banner, empresa: este.empresa},
+            query: "$r->html=Utilidades::base64encode($o->banner->getHTML())",
             sucesso: fn,
             falha: fn
         });
@@ -683,43 +686,89 @@ rtc.service('listaPrecoPragaService', function ($http, $q) {
     }
 })
 rtc.service('campanhaService', function ($http, $q) {
+    this.empresa = null;
+    var este = this;
     this.getCampanha = function (fn) {
-        baseService($http, $q, {
-            query: "$r->campanha=new Campanha();$r->campanha->empresa=$empresa",
-            sucesso: fn,
-            falha: fn
-        });
+        if (este.empresa === null) {
+            baseService($http, $q, {
+                query: "$r->campanha=new Campanha();$r->campanha->empresa=$empresa",
+                sucesso: fn,
+                falha: fn
+            });
+        } else {
+            baseService($http, $q, {
+                o: {empresa: este.empresa},
+                query: "$r->campanha=new Campanha();$r->campanha->empresa=$o->empresa",
+                sucesso: fn,
+                falha: fn
+            });
+        }
     }
     this.getProdutoCampanha = function (fn) {
-        baseService($http, $q, {
-            query: "$r->produto_campanha=new ProdutoCampanha()",
-            sucesso: fn,
-            falha: fn
-        });
+        if (este.empresa === null) {
+            baseService($http, $q, {
+                query: "$r->produto_campanha=new ProdutoCampanha()",
+                sucesso: fn,
+                falha: fn
+            });
+        } else {
+            baseService($http, $q, {
+                query: "$r->produto_campanha=new ProdutoCampanha()",
+                sucesso: fn,
+                falha: fn
+            });
+        }
     }
     this.getCount = function (filtro, fn) {
-        baseService($http, $q, {
-            o: {filtro: filtro},
-            query: "$r->qtd=$empresa->getCountCampanha($c,$o->filtro)",
-            sucesso: fn,
-            falha: fn
-        });
+        if (este.empresa === null) {
+            baseService($http, $q, {
+                o: {filtro: filtro},
+                query: "$r->qtd=$empresa->getCountCampanha($c,$o->filtro)",
+                sucesso: fn,
+                falha: fn
+            });
+        } else {
+            baseService($http, $q, {
+                o: {filtro: filtro, empresa: este.empresa},
+                query: "$r->qtd=$o->empresa->getCountCampanha($c,$o->filtro)",
+                sucesso: fn,
+                falha: fn
+            });
+        }
     }
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
-        baseService($http, $q, {
-            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
-            query: "$r->elementos=$empresa->getCampanhas($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
-            sucesso: fn,
-            falha: fn
-        });
+        if (este.empresa === null) {
+            baseService($http, $q, {
+                o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+                query: "$r->elementos=$empresa->getCampanhas($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+                sucesso: fn,
+                falha: fn
+            });
+        } else {
+            baseService($http, $q, {
+                o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem, empresa: este.empresa},
+                query: "$r->elementos=$o->empresa->getCampanhas($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+                sucesso: fn,
+                falha: fn
+            });
+        }
     }
     this.getProdutosDia = function (dia, fn) {
-        baseService($http, $q, {
-            o: {dia: dia},
-            query: "$r->produtos=Sistema::getProdutosDoDia($c,$o->dia,5,$empresa)",
-            sucesso: fn,
-            falha: fn
-        });
+        if (este.empresa === null) {
+            baseService($http, $q, {
+                o: {dia: dia},
+                query: "$r->produtos=Sistema::getProdutosDoDia($c,$o->dia,5,$empresa)",
+                sucesso: fn,
+                falha: fn
+            });
+        } else {
+            baseService($http, $q, {
+                o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem, empresa: este.empresa},
+                query: "$r->elementos=$o->empresa->getCampanhas($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+                sucesso: fn,
+                falha: fn
+            });
+        }
     }
 })
 rtc.service('loteService', function ($http, $q) {
@@ -1037,7 +1086,7 @@ rtc.service('categoriaClienteService', function ($http, $q) {
 rtc.service('categoriaProdutoService', function ($http, $q) {
     this.getElementos = function (fn) {
         baseService($http, $q, {
-            query: "$r->elementos=Sistema::getCategoriaProduto($c)",
+            query: "$r->elementos=Sistema::getCategoriaProduto($empresa)",
             sucesso: fn,
             falha: fn
         });
@@ -1111,6 +1160,164 @@ rtc.service('produtoService', function ($http, $q) {
             sucesso: fn,
             falha: fn
         });
+    }
+    this.remessaGetLotes = function(produtos,filtro,ordem,fn){
+        var ids = [];
+        for(var i=0;i<produtos.length;i++){
+            ids[ids.length] = produtos[i].id;
+        }
+        baseService($http, $q, {
+            o: {produtos: ids, filtro: filtro, ordem: ordem},
+            query: "$r->remessas=Sistema::getRemessasDeLote($c,$o->produtos,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.remessaGetValidades = function (meses_validade_curta, produtos, fn) {
+        this.remessaGetLotes(produtos, 'lote.quantidade_real>0', 'lote.validade', function (l) {
+
+            for (var qq = 0; qq < produtos.length; qq++) {
+
+                var produto = produtos[qq];
+
+                if (!produto.sistema_lotes) {
+
+                    var validade = {validade: 1000, quantidade: produto.disponivel, alem: false, limite: -1, valor: produto.valor_base, validades: []};
+
+                    for (var j = 0; j < produto.ofertas.length; j++) {
+
+                        validade.valor = produto.ofertas[j].valor;
+                        validade.limite = produto.ofertas[j].limite;
+
+                    }
+
+                    produto.validades = [validade];
+
+                    continue;
+
+                }
+
+                //==============================================
+
+                var lotes = [];
+                
+                for(var i=0;i<l.remessas.length;i++){
+                    if(l.remessas[i].id_produto === produto.id){
+                        lotes = l.remessas[i].lotes;
+                        for(var j=0;j<lotes.length;j++){
+                            lotes[j].produto = produto;
+                        }
+                    }
+                }
+
+                var validades = [];
+
+                lbl:
+                        for (var i = 0; i < lotes.length; i++) {
+
+                    var lote = lotes[i];
+
+                    for (var j = 0; j < validades.length; j++) {
+
+                        if (validades[j].validade === lote.validade) {
+
+                            validades[j].quantidade += lote.quantidade_real;
+                            continue lbl;
+
+                        }
+
+                    }
+
+                    var diff = ((((((lote.validade - new Date().getTime()) / 1000) / 60) / 60) / 24) / 30);
+
+                    if (diff < meses_validade_curta) {
+
+                        validades[validades.length] = {validade: lote.validade, quantidade: lote.quantidade_real, alem: false, validades: []};
+
+                    } else {
+
+                        var criar = validades.length === 0;
+
+                        if (!criar) {
+
+                            var diff = ((((((validades[validades.length - 1].validade - new Date().getTime()) / 1000) / 60) / 60) / 24) / 30);
+                            criar = diff < meses_validade_curta;
+
+                        }
+
+                        if (criar) {
+
+                            validades[validades.length] = {validade: lote.validade, quantidade: lote.quantidade_real, alem: false, validades: []};
+
+                        } else {
+
+                            var v = validades[validades.length - 1];
+
+                            v.quantidade += lote.quantidade_real;
+                            v.alem = true;
+
+                            for (var m = 0; m < v.validades.length; m++) {
+                                if (v.validades[m].validade === lote.validade) {
+                                    v.validades[m].quantidade += lote.quantidade_real;
+                                    continue lbl;
+                                }
+                            }
+
+                            v.validades[v.validades.length] = {validade: lote.validade, quantidade: lote.quantidade_real};
+
+                        }
+
+
+                    }
+
+                }
+
+                lbl:
+                        for (var i = 0; i < validades.length; i++) {
+
+                    validades[i].oferta = false;
+
+
+
+                    for (var j = 0; j < produto.ofertas.length; j++) {
+
+                        var is = validades[i].validade === produto.ofertas[j].validade;
+
+                        if (!is) {
+
+                            var diff1 = ((((((validades[i].validade - new Date().getTime()) / 1000) / 60) / 60) / 24) / 30);
+                            var diff2 = ((((((produto.ofertas[j].validade - new Date().getTime()) / 1000) / 60) / 60) / 24) / 30);
+
+                            is = diff1 > meses_validade_curta && diff2 > meses_validade_curta;
+
+                        }
+
+                        if (is) {
+
+                            validades[i].valor = produto.ofertas[j].valor;
+                            validades[i].limite = produto.ofertas[j].limite;
+                            validades[i].oferta = true;
+                            var atual = new Date().getTime();
+                            validades[i].restante = produto.ofertas[j].campanha.fim - atual;
+
+                            continue lbl;
+
+                        }
+
+                    }
+
+                    validades[i].valor = produto.valor_base;
+                    validades[i].limite = -1;
+
+                }
+
+                produto.validades = validades;
+
+            }
+            
+            fn();
+
+        })
     }
     this.getValidades = function (meses_validade_curta, produto, fn) {
 
@@ -1223,7 +1430,7 @@ rtc.service('produtoService', function ($http, $q) {
                         validades[i].oferta = true;
                         var atual = new Date().getTime();
                         validades[i].restante = produto.ofertas[j].campanha.fim - atual;
-                        
+
                         continue lbl;
 
                     }
@@ -1413,18 +1620,25 @@ rtc.service('empresaService', function ($http, $q) {
             falha: fn
         }, null, true);
     }
-    this.setMarketing = function (empresa,mkt,fn) {
+    this.setMarketing = function (empresa, mkt, fn) {
         baseService($http, $q, {
-            o:{empresa:empresa,mkt:mkt},
+            o: {empresa: empresa, mkt: mkt},
             query: "$o->empresa->setMarketing($c,$o->mkt)",
             sucesso: fn,
             falha: fn
         });
     }
-    this.getMarketing = function (empresa,fn) {
+    this.getMarketing = function (empresa, fn) {
         baseService($http, $q, {
-            o:empresa,
+            o: empresa,
             query: "$r->marketing=$o->getMarketing($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getEmpresasClientes = function (fn) {
+        baseService($http, $q, {
+            query: "$r->clientes=$empresa->getEmpresasClientes($c)",
             sucesso: fn,
             falha: fn
         });

@@ -83,6 +83,11 @@
                                         <div class="table-responsive">
                                             <div class="product-btn m-b-20">
                                                 <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ng-click="novoBanner()"><i class="fas fa-plus-circle m-r-10"></i>Adicionar Banner</a>
+                                                <div style="float:right">
+                                                    <select ng-model="bannerService.empresa" class="form-control" ng-change="trocaEmpresa()">
+                                                        <option ng-repeat="empresa in clientes" ng-value="empresa">{{empresa.nome}}</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                             <table id="clientes" class="table table-striped table-bordered first">
                                                 <thead>
@@ -111,13 +116,42 @@
                                                         </th>
                                                     </tr>
                                                     <tr ng-repeat-end>
-                                                        <td colspan="7" class="hiddenRow">
+                                                        <td colspan="6" class="hiddenRow">
                                                             <div class="accordian-body collapse" id="demo{{banner[0].id}}">
                                                                 <div class="row mx-auto m-b-30">
-                                                                    <div style="{{banner[0].tipo===0?'width:70vw;height:22vw':'width:14vw;height:auto'}}" id="html_{{banner[0].id}}">
-                                                                        
-                                                                    </div>														
-                                                                </div>	
+
+                                                                    <div ng-if="banner[0].tipo === 0" style="width: 100%">
+                                                                        <div class="col-xl-9 col-lg-8 col-md-8 col-sm-12 col-12">
+                                                                            <div class="row">
+                                                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                                                    <div id="carouselExampleIndicators{{banner[0].id}}" class="product-carousel carousel slide m-b-40" data-ride="carousel">
+                                                                                        <ol class="carousel-indicators">
+                                                                                            <li data-target="#carouselExampleIndicators{{banner[0].id}}" data-slide-to="0" class="active" style="cursor: pointer;"></li>
+                                                                                        </ol>
+                                                                                        <div class="carousel-inner">
+                                                                                            <div class="carousel-item active" id="html_{{banner[0].id}}" style="height:22vw">
+
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                                                                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                                                            <span class="sr-only">Previous</span>  </a>
+                                                                                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                                                                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                                                            <span class="sr-only">Next</span>  </a>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div ng-if="banner[0].tipo === 1" style="width:14vw;height:auto" id="html_{{banner[0].id}}">
+
+                                                                </div>
+                                                                <div ng-if="banner[0].tipo === 2" style="width:14vw;height:auto" id="html_{{banner[0].id}}">
+
+                                                                </div>
+                                                            </div>	
                                                             </div> 
                                                         </td>
                                                     </tr>
@@ -204,22 +238,22 @@
                                     </div>
                                     <div class="form-group row">
                                         <div class="col">
-                                        <calendario inicio="banner.data_inicial" fim="banner.data_final" refresh="banner" botao="true" tempo="true" meses="1"></calendario>
+                                            <calendario inicio="banner.data_inicial" fim="banner.data_final" refresh="banner" botao="true" tempo="true" meses="1"></calendario>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <div class="col">
-                                        <button type="button" ng-disabled="banner.json!==null" class="btn btn-outline-dark" onclick="$('#uploaderHTML').click()"><i class="fas fa-upload"></i>&nbsp Subir HTML</button>
-                                        <input type="file" id="uploaderHTML" style="display: none" />
+                                            <button type="button" ng-disabled="banner.json !== null" class="btn btn-outline-dark" onclick="$('#uploaderHTML').click()"><i class="fas fa-upload"></i>&nbsp Subir HTML</button>
+                                            <input type="file" id="uploaderHTML" style="display: none" />
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        
+
                                         <div class="col-9 col-lg-10">
                                             <label for="slTipo" class="col-3 col-lg-2 col-form-label text-left">Tipo de Banner</label>
-                                           <select ng-model="banner.tipo" id="slTipo" class="form-control">
-                                               <option ng-repeat="t in tipos_banner" ng-value="$index" >{{t}}</option>
-                                           </select>
+                                            <select ng-model="banner.tipo" id="slTipo" class="form-control">
+                                                <option ng-repeat="t in tipos_banner" ng-value="$index" >{{t}}</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -235,7 +269,7 @@
                     </div>
                 </div>
                 <!-- /.modal-content -->
-ti
+                ti
                 <!-- /.modal-content EDIT --> 
                 <div class="modal fade" id="campanhas" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
@@ -258,8 +292,8 @@ ti
                                     <tr ng-repeat="c in campanhas.elementos">
                                         <th>{{c[0].id}}</th>
                                         <th>{{c[0].nome}}</th>
-                                        <th>{{c[0].inicio | data}}</th>
-                                        <th>{{c[0].fim | data}}</th>
+                                        <th>{{c[0].inicio| data}}</th>
+                                        <th>{{c[0].fim| data}}</th>
                                         <th><button class="btn btn-success" ng-click="setCampanha(c[0])" data-dismiss="modal" aria-label="Close"><i class="fa fa-info"></i></button></th>
                                     </tr> 
                                 </table>
@@ -337,67 +371,67 @@ ti
                 <!-- Optional JavaScript -->
                 <script>
 
-                                            var l = $('#loading');
-                                                            l.hide();
-
-                                                            
-                                                            var x = 0;
-                                                            var y = 0;
-                                                                
-                                                            $(document).mousemove(function (e) {
-                                                                
-                                                                x = e.clientX;
-                                                                y = e.clientY;
-                                                                
-                                                                var s = $(this).scrollTop();
-
-                                                                l.offset({top: (y + s), left: x});
-
-                                                            })
-
-                                                            var sh = false;
-                                                            var it = null;
-
-                                                            loading.show = function () {
-                                                                l.show();
-                                                                var s = $(document).scrollTop();
-
-                                                                l.offset({top: (y + s), left: x});
-                                                                
-                                                            }
-
-                                                            loading.close = function () {
-                                                                l.hide();
-                                                            }
+                                    var l = $('#loading');
+                                    l.hide();
 
 
-                                                $(document).ready(function () {
-                                                    $(document).on({
-                                                        'show.bs.modal': function () {
-                                                            var zIndex = 1040 + (10 * $('.modal:visible').length);
-                                                            $(this).css('z-index', zIndex);
-                                                            setTimeout(function () {
-                                                                $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
-                                                            }, 0);
-                                                        },
-                                                        'hidden.bs.modal': function () {
-                                                            if ($('.modal:visible').length > 0) {
-                                                                // restore the modal-open class to the body element, so that scrolling works
-                                                                // properly after de-stacking a modal.
-                                                                setTimeout(function () {
-                                                                    $(document.body).addClass('modal-open');
-                                                                }, 0);
-                                                            }
-                                                        }
-                                                    }, '.modal');
-                                                });
+                                    var x = 0;
+                                    var y = 0;
+
+                                    $(document).mousemove(function (e) {
+
+                                        x = e.clientX;
+                                        y = e.clientY;
+
+                                        var s = $(this).scrollTop();
+
+                                        l.offset({top: (y + s), left: x});
+
+                                    })
+
+                                    var sh = false;
+                                    var it = null;
+
+                                    loading.show = function () {
+                                        l.show();
+                                        var s = $(document).scrollTop();
+
+                                        l.offset({top: (y + s), left: x});
+
+                                    }
+
+                                    loading.close = function () {
+                                        l.hide();
+                                    }
 
 
-                                                $(document).ready(function () {
-                                                    $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
-                                                    $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                                                    $('.btndel').tooltip({title: "Deletar", placement: "top"});
-                                                });
+                                    $(document).ready(function () {
+                                        $(document).on({
+                                            'show.bs.modal': function () {
+                                                var zIndex = 1040 + (10 * $('.modal:visible').length);
+                                                $(this).css('z-index', zIndex);
+                                                setTimeout(function () {
+                                                    $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+                                                }, 0);
+                                            },
+                                            'hidden.bs.modal': function () {
+                                                if ($('.modal:visible').length > 0) {
+                                                    // restore the modal-open class to the body element, so that scrolling works
+                                                    // properly after de-stacking a modal.
+                                                    setTimeout(function () {
+                                                        $(document.body).addClass('modal-open');
+                                                    }, 0);
+                                                }
+                                            }
+                                        }, '.modal');
+                                    });
+
+
+                                    $(document).ready(function () {
+                                        $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                                        $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                                        $('.btndel').tooltip({title: "Deletar", placement: "top"});
+                                    });
 
 
                 </script>

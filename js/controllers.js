@@ -191,10 +191,10 @@ rtc.controller("crtAtividade", function ($scope, $timeout, $interval, atividadeS
 
 });
 
-rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, uploadService, baseService) {
+rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, uploadService, empresaService, baseService) {
 
-    $scope.banners = createAssinc(bannerService, 1, 3, 10);
-    $scope.banners.attList();
+    $scope.banners = createAssinc(bannerService, 1, 5, 10);
+
     assincFuncs(
             $scope.banners,
             "banner",
@@ -208,10 +208,38 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
 
     $scope.banner_novo = {};
     $scope.banner = {};
+    $scope.bannerService = bannerService;
+
+    $scope.clientes = [];
+
+    $scope.trocaEmpresa = function () {
+
+        bannerService.getBanner(function (p) {
+            $scope.banner_novo = p.banner;
+        })
+
+        $scope.novoBanner = function () {
+            $scope.banner = angular.copy($scope.banner_novo);
+        }
+
+        campanhaService.empresa = bannerService.empresa;
+        $scope.banners.attList();
+
+    }
+
+    empresaService.getEmpresasClientes(function (c) {
+
+        $scope.clientes = c.clientes;
+        if ($scope.clientes.length > 0) {
+            bannerService.empresa = $scope.clientes[0];
+            $scope.trocaEmpresa();
+        }
+
+    })
 
     $scope.data_atual = new Date().getTime();
 
-    $scope.tipos_banner = ["Frontal", "Lateral"];
+    $scope.tipos_banner = ["Frontal", "Lateral","Email Marketing"];
 
     $("#uploaderHTML").change(function () {
 
@@ -301,12 +329,13 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
 
         $scope.banner = banner;
         banner.html = "";
+        
         bannerService.getHTML(banner, function (h) {
 
             banner.html = window.atob(h.html);
 
             $("#html_" + banner.id).html(banner.html);
-
+            
         })
 
     }
@@ -540,7 +569,7 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
 
 
 })
-rtc.controller("crtEmpresaConfig", function ($scope, empresaService,sistemaService, cidadeService, baseService, uploadService) {
+rtc.controller("crtEmpresaConfig", function ($scope, empresaService, sistemaService, cidadeService, baseService, uploadService) {
 
     $scope.empresa = null;
     $scope.filiais = [];
@@ -551,7 +580,7 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService,sistemaServi
     $scope.marketings = [];
     $scope.marketing = null;
 
-    
+
 
     $("#uploaderCertificadoDigital").change(function () {
 
@@ -599,11 +628,11 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService,sistemaServi
 
     })
 
-    $scope.setMarketing = function(mkt){
-        
-        $scope.marketing=mkt;
-        
-        
+    $scope.setMarketing = function (mkt) {
+
+        $scope.marketing = mkt;
+
+
     }
 
     empresaService.getEmpresa(function (r) {
@@ -624,24 +653,25 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService,sistemaServi
             }
 
         })
-        
-        sistemaService.getMarketings(function(r){
-            
+
+        sistemaService.getMarketings(function (r) {
+
             $scope.marketings = r.marketings;
-            
-            empresaService.getMarketing($scope.empresa,function(m){
-            
+
+            empresaService.getMarketing($scope.empresa, function (m) {
+
                 $scope.marketing = m.marketing;
-                
-                if($scope.marketing !== null){
+
+                if ($scope.marketing !== null) {
                     equalize($scope, "marketing", $scope.marketings);
                 }
                 $scope.marketings[$scope.marketings.length] = null;
+
             })
-            
+
         })
-        
-        
+
+
 
 
         empresaService.getParametrosEmissao($scope.empresa, function (e) {
@@ -671,12 +701,12 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService,sistemaServi
             if (r.sucesso) {
 
                 $scope.empresa = r.o;
-               
-               empresaService.setMarketing($scope.empresa,$scope.marketing,function(rr){
-                   
-                   
-               })
-               
+
+                empresaService.setMarketing($scope.empresa, $scope.marketing, function (rr) {
+
+
+                })
+
                 equalize($scope.empresa.endereco, "cidade", $scope.cidades);
                 if (typeof $scope.empresa.endereco.cidade !== 'undefined') {
                     $scope.estado = $scope.empresa.endereco.cidade.estado;
@@ -1061,7 +1091,7 @@ rtc.controller("crtEmpresa", function ($scope, empresaService) {
 
             if (r.sucesso) {
                 if (r.aceito) {
-                    location.reload();
+                    window.location = 'index_em_branco.php';
                 } else {
                     msg.alerta("Voce nao tem acesso a empresa " + $scope.empresa.nome);
                 }
@@ -1081,25 +1111,11 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
 
     }
 
-    var cv = function (produto) {
-        sistemaService.getMesesValidadeCurta(function (p) {
-            produtoService.getValidades(p.meses_validade_curta, produto, function (v) {
-                produto.validades = v;
-            })
-        });
-    }
-
     $scope.produtos = createFilterList(compraParceiroService, 3, 6, 10);
     $scope.produtos["posload"] = function (elementos) {
-        for (var i = 0; i < elementos.length; i++) {
-
-
-            var e = elementos[i];
-            if (!$scope.tv(e)) {
-                cv(e);
-            }
-        }
-
+        sistemaService.getMesesValidadeCurta(function (p) {
+            produtoService.remessaGetValidades(p.meses_validade_curta, elementos, function (){});
+        });
     }
     $scope.produtos.attList();
 
@@ -1505,7 +1521,7 @@ rtc.controller("crtProdutoClienteLogistic", function ($scope, produtoClienteLogi
     assincFuncs(
             $scope.produtos,
             "produto",
-            ["id_universal", "nome", "categoria.nome", "empresa.nome"]);
+            ["id_universal", "nome", "empresa.nome"]);
 
     $scope.to = function (num) {
         var k = [];

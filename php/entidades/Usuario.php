@@ -43,7 +43,7 @@ class Usuario {
     public function merge($con) {
 
 
-        $ps = $con->getConexao()->prepare("SELECT id FROM usuario WHERE (cpf='" . $this->cpf->valor . "') AND id <> $this->id AND id_empresa=".$this->empresa->id);
+        $ps = $con->getConexao()->prepare("SELECT id FROM usuario WHERE (cpf='" . $this->cpf->valor . "' OR login='$this->login') AND id <> $this->id AND id_empresa=".$this->empresa->id);
         $ps->execute();
         $ps->bind_result($id);
         if ($ps->fetch()) {

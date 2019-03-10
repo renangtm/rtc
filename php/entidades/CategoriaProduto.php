@@ -19,7 +19,12 @@ class CategoriaProduto {
     public $base_calculo;
     public $ipi;
     public $icms_normal;
+    public $desconta_estoque;
+    public $parametros_agricolas;
     public $icms;
+    public $loja;
+    public $abstrato;
+    
     function __construct() {
 
         $this->id = 0;
@@ -28,30 +33,11 @@ class CategoriaProduto {
         $this->ipi = 0;
         $this->icms_normal = true;
         $this->icms = 7;
+        $this->desconta_estoque = true;
+        $this->parametros_agricolas = false;
+        $this->loja = false;
+        $this->abstrato = false;
         
-    }
-
-    public function merge($con) {
-
-        if ($this->id == 0) {
-
-            $ps = $con->getConexao()->prepare("INSERT INTO categoria_produto(nome,excluida,base_calculo,ipi,icms_normal,icms) VALUES('" . addslashes($this->nome) . "',false,$this->base_calculo,$this->ipi," . ($this->icms_normal ? "true" : "false") . ",$this->icms)");
-            $ps->execute();
-            $this->id = $ps->insert_id;
-            $ps->close();
-        } else {
-
-            $ps = $con->getConexao()->prepare("UPDATE categoria_produto SET nome = '" . addslashes($this->nome) . "', excluida=false, ipi=$this->ipi, base_calculo=$this->base_calculo, icms = $this->icms, icms_normal=" . ($this->icms_normal ? "true" : "false") . " WHERE id = " . $this->id);
-            $ps->execute();
-            $ps->close();
-        }
-    }
-
-    public function delete($con) {
-
-        $ps = $con->getConexao()->prepare("UPDATE categoria_produto SET excluida = true WHERE id = " . $this->id);
-        $ps->execute();
-        $ps->close();
     }
 
 }

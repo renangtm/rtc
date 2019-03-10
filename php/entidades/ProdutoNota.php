@@ -41,36 +41,35 @@ class ProdutoNota {
     }
 
     public function merge($con) {
+        if ($this->produto->categoria->desconta_estoque) {
+            $ps = $con->getConexao()->prepare("SELECT estoque, disponivel FROM produto WHERE id=" . $this->produto->id);
+            $ps->execute();
+            $ps->bind_result($estoque, $disponivel);
+            if ($ps->fetch()) {
+                $this->produto->estoque = $estoque;
+                $this->produto->disponivel = $disponivel;
+            }
+            $ps->close();
 
-        $ps = $con->getConexao()->prepare("SELECT estoque, disponivel FROM produto WHERE id=" . $this->produto->id);
-        $ps->execute();
-        $ps->bind_result($estoque, $disponivel);
-        if ($ps->fetch()) {
-            $this->produto->estoque = $estoque;
-            $this->produto->disponivel = $disponivel;
+            $x_res = ($this->nota->interferir_estoque && !$this->nota->cancelada && $this->nota->emitida) ? ($this->nota->saida ? $this->quantidade * -1 : $this->quantidade) : 0;
+            $dif_res = $x_res - $this->influencia_estoque;
+
+            if ($this->produto->disponivel + $dif_res < 0) {
+
+                throw new Exception('Sem estoque disponivel para executar essa operacao ' . $this->produto->disponivel . "--" . $dif_res);
+            }
+
+            if ($this->produto->estoque + $dif_res < 0) {
+
+                throw new Exception('Sem estoque para executar essa operacao');
+            }
+
+            $this->produto->estoque += $dif_res;
+            $this->produto->disponivel += $dif_res;
+            $this->produto->merge($con);
+
+            $this->influencia_estoque = $x_res;
         }
-        $ps->close();
-
-        $x_res = ($this->nota->interferir_estoque && !$this->nota->cancelada && $this->nota->emitida) ? ($this->nota->saida ? $this->quantidade * -1 : $this->quantidade) : 0;
-        $dif_res = $x_res - $this->influencia_estoque;
-
-        if ($this->produto->disponivel + $dif_res < 0) {
-
-            throw new Exception('Sem estoque disponivel para executar essa operacao '.$this->produto->disponivel."--".$dif_res);
-        }
-
-        if ($this->produto->estoque + $dif_res < 0) {
-
-            throw new Exception('Sem estoque para executar essa operacao');
-        }
-
-        $this->produto->estoque += $dif_res;
-        $this->produto->disponivel += $dif_res;
-        $this->produto->merge($con);
-
-        $this->influencia_estoque = $x_res;
-
-
 
         if ($this->id == 0) {
 
@@ -79,7 +78,7 @@ class ProdutoNota {
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
-           
+
             $ps = $con->getConexao()->prepare("UPDATE produto_nota SET id_produto=" . $this->produto->id . ",id_nota=" . $this->nota->id . ",quantidade=$this->quantidade,valor_unitario=$this->valor_unitario,valor_total=$this->valor_total,influencia_estoque=$this->influencia_estoque,ipi=$this->ipi,icms=$this->icms,base_calculo=$this->base_calculo,cfop='$this->cfop', informacao_adicional='$this->informacao_adicional' WHERE id=$this->id");
             $ps->execute();
             $ps->close();
@@ -88,24 +87,26 @@ class ProdutoNota {
 
     public function delete($con) {
 
-        $dif_res = - $this->influencia_estoque;
+        if ($this->produto->categoria->desconta_estoque) {
 
-        if ($this->produto->disponivel + $dif_res < 0) {
+            $dif_res = - $this->influencia_estoque;
 
-            throw new Exception('Sem estoque disponivel para executar essa operacao');
+            if ($this->produto->disponivel + $dif_res < 0) {
+
+                throw new Exception('Sem estoque disponivel para executar essa operacao');
+            }
+
+            if ($this->produto->estoque + $dif_res < 0) {
+
+                throw new Exception('Sem estoque para executar essa operacao');
+            }
+
+            $this->produto->estoque += $dif_res;
+            $this->produto->disponivel += $dif_res;
+            $this->produto->merge($con);
+
+            $this->influencia_estoque = 0;
         }
-
-        if ($this->produto->estoque + $dif_res < 0) {
-
-            throw new Exception('Sem estoque para executar essa operacao');
-        }
-
-        $this->produto->estoque += $dif_res;
-        $this->produto->disponivel += $dif_res;
-        $this->produto->merge($con);
-
-        $this->influencia_estoque = 0;
-
 
         $ps = $con->getConexao()->prepare("DELETE FROM produto_nota WHERE id = " . $this->id);
         $ps->execute();

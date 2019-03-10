@@ -95,12 +95,16 @@
                                                     <tr>
                                                         <th data-ordem="produto.codigo">Cod.</th>
                                                         <th data-ordem="produto.nome">Nome</th>
+                                                        <?php if($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))){ ?>
                                                         <th data-ordem="produto.classe_risco">Cl</th>
+                                                        <?php } ?>
                                                         <th data-ordem="produto.estoque">Qtd</th>
                                                         <th data-ordem="produto.disponivel">Disp</th>
                                                         <th data-ordem="produto.transito">Trans</th>
                                                         <th data-ordem="produto.valor_base">Valor (R$)</th>
+                                                        <?php if($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))){ ?>
                                                         <th data-ordem="produto.ativo">Princ&iacute;pio ativo</th>
+                                                        <?php } ?>
                                                         <th width="180px">A&ccedil;&atilde;o</th>
                                                     </tr>
                                                 </thead>
@@ -108,12 +112,16 @@
                                                     <tr ng-repeat-start="produto in produtos.elementos">
                                                         <td class="text-center">{{produto[0].codigo}}</td>
                                                         <td>{{produto[0].nome}}</td>
+                                                        <?php if($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))){ ?>
                                                         <td class="text-center">{{produto[0].classe_risco}}</td>
+                                                        <?php } ?>
                                                         <td class="text-center">{{produto[0].estoque}}</td>
                                                         <td class="text-center">{{produto[0].disponivel}}</td>
                                                         <td class="text-center">{{produto[0].transito}}</td>
                                                         <td class="text-center">{{produto[0].valor_base}}</td>
+                                                        <?php if($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))){ ?>
                                                         <td>{{produto[0].ativo}}</td>
+                                                        <?php } ?>
                                                         <th>
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setProduto(produto[0]);getReceituario(produto[0])" data-target="#demo{{produto[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
@@ -164,7 +172,8 @@
                                                                                         <option value="">{{produto[0].categoria.nome}}</option>
                                                                                     </select></td>
                                                                             </tr>
-                                                                            <tr>
+                                                                            <?php if($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))){ ?>
+                                                                            <tr ng-if="produto[0].categoria.parametros_agricolas">
                                                                                 <td colspan="2">
 
                                                                                     Indica&ccedil;&atilde;o de Uso:
@@ -179,9 +188,8 @@
                                                                                         <hr>
                                                                                     </div> 
                                                                                 </td>
-
-
                                                                             </tr>
+                                                                            <?php } ?>
                                                                             <tr>
                                                                                 <td></td>
                                                                                 <td></td>
@@ -218,12 +226,16 @@
                                                     <tr>
                                                         <th>Cod.</th>
                                                         <th>Nome</th>
+                                                        <?php if($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))){ ?>
                                                         <th>Cl</th>
+                                                        <?php } ?>
                                                         <th>Qtd</th>
                                                         <th>Disp</th>
                                                         <th>Trans</th>
                                                         <th>Valor (R$)</th>
+                                                        <?php if($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))){ ?>
                                                         <th>Princ&iacute;pio ativo</th>
+                                                        <?php } ?>
                                                         <th width="150px">A&ccedil;&atilde;o</th>
                                                     </tr>
                                                 </tfoot>
@@ -285,7 +297,9 @@
                                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                         <a class="nav-item nav-link active" id="nav-prod-tab" data-toggle="tab" href="#nav-prod" role="tab" aria-controls="nav-prod" aria-selected="true">Produto</a>
                                         <a class="nav-item nav-link" id="nav-img-tab" data-toggle="tab" href="#nav-img" role="tab" aria-controls="nav-img" aria-selected="false">Imagem</a>
-                                        <a class="nav-item nav-link text-center" id="nav-uso-tab" data-toggle="tab" href="#nav-uso" role="tab" aria-controls="nav-uso" aria-selected="false">Indica&ccedil;&atilde;o<br> de uso</a>
+                                        <?php if($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))){ ?>
+                                        <a ng-if="produto.categoria.parametros_agricolas" class="nav-item nav-link text-center" id="nav-uso-tab" data-toggle="tab" href="#nav-uso" role="tab" aria-controls="nav-uso" aria-selected="false">Indica&ccedil;&atilde;o<br> de uso</a>
+                                        <?php } ?>
                                     </div>
                                 </nav>
                                 <div class="tab-content" id="nav-tabContent">
@@ -311,7 +325,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group row">
+                                            <div class="form-group row" ng-if="!produto.categoria.abstrato">
                                                 <label for="txtfab" class="col-3 col-lg-2 col-form-label text-left">Fabricante</label>
                                                 <div class="col-9 col-lg-10">
                                                     <input id="txtfab" type="text" ng-model="produto.fabricante" required data-parsley-type="email" placeholder="" class="form-control">
@@ -320,7 +334,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group row">
+                                            <?php if($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))){ ?>
+                                            <div class="form-group row" ng-if="produto.categoria.parametros_agricolas">
                                                 <label for="txtcl" class="col-3 col-lg-2 col-form-label text-left">Cl:</label>
                                                 <div class="col-9 col-lg-10">
                                                     <inteiro model="produto.classe_risco"></inteiro>
@@ -329,8 +344,9 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group row">
-                                                <label for="txtqtd" class="col-3 col-lg-2 col-form-label text-left">QTd.</label>
+                                            <?php } ?>
+                                            <div class="form-group row" ng-if="produto.categoria.desconta_estoque">
+                                                <label for="txtqtd" class="col-3 col-lg-2 col-form-label text-left">Qtd.</label>
                                                 <div class="col-9 col-lg-10">
                                                     <inteiro model="produto.estoque"></inteiro>
                                                     <div class="invalid-feedback">
@@ -338,7 +354,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group row">
+                                            <div class="form-group row" ng-if="produto.sistema_lotes && !produto.categoria.abstrato">
                                                 <label for="txtqtdcaixa" class="col-3 col-lg-2 col-form-label text-left">Grade</label>
                                                 <div class="col-9 col-lg-10">
                                                     <input ng-model="produto.grade.str" id="txtqtdcaixa" type="text" required placeholder="" class="form-control">
@@ -356,7 +372,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group row">
+                                            <div class="form-group row" ng-if="!produto.categoria.abstrato">
                                                 <label for="txtqtdcaixa" class="col-4 col-lg-3 col-form-label text-left">Qtd Unidade</label>
                                                 <div class="col-9 col-lg-9">
                                                     <decimal model="produto.quantidade_unidade"></decimal>
@@ -366,7 +382,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="form-group row">
+                                            <div class="form-group row" ng-if="produto.categoria.desconta_estoque">
                                                 <label for="txtdisp" class="col-3 col-lg-2 col-form-label text-left">Disp.</label>
                                                 <div class="col-9 col-lg-10">
                                                     <inteiro model="produto.disponivel"></inteiro>
@@ -375,7 +391,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group row">
+                                            <div class="form-group row" ng-if="!produto.categoria.abstrato">
                                                 <label for="txtval" class="col-3 col-lg-2 col-form-label text-left">Custo (U$)</label>
                                                 <div class="col-9 col-lg-10">
                                                     <decimal model="produto.custo"></decimal>
@@ -393,7 +409,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group row">
+                                            <?php if($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))){ ?>
+                                            <div class="form-group row" ng-if="produto.categoria.parametros_agricolas">
                                                 <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Princ&iacute;pio ativo</label>
                                                 <div class="col-9 col-lg-9 text-left">
                                                     <input id="txtpativo" ng-model="produto.ativo" type="text" required placeholder="" class="form-control">
@@ -401,7 +418,10 @@
                                                         Please provide a valid text.
                                                     </div>
                                                 </div>
-                                            </div><div class="form-group row">
+                                            </div>
+                                            <?php } ?>
+                                            <?php if($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))){ ?>
+                                            <div class="form-group row" ng-if="produto.categoria.parametros_agricolas">
                                                 <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Concentracao</label>
                                                 <div class="col-9 col-lg-9 text-left">
                                                     <input id="txtpativo" ng-model="produto.concentracao" type="text" required placeholder="" class="form-control">
@@ -410,7 +430,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group row">
+                                            <?php } ?>
+                                            <div class="form-group row" ng-if="produto.categoria.desconta_estoque">
                                                 <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Log&iacute;stica</label>
                                                 <div class="col-9 col-lg-9 text-left">
                                                     <select ng-model="produto.logistica" class="form-control" >
@@ -426,7 +447,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="form-group row">
+                                            <div class="form-group row" ng-if="!produto.categoria.abstrato">
                                                 <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Peso Liquido</label>
                                                 <div class="col-9 col-lg-9 text-left">
                                                     <decimal model="produto.peso_liquido"></decimal>
@@ -436,7 +457,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="form-group row">
+                                            <div class="form-group row" ng-if="!produto.categoria.abstrato">
                                                 <label for="txtpeso" class="col-4 col-lg-3 col-form-label text-left">Peso Bruto</label>
                                                 <div class="col-4 col-lg-4">
                                                     <decimal model="produto.peso_bruto" style=""></decimal>               
@@ -454,7 +475,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="form-group row">
+                                            <div class="form-group row" ng-if="produto.categoria.desconta_estoque">
 
                                                 <div class="col-6 col-lg-6" style="padding-top: 5px;">
                                                     Trabalha com o modulo de Lotes ?
