@@ -47,7 +47,7 @@ class Transportadora {
         
         if($this->codigo === 0){
             
-            $ps = $con->getConexao()->prepare("SELECT MAX(codigo)+1 FROM transportadora WHERE id_empresa=".$this->empresa->id);
+            $ps = $con->getConexao()->prepare("SELECT IFNULL(MAX(codigo)+1,0) FROM transportadora WHERE id_empresa=".$this->empresa->id);
             $ps->execute();
             $ps->bind_result($idn);
             

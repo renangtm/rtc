@@ -1274,6 +1274,78 @@ rtc.directive('cronometro', function ($interval) {
     };
 })
 
+var mask = function(str,msk){
+    
+    
+    
+    var k = [];
+    for(var i=0;i<msk.length;i++){
+        var c = msk.charAt(i);
+        if(c==="x"){
+            k[i] = null;
+        }else{
+            k[i] = c;
+            str = str.split(c).join("");
+        }
+    }
+   
+    
+    var ret = "";
+    for(var i=0,j=0;i<str.length;i++){
+        var c = str.charAt(i);
+        var m = null;
+        if(i+j<k.length){
+            m = k[i+j];
+        }
+        
+        if(m===null){
+            ret += c;
+        }else if(c === m){
+            ret += c;
+        }else{
+            if(str.length>=i){
+                ret += m+c;
+            }
+        }
+        if(m!==null){
+            j++;
+        }
+    }
+    
+    ret = ret.substr(0,msk.length);
+
+    return ret;
+    
+}
+
+
+rtc.directive('telefone', function ($timeout) {
+    return {
+        restrict: 'E',
+        scope: {
+            model: '='
+        },
+        templateUrl: 'txtTelefone.html',
+        link: function (scope, element, attrs) {
+            var rep = function (str) {
+               if(str.indexOf('(11)9') >= 0){
+                   return mask(str,"(xx)xxxxx-xxxx");
+               }else{
+                   return mask(str,"(xx)xxxx-xxxx");
+               }
+            }
+            scope.adjust = function () {
+                scope.model = rep(scope.model);
+            }
+           
+            $timeout(function(){
+                scope.adjust();
+            },3000);
+            
+        }
+    };
+})
+
 rtc.directive('inteiro', function () {
     return {
         restrict: 'E',
@@ -1298,6 +1370,7 @@ rtc.directive('inteiro', function () {
             scope.adjust = function () {
                 scope.model = parseInt(rep(scope.model) + "");
             }
+             
         }
     };
 })

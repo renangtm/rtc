@@ -115,7 +115,7 @@
                                             <div class="form-group row">
                                                 <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Telefone</label>
                                                 <div class="col-md-4">
-                                                    <input id="txtname" type="text" ng-model="empresa.telefone.numero" required data-parsley-type="email" placeholder="" class="form-control">
+                                                    <telefone model="empresa.telefone.numero"></telefone>
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>

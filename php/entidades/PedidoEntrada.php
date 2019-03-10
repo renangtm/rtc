@@ -28,6 +28,7 @@ class PedidoEntrada {
     public $prazo;
     public $parcelas;
     public $empresa;
+    public $enviar_emails;
 
     function __construct() {
 
@@ -44,6 +45,7 @@ class PedidoEntrada {
         $this->prazo = 0;
         $this->parcelas = 1;
         $this->observacoes = "";
+        $this->enviar_emails = true;
         
     }
 
@@ -98,7 +100,7 @@ class PedidoEntrada {
                 . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
 
         $ps->execute();
-        $ps->bind_result($id,$camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa,$tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
@@ -114,7 +116,7 @@ class PedidoEntrada {
                 $campanhas[$id]->cliente_expression = $cliente;
 
                 $empresa = Sistema::getEmpresa($tipo_empresa);
-                
+
                 $empresa->id = $id_empresa;
                 $empresa->cnpj = new CNPJ($cnpj);
                 $empresa->inscricao_estadual = $inscricao_empresa;
@@ -156,7 +158,6 @@ class PedidoEntrada {
                 $empresa->telefone = $telefone;
 
                 $campanhas[$id]->empresa = $empresa;
-                
             }
 
             $campanha = $campanhas[$id];
@@ -174,7 +175,7 @@ class PedidoEntrada {
             }
 
             $campanhas[$id]->produtos[] = $p;
-            
+
             $ofertas[$id_produto][] = $p;
         }
 
@@ -246,7 +247,7 @@ class PedidoEntrada {
 
 
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $valor,$ie,$it, $id_pro,$cod_pro,$id_log,$classe_risco,$fabricante,$imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro,$ativo,$conc,$sistema_lotes,$nota_usuario, $cat_id,$id_empresa,$tipo_empresa,$nome_empresa,$inscricao_empresa,$consigna,$aceitou_contrato,$juros_mensal,$cnpj,$numero_endereco,$id_endereco,$rua,$bairro,$cep,$id_cidade,$nome_cidade,$id_estado,$nome_estado,$id_email,$endereco_email,$senha_email,$id_telefone,$numero_telefone);
+        $ps->bind_result($id, $quantidade, $valor, $ie, $it, $id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
@@ -269,7 +270,7 @@ class PedidoEntrada {
             $p->habilitado = $hab;
             $p->valor_base = $vb;
             $p->custo = $cus;
-            $p->sistema_lotes = $sistema_lotes==1;
+            $p->sistema_lotes = $sistema_lotes == 1;
             $p->nota_usuario = $nota_usuario;
             $p->peso_bruto = $pb;
             $p->peso_liquido = $pl;
@@ -282,16 +283,15 @@ class PedidoEntrada {
             $p->lucro_consignado = $lucro;
             $p->ofertas = (!isset($ofertas[$p->id]) ? array() : $ofertas[$p->id]);
 
-            foreach($p->ofertas as $key=>$oferta){
-                
+            foreach ($p->ofertas as $key => $oferta) {
+
                 $oferta->produto = $p;
-                
             }
-            
-            $p->categoria = Sistema::getCategoriaProduto(null,$cat_id);
-            
+
+            $p->categoria = Sistema::getCategoriaProduto(null, $cat_id);
+
             $empresa = Sistema::getEmpresa($tipo_empresa);
-            
+
             $empresa->id = $id_empresa;
             $empresa->cnpj = new CNPJ($cnpj);
             $empresa->inscricao_estadual = $inscricao_empresa;
@@ -299,40 +299,40 @@ class PedidoEntrada {
             $empresa->aceitou_contrato = $aceitou_contrato;
             $empresa->juros_mensal = $juros_mensal;
             $empresa->consigna = $consigna;
-            
+
             $endereco = new Endereco();
             $endereco->id = $id_endereco;
             $endereco->rua = $rua;
             $endereco->bairro = $bairro;
             $endereco->cep = new CEP($cep);
             $endereco->numero = $numero_endereco;
-            
+
             $cidade = new Cidade();
             $cidade->id = $id_cidade;
             $cidade->nome = $nome_cidade;
-            
+
             $estado = new Estado();
             $estado->id = $id_estado;
             $estado->sigla = $nome_estado;
-            
+
             $cidade->estado = $estado;
-            
+
             $endereco->cidade = $cidade;
-            
+
             $empresa->endereco = $endereco;
-            
+
             $email = new Email($endereco_email);
             $email->id = $id_email;
             $email->senha = $senha_email;
-            
+
             $empresa->email = $email;
-            
+
             $telefone = new Telefone($numero_telefone);
             $telefone->id = $id_telefone;
 
             $empresa->telefone = $telefone;
-            
-            
+
+
             $p->empresa = $empresa;
 
             $pp = new ProdutoPedidoEntrada();
@@ -349,9 +349,9 @@ class PedidoEntrada {
         }
 
         $ps->close();
-        
-        foreach($retorno as $key=>$value){
-            $value->produto->logistica = Sistema::getLogisticaById($con,$value->produto->logistica);
+
+        foreach ($retorno as $key => $value) {
+            $value->produto->logistica = Sistema::getLogisticaById($con, $value->produto->logistica);
         }
 
         $real_ret = array();
@@ -367,40 +367,23 @@ class PedidoEntrada {
     public function merge($con) {
 
         if ($this->id == 0) {
-            
+
             $ps = $con->getConexao()->prepare("INSERT INTO pedido_entrada(id_fornecedor,id_transportadora,frete,observacoes,frete_inclusao,id_empresa,data,excluido,id_usuario,id_nota,prazo,parcelas,id_status) VALUES(" . $this->fornecedor->id . "," . $this->transportadora->id . "," . $this->frete . ",'" . $this->observacoes . "'," . ($this->incluir_frete ? "true" : "false") . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data/1000),false," . $this->usuario->id . "," . ($this->nota != null ? $this->nota->id : 0) . ",$this->prazo,$this->parcelas," . $this->status->id . ")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
-
         } else {
-           
+
             $ps = $con->getConexao()->prepare("UPDATE pedido_entrada SET id_fornecedor=" . $this->fornecedor->id . ",id_transportadora=" . $this->transportadora->id . ",frete=" . $this->frete . ",observacoes='" . $this->observacoes . "',frete_inclusao=" . ($this->incluir_frete ? "true" : "false") . ",id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data/1000),excluido=false,id_usuario=" . $this->usuario->id . ",id_nota=" . ($this->nota != null ? $this->nota->id : 0) . ",prazo=$this->prazo,parcelas=$this->parcelas,id_status=" . $this->status->id . " WHERE id = $this->id");
             $ps->execute();
             $ps->close();
         }
 
         $prods = $this->getProdutos($con);
-        
-        if ($this->status->envia_email) {
 
-            try {
+        if ($this->produtos === null) {
 
-                $html = Sistema::getHtml('visualizar-pedidos-compra', $this);
-
-                $this->empresa->email->enviarEmail($this->fornecedor->email->filtro(Email::$VENDAS), "Pedido de Compra", $html);
-                $this->empresa->email->enviarEmail($this->empresa->email->filtro(Email::$LOGISTICA), "Pedido de Compra", $html);
-                
-            } catch (Exception $ex) {
-                
-            }
-            
-        }
-        
-        if($this->produtos === null){
-            
             $this->produtos = $prods;
-            
         }
 
         foreach ($prods as $key => $value) {
@@ -420,10 +403,22 @@ class PedidoEntrada {
 
             $value2->merge($con);
         }
+
+        if ($this->status->envia_email && $this->enviar_emails) {
+
+            try {
+
+                $html = Sistema::getHtml('visualizar-pedidos-compra', $this);
+                $this->empresa->email->enviarEmail($this->fornecedor->email->filtro(Email::$VENDAS), "Pedido de Compra", $html);
+                $this->empresa->email->enviarEmail($this->empresa->email->filtro(Email::$LOGISTICA), "Pedido de Compra", $html);
+            } catch (Exception $ex) {
+                throw new Exception($ex);
+            }
+        }
     }
 
     public function delete($con) {
-        
+
         $this->status = Sistema::getStatusCanceladoPedidoEntrada();
 
         $prods = $this->getProdutos($con);
@@ -432,7 +427,7 @@ class PedidoEntrada {
 
             $value2->merge($con);
         }
-        
+
         $ps = $con->getConexao()->prepare("UPDATE pedido_entrada SET excluido=true WHERE id = " . $this->id);
         $ps->execute();
         $ps->close();

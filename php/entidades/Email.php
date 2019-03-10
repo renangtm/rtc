@@ -150,45 +150,49 @@ class Email {
         $th = $this->getEnderecos();
         $th = $th[0];
 
+
+
+        if ($th == "emailinvalido@invalido.com.br")
+            return;
+
+        $servidor = explode('@', $th);
+        $servidor = $servidor[1];
+
+        if (isset(self::$SERVIDORES[$servidor])) {
+            $servidor = self::$SERVIDORES[$servidor];
+        } else {
+            $servidor = array("mail." . $servidor, 587, true);
+        }
+
+
+        $mail = new PHPMailer\PHPMailer\PHPMailer();
+
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+
+        $mail->IsSMTP();
+        $mail->SMTPAuth = true;
+        $mail->Host = $servidor[0];
+        $mail->Port = $servidor[1];
+
+        if ($servidor[2]) {
+            $mail->SMTPSecure = "tls";
+        }
+
+        $mail->IsHTML(true);
+
+        $mail->Username = $th; // your gmail address
+        $mail->Password = $this->senha; // password
+
+        $mail->Timeout = 5; // set the timeout (seconds)
+        $mail->SMTPKeepAlive = true; // don't close the connection between messages
+
         foreach ($enderecos as $key => $endereco) {
-
-            if ($th == "emailinvalido@invalido.com.br")
-                return;
-
-            $servidor = explode('@', $th);
-            $servidor = $servidor[1];
-
-            if (isset(self::$SERVIDORES[$servidor])) {
-                $servidor = self::$SERVIDORES[$servidor];
-            } else {
-                $servidor = array("mail." . $servidor, 587, true);
-            }
-
-
-            $mail = new PHPMailer\PHPMailer\PHPMailer();
-
-            $mail->SMTPOptions = array(
-                'ssl' => array(
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                    'allow_self_signed' => true
-                )
-            );
-
-            $mail->IsSMTP();
-            $mail->SMTPAuth = true;
-            $mail->Host = $servidor[0];
-            $mail->Port = $servidor[1];
-
-            if ($servidor[2]) {
-                $mail->SMTPSecure = "tls";
-            }
-
-            $mail->IsHTML(true);
-
-            $mail->Username = $th; // your gmail address
-            $mail->Password = $this->senha; // password
-
             $mail->SetFrom($th);
             $mail->Subject = $titulo; // Mail subject
             $mail->Body = $conteudo;

@@ -17,7 +17,7 @@ if (!isset($filtro)) {
     $filtro = "";
 }
 
-$rtc = $ses->get('rtc');
+$rtc = $usuario->empresa->getRTC(new ConnectionFactory());
 
 if ($rtc == null) {
 
@@ -41,8 +41,9 @@ if (isset($_GET['t'])) {
     $n = $_GET['t'];
     foreach ($possiveis as $key => $value) {
         if ($value->numero == $n) {
-            $rtc = $value;
-            $ses->set('rtc', $value);
+            $usuario->empresa->rtc = $value;
+            $ses->set('usuario',$usuario);
+            $rtc = $usuario->empresa->rtc;
             break;
         }
     }

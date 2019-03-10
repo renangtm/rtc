@@ -467,6 +467,7 @@ class Sistema {
 
         $entrada = new PedidoEntrada();
         $entrada->empresa = $empresa;
+        $entrada->enviar_emails = false;
         $entrada->fornecedor = $ge->getFornecedorViaEmpresa($con, $pedido->empresa);
         $entrada->frete = $pedido->frete;
         $entrada->incluir_frete = $pedido->incluir_frete;
@@ -493,9 +494,6 @@ class Sistema {
 
         $entrada->merge($con);
 
-        $ret = $pedido->forma_pagamento->aoFinalizarPedido($pedido);
-
-        return $ret;
     }
 
     public static function getPedidosResultantes($con, $carrinho, $empresa, $usuario) {
@@ -893,7 +891,7 @@ class Sistema {
     }
 
     public static function getHtml($nom, $p = null) {
-
+        
         global $obj;
         $obj = $p;
 
@@ -905,6 +903,7 @@ class Sistema {
         $html = ob_get_clean();
 
         return utf8_decode($html);
+      
     }
 
     public static function finalizarNotas($con, $notas) {

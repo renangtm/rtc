@@ -95,7 +95,7 @@ class Fornecedor {
         
         if($this->codigo === 0){
             
-            $ps = $con->getConexao()->prepare("SELECT MAX(codigo)+1 FROM fornecedor WHERE id_empresa=".$this->empresa->id);
+            $ps = $con->getConexao()->prepare("SELECT IFNULL(MAX(codigo)+1,0) FROM fornecedor WHERE id_empresa=".$this->empresa->id);
             $ps->execute();
             $ps->bind_result($idn);
             
@@ -110,7 +110,8 @@ class Fornecedor {
         }
 
         if ($this->id == 0) {
-
+            
+            
             $ps = $con->getConexao()->prepare("INSERT INTO fornecedor(nome,cnpj,excluido,id_empresa,inscricao_estadual,habilitado,codigo) VALUES('" . addslashes($this->nome) . "','" . $this->cnpj->valor . "',false," . $this->empresa->id . ",'$this->inscricao_estadual',".($this->habilitado?"true":"false").",$this->codigo)");
             $ps->execute();
             $this->id = $ps->insert_id;

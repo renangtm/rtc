@@ -79,7 +79,7 @@
                         <!-- ============================================================== -->
                         <div class="">
                            
-                            <div ng-repeat="pedido in pedidos" ng-if="!finalizado(pedido)" style="display: inline-block; width:48%; min-width:500px;margin-left:10px;margin-bottom: 50px;">
+                            <div ng-repeat="pedido in pedidos" style="display: inline-block; width:48%; min-width:500px;margin-left:10px;margin-bottom: 50px;">
                                 <div class="table-responsive-sm">
                                     <strong style="color:SteelBlue"><i class="fas fa-road"></i>&nbsp{{pedido.empresa.nome}}</strong>
                                     <strong ng-if="pedido.logistica !== null" style="color:DarkBlue">&nbsp / &nbsp<i class="fas fa-box"></i>&nbsp{{pedido.logistica.nome}}</strong>
@@ -99,7 +99,7 @@
                                         </thead>
                                         <tbody>
                                             <tr ng-repeat="produto in pedido.produtos">
-                                                <td class="center" width="10%" style="position: relative"><button class="btn btn-danger" style="position: absolute;left:5px;top:5px;width:20px;height:20px;padding:0px" ng-click="remover(produto)"><i class="fas fa-times"></i></button><img src="{{produto.produto.imagem}}" class="product-image"></td>
+                                                <td class="center" width="10%" style="position: relative"><button class="btn btn-danger" style="position: absolute;left:5px;top:5px;width:20px;height:20px;padding:0px" ng-click="remover(produto)" ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final"><i class="fas fa-times"></i></button><img src="{{produto.produto.imagem}}" class="product-image"></td>
                                                 <td class="left">{{produto.produto.nome}}<hr><span ng-if="produto.validade_minima !== 1000">Val:<strong style="text-decorarion:underline">{{produto.validade_minima| data_st}}</strong></span></td>
                                                 <td class="right">{{produto.quantidade}}</td>
                                                 <td class="text-center" style="color:{{(retirouPromocao(produto) > 0) ? 'Orange' : '#000000'}}">{{produto.valor_base.toFixed(2)}} R$ <span ng-if="retirouPromocao(produto) > 0"><hr>Seria {{retirouPromocao(produto)}} R$ em campanha, no entanto a campanha nao contempla este prazo</span></td>
@@ -125,11 +125,11 @@
                                                         <div class="form-group">
                                                             <label for="">Tipo de Frete:</label><br>
                                                             <div class="custom-control custom-radio custom-control-inline" style="margin-left:30px;margin-top: 5px;">
-                                                                <input type="radio" id="ra{{pedido.identificador}}" name="radio_{{pedido.identificador}}" ng-value="true" ng-change="atualizaCustosResetandoFrete(pedido)" ng-model="pedido.frete_incluso" class="custom-control-input">
+                                                                <input ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" type="radio" id="ra{{pedido.identificador}}" name="radio_{{pedido.identificador}}" ng-value="true" ng-change="atualizaCustosResetandoFrete(pedido)" ng-model="pedido.frete_incluso" class="custom-control-input">
                                                                 <label class="custom-control-label" for="ra{{pedido.identificador}}">Por conta da Empresa (CIF)</label>
                                                             </div>
                                                             <div class="custom-control custom-radio custom-control-inline" style="margin-left:30px;margin-top: 5px;">
-                                                                <input type="radio" id="rb{{pedido.identificador}}" name="radio_{{pedido.identificador}}" ng-value="false" ng-change="atualizaCustosResetandoFrete(pedido)" ng-model="pedido.frete_incluso" class="custom-control-input">
+                                                                <input ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" type="radio" id="rb{{pedido.identificador}}" name="radio_{{pedido.identificador}}" ng-value="false" ng-change="atualizaCustosResetandoFrete(pedido)" ng-model="pedido.frete_incluso" class="custom-control-input">
                                                                 <label class="custom-control-label" for="rb{{pedido.identificador}}">Por sua conta (FOB)</label>
                                                             </div>
                                                         </div>
@@ -142,16 +142,16 @@
                                                             <label for="">Transportadora</label>
                                                             <div class="form-row">
                                                                 <div class="col-2">
-                                                                    <input type="text" class="form-control" placeholder="Cod." ng-model="pedido.transportadora.id" disabled>
+                                                                    <input ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" type="text" class="form-control" placeholder="Cod." ng-model="pedido.transportadora.id" disabled>
                                                                 </div>
                                                                 <div class="col-5">
-                                                                    <input type="text" class="form-control" ng-model="pedido.transportadora.razao_social" placeholder="Nome da Transportadora" disabled>
+                                                                    <input ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" type="text" class="form-control" ng-model="pedido.transportadora.razao_social" placeholder="Nome da Transportadora" disabled>
                                                                 </div>
                                                                 <div class="col-1">
-                                                                    <button ng-if="!pedido.frete_incluso" ng-click="setPedidoContexto(pedido)" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#transportadoras" ng-disabled="!pedido.status.altera" style="padding: .375rem .75rem;"><i class="fas fa-search"></i><span class="indicator" ng-if="pedido.transportadora === null"></span></button>   
+                                                                    <button ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" ng-if="!pedido.frete_incluso" ng-click="setPedidoContexto(pedido)" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#transportadoras" ng-disabled="!pedido.status.altera" style="padding: .375rem .75rem;"><i class="fas fa-search"></i><span class="indicator" ng-if="pedido.transportadora === null"></span></button>   
                                                                 </div>
                                                                 <div class="col-1">
-                                                                    <button class="btn btn-primary" ng-click="getFretes(pedido)" data-toggle="modal" ng-if="pedido.frete_incluso" data-target="#fretes"><i class="fas fa-truck"></i>&nbspCalcular Frete</button>
+                                                                    <button ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" class="btn btn-primary" ng-click="getFretes(pedido)" data-toggle="modal" ng-if="pedido.frete_incluso" data-target="#fretes"><i class="fas fa-truck"></i>&nbspCalcular Frete</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -163,7 +163,7 @@
                                                         <div class="form-group">
                                                             <label for="">Valor do Frete R$</label>
                                                             <div class="form-row">
-                                                                <input type="text" class="form-control col-3" placeholder="0.0" style="padding-left:5px" ng-disabled="pedido.frete_incluso" ng-model="pedido.frete" ng-confirm="atualizaCustos(pedido)">
+                                                                <input type="text" ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" class="form-control col-3" placeholder="0.0" style="padding-left:5px" ng-disabled="pedido.frete_incluso" ng-model="pedido.frete" ng-confirm="atualizaCustos(pedido)">
                                                             </div>
                                                         </div>
                                                     </td>
@@ -173,7 +173,7 @@
                                                         <div class="form-group">
                                                             <label for="">Forma de pagamento</label>
                                                             <div class="form-row">
-                                                                <select class="form-control" ng-model="pedido.forma_pagamento">
+                                                                <select ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" class="form-control" ng-model="pedido.forma_pagamento">
                                                                     <option ng-repeat="f in pedido.formas_pagamento" ng-value="f">{{f.nome}}</option>
                                                                 </select>
                                                             </div>
@@ -185,7 +185,7 @@
                                                         <div class="form-group">
                                                             <label for="">Prazo</label>
                                                             <div class="form-row">
-                                                                <select class="form-control" ng-change="attPrazoParcelas(pedido)" ng-model="pedido.prazo_parcelas">
+                                                                <select class="form-control" ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" ng-change="attPrazoParcelas(pedido)" ng-model="pedido.prazo_parcelas">
                                                                     <option ng-repeat="f in possibilidades" ng-value="f">{{f.nome === null ? ('Prazo: ' + f.prazo + ' dias em ' + f.parcelas + ' parcelas') : f.nome}}</option>
                                                                 </select>
                                                             </div>
@@ -203,7 +203,9 @@
                                             <button class="btn btn-lg btn-block btn-light" onclick="location.href = 'comprar.html';" >Continuar comprando</button>
                                         </div>
                                         <div class="col-sm-12 col-md-6 text-right">
-                                            <button class="btn btn-lg btn-block btn-primary text-uppercase" ng-disabled="pedido.transportadora === null" ng-click="finalizarPedido(pedido)">Finalizar Compra</button>
+                                            <button style="width:100%;white-space: normal" class="btn btn-lg {{pedido.status_finalizacao === null ? 'btn-primary':pedido.status_finalizacao.classe}}  text-uppercase" ng-disabled="pedido.transportadora === null || pedido.status_finalizacao !== null" ng-click="finalizarPedido(pedido)">
+                                               {{pedido.status_finalizacao === null ? 'Finalizar Compra':pedido.status_finalizacao.valor}} 
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

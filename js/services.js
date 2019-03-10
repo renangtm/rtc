@@ -1539,7 +1539,7 @@ rtc.service('sistemaService', function ($http, $q) {
     this.finalizarCompraParceiros = function (pedido, fn) {
         baseService($http, $q, {
             o: pedido,
-            query: "$r->retorno=Sistema::finalizarCompraParceiros($c,$o,$empresa);",
+            query: "Sistema::finalizarCompraParceiros($c,$o,$empresa);",
             sucesso: fn,
             falha: fn
         });

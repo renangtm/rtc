@@ -199,7 +199,7 @@ class Utilidades {
 
     public static function fromJson($str) {
 
-        $js = json_decode(utf8_decode($str));
+        $js = json_decode(utf8_encode($str));
 
         return self::getObject($js);
     }

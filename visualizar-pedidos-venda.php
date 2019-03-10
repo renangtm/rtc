@@ -717,7 +717,7 @@
                             <div class="modal-body">
                                 <div class="form-group">
                                     <div class="form-row">
-                                        <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;" id="shLogs">
+                                        <div class="custom-control custom-radio" style="margin-top: 5px;" id="shLogs">
 
                                         </div>
                                     </div>

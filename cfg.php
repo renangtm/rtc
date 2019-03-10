@@ -395,7 +395,7 @@
                                         <div class="col-md-10">
                                             Telefone
                                             <hr>
-                                            <input id="txttel" type="text" ng-model="telefone.numero" placeholder="" class="form-control">
+                                            <telefone model="telefone.numero"></telefone>
                                         </div>
 
                                         <div class="col-md-2">

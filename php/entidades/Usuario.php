@@ -143,7 +143,14 @@ class Usuario {
                 } else if ($p->cons && !$value->cons) {
                     return false;
                 }else{
-                    return true;
+                    
+                    foreach($this->empresa->rtc->permissoes as $key2=>$value2){
+                        if($value2->id === $value->id){
+                            return true;
+                        }
+                    }
+                    
+                    return false;
                 }
                 
             }
