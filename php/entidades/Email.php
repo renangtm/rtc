@@ -20,15 +20,12 @@ class Email {
     public static $DIRETORIA = "Diretoria";
     public static $ADMINISTRATIVO = "Administrativo";
     public static $FINANCEIRO = "Financeiro";
-    public static $TIPOS_GRUPO = array("Logistica","Compras","Vendas","Manutencao","Diretoria","Administrativo","Financeiro");
-    
+    public static $TIPOS_GRUPO = array("Logistica", "Compras", "Vendas", "Manutencao", "Diretoria", "Administrativo", "Financeiro");
     public $id;
     public $endereco;
     public $excluido;
     public $senha;
     public $filtro;
-    
-    
     private static $SERVIDORES = array(
         "gmail.com" => array("smtp.gmail.com", 587, true),
     );
@@ -56,8 +53,8 @@ class Email {
 
         $grupos = explode(';', $this->endereco);
 
-     
-        
+
+
         foreach ($grupos as $key => $value) {
 
             if (count(explode(':', $value)) == 2) {
@@ -69,7 +66,7 @@ class Email {
                 $emails = explode(',', $gp[1]);
 
                 foreach ($emails as $key2 => $value2) {
- 
+
                     if (!filter_var($value2, FILTER_VALIDATE_EMAIL)) {
 
                         $fin[$gp[0]][] = "emailinvalido@invalido.com.br";
@@ -78,14 +75,13 @@ class Email {
                         $fin[$gp[0]][] = $value2;
                     }
                 }
-
             } else {
-     
+
                 if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
 
                     $fin[] = "emailinvalido@invalido.com.br";
                 } else {
-               
+
                     $fin[] = $value;
                 }
             }
@@ -98,13 +94,13 @@ class Email {
 
                 if ($ne != "")
                     $ne .= ";";
-                
+
                 $ne .= $value;
             }else {
 
                 if ($ne != "")
                     $ne .= ";";
-                
+
                 $ne .= $key . ":";
 
                 $b = false;
@@ -128,25 +124,23 @@ class Email {
             if (!is_array($value)) {
 
                 $enderecos[] = $value;
-           
-            } else{
+            } else {
 
-                $k = $this->filtro=="";
-                if (!$k){
+                $k = $this->filtro == "";
+                if (!$k) {
                     if (strpos($key, $this->filtro) === false) {
                         continue;
                     }
                 }
-                
+
                 foreach ($value as $key2 => $value2) {
 
                     $enderecos[] = $value2;
                 }
             }
         }
-        
+
         return $enderecos;
-        
     }
 
     public function enviarEmail($destino, $titulo, $conteudo) {
@@ -173,6 +167,14 @@ class Email {
 
             $mail = new PHPMailer\PHPMailer\PHPMailer();
 
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                )
+            );
+
             $mail->IsSMTP();
             $mail->SMTPAuth = true;
             $mail->Host = $servidor[0];
@@ -183,7 +185,7 @@ class Email {
             }
 
             $mail->IsHTML(true);
-            
+
             $mail->Username = $th; // your gmail address
             $mail->Password = $this->senha; // password
 
