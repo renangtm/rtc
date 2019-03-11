@@ -248,7 +248,7 @@
                                                 <label for="">Observações</label>
                                                 <div class="form-row">
                                                     <div class="col">
-                                                        <textarea class="form-control" rows="2" id="comment" ng-model="pedido.observacao" ng-disabled="!pedido.status.altera"></textarea>
+                                                        <textarea class="form-control" rows="2" id="comment" ng-model="pedido.observacoes" ng-disabled="!pedido.status.altera"></textarea>
                                                     </div>
                                                 </div>
 
