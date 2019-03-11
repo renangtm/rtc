@@ -99,9 +99,10 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
       
         $empresa = new Empresa(1733);
-        $pedidos = $empresa->getPedidos($con, 0, 1,'','pedido.id DESC');
-        $pedido = $pedidos[0];
+        $notas = $empresa->getNotas($con, 0, 1,'','nota.ficha DESC');
         
+        echo $notas[0]->ficha;
+       
         
     }
 
