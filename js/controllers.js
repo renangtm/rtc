@@ -501,9 +501,11 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
 
         $scope.relatorio.order = order;
 
+
         relatorioService.relatorio = $scope.relatorio;
 
         $scope.gerado = createAssinc(relatorioService, 1, 20, 1000);
+        $scope.gerado.attList();
 
         $("#mdlRelatorio").modal("show");
 
@@ -3481,10 +3483,39 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
         $scope.produto_campanha_novo = p.produto_campanha;
 
     })
+    
+    $scope.quantidadeNumero = function(campanha,cc){
+        
+        var qtd = 0;
+        
+        var numero = 0;
+        for(var i=0;i<campanha.campanhas.length;i++){
+            if(campanha.campanhas[i] === cc){
+                numero = campanha.campanhas[i].id;
+                break;
+            }
+        }
+     
+        for(var i=0;i<campanha.produtos.length;i++){
+            
+            var p = campanha.produtos[i];
+            
+            if(p.numeracao === numero){
+                
+                qtd++;
+                
+            }
+            
+        }
+        
+        return qtd;
+        
+    }
 
     $scope.setAutoValidade = function (v) {
 
         $scope.produto_campanha_validade.validade = v.validade;
+        $scope.produto_campanha_validade.quantidade_validade = v.quantidade;
     }
 
     $scope.setProdutoValidade = function (produto_campanha) {
@@ -3585,6 +3616,8 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
         }
 
     }
+
+
 
     $scope.removeNumeracao = function (prod) {
 
@@ -3759,6 +3792,48 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
         if (!okc)
             return;
         $scope.setCampanhaCriacao($scope.agora);
+
+    }
+
+    $scope.removeProdutoCamp = function (campanha, produto) {
+        
+        if(campanha.produtos.length===1){
+            msg.alerta("A Campanha nao pode ficar sem produtos");
+            return;
+        }
+        
+        var np = [];
+        for(var i=0;i<campanha.produtos.length;i++){
+            if(campanha.produtos[i] !== produto){
+                np[np.length] = campanha.produtos[i];
+            }
+        }
+        campanha.produtos = np;
+        
+        $scope.addNumeracao(campanha.produtos[0]);
+        $scope.removeNumeracao(campanha.produtos[0]);
+        campanha.lista = createList(campanha.produtos, 1, 5, "produto.nome");
+    }
+
+    $scope.addProdutoCamp = function (campanha, produto) {
+        
+        var produto_campanha = angular.copy($scope.produto_campanha_novo);
+        produto_campanha.produto = produto;
+        produto_campanha.validade = -1;
+        produto_campanha.campanha = campanha;
+        produto_campanha.valores = [{valor: produto.valor_base, selecionado: false}];
+        produto_campanha.valor_editavel = {valor: produto.valor_base, selecionado: false};
+        produto_campanha.numeracao = -1;
+
+        for (var j = 0; j < 3; j++) {
+            produto_campanha.valores[j + 1] = {valor: (produto_campanha.valores[j].valor * 0.95).toFixed(2), selecionado: false};
+        }
+
+        campanha.produtos[campanha.produtos.length] = produto_campanha;
+        
+        $scope.addNumeracao(produto_campanha);
+        
+        campanha.lista.attList();
 
     }
 

@@ -408,8 +408,9 @@ function createAssinc(lista, cols, rows, maxPage) {
         attList: function () {
 
             var este = this;
-
+            
             lista.getCount(este.filtro, function (r) {
+               
                 //----------------------------
                 var np = Math.ceil(r.qtd / (este.por_pagina * este.por_coluna));
                 este.pagina = Math.max(Math.min(este.pagina, np - 1), 0);

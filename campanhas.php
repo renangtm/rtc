@@ -502,7 +502,7 @@
                                     <div class="col-md-6">
                                         <div class="row">
                                             <div class="col-md-6" style="text-align:left">
-                                                Nome
+                                                Nome - {{quantidadeNumero(c,cc)}}
                                             </div>
                                             <div class="col-md-4" style="text-align:left">
                                                 Prazo
@@ -541,9 +541,9 @@
                                     </thead>
                                     <tr ng-repeat="prod in campanha.lista.elementos">
                                         <th><button ng-click="addNumeracao(prod[0])" ng-right-click="removeNumeracao(prod[0])" class="btn btn-default" style="width:23px;height:23px;padding:1px;display:inline;background-color:{{getNumeracaoCor(prod[0].numeracao)}};color:#FFFFFF">{{getNumeracaoAlfabetica(prod[0].numeracao)}}</button></th>
-                                        <th>{{prod[0].produto.codigo}} - {{prod[0].produto.nome}}</th>
-                                        <th ng-if="prod[0].validade !== 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-{{prod[0].validade<0?'danger':'success'}}" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">{{(prod[0].validade > 0) ? (prod[0].validade | data_st) : 'Selecione'}}</strong></th>
-                                        <th ng-if="prod[0].validade === 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-warning" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">------</strong></th>
+                                        <th><button ng-click="removeProdutoCamp(c,prod[0])" class="btn btn-danger" style="width:20px;height:20px;padding:1px"><i class="fas fa-times"></i></button>&nbsp{{prod[0].produto.codigo}} - {{prod[0].produto.nome}}</th>
+                                        <th ng-if="prod[0].validade !== 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-{{prod[0].validade<0?'danger':'success'}}" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">{{(prod[0].validade > 0) ? (prod[0].validade | data_st) : 'Selecione'}}</strong> ({{prod[0].quantidade_validade}})</th>
+                                        <th ng-if="prod[0].validade === 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-warning" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">------</strong> ({{prod[0].quantidade_validade}})</th>
                                         <th><input type="text" style="max-width:60px" class="form-control" ng-model="prod[0].limite"></th>
                                         <th>{{prod[0].produto.custo}}</th>
                                         <th ng-click="selecionarValor(prod[0], v)" style="cursor:pointer;{{v.selecionado?'text-decoration:underline;color:Green':''}}" ng-repeat="v in prod[0].valores">{{v.valor}} R$</th>
@@ -557,6 +557,7 @@
 
                             </div>
                             <div class="modal-footer">
+                                <button class="btn btn-outline-light" data-target="#addProdutoMontagem" data-toggle="modal" ng-click="produtos.attList()"><i class="fas fa-plus-circle"></i></button>
                                 <button class="btn btn-primary" ng-click="terminarCadastro()" ng-if="!campanha.terminada"><i class="fas fa-check"></i>&nbsp; Terminar</button>
                                 <button class="btn btn-warning" data-dismiss="modal" aria-label="Close" ng-if="campanha.terminada"><i class="fas fa-check"></i>&nbsp; Campanha ja esta formada</button>
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
@@ -599,7 +600,51 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="modal fade" id="addProdutoMontagem" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Seleção de produtos</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="text" class="form-control" id="filtroProdutos" placeholder="Filtro">
+                                <hr>
+                                <table class="table table-striped table-bordered first">
+                                    <thead>
+                                    <th>Cod.</th>
+                                    <th>Produto</th>
+                                    <th>Disponivel</th>
+                                    <th>Valor</th>
+                                    <th>Ver Validades</th>
+                                    </thead>
+                                    <tr ng-repeat="produto in produtos.elementos">
+                                        <th>{{produto[0].id}}</th>
+                                        <th>{{produto[0].nome}}</th>
+                                        <th class="text-center">{{produto[0].disponivel}}</th>
+                                        <th class="text-center">{{produto[0].valor_base}}</th>
+                                        <th class="text-center"><button class="btn btn-primary" ng-click="addProdutoCamp(c,produto[0])"><i class="fas fa-plus-circle"></i></button></th>
+                                    </tr>
+                                    </tr>
+                                </table>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-end">
+                                            <li class="page-item" ng-click="produtos.prev()"><a class="page-link" href="">Anterior</a></li>
+                                            <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                            <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Próximo</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
 
+                            </div>
+                            <div class="modal-footer">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- /.modal-content PRODUTOS --> 
                 <div class="modal fade" id="produtos" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                     <div class="modal-dialog">
