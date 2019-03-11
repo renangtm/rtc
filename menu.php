@@ -19,9 +19,9 @@ if (!isset($filtro)) {
 
 $rtc = $usuario->empresa->getRTC(new ConnectionFactory());
 
-if ($rtc == null) {
 
-    $rtc = $empresa->getRTC(new ConnectionFactory());
+$rtcs = $ses->get('rtcs');
+if ($rtcs === null) {
 
     $rtcs = Sistema::getRTCS();
 
@@ -57,7 +57,7 @@ foreach ($possiveis as $key => $value) {
 }
 
 $possiveis[0] = $rtc;
-$rtc->numero--;
+
 ?>
 
 <style type="text/css">

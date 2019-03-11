@@ -239,7 +239,7 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
 
     $scope.data_atual = new Date().getTime();
 
-    $scope.tipos_banner = ["Frontal", "Lateral","Email Marketing"];
+    $scope.tipos_banner = ["Frontal", "Lateral", "Email Marketing"];
 
     $("#uploaderHTML").change(function () {
 
@@ -329,13 +329,13 @@ rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, u
 
         $scope.banner = banner;
         banner.html = "";
-        
+
         bannerService.getHTML(banner, function (h) {
 
             banner.html = window.atob(h.html);
 
             $("#html_" + banner.id).html(banner.html);
-            
+
         })
 
     }
@@ -775,7 +775,7 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
             "transportadora",
             ["codigo", "razao_social"], "filtroTransportadoras");
 
-
+    $scope.atualizando_custo = false;
     $scope.pedidos = [];
     $scope.pedido_contexto = null;
     $scope.carrinho = [];
@@ -794,10 +794,10 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
     })
 
     $scope.finalizarPedido = function (pedido) {
-        pedido.status_finalizacao = {valor:"Aguarde... O Sistema esta fechando seu pedido",classe:"btn-primary",final:false};
-        
+        pedido.status_finalizacao = {valor: "Aguarde... O Sistema esta fechando seu pedido", classe: "btn-primary", final: false};
+
         sistemaService.finalizarCompraParceiros(pedido, function (r) {
-  
+
             var novo_carrinho = [];
 
             lbl:
@@ -820,12 +820,12 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
                 novo_carrinho[novo_carrinho.length] = it;
 
             }
-     
+
             $scope.carrinho = novo_carrinho;
             var p = r.o;
             carrinhoService.setCarrinho($scope.carrinho, function (s) {
-            
-                pedido.status_finalizacao = {valor:"O Sistema esta gerando a cobranca, aguarde mais um pouco...",classe:"btn-outline-success",final:false};
+
+                pedido.status_finalizacao = {valor: "O Sistema esta gerando a cobranca, aguarde mais um pouco...", classe: "btn-outline-success", final: false};
                 pedidoService.gerarCobranca(p, function (r) {
                     $("#finalizarCompraModal").modal('show');
                     if (r.sucesso) {
@@ -833,11 +833,11 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
                     } else {
                         $("#finalizarCompra").html("Compra finalizada porem houve um problema ao gerar a cobranca");
                     }
-                    
-                    pedido.cobranca_gerada=true;
-                    pedido.status_finalizacao = {valor:"O Pedido foi realizado com sucesso !, verifique a confirmacao em seu email",classe:"btn btn-warning",final:true};
+
+                    pedido.cobranca_gerada = true;
+                    pedido.status_finalizacao = {valor: "O Pedido foi realizado com sucesso !, verifique a confirmacao em seu email", classe: "btn btn-warning", final: true};
                 })
-                
+
 
             })
 
@@ -988,7 +988,7 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
     }
 
     $scope.atualizaCustos = function (pedido) {
-
+        $scope.atualizando_custo = true;
         var i = 0;
         for (; i < $scope.pedidos.length; i++) {
             if ($scope.pedidos[i] === pedido) {
@@ -1005,7 +1005,7 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
             $scope.getFormasPagamento($scope.pedidos[i]);
             equalize($scope.pedidos[i], "prazo_parcelas", $scope.possibilidades);
             $scope.pedido_contexto = $scope.pedidos[i];
-
+            $scope.atualizando_custo = false;
         })
 
     }
@@ -1106,7 +1106,7 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
     $scope.produtos = createFilterList(compraParceiroService, 3, 6, 10);
     $scope.produtos["posload"] = function (elementos) {
         sistemaService.getMesesValidadeCurta(function (p) {
-            produtoService.remessaGetValidades(p.meses_validade_curta, elementos, function (){});
+            produtoService.remessaGetValidades(p.meses_validade_curta, elementos, function () {});
         });
     }
     $scope.produtos.attList();
@@ -2527,6 +2527,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
     $scope.produto = {};
 
 
+
     $scope.getPesoBrutoPedido = function () {
 
         var tot = 0;
@@ -2914,7 +2915,7 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
 
                 var l = $scope.logs[i];
 
-                $("<div></div>").css('width', '100%').css('display','block').css('border-bottom', '1px solid Gray').css('padding', '10px').html(l.usuario + " / " + toTime(l.momento) + " / " + l.obs).appendTo($("#shLogs"));
+                $("<div></div>").css('width', '100%').css('display', 'block').css('border-bottom', '1px solid Gray').css('padding', '10px').html(l.usuario + " / " + toTime(l.momento) + " / " + l.obs).appendTo($("#shLogs"));
 
             }
 
@@ -4809,7 +4810,7 @@ rtc.controller("crtClientes", function ($scope, clienteService, categoriaCliente
         $scope.documento.categoria = $scope.categorias_documento[0];
     })
     telefoneService.getTelefone(function (p) {
-        
+
         $scope.telefone_novo = p.telefone;
         $scope.telefone = angular.copy($scope.telefone_novo);
     })
@@ -4930,7 +4931,7 @@ rtc.controller("crtClientes", function ($scope, clienteService, categoriaCliente
 
     }
     $scope.addTelefone = function () {
-        
+
         $scope.cliente.telefones[$scope.cliente.telefones.length] = $scope.telefone;
         $scope.telefone = angular.copy($scope.telefone_novo);
     }

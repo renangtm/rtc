@@ -137,6 +137,10 @@ class Sistema {
         return new Permissao(35, "parametros agricolas cadastro de produto");
     }
 
+     public static function P_EMPRESA_PEDIDO() {
+        return new Permissao(36, "visualizar empresa do pedido");
+    }
+    
     public static function getEmpresa($tipo) {
 
         $empresa = null;
@@ -470,7 +474,7 @@ class Sistema {
         $entrada->enviar_emails = false;
         $entrada->fornecedor = $ge->getFornecedorViaEmpresa($con, $pedido->empresa);
         $entrada->frete = $pedido->frete;
-        $entrada->incluir_frete = $pedido->incluir_frete;
+        $entrada->frete_incluso = $pedido->frete_incluso;
         $entrada->parcelas = $pedido->parcelas;
         $entrada->prazo = $pedido->prazo;
         $entrada->transportadora = $ge->getTransportadoraViaTransportadora($con, $pedido->transportadora);
@@ -1096,7 +1100,7 @@ class Sistema {
         $nota->forma_pagamento = $nota->forma_pagamento[0];
         $nota->interferir_estoque = false;
         $nota->empresa = $e;
-        $nota->frete_destinatario_remetente = $pedido->incluir_frete;
+        $nota->frete_destinatario_remetente = $pedido->frete_incluso;
 
         $vencimentos = array();
         $cobr = $inf->cobr->dup;

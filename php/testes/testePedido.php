@@ -260,7 +260,7 @@ class testePedido extends PHPUnit_Framework_TestCase {
         $pedido = new Pedido();
         $pedido->cliente = $cliente;
         $pedido->transportadora = $tra;
-        $pedido->incluir_frete = true;
+        $pedido->frete_incluso = true;
         $pedido->frete = 10;
         $pedido->prazo = 20;
         $pedido->empresa = $empresa;

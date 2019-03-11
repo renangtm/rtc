@@ -229,7 +229,7 @@ class testeProdutoPedidoEntrada extends PHPUnit_Framework_TestCase {
         $pedido = new stdClass();
         $pedido->id = 2;
         $pedido->fornecedor = $fornecedor;
-        $pedido->incluir_frete = true;
+        $pedido->frete_incluso = true;
         $pedido->frete = 10;
         $pedido->prazo = 20;
         $pedido->empresa = $empresa;

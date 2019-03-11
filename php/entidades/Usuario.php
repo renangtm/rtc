@@ -43,7 +43,7 @@ class Usuario {
     public function merge($con) {
 
 
-        $ps = $con->getConexao()->prepare("SELECT id FROM usuario WHERE (cpf='" . $this->cpf->valor . "' OR login='$this->login') AND id <> $this->id AND id_empresa=".$this->empresa->id);
+        $ps = $con->getConexao()->prepare("SELECT id FROM usuario WHERE (cpf='" . $this->cpf->valor . "' OR login='$this->login') AND id <> $this->id AND id_empresa=" . $this->empresa->id);
         $ps->execute();
         $ps->bind_result($id);
         if ($ps->fetch()) {
@@ -129,7 +129,7 @@ class Usuario {
     }
 
     public function temPermissao($p) {
-        
+
         foreach ($this->permissoes as $key => $value) {
 
             if ($value->nome == $p->nome) {
@@ -142,19 +142,28 @@ class Usuario {
                     return false;
                 } else if ($p->cons && !$value->cons) {
                     return false;
-                }else{
-                    
-                    foreach($this->empresa->rtc->permissoes as $key2=>$value2){
-                        if($value2->id === $value->id){
+                } else {
+
+                    foreach ($this->empresa->rtc->permissoes as $key2 => $value2) {
+                        if ($value2->id === $value->id) {
                             return true;
                         }
                     }
-                    
+
+                    foreach ($this->empresa->permissoes_especiais as $key3 => $value3) {
+                        if ($key3 >= $this->empresa->rtc->numero) {
+                            continue;
+                        }
+                        foreach ($value3 as $key2 => $value2) {
+                            if ($value2->id === $value->id) {
+                                return true;
+                            }
+                        }
+                    }
+
                     return false;
                 }
-                
             }
-            
         }
 
         return false;

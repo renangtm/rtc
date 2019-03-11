@@ -704,7 +704,7 @@ class Utilidades {
 
         $nota = new Nota();
         $nota->fornecedor = $fornecedor;
-        $nota->incluir_frete = true;
+        $nota->frete_incluso = true;
         $nota->transportadora = $tra;
         $nota->forma_pagamento = Sistema::getFormasPagamento();
         $nota->forma_pagamento = $nota->forma_pagamento[0];
@@ -1205,7 +1205,7 @@ class Utilidades {
         $pedido = new Pedido();
         $pedido->cliente = $cliente;
         $pedido->transportadora = $tra;
-        $pedido->incluir_frete = true;
+        $pedido->frete_incluso = true;
         $pedido->frete = 10;
         $pedido->prazo = 20;
         $pedido->empresa = $empresa;
@@ -1484,7 +1484,7 @@ class Utilidades {
 
         $pedido = new PedidoEntrada();
         $pedido->fornecedor = $fornecedor;
-        $pedido->incluir_frete = true;
+        $pedido->frete_incluso = true;
         $pedido->frete = 10;
         $pedido->prazo = 20;
         $pedido->usuario = Utilidades::getUsuarioTeste($empresa);

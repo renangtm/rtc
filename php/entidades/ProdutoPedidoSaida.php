@@ -359,7 +359,7 @@ class ProdutoPedidoSaida {
 
         $this->ipi = ($this->valor_base + $this->juros + $this->icms) * ($this->produto->categoria->ipi / 100);
 
-        if ($this->pedido->incluir_frete) {
+        if ($this->pedido->frete_incluso) {
 
             $total = 0;
 

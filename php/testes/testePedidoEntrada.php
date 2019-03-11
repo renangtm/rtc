@@ -232,7 +232,7 @@ class testePedidoEntrada extends PHPUnit_Framework_TestCase {
         
         $pedido = new PedidoEntrada();
         $pedido->fornecedor = $fornecedor;
-        $pedido->incluir_frete = true;
+        $pedido->frete_incluso = true;
         $pedido->frete = 10;
         $pedido->prazo = 20;
         $pedido->usuario = Utilidades::getUsuarioTeste($empresa);

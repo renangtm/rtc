@@ -91,6 +91,9 @@
                                                         <th data-ordem="pedido.data">Data</th>
                                                         <th width="70px" data-ordem="pedido.frete">frete</th>
                                                         <th data-ordem="pedido.id_status">Status</th>
+                                                        <?php if ($usuario->temPermissao(Sistema::P_EMPRESA_PEDIDO()->m('C'))) { ?>
+                                                            <th>Empresa</th>
+                                                        <?php } ?>
                                                         <th width="105px" data-ordem="pedido.usuario.nome">Vendedor</th>
                                                         <th width="180px">Ação</th>
                                                     </tr>
@@ -102,6 +105,9 @@
                                                         <td>{{pedid[0].data| data}}</td>
                                                         <td>{{pedid[0].frete.toFixed(2)}}</td>
                                                         <td>{{pedid[0].status.nome}}</td>
+                                                        <?php if ($usuario->temPermissao(Sistema::P_EMPRESA_PEDIDO()->m('C'))) { ?>
+                                                            <th>{{pedid[0].empresa.nome}}</th>
+                                                        <?php } ?>
                                                         <td>{{pedid[0].usuario.nome}}</td>
                                                         <th>
                                                             <div class="product-btn">
@@ -118,6 +124,9 @@
                                                         <th>Data</th>
                                                         <th>frete</th>
                                                         <th>Status</th>
+                                                        <?php if ($usuario->temPermissao(Sistema::P_EMPRESA_PEDIDO()->m('C'))) { ?>
+                                                            <th>Empresa</th>
+                                                        <?php } ?>
                                                         <th>Vendedor</th>
                                                         <th>Ação</th>
                                                     </tr>
@@ -189,7 +198,7 @@
                                                 <input type="text" ng-model="pedido.cliente.razao_social" class="form-control" placeholder="Nome do cliente" value="" disabled="">
                                             </div>
                                             <div class="col">
-                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" ng-click="clientes.attList()" data-target="#clientes" ng-disabled="!pedido.status.altera"><i class="fas fa-search"></i></a>
+                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" ng-click="clientes.attList()" data-target="#clientes" ng-disabled="!pedido.status.altera" ng-if="pedido.empresa.id===<?php echo $empresa->id; ?>"><i class="fas fa-search"></i></a>
                                             </div>
                                         </div>
                                     </div>
@@ -197,13 +206,13 @@
                                     <div class="form-group">
                                         <label for="">Logistica</label>
                                         <div class="form-row">
-                                            <select ng-model="pedido.logistica" style="width:40%" class="form-control" ng-change="resetarPedido()" ng-disabled="!pedido.status.altera">
+                                                <select ng-model="pedido.logistica" style="width:40%" class="form-control" ng-change="resetarPedido()" ng-disabled="!pedido.status.altera || pedido.empresa.id !== <?php echo $empresa->id; ?>">
                                                 <option ng-repeat="l in logisticas" ng-value="l">{{l.nome}}</option>
                                             </select>
                                         </div>
                                         <div ng-if="pedido.logistica === null" style="color:SteelBlue">
                                             <div class="form-row" style="margin-top: 10px;">
-                                                Pedido normal feito com estoque da <?php echo $empresa->nome; ?>
+                                                Pedido normal feito com estoque da {{pedido.empresa.nome}}
                                             </div>
                                         </div>
                                         <div ng-if="pedido.logistica !== null" style="color:Orange">
@@ -277,7 +286,7 @@
                                                 <td class="text-center" width="100px">{{prod.quantidade}}</td>
                                                 <td ng-if="prod.validade_minima > 0 && prod.validade_minima !== 1000" class="text-center">{{prod.validade_minima| data}}</td>
                                                 <td ng-if="prod.validade_minima === 1000" class="text-center">-------</td>
-                                                <td class="text-center"><input ng-disabled="!pedido.status.altera" type="number" steep="0.01" ng-confirm="atualizaCustos()" class="form-control" ng-model="prod.valor_base"></td>
+                                                <td class="text-center"><input ng-disabled="!pedido.status.altera || pedido.empresa.id !== <?php echo $empresa->id ?>" type="number" steep="0.01" ng-confirm="atualizaCustos()" class="form-control" ng-model="prod.valor_base"></td>
                                                 <td class="text-center">{{prod.juros}}</td>
                                                 <td class="text-center">{{prod.frete}}</td>
                                                 <td class="text-center">{{prod.icms}}</td>
@@ -303,7 +312,7 @@
                                                 <td></td>
                                                 <td>
                                                     <div class="product-btn">
-                                                        <a href="#" class="btn btn-outline-light btnaddprod" ng-disabled="!pedido.status.altera" ng-click="produtos.attList()" data-title="addproduto" data-toggle="modal" data-target="#produtos"><i class="fas fa-plus-circle"></i></a>
+                                                        <a href="#" class="btn btn-outline-light btnaddprod" ng-disabled="!pedido.status.altera" ng-if="pedido.empresa.id === <?php echo $empresa->id; ?>" ng-click="produtos.attList()" data-title="addproduto" data-toggle="modal" data-target="#produtos"><i class="fas fa-plus-circle"></i></a>
                                                     </div>
                                                 </td>
 
@@ -324,11 +333,11 @@
                                                 <label for="">Frete</label>
                                             </div>
                                             <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
-                                                <input ng-disabled="!pedido.status.altera" type="radio" id="customRadioInline1" name="customRadioInline1" ng-value="true" ng-change="atualizaCustos()" ng-model="pedido.incluir_frete" class="custom-control-input" checked>
+                                                <input ng-disabled="!pedido.status.altera" type="radio" id="customRadioInline1" name="customRadioInline1" ng-value="true" ng-change="atualizaCustos()" ng-model="pedido.frete_incluso" class="custom-control-input" checked>
                                                 <label class="custom-control-label" for="customRadioInline1">CIF</label>
                                             </div>
                                             <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
-                                                <input ng-disabled="!pedido.status.altera" type="radio" id="customRadioInline2" name="customRadioInline1" ng-value="false" ng-change="atualizaCustos()" ng-model="pedido.incluir_frete" class="custom-control-input">
+                                                <input ng-disabled="!pedido.status.altera" type="radio" id="customRadioInline2" name="customRadioInline1" ng-value="false" ng-change="atualizaCustos()" ng-model="pedido.frete_incluso" class="custom-control-input">
                                                 <label class="custom-control-label" for="customRadioInline2">FOB</label>
                                             </div>
                                             <div class="form-inline col-3" style="margin-left: 40px;">
@@ -344,7 +353,7 @@
                                                 <label for="">Forma de pagamento</label>
                                             </div>
                                             <div class="form-inline" style="margin-left: 40px;">
-                                                <select ng-disabled="!pedido.status.altera" class="form-control" id="ped" ng-model="pedido.forma_pagamento">    
+                                                    <select ng-disabled="!pedido.status.altera || pedido.empresa.id !== <?php echo $empresa->id; ?>" class="form-control" id="ped" ng-model="pedido.forma_pagamento">    
                                                     <option ng-value="forma_pagamento" ng-repeat="forma_pagamento in formas_pagamento">{{forma_pagamento.nome}}</option>
                                                 </select>
                                             </div>

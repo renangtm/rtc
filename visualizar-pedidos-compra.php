@@ -295,11 +295,11 @@
                                                 <label for="">Frete</label>
                                             </div>
                                             <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
-                                                <input type="radio" id="customRadioInline1" name="customRadioInline1" ng-value="true" ng-model="pedido.incluir_frete" class="custom-control-input" checked>
+                                                <input type="radio" id="customRadioInline1" name="customRadioInline1" ng-value="true" ng-model="pedido.frete_incluso" class="custom-control-input" checked>
                                                 <label class="custom-control-label" for="customRadioInline1">CIF</label>
                                             </div>
                                             <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
-                                                <input type="radio" id="customRadioInline2" name="customRadioInline1" ng-value="false" ng-model="pedido.incluir_frete" class="custom-control-input">
+                                                <input type="radio" id="customRadioInline2" name="customRadioInline1" ng-value="false" ng-model="pedido.frete_incluso" class="custom-control-input">
                                                 <label class="custom-control-label" for="customRadioInline2">FOB</label>
                                             </div>
                                             <div class="form-inline col-3" style="margin-left: 40px;">

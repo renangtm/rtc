@@ -203,7 +203,7 @@
                                             <button class="btn btn-lg btn-block btn-light" onclick="location.href = 'comprar.html';" >Continuar comprando</button>
                                         </div>
                                         <div class="col-sm-12 col-md-6 text-right">
-                                            <button style="width:100%;white-space: normal" class="btn btn-lg {{pedido.status_finalizacao === null ? 'btn-primary':pedido.status_finalizacao.classe}}  text-uppercase" ng-disabled="pedido.transportadora === null || pedido.status_finalizacao !== null" ng-click="finalizarPedido(pedido)">
+                                            <button style="width:100%;white-space: normal" class="btn btn-lg {{pedido.status_finalizacao === null ? 'btn-primary':pedido.status_finalizacao.classe}}  text-uppercase" ng-disabled="pedido.transportadora === null || pedido.status_finalizacao !== null || atualizando_custo" ng-click="finalizarPedido(pedido)">
                                                {{pedido.status_finalizacao === null ? 'Finalizar Compra':pedido.status_finalizacao.valor}} 
                                             </button>
                                         </div>

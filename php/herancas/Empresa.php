@@ -1285,7 +1285,7 @@ class Empresa {
             }
 
             $pedido->frete = $frete;
-            $pedido->incluir_frete = $frete_incluso == 1;
+            $pedido->frete_incluso = $frete_incluso == 1;
             $pedido->id = $id_pedido;
             $pedido->observacoes = $obs;
             $pedido->parcelas = $parcelas;

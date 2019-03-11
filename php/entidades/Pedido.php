@@ -30,6 +30,7 @@ class Pedido {
     public $produtos;
     public $forma_pagamento;
     public $logistica;
+    
 
     function __construct() {
 
@@ -49,7 +50,6 @@ class Pedido {
         $this->status = null;
         $this->produtos = null;
         $this->forma_pagamento = null;
-        $this->incluir_frete = true;
         $this->logistica = null;
     }
 

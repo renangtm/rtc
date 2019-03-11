@@ -226,7 +226,7 @@ class testeProdutoNota extends PHPUnit_Framework_TestCase {
         $nota = new stdClass();
         $nota->id = 2;
         $nota->fornecedor = $fornecedor;
-        $nota->incluir_frete = true;
+        $nota->frete_incluso = true;
         $nota->saida = false;
         $nota->interferir_estoque = true;
         $nota->frete = 10;
