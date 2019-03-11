@@ -43,6 +43,9 @@ class Getter {
         $nova = Utilidades::copyId0($transportadora);
         $nova->empresa = $this->empresa;
         $nova->tabela = null;
+        $nova->endereco = Utilidades::copyId0($transportadora->endereco);
+        $nova->telefones = Utilidades::copyId0($transportadora->telefones);
+        $nova->email = Utilidades::copyId0($transportadora->email);
         $nova->merge($con);
 
         return $nova;
