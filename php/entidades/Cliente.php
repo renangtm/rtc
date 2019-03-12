@@ -32,6 +32,7 @@ class Cliente {
     public $empresa;
     public $categoria;
     public $codigo;
+    public $codigo_contimatic;
 
     function __construct() {
 
@@ -48,7 +49,8 @@ class Cliente {
         $this->excluido = false;
         $this->suframado = false;
         $this->limite_credito = 0;
-            
+        $this->codigo_contimatic = 0;
+        
         $this->inicio_limite = round(microtime(true) * 1000);
         $this->termino_limite = round(microtime(true) * 1000);
         
@@ -86,6 +88,14 @@ class Cliente {
             $ps = $con->getConexao()->prepare("UPDATE cliente SET razao_social='" . addslashes($this->razao_social) . "', nome_fantasia='" . addslashes($this->nome_fantasia) . "', limite_credito=$this->limite_credito, inicio_limite=FROM_UNIXTIME($this->inicio_limite/1000), termino_limite=FROM_UNIXTIME($this->termino_limite/1000), pessoa_fisica=" . ($this->pessoa_fisica ? "true" : "false") . ", cpf='" . addslashes($this->cpf->valor) . "', rg='" . addslashes($this->rg->valor) . "', cnpj='" . addslashes($this->cnpj->valor) . "', excluido= false, id_categoria=" . $this->categoria->id . ", id_empresa=" . $this->empresa->id . ", inscricao_estadual='" . addslashes($this->inscricao_estadual) . "',suframado=" . ($this->suframado ? "true" : "false") . ", inscricao_suframa='$this->inscricao_suframa', codigo=$this->codigo WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
+        }
+        
+        if($this->codigo_contimatic > 0){
+            
+            $ps = $con->getConexao()->prepare("UPDATE cliente SET codigo_contimatic=$this->codigo_contimatic WHERE id=$this->id");
+            $ps->execute();
+            $ps->close();
+            
         }
 
         $this->endereco->merge($con);

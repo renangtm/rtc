@@ -78,11 +78,10 @@ class Empresa {
             $ps->close();
         }
     }
-    
-    public function getEmpresasClientes($con){
-        
+
+    public function getEmpresasClientes($con) {
+
         return array();
-        
     }
 
     public function setRTC($con, $rtc) {
@@ -169,16 +168,15 @@ class Empresa {
         $ps->close();
     }
 
-    public function setMarketing($con,$mkt){
-        
-        $ps = $con->getConexao()->prepare("UPDATE empresa SET contrato_mkt=".($mkt!==null?$mkt->id:0)." WHERE id=$this->id");
+    public function setMarketing($con, $mkt) {
+
+        $ps = $con->getConexao()->prepare("UPDATE empresa SET contrato_mkt=" . ($mkt !== null ? $mkt->id : 0) . " WHERE id=$this->id");
         $ps->execute();
         $ps->close();
-        
     }
-    
-    public function getMarketing($con){
-        
+
+    public function getMarketing($con) {
+
         $ps = $con->getConexao()->prepare("SELECT "
                 . "empresa.id,"
                 . "empresa.tipo_empresa,"
@@ -210,12 +208,12 @@ class Empresa {
                 . "INNER JOIN estado ON cidade.id_estado = estado.id "
                 . "INNER JOIN empresa e2 ON e2.contrato_mkt=empresa.id "
                 . "WHERE e2.id=$this->id");
- 
+
         $ps->execute();
         $ps->bind_result($id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
-        
-        if($ps->fetch()){
-            
+
+        if ($ps->fetch()) {
+
             $empresa = Sistema::getEmpresa($tipo_empresa);
 
             $empresa->id = $id_empresa;
@@ -257,19 +255,17 @@ class Empresa {
             $telefone->id = $id_telefone;
 
             $empresa->telefone = $telefone;
-            
+
             $ps->close();
-            
+
             return $empresa;
-            
         }
-        
+
         $ps->close();
-        
+
         return null;
-        
     }
-    
+
     public function getFiliais($con) {
 
         $ids = $this->id;
@@ -491,7 +487,7 @@ class Empresa {
 
         $bancos = array();
 
-        $sql = "SELECT id,nome,saldo,conta,codigo,agencia FROM banco WHERE id_empresa=$this->id AND excluido=false ";
+        $sql = "SELECT id,codigo_contimatic,nome,saldo,conta,codigo,agencia FROM banco WHERE id_empresa=$this->id AND excluido=false ";
 
         if ($filtro != "") {
             $sql .= "AND $filtro ";
@@ -505,13 +501,14 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $nome, $saldo, $conta, $codigo, $agencia);
+        $ps->bind_result($id, $cod_ctm, $nome, $saldo, $conta, $codigo, $agencia);
 
         while ($ps->fetch()) {
 
             $banco = new Banco();
 
             $banco->id = $id;
+            $banco->codigo_contimatic = $cod_ctm;
             $banco->nome = $nome;
             $banco->saldo = $saldo;
             $banco->conta = $conta;
@@ -1130,7 +1127,7 @@ class Empresa {
         }
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
-        
+
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
         $ps->bind_result($id_pedido, $id_log, $id_nota, $frete_incluso, $data, $prazo, $parcelas, $id_status, $id_forma_pagamento, $frete, $obs, $id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $tra_id, $cod_tra, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_cli_id, $email_cli_end, $email_cli_senha, $email_tra_id, $email_tra_end, $email_tra_senha, $email_usu_id, $email_usu_end, $email_usu_senha);
@@ -1623,7 +1620,7 @@ class Empresa {
                 $pro->ncm = $ncm;
                 $pro->lucro_consignado = $lucro;
 
-                $pro->categoria = Sistema::getCategoriaProduto(null,$cat_id);
+                $pro->categoria = Sistema::getCategoriaProduto(null, $cat_id);
 
                 $empresa = Sistema::getEmpresa($tipo_empresa);
 
@@ -2409,14 +2406,14 @@ class Empresa {
         }
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
-        
+
 
         $transportadoras = array();
         $notas = array();
         $fornecedores = array();
         $clientes = array();
 
-        
+
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
         $ps->bind_result($id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $id_email_cliente, $end_email_cliente, $senh_email_cliente, $id_for, $cod_for, $nom_for, $cnpj_for, $hab_for, $ie_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for, $tra_id, $cod_tra, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_email_tra, $end_email_tra, $sen_email_tra, $id_nf, $sai_nf, $cha_nf, $obs_nf, $id_pag_nf, $dt_nf, $nf_inf_est, $fdr, $emitida, $danfe, $xml, $numero, $ficha, $cancelada, $protocolo);
@@ -3093,6 +3090,7 @@ class Empresa {
 
         $sql = "SELECT "
                 . "fornecedor.id,"
+                . "fornecedor.codigo_contimatic,"
                 . "fornecedor.codigo, "
                 . "fornecedor.nome,"
                 . "fornecedor.cnpj,"
@@ -3131,7 +3129,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_for, $cod_for, $nom_for, $cnpj_for, $hab, $ie, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for);
+        $ps->bind_result($id_for, $cod_ctm, $cod_for, $nom_for, $cnpj_for, $hab, $ie, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for);
 
         $fornecedores = array();
 
@@ -3139,6 +3137,7 @@ class Empresa {
 
             $fornecedor = new Fornecedor();
             $fornecedor->id = $id_for;
+            $fornecedor->codigo_contimatic = $cod_ctm;
             $fornecedor->codigo = $cod_for;
             $fornecedor->habilitado = $hab == 1;
             $fornecedor->inscricao_estadual = $ie;
@@ -3452,7 +3451,7 @@ class Empresa {
 
         while ($ps->fetch()) {
             foreach ($usuarios[$id_usuario] as $key => $usu) {
-                
+
                 $permissoes = $usu->permissoes;
 
                 $p = null;
@@ -3726,7 +3725,7 @@ class Empresa {
                 $oferta->produto = $p;
             }
 
-            $p->categoria = Sistema::getCategoriaProduto(null,$cat_id);
+            $p->categoria = Sistema::getCategoriaProduto(null, $cat_id);
 
             $p->empresa = $this;
 
@@ -3992,7 +3991,7 @@ class Empresa {
                 $oferta->produto = $p;
             }
 
-            $p->categoria = Sistema::getCategoriaProduto(null,$cat_id);
+            $p->categoria = Sistema::getCategoriaProduto(null, $cat_id);
 
             $p->empresa = $this;
 
@@ -4232,6 +4231,7 @@ class Empresa {
 
         $sql = "SELECT "
                 . "cliente.id,"
+                . "cliente.codigo_contimatic,"
                 . "cliente.codigo,"
                 . "cliente.razao_social, "
                 . "cliente.nome_fantasia, "
@@ -4282,7 +4282,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $email_cli_id, $email_cli_end, $email_cli_senha);
+        $ps->bind_result($id_cliente,$cod_ctm, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $email_cli_id, $email_cli_end, $email_cli_senha);
 
         $clientes = array();
 
@@ -4290,6 +4290,7 @@ class Empresa {
 
             $cliente = new Cliente();
             $cliente->id = $id_cliente;
+            $cliente->codigo_contimatic = $cod_ctm;
             $cliente->codigo = $cod_cli;
             $cliente->cnpj = new CNPJ($cnpj);
             $cliente->cpf = new CPF($cpf);

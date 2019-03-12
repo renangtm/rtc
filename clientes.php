@@ -255,6 +255,15 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
+                                        <label for="txtname" class="col-3 col-lg-3 col-form-label text-left">Codigo Contimatic</label>
+                                        <div class="col-9 col-lg-9">
+                                            <input id="txtname" type="number" ng-model="cliente.codigo_contimatic">
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
                                         <label for="txtname" class="col-3 col-lg-3 col-form-label text-left">Razão social</label>
                                         <div class="col-9 col-lg-9">
                                             <input id="txtname" type="text" ng-model="cliente.razao_social" required data-parsley-type="email" placeholder="" class="form-control">

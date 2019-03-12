@@ -24,6 +24,7 @@ class Fornecedor {
     public $inscricao_estadual;
     public $habilitado;
     public $codigo;
+    public $codigo_contimatic;
 
     function __construct() {
 
@@ -37,6 +38,8 @@ class Fornecedor {
         $this->habilitado = false;
         $this->email = new Email("");
         $this->codigo = 0;
+        $this->codigo_contimatic = 0;
+        
     }
 
     public function setDocumentos($docs, $con) {
@@ -121,6 +124,14 @@ class Fornecedor {
             $ps = $con->getConexao()->prepare("UPDATE fornecedor SET nome = '" . addslashes($this->nome) . "', cnpj='" . $this->cnpj->valor . "',excluido=false, id_empresa=" . $this->empresa->id . ", inscricao_estadual='$this->inscricao_estadual', habilitado=".($this->habilitado?"true":"false").",codigo=$this->codigo WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
+        }
+        
+        if($this->codigo_contimatic > 0){
+            
+            $ps = $con->getConexao()->prepare("UPDATE fornecedor SET codigo_contimatic=$this->codigo_contimatic WHERE id=$this->id");
+            $ps->execute();
+            $ps->close();
+            
         }
 
         $this->email->merge($con);
