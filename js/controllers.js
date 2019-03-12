@@ -1925,12 +1925,13 @@ rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoSe
             msg.alerta("Data de emissao incorreta");
             return;
         }
-
+       
         baseService.merge(n, function (r) {
             if (r.sucesso) {
                 $scope.nota = r.o;
                 equalize($scope.nota, "forma_pagamento", $scope.formas_pagamento);
                 msg.alerta("Operacao efetuada com sucesso");
+                $scope.notas.attList();
             } else {
                 $scope.nota = r.o;
                 equalize($scope.nota, "forma_pagamento", $scope.formas_pagamento);

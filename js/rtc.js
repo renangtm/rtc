@@ -1,5 +1,36 @@
 var projeto = "http://192.168.18.121:888/novo_rtc_web";
 
+function mtlCharAt(str, idx) {
+    str += '';
+    var code,
+            end = str.length;
+
+    var surrogatePairs = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
+    while ((surrogatePairs.exec(str)) != null) {
+        var li = surrogatePairs.lastIndex;
+        if (li - 2 < idx) {
+            idx++;
+        } else {
+            break;
+        }
+    }
+
+    if (idx >= end || idx < 0) {
+        return NaN;
+    }
+
+    code = str.charCodeAt(idx);
+
+    var hi, low;
+    if (0xD800 <= code && code <= 0xDBFF) {
+        hi = code;
+        low = str.charCodeAt(idx + 1);
+        // Vá um adiante, já que um dos "characters" é parte de um par substituto
+        return ((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000;
+    }
+    return code;
+}
+
 //@author Renan Goncalves Teixeira Miranda
 function DOMToJson(h) {
 
@@ -141,6 +172,8 @@ function resolverRecursao(obj, pilha) {
 }
 
 function paraObjeto(json) {
+    
+    json = json.split("\n").join(" ").split("\r").join(" ").split("\\").join(" ");
 
     return resolverRecursao(JSON.parse(json), []);
 
@@ -408,7 +441,7 @@ function createAssinc(lista, cols, rows, maxPage) {
         attList: function () {
 
             var este = this;
-            
+
             lista.getCount(este.filtro, function (r) {
                 //----------------------------
                 var np = Math.ceil(r.qtd / (este.por_pagina * este.por_coluna));
@@ -418,9 +451,9 @@ function createAssinc(lista, cols, rows, maxPage) {
                         Math.min((este.pagina + 1) * (este.por_pagina * este.por_coluna), r.qtd),
                         este.filtro, este.ordem, function (e) {
                             este.elementos = [];
-                           
+
                             var els = e.elementos;
-                             
+
                             for (var i = 0; i < este.por_pagina && (i * este.por_coluna) < els.length; i++) {
                                 este.elementos[i] = [];
                                 for (var j = 0; j < este.por_coluna && (i * este.por_coluna + j) < els.length; j++) {
@@ -456,7 +489,7 @@ function createAssinc(lista, cols, rows, maxPage) {
         }
     }
 
-   
+
 
     return listar;
 
@@ -795,7 +828,7 @@ function decode64SPEC(val) {
     for (var i = 0; i < chrArr.length; i++) {
         invMap["c" + chrArr.charCodeAt(i)] = i;
     }
-   
+
     var res = "";
 
     for (var i = 0; i < val.length; i += 4) {
@@ -842,7 +875,7 @@ function baseService(http, q, obj, get, cancel, noloading) {
 
     if (teste) {
 
-        document.write("c=" + encode64SPEC(obj.query) + ((typeof obj["o"] !== 'undefined') ? ("&o=" + encode64SPEC(paraJson(obj.o))) : "")+"<hr>");
+        document.write("c=" + encode64SPEC(obj.query) + ((typeof obj["o"] !== 'undefined') ? ("&o=" + encode64SPEC(paraJson(obj.o))) : "") + "<hr>");
 
     }
 
@@ -852,7 +885,7 @@ function baseService(http, q, obj, get, cancel, noloading) {
         data: "c=" + encode64SPEC(obj.query) + ((typeof obj["o"] !== 'undefined') ? ("&o=" + encode64SPEC(paraJson(obj.o))) : ""),
         timeout: p.promise,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (exx) {
-       
+
         var m = 0;
         for (var i = 0; i < ids.length; i++) {
             if (ids[i] == idt) {
@@ -866,7 +899,7 @@ function baseService(http, q, obj, get, cancel, noloading) {
         }
 
         if (typeof obj["sucesso"] !== 'undefined') {
-            
+
             obj.sucesso(paraObjeto(decode64SPEC(exx.data)));
         }
 
@@ -1274,48 +1307,48 @@ rtc.directive('cronometro', function ($interval) {
     };
 })
 
-var mask = function(str,msk){
-    
-    
-    
+var mask = function (str, msk) {
+
+
+
     var k = [];
-    for(var i=0;i<msk.length;i++){
+    for (var i = 0; i < msk.length; i++) {
         var c = msk.charAt(i);
-        if(c==="x"){
+        if (c === "x") {
             k[i] = null;
-        }else{
+        } else {
             k[i] = c;
             str = str.split(c).join("");
         }
     }
-   
-    
+
+
     var ret = "";
-    for(var i=0,j=0;i<str.length;i++){
+    for (var i = 0, j = 0; i < str.length; i++) {
         var c = str.charAt(i);
         var m = null;
-        if(i+j<k.length){
-            m = k[i+j];
+        if (i + j < k.length) {
+            m = k[i + j];
         }
-        
-        if(m===null){
+
+        if (m === null) {
             ret += c;
-        }else if(c === m){
+        } else if (c === m) {
             ret += c;
-        }else{
-            if(str.length>=i){
-                ret += m+c;
+        } else {
+            if (str.length >= i) {
+                ret += m + c;
             }
         }
-        if(m!==null){
+        if (m !== null) {
             j++;
         }
     }
-    
-    ret = ret.substr(0,msk.length);
+
+    ret = ret.substr(0, msk.length);
 
     return ret;
-    
+
 }
 
 
@@ -1328,20 +1361,20 @@ rtc.directive('telefone', function ($timeout) {
         templateUrl: 'txtTelefone.html',
         link: function (scope, element, attrs) {
             var rep = function (str) {
-               if(str.indexOf('(11)9') >= 0){
-                   return mask(str,"(xx)xxxxx-xxxx");
-               }else{
-                   return mask(str,"(xx)xxxx-xxxx");
-               }
+                if (str.indexOf('(11)9') >= 0) {
+                    return mask(str, "(xx)xxxxx-xxxx");
+                } else {
+                    return mask(str, "(xx)xxxx-xxxx");
+                }
             }
             scope.adjust = function () {
                 scope.model = rep(scope.model);
             }
-           
-            $timeout(function(){
+
+            $timeout(function () {
                 scope.adjust();
-            },3000);
-            
+            }, 3000);
+
         }
     };
 })
@@ -1370,7 +1403,7 @@ rtc.directive('inteiro', function () {
             scope.adjust = function () {
                 scope.model = parseInt(rep(scope.model) + "");
             }
-             
+
         }
     };
 })

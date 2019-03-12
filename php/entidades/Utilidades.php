@@ -13,31 +13,27 @@
  */
 class Utilidades {
 
-    public static function getAttr($obj,$atributo){
-        
+    public static function getAttr($obj, $atributo) {
+
         $a = explode('.', $atributo);
         $o = $obj;
-        
-        foreach($a as $key=>$value){
-            
-            if(!isset($o->$value)){
-                
+
+        foreach ($a as $key => $value) {
+
+            if (!isset($o->$value)) {
+
                 return "";
-                
             }
-            
+
             $o = $o->$value;
-            
         }
-        
+
         return $o;
-        
     }
-    
+
     public static function eq($string) {
 
         return strtoupper($string);
-        
     }
 
     public static function copy($entidade) {
@@ -50,11 +46,11 @@ class Utilidades {
     public static function copyId0($entidade) {
 
         $ne = unserialize(serialize($entidade));
-        
-        if(!is_array($ne)){
+
+        if (!is_array($ne)) {
             $ne->id = 0;
-        }else{
-            foreach($ne as $key=>$value){
+        } else {
+            foreach ($ne as $key => $value) {
                 $ne[$key]->id = 0;
             }
         }
@@ -199,7 +195,9 @@ class Utilidades {
 
     public static function fromJson($str) {
 
-        $js = json_decode(utf8_encode($str));
+        $json = utf8_encode($str);
+        $json = str_replace(array("\n", "\r","\\"), " ", $json);
+        $js = json_decode($json);
 
         return self::getObject($js);
     }
@@ -974,7 +972,7 @@ class Utilidades {
 
         $usuario->email = new Email("renan.miranda@agrofauna.com.br");
         $usuario->email->senha = "5hynespt";
-        
+
 
         $usuario->merge(new ConnectionFactory());
 
@@ -1694,7 +1692,7 @@ class Utilidades {
 
         return $fornecedor;
     }
-    
+
     public static function base64encodeSPEC($val) {
 
         $chrArr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#";

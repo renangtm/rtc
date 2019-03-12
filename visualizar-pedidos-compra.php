@@ -253,7 +253,7 @@
                                                 <td>{{prod.produto.codigo}}</td>
                                                 <td>{{prod.produto.nome}}</td>
                                                 <td>{{prod.produto.unidade}} / {{prod.produto.quantidade_unidade}}</td>
-                                                <td class="text-center" width="100px">{{prod.quantidade}}</td>
+                                                <td class="text-center" width="100px"><input type="number" class="form-control" ng-model="prod.quantidade"></td>
                                                 <td class="text-center"><input type=text ng-keyup="attValor(prod)" class="form-control" ng-model="prod.valor"></td>
                                                 <td>{{prod.quantidade * prod.produto.quantidade_unidade}}</td>
                                                 <td class="text-center"><input type=text ng-keyup="attValorUnitario(prod)" class="form-control" ng-model="prod.valor_unitario"></td>
