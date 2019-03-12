@@ -137,8 +137,12 @@ class Sistema {
         return new Permissao(35, "parametros agricolas cadastro de produto");
     }
 
-     public static function P_EMPRESA_PEDIDO() {
+    public static function P_EMPRESA_PEDIDO() {
         return new Permissao(36, "visualizar empresa do pedido");
+    }
+    
+    public static function P_EXPORTAR_LANCAMENTO() {
+        return new Permissao(37, "RelatorioExportaLancamento");
     }
     
     public static function getEmpresa($tipo) {
@@ -174,6 +178,7 @@ class Sistema {
 
         $relatorios[] = new RelatorioFinanceiro($empresa);
         $relatorios[] = new RelatorioMovimento($empresa);
+        $relatorios[] = new RelatorioExportaLancamento($empresa);
 
         $permitidos = array();
 
@@ -1542,7 +1547,6 @@ class Sistema {
                 Sistema::P_CLIENTE(),
                 Sistema::P_FORNECEDOR(),
                 Sistema::P_TRANSPORTADORA(),
-                Sistema::P_COTACAO(),
                 Sistema::P_PEDIDO_SAIDA(),
                 Sistema::P_PEDIDO_ENTRADA(),
                 Sistema::P_LOGO(),
@@ -1552,7 +1556,8 @@ class Sistema {
                 Sistema::P_CATEGORIA_CLIENTE(),
                 Sistema::P_CATEGORIA_PRODUTO(),
                 Sistema::P_CATEGORIA_DOCUMENTO(),
-                Sistema::P_CONFIGURACAO_EMPRESA())
+                Sistema::P_CONFIGURACAO_EMPRESA(),
+                Sistema::P_COTACAO())
             ), new RTC(3, array(
                 Sistema::P_GRUPO_CIDADE(),
                 Sistema::P_CFG(),
@@ -1567,7 +1572,8 @@ class Sistema {
                 Sistema::P_MOVIMENTO()
                     )), new RTC(6, array(
                 Sistema::P_LOTE(),
-                Sistema::P_SEPARACAO()
+                Sistema::P_SEPARACAO(),
+                Sistema::P_EXPORTAR_LANCAMENTO()
                     )), new RTC(7, array(
                 Sistema::P_GERENCIADOR()
         )));
