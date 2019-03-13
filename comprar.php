@@ -129,8 +129,8 @@ for ($j = 0; $j < count($banners_frontais); $j++) {
                                                     </a>
                                                 </div>
                                                 <div class="carousel-item">
-                                                    <a href="http://agrofauna.com.br/apresentacao_rtc_v3.pdf" target="_blank">
-                                                        <img class="d-block w-100" src="assets/images/banner_conheca_projeto_novos_rumos_784x295.jpg" alt="Second slide">
+                                                    <a href="http://agrofauna.com.br/apresentacao_rtc_v6.pdf" target="_blank">
+                                                        <img class="d-block w-100" src="assets/images/banner_conheca_projeto_novos_rumos_784x295_v2.jpg" alt="Second slide">
                                                     </a>    
                                                 </div>
 <?php
