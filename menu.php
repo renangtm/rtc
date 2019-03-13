@@ -101,7 +101,7 @@ $possiveis[0] = $rtc;
 <div ng-controller="crtAtividade"></div>
 <div class="dashboard-header" ng-controller="crtCarrinho">
     <nav class="navbar navbar-expand-lg bg-white fixed-top">
-        <a class="navbar-brand" href="index.html"><img id="logo" src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" title="" style="max-height:50px"></a>
+        <a class="navbar-brand" href="comprar.php"><img id="logo" src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" title="" style="max-height:50px"></a>
         &nbsp;
         <div ng-controller="crtEmpresa" style="margin-right: 10px">
             <select class="form-control" ng-model="empresa" ng-change="setEmpresa()">
@@ -166,7 +166,7 @@ $possiveis[0] = $rtc;
                                     <a href="#" class="list-group-item list-group-item-action bg-chat-pardal">
                                         <div class="notification-info">
                                             <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal:</span>Quer fazer uma simulaÃ§Ã£o preÃ§os com produtos que tenham algum ativo, ou cultura?
+                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal:</span>Quer fazer uma simulação preços com produtos que tenham algum ativo, ou cultura?
                                                 <div class="notification-date">2 min ago</div>
                                             </div>
                                         </div>
@@ -174,7 +174,7 @@ $possiveis[0] = $rtc;
                                     <a href="#" class="list-group-item list-group-item-action">
                                         <div class="notification-info">
                                             <div class="notification-list-user-img"><img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                            <div class="notification-list-user-block"><span class="notification-list-user-name">VocÃª:</span>teste
+                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Você:</span>teste
                                                 <div class="notification-date">2 days ago</div>
                                             </div>
                                         </div>
@@ -182,7 +182,7 @@ $possiveis[0] = $rtc;
                                     <a href="#" class="list-group-item list-group-item-action bg-chat-pardal">
                                         <div class="notification-info">
                                             <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal:</span> Como posso ajudÃ¡-lo? Serei seu vendedor virtual!
+                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal:</span> Como posso ajudá-lo? Serei seu vendedor virtual!
                                                 <div class="notification-date text-right">2 min ago</div>
                                             </div>
                                         </div>
@@ -190,7 +190,7 @@ $possiveis[0] = $rtc;
                                     <a href="#" class="list-group-item list-group-item-action">
                                         <div class="notification-info">
                                             <div class="notification-list-user-img"><img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                            <div class="notification-list-user-block"><span class="notification-list-user-name">VocÃª:</span>teste
+                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Você:</span>teste
                                                 <div class="notification-date">2 days ago</div>
                                             </div>
                                         </div>
@@ -198,7 +198,7 @@ $possiveis[0] = $rtc;
                                     <a href="#" class="list-group-item list-group-item-action bg-chat-pardal">
                                         <div class="notification-info">
                                             <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal: </span>Sou o Pardal!! NÃ£o sou professor, mas inventei o RTC para atendÃª-lo!
+                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal: </span>Sou o Pardal!! Não sou professor, mas inventei o RTC para atendê-lo!
                                                 <div class="notification-date">2 min ago</div>
                                             </div>
                                         </div>
@@ -291,7 +291,7 @@ $possiveis[0] = $rtc;
                         <a class="dropdown-item" href="cfg.php"><i class="fas fa-user mr-2"></i>Colaboradores</a>
                         <a class="dropdown-item" href="alteracao-do-logo.php"><i class="fas fa-font mr-2"></i>Alterar Logo</a>
                         <!--<a class="dropdown-item" href="cadastro-empresas-filiais.html"><i class="fas fa-file-alt mr-2"></i>Empresas / Filiais</a>-->
-                        <!--<a class="dropdown-item" href="configuracao-da-empresa.html"><i class="fas fa-cog mr-2"></i>ConfiguraÃ§Ã£o da empresa</a>-->
+                        <!--<a class="dropdown-item" href="configuracao-da-empresa.html"><i class="fas fa-cog mr-2"></i>Configuração da empresa</a>-->
                         <a class="dropdown-item" href="index.php"><i class="fas fa-power-off mr-2"></i>Sair</a>
                     </div>
                 </li>
@@ -318,120 +318,125 @@ $possiveis[0] = $rtc;
                         </select>
                     </li>
                     <li class="nav-item ">
-                        <a class="nav-link" href="comprar.php"><button class="btn btn-warning" onmousedown="tutorial('Compra Parceiros', 'Aqui voce pode comprar produtos da Agro Fauna, e de qualquer empresa do grupo Novos Rumos, adicione os produtos desejados ao seu carrinho de compras, e finalize seu pedido')" style="padding:0px;padding-left:4px;display:inline;margin: 0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fa fa-fw fa-shopping-basket"></i>Compra Parceiros</a>
+                        <a class="nav-link" href="comprar.php"><button class="btn btn-warning" onmousedown="tutorial('Compra Parceiros', 'Aqui voce pode comprar produtos da Agro Fauna, e de qualquer empresa do grupo Novos Rumos, adicione os produtos desejados ao seu carrinho de compras, e finalize seu pedido')" style="padding:0px;padding-left:4px;display:inline;margin: 0px">&nbsp<i class="fas fa-info"></i></button><i class="fa fa-fw fa-shopping-basket"></i>&nbspCompra Parceiros</a>
                     </li>
                     <li class="nav-item ">
-                        <a class="nav-link" href="carrinho-de-compras.php"><button class="btn btn-warning" onmousedown="tutorial('Carrinho', 'Aqui Ã© onde vocÃª finalizar sua compra, depois de ja ter adcionado os itens ao carrinho na aba de Compra Parceiros, aqui voce tambÃ©m vai ver todos os impostos que estao incidindo sobre a sua compra.')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button><i class="fa fa-fw fa-shopping-cart"></i>Carrinho</a>
+                        <a class="nav-link" href="carrinho-de-compras.php"><button class="btn btn-warning" onmousedown="tutorial('Carrinho', 'Aqui é onde você finalizar sua compra, depois de ja ter adcionado os itens ao carrinho na aba de Compra Parceiros, aqui voce também vai ver todos os impostos que estao incidindo sobre a sua compra.')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px"><i class="fas fa-info"></i>&nbsp</button><i class="fa fa-fw fa-shopping-cart"></i>Carrinho</a>
                     </li>
-
+                    <li class="nav-item ">
+                        <a class="nav-link" href="acompanhar-pedidos.php"><button class="btn btn-warning" onmousedown="tutorial('Acompanhamento de pedido', 'Aqui voce pode acompanhar seus pedidos realizados')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px"><i class="fas fa-info"></i>&nbsp</button><i class="fa fa-fw fa-eye"></i>Acompanhar Pedidos</a>
+                    </li>
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         <?php echo $empresa->nome; ?>
                     </li>
                     <?php if ($usuario->temPermissao(Sistema::P_CONFIGURACAO_EMPRESA()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="configuracao-empresa.php" ><button class="btn btn-warning" onmousedown="tutorial('Configuracao da Empresa', 'Aqui Ã© onde vocÃª cadastra os dados da sua empresa, para que o sistema deixe algumas coisas automaticas para vocÃª, caso vocÃª tenha o modulo de emissÃ£o de nota tambÃ©m ira cadastrar o seu certificado digitao aqui')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-compass"></i>Config. Empresa</a>
+                            <a class="nav-link" href="configuracao-empresa.php" ><button class="btn btn-warning" onmousedown="tutorial('Configuracao da Empresa', 'Aqui é onde você cadastra os dados da sua empresa, para que o sistema deixe algumas coisas automaticas para você, caso você tenha o modulo de emissão de nota também ira cadastrar o seu certificado digitao aqui')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-compass"></i>Config. Empresa</a>
                         </li>         
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_CFG()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="cfg.php" ><button class="btn btn-warning" onmousedown="tutorial('CFG', 'Aqui Ã© onde vocÃª cria novos usuarios para a sua empresa, atribui autorizaÃ§Ãµes e retira')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-user mr-2"></i>Colaboradores</a>
+                            <a class="nav-link" href="cfg.php" ><button class="btn btn-warning" onmousedown="tutorial('CFG', 'Aqui é onde você cria novos usuarios para a sua empresa, atribui autorizações e retira')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-user mr-2"></i>Colaboradores</a>
                         </li>         
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_LISTA_PRECO()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="lista-de-preco.php" ><button class="btn btn-warning" onmousedown="tutorial('Lista de preÃ§o', 'Esta Ã© uma pagina de consulta para que vocÃª consiga fazer o seu receituario, contem todas as relaÃ§Ãµes de praga, produto e cultura')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-clipboard-list"></i>Receituario</a>
+                            <a class="nav-link" href="lista-de-preco.php" ><button class="btn btn-warning" onmousedown="tutorial('Lista de preço', 'Esta é uma pagina de consulta para que você consiga fazer o seu receituario, contem todas as relações de praga, produto e cultura')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-clipboard-list"></i>Receituario</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_CAMPANHA()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="campanhas.php" ><button class="btn btn-warning" onmousedown="tutorial('Campanhas', 'Aqui Ã© onde vocÃª define promoÃ§Ãµes para os seus produtos, e tambÃ©m pode consultar e alterar parametros promocionais')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-anchor"></i>Campanhas</a>
+                            <a class="nav-link" href="campanhas.php" ><button class="btn btn-warning" onmousedown="tutorial('Campanhas', 'Aqui é onde você define promoções para os seus produtos, e também pode consultar e alterar parametros promocionais')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-anchor"></i>Campanhas</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_GERENCIADOR()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="gerenciador.php" ><button class="btn btn-warning" onmousedown="tutorial('Gerenciador', 'Aqui vocÃª consegue ver os usuarios que estao online no perÃ­odo selecionado, ou que entraram no periodo selecionado, apareceram com uma bolinha verde os que estiverem online, e uma vermelha para os que ja sairam, alÃ©m disso aqui vocÃª consegue ver parametros como a quantidade maxima de usuarios que acessam simultaneamente o RTC em um periodo, tambÃ©m consegue checar dados de um usuÃ¡rio especifico, ver sua pontuaÃ§Ã£o seus logs de acesso, e tambÃ©m via grafico, a frequencia de sua atividade')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-chart-bar"></i>Gerenciador</a>
+                            <a class="nav-link" href="gerenciador.php" ><button class="btn btn-warning" onmousedown="tutorial('Gerenciador', 'Aqui você consegue ver os usuarios que estao online no período selecionado, ou que entraram no periodo selecionado, apareceram com uma bolinha verde os que estiverem online, e uma vermelha para os que ja sairam, além disso aqui você consegue ver parametros como a quantidade maxima de usuarios que acessam simultaneamente o RTC em um periodo, também consegue checar dados de um usuário especifico, ver sua pontuação seus logs de acesso, e também via grafico, a frequencia de sua atividade')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-chart-bar"></i>Gerenciador</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_BANNERS()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="banners.php" ><button class="btn btn-warning" onmousedown="tutorial('Banners', 'Aqui vocÃª consegue confeccionar banners dinÃ¢micos para entrar no RTC da sua empresa e serem enviados por email, esses banners tem que estar em formato HTML, e talvez precise de um profissional de marketing para criar esse HTML para vocÃª, mas depois que Ã© criado o prÃ³prio sistema faz adaptaÃ§Ãµes nele para servir para qualquer situaÃ§Ã£o')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-image"></i>Banners</a>
+                            <a class="nav-link" href="banners.php" ><button class="btn btn-warning" onmousedown="tutorial('Banners', 'Aqui você consegue confeccionar banners dinâmicos para entrar no RTC da sua empresa e serem enviados por email, esses banners tem que estar em formato HTML, e talvez precise de um profissional de marketing para criar esse HTML para você, mas depois que é criado o próprio sistema faz adaptações nele para servir para qualquer situação')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-image"></i>Banners</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_FORNECEDOR()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="fornecedores.php" ><button class="btn btn-warning" onmousedown="tutorial('Fornecedores', 'Aqui vocÃª faz o cadastro de seus fornecedores, alteraÃ§Ã£o, exclusÃ£o, habilitaÃ§Ã£o e desabilitaÃ§Ã£o')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-industry"></i>Fornecedores</a>
+                            <a class="nav-link" href="fornecedores.php" ><button class="btn btn-warning" onmousedown="tutorial('Fornecedores', 'Aqui você faz o cadastro de seus fornecedores, alteração, exclusão, habilitação e desabilitação')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-industry"></i>Fornecedores</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_BANCO()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="bancos.php" ><button class="btn btn-warning" onmousedown="tutorial('Bancos', 'Aqui vocÃª faz o cadastro de seus bancos com saldos, agencia, conta e outros dados, pode alterar e excluir tambÃ©m')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-calculator"></i>Bancos</a>
+                            <a class="nav-link" href="bancos.php" ><button class="btn btn-warning" onmousedown="tutorial('Bancos', 'Aqui você faz o cadastro de seus bancos com saldos, agencia, conta e outros dados, pode alterar e excluir também')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-calculator"></i>Bancos</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_MOVIMENTO()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="movimentos_banco.php" ><button class="btn btn-warning" onmousedown="tutorial('Movimentos', 'Aqui vocÃª faz as baixas das notas fiscais, cadastrando o movimento para ela, o mesmo relacionado a um banco, um cÃ³digo de operaÃ§Ã£o e histÃ³rico, ele ja faz a correÃ§Ã£o de saldo automaticamente tambÃ©m')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-money-bill-alt"></i>Movimentos Financeiro</a>
+                            <a class="nav-link" href="movimentos_banco.php" ><button class="btn btn-warning" onmousedown="tutorial('Movimentos', 'Aqui você faz as baixas das notas fiscais, cadastrando o movimento para ela, o mesmo relacionado a um banco, um código de operação e histórico, ele ja faz a correção de saldo automaticamente também')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-money-bill-alt"></i>Movimentos Financeiro</a>
                         </li>
                     <?php } ?>
                     <li class="nav-item" ng-repeat="relatorio in relatorios">
-                        <a class="nav-link" href="relatorios.php?rel={{relatorio.id}}" ><button class="btn btn-warning" onmousedown="tutorial('Relatorios', 'Essa Ã© uma parte destinada a geraÃ§Ã£o de relatorios, vocÃª pode solicitar o relatÃ³rio que desejar para a equipe da Agrofauna TÃ©cnologia.')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-paper-plane"></i>{{relatorio.nome}}</a>
+                        <a class="nav-link" href="relatorios.php?rel={{relatorio.id}}" ><button class="btn btn-warning" onmousedown="tutorial('Relatorios', 'Essa é uma parte destinada a geração de relatorios, você pode solicitar o relatório que desejar para a equipe da Agrofauna Técnologia.')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-paper-plane"></i>{{relatorio.nome}}</a>
                     </li>
                     <?php if ($usuario->temPermissao(Sistema::P_PRODUTO_CLIENTE()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="produto-cliente-logistic.php"><button class="btn btn-warning" onmousedown="tutorial('Produtos Logistic', 'Aqui Ã© onde a empresa de armazenamento, ve os produtos de seus clientes, com respectivos estoques que estÃ£o armazenados no armazÃ©n')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-camera"></i>Produtos cliente Logistic</a>
+                            <a class="nav-link" href="produto-cliente-logistic.php"><button class="btn btn-warning" onmousedown="tutorial('Produtos Logistic', 'Aqui é onde a empresa de armazenamento, ve os produtos de seus clientes, com respectivos estoques que estão armazenados no armazén')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-camera"></i>Produtos cliente Logistic</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_PRODUTO()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="cadastro-de-produtos.php"><button class="btn btn-warning" onmousedown="tutorial('Cadastro de Produtos', 'Aqui Ã© onde seus produtos sÃ£o cadastrados, podem ser excluidos e/ou alterados tambÃ©m. ')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-cube"></i>Cadastro de Produtos</a>
+                            <a class="nav-link" href="cadastro-de-produtos.php"><button class="btn btn-warning" onmousedown="tutorial('Cadastro de Produtos', 'Aqui é onde seus produtos são cadastrados, podem ser excluidos e/ou alterados também. ')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-cube"></i>Cadastro de Produtos</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_NOTA()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="notas.php"><button class="btn btn-warning" onmousedown="tutorial('Notas', 'Aqui estÃ£o todas as fichas, de saÃ­da e entrada, podem ser cadastradas quando for necessÃ¡rio, realizam movimentaÃ§Ã£o no estoque, e tambÃ©m Ã© a parte do sistema destinada a emissÃ£o de nota, onde o prÃ³prio sistema emite as notas aqui inseridas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-book"></i>Notas</a>
+                            <a class="nav-link" href="notas.php"><button class="btn btn-warning" onmousedown="tutorial('Notas', 'Aqui estão todas as fichas, de saída e entrada, podem ser cadastradas quando for necessário, realizam movimentação no estoque, e também é a parte do sistema destinada a emissão de nota, onde o próprio sistema emite as notas aqui inseridas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-book"></i>Notas</a>
                         </li>                  
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_LOTE()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="lotes.php"><button class="btn btn-warning" onmousedown="tutorial('Lotes', 'Aqui Ã© onde sÃ£o administrados os lotes de cada um dos produtos que utilizam o sistema de lotes, podem ser cadastrados, e ter impressas as etiquetas de cada um deles')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-cubes"></i>Lotes</a>
+                            <a class="nav-link" href="lotes.php"><button class="btn btn-warning" onmousedown="tutorial('Lotes', 'Aqui é onde são administrados os lotes de cada um dos produtos que utilizam o sistema de lotes, podem ser cadastrados, e ter impressas as etiquetas de cada um deles')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-cubes"></i>Lotes</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_CLIENTE()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="clientes.php" ><button class="btn btn-warning" onmousedown="tutorial('Clientes', 'Aqui Ã© o cadastro de clientes, onde vocÃª pode cadastrar, excluir e alterar seus clientes')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-users"></i>Clientes</a>
+                            <a class="nav-link" href="clientes.php" ><button class="btn btn-warning" onmousedown="tutorial('Clientes', 'Aqui é o cadastro de clientes, onde você pode cadastrar, excluir e alterar seus clientes')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-users"></i>Clientes</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_TRANSPORTADORA()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="transportadoras.php" ><button class="btn btn-warning" onmousedown="tutorial('Transportadoras', 'Aqui Ã© onde ficam cadastradas todas as suas transportadoras, Ã© possÃ­vel tambÃ©m alterar e excluir, alÃ©m disso o RTC conta com um sistema de calculo de frete bastante interessante onde vocÃª pode cadastrar sua tabela atravÃ©s de expressÃµes matemÃ¡ticas, e o sistema entÃ£o passa a calcular seu frete automaticamente, nos seus pedidos para os seus clientes, alÃ©m disso a consulta de tabela fica disponivel aqui mesmo para fazer uma simulaÃ§Ã£o de frete')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-truck"></i>Transportadoras</a>
+                            <a class="nav-link" href="transportadoras.php" ><button class="btn btn-warning" onmousedown="tutorial('Transportadoras', 'Aqui é onde ficam cadastradas todas as suas transportadoras, é possível também alterar e excluir, além disso o RTC conta com um sistema de calculo de frete bastante interessante onde você pode cadastrar sua tabela através de expressões matemáticas, e o sistema então passa a calcular seu frete automaticamente, nos seus pedidos para os seus clientes, além disso a consulta de tabela fica disponivel aqui mesmo para fazer uma simulação de frete')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-truck"></i>Transportadoras</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_COTACAO()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="cotacao-compra.php"><button class="btn btn-warning" onmousedown="tutorial('Cotacao', 'Aqui Ã© onde vocÃª pode fazer uma cotaÃ§Ã£o com os seus fornecedores, quando vocÃª finaliza a cotaÃ§Ã£o, ele envia um email para o seu fornecedor, com a possÃ­bilidade dele responder pelo prÃ³prio email, e quando isso acontece a resposta dele ja entra no seu sistema automaticamente.')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-check-square"></i>Cotacao</a>
+                            <a class="nav-link" href="cotacao-compra.php"><button class="btn btn-warning" onmousedown="tutorial('Cotacao', 'Aqui é onde você pode fazer uma cotação com os seus fornecedores, quando você finaliza a cotação, ele envia um email para o seu fornecedor, com a possíbilidade dele responder pelo próprio email, e quando isso acontece a resposta dele ja entra no seu sistema automaticamente.')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-check-square"></i>Cotacao</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_PEDIDO_ENTRADA()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="visualizar-pedidos-compra.php"><button class="btn btn-warning" onmousedown="tutorial('Pedido de compra', 'Aqui Ã© onde ficam seus pedidos de compra, com o seu fornecedor, tambÃ©m Ã© enviado um email de confirmaÃ§Ã£o de pedido apÃ³s a conclusÃ£o do mesmo, o pedido gera interferÃªncia no estoque e Ã© a partir dele que a entrada de NFe vai acontecer')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks"></i>Pedidos de Compra</a>
+                            <a class="nav-link" href="visualizar-pedidos-compra.php"><button class="btn btn-warning" onmousedown="tutorial('Pedido de compra', 'Aqui é onde ficam seus pedidos de compra, com o seu fornecedor, também é enviado um email de confirmação de pedido após a conclusão do mesmo, o pedido gera interferência no estoque e é a partir dele que a entrada de NFe vai acontecer')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks"></i>Pedidos de Compra</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_ENTRADA_NFE()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="entrada_nota.php"><button class="btn btn-warning" onmousedown="tutorial('Entrada de Nota', 'Aqui Ã© onde vocÃª da a entrada nas suas notas, aqui ocorre relaÃ§Ã£o com o pedido de compra para que as alteraÃ§Ãµes de estoque sejam computadas de forma integra, sem depender da nota do fornecedor, portanto Ã© necessÃ¡rio sempre um pedido de compra para dar entrada em uma NFe')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-code"></i>Entrada NFe</a>
+                            <a class="nav-link" href="entrada_nota.php"><button class="btn btn-warning" onmousedown="tutorial('Entrada de Nota', 'Aqui é onde você da a entrada nas suas notas, aqui ocorre relação com o pedido de compra para que as alterações de estoque sejam computadas de forma integra, sem depender da nota do fornecedor, portanto é necessário sempre um pedido de compra para dar entrada em uma NFe')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-code"></i>Entrada NFe</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_PEDIDO_SAIDA()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="visualizar-pedidos-venda.php"><button class="btn btn-warning" onmousedown="tutorial('Pedido de Venda', 'Aqui Ã© onde vocÃª cria os pedidos de venda para os seus clientes, jÃ¡ levando em consideraÃ§Ã£o suas promoÃ§Ãµes e fazendo as movimentaÃ§Ãµes de estoque conforme necessÃ¡rio')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks"></i>Pedidos de Venda</a>
+                            <a class="nav-link" href="visualizar-pedidos-venda.php"><button class="btn btn-warning" onmousedown="tutorial('Pedido de Venda', 'Aqui é onde você cria os pedidos de venda para os seus clientes, já levando em consideração suas promoções e fazendo as movimentações de estoque conforme necessário')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks"></i>Pedidos de Venda</a>
                         </li>
                     <?php } ?>
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         Administrativo RTC
                     </li>
                     <li class="nav-item ">
-                        <a class="nav-link" href="http://agrofauna.com.br/apresentacao_rtc_v3.pdf" target="_blank"><i class="fa fa-fw fa-file-alt"></i>Projeto Novos Rumos</a>
+                        <a class="nav-link" href="http://agrofauna.com.br/apresentacao_rtc_v6.pdf" target="_blank"><i class="fa fa-fw fa-file-alt"></i>Projeto Novos Rumos</a>
                     </li>
-                    <li class="nav-item ">
+					<li class="nav-item ">
+                        <a class="nav-link" href="http://agrofauna.com.br/apresentacao_rtc_passo_a_passo_v6.pdf" target="_blank"><i class="fa fa-fw fa-file-alt"></i>Passo a Passo de seu RTC</a>
+                    </li>
+                    <li class="nav-item " style="margin-bottom:150px">
                         <a class="nav-link" href="contrato.php" ><i class="fa fa-fw fa-file-alt"></i>Contrato</a>
                     </li>
 
@@ -446,7 +451,7 @@ $possiveis[0] = $rtc;
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title m-t-10"><i class="fas fa-book"></i>&nbsp;&nbsp;&nbsp;<strong id="tituloTutorial"></strong></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Ã—</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
             </div>
             <div class="modal-body text-center" id="conteudoTutorial">
 

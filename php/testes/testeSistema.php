@@ -95,45 +95,13 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
 
         //echo Utilidades::toJson($produtos);
-
-        $empresas = array();
-        $ps = $con->getConexao()->prepare("SELECT id FROM empresa WHERE id NOT IN (1733,1734,1735)");
-        $ps->execute();
-        $ps->bind_result($id);
-        while ($ps->fetch()) {
-            $empresas[] = $id;
-        }
-        $ps->close();
-
-        $permissoes = Sistema::getRTCS();
-        $permissoes = $permissoes[0];
-        $permissoes = $permissoes->permissoes;
-
-        foreach ($empresas as $key => $value) {
-
-            $empresa = new Empresa($value);
-
-            $usuarios = $empresa->getUsuarios($con, 0, 1);
-
-            if (count($usuarios) === 0) {
-                continue;
-            }
-
-            $perms = Utilidades::copy($permissoes);
-
-            foreach ($perms as $key2 => $value2) {
-                $value2->in = true;
-                $value2->del = true;
-                $value2->alt = true;
-                $value2->cons = true;
-            }
-
-            $usuario = $usuarios[0];
-
-            $usuario->permissoes = $perms;
-
-            $usuario->merge($con);
-        }
+        
+        $emp = new Empresa(1733);
+        
+        $pedidos = Sistema::getCountPedidosAcompanhamento($con, $emp);
+        
+        echo Utilidades::toJson($pedidos);
+        
     }
 
     public static function uniord($u) {

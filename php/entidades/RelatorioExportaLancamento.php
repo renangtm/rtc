@@ -27,6 +27,7 @@ class RelatorioExportaLancamento extends Relatorio {
 
         $id = new CampoRelatorio('id', 'Lancamento', 'N');
         $data = new CampoRelatorio('data_movimento', 'Data', 'D');
+        $valor = new CampoRelatorio('valor', 'Valor', 'N');
         $debito = new CampoRelatorio('debito', 'Debito', 'N');
         $credito = new CampoRelatorio('credito', 'Credito', 'N');
         $historico = new CampoRelatorio('historico', 'Historico Padrao', 'N');
@@ -35,10 +36,12 @@ class RelatorioExportaLancamento extends Relatorio {
         $this->campos = array(
             $id,
             $data,
+            $valor,
             $debito,
             $credito,
             $historico,
             $complemento);
+        
     }
 
 }

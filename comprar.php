@@ -112,11 +112,11 @@
                                             <ol class="carousel-indicators">
                                                 <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active" style="cursor: pointer;"></li>
                                                 <li data-target="#carouselExampleIndicators" data-slide-to="1" style="cursor: pointer;"></li>
-                                                <?php
-                                                $i = 2; //manter sempre proximo numero inteiro apos o <li data-slide-to> anterior
+<?php
+$i = 2; //manter sempre proximo numero inteiro apos o <li data-slide-to> anterior
 
-                                                for ($j = 0; $j < count($banners_frontais); $j++) {
-                                                    ?>
+for ($j = 0; $j < count($banners_frontais); $j++) {
+    ?>
                                                     <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo ($j + $i); ?>" style="cursor: pointer;"></li>
                                                     <?php
                                                 }
@@ -133,15 +133,15 @@
                                                         <img class="d-block w-100" src="assets/images/banner_conheca_projeto_novos_rumos_784x295.jpg" alt="Second slide">
                                                     </a>    
                                                 </div>
-                                                <?php
-                                                for ($j = 0; $j < count($banners_frontais); $j++) {
-                                                    ?>
+<?php
+for ($j = 0; $j < count($banners_frontais); $j++) {
+    ?>
                                                     <div class="carousel-item" style="height:22vw">
-                                                        <?php echo $banners_frontais[$j]; ?>
+                                                    <?php echo $banners_frontais[$j]; ?>
                                                     </div>
-                                                    <?php
-                                                }
-                                                ?>
+                                                        <?php
+                                                    }
+                                                    ?>
                                             </div>
                                             <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
                                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -337,11 +337,11 @@
                                         </div>
                                         <div ng-if="filtro._classe === 'FiltroOpcional'" class="collapse" id="collapseExample_{{filtro.id}}">
                                             <div  class="custom-control custom-checkbox" ng-repeat="opcao in filtro.opcoes" style="{{opcao.quantidade===0?'text-decoration:line-through;color:DarkRed':''}}">
-                                                <button ng-if="opcao.selecionada === 0" ng-click="addLevel(opcao)" class="btn btn-default" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-adjust"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</button>
-                                                <button ng-if="opcao.selecionada === 1" ng-click="addLevel(opcao)" class="btn btn-success" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-check"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</button>
-                                                <button ng-if="opcao.selecionada === 2" ng-click="addLevel(opcao)" class="btn btn-danger" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px"><i class="fa fa-times"></i>&nbsp {{opcao.nome}} <strong> ({{opcao.quantidade}})</strong></button>
+                                                <a ng-if="opcao.selecionada === 0" ng-click="addLevel(opcao, filtro)" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px;cursor:pointer"><i class="fa fa-square"></i>&nbsp {{opcao.nome}} <strong> {{opcao.quantidade > 0 ? '(' + opcao.quantidade + ')' : ''}}</a>
+                                                <a ng-if="opcao.selecionada === 1" ng-click="addLevel(opcao, filtro)" style="width:auto;height:20px;padding:3px;padding-top:0px;padding-right:0px;cursor:pointer"><i class="fa fa-check"></i>&nbsp {{opcao.nome}} <strong> {{opcao.quantidade > 0 ? '(' + opcao.quantidade + ')' : ''}}</a>
 
                                             </div>
+                                            <button type="button" class="btn btn-success" ng-click="resetarFiltro()"><i class="fas fa-certificate"></i>&nbsp Mostrar Todos Produtos</button>
                                         </div>
                                     </div>
 
@@ -399,15 +399,15 @@
                                 <!-- sidebar BANNER 300x250  -->
                                 <!-- ============================================================== -->
 
-                                <?php foreach ($banners_laterais as $key => $value) { ?>
+<?php foreach ($banners_laterais as $key => $value) { ?>
                                     <div class="">
                                         <div class="" style="margin-bottom: 0px">
                                             <div style="">
-                                                <?php echo $value; ?>
+    <?php echo $value; ?>
                                             </div>
                                         </div>
                                     </div>
-                                <?php } ?>
+<?php } ?>
 
                             </div>
                         </div>
@@ -471,49 +471,56 @@
         <!-- Optional JavaScript -->
         <script>
 
-                                                            var l = $('#loading');
-                                                            l.hide();
+                            function filtro(f) {
+                                alert("dede")
+                                $("#filtro").val(f).change();
 
-                                                            
-                                                            var x = 0;
-                                                            var y = 0;
-                                                                
-                                                            $(document).mousemove(function (e) {
-                                                                
-                                                                x = e.clientX;
-                                                                y = e.clientY;
-                                                                
-                                                                var s = $(this).scrollTop();
-
-                                                                l.offset({top: (y + s), left: x});
-
-                                                            })
-
-                                                            var sh = false;
-                                                            var it = null;
-
-                                                            loading.show = function () {
-                                                                l.show();
-                                                                var s = $(document).scrollTop();
-
-                                                                l.offset({top: (y + s), left: x});
-                                                                
-                                                            }
-
-                                                            loading.close = function () {
-                                                                l.hide();
-                                                            }
-
-                                                            function fechaLoad(img) {
-
-                                                                var im = $(img);
-                                                                var num = im.attr('id').split('_')[1];
+                            }
 
 
-                                                                $("#sp_" + num).hide();
-                                                                im.css('display', 'initial');
+                            var l = $('#loading');
+                            l.hide();
 
-                                                            }
+
+                            var x = 0;
+                            var y = 0;
+
+                            $(document).mousemove(function (e) {
+
+                                x = e.clientX;
+                                y = e.clientY;
+
+                                var s = $(this).scrollTop();
+
+                                l.offset({top: (y + s), left: x});
+
+                            })
+
+                            var sh = false;
+                            var it = null;
+
+                            loading.show = function () {
+                                l.show();
+                                var s = $(document).scrollTop();
+
+                                l.offset({top: (y + s), left: x});
+
+                            }
+
+                            loading.close = function () {
+                                l.hide();
+                            }
+
+                            function fechaLoad(img) {
+
+                                var im = $(img);
+                                var num = im.attr('id').split('_')[1];
+
+
+                                $("#sp_" + num).hide();
+                                im.css('display', 'initial');
+
+                            }
 
 
 
@@ -523,6 +530,9 @@
         </script>
 
         <script>
+
+
+
                     $('.collapse').on('shown.bs.collapse', function () {
                         /* $(this).parent().find(".fa-angle-down").removeClass("fa-angle-down").addClass("fa-angle-up");*/
                         $(this).parent().find(".fa-angle-down").css('transform', 'rotate(180deg)');

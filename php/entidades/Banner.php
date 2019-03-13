@@ -90,15 +90,32 @@ class Banner {
         if ($item->tipo === 0) {
 
             $tag = "<$item->valor";
-
+            $stl = false;
             foreach ($item->atributos as $att => $value) {
 
                 if ($value === true) {
                     $tag .= " $att";
                     continue;
                 }
+                
+                if($produto !== null && $att=='style'){
+                    $value = "\"cursor:pointer;".substr($value, 1);
+                    $str = true;
+                }
 
                 $tag .= " $att=$value";
+            }
+            
+            if($produto !== null){
+                
+                $tag .= " onclick=\"filtro('".$produto->nome."')\"";
+                
+                if(!$stl){
+                    
+                    $tag .= " style='cursor:pointer'";
+                    
+                }
+                
             }
 
             $tag .= ">";

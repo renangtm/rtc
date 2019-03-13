@@ -415,6 +415,18 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
         })
 
     }
+    $scope.xsd = "";
+    $scope.gerarXsd = function(){
+        
+        relatorioService.relatorio = $scope.relatorio;
+        relatorioService.getXsd(function(x){
+            
+            $scope.xsd = projeto+"/php/uploads/"+x.arquivo;
+            $("#mdlXsd").modal('show');
+            
+        });
+        
+    }
 
     $scope.gerarRelatorio = function () {
 
@@ -1205,9 +1217,16 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
         })
     }
 
-    $scope.addLevel = function (op) {
+    $scope.addLevel = function (op,filtro) {
         op.selecionada++;
-        op.selecionada = op.selecionada % 3;
+        op.selecionada = op.selecionada % 2;
+        
+        for(var i=0;i<filtro.opcoes.length;i++){
+            if(filtro.opcoes[i].selecionada>0 && filtro.opcoes[i].id !== op.id){
+                filtro.opcoes[i].selecionada = 0;
+            }
+        }
+        
         $scope.produtos.attList();
     }
 
@@ -2828,6 +2847,230 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
 
 
 })
+rtc.controller("crtAcompanharPedidos", function ($scope, acompanharPedidoService, logService, tabelaService, baseService, produtoService, sistemaService, statusPedidoSaidaService, formaPagamentoService, transportadoraService, clienteService, produtoPedidoService) {
+
+    $scope.pedidos = createAssinc(acompanharPedidoService, 1, 10, 10);
+    $scope.pedidos.attList();
+    assincFuncs(
+            $scope.pedidos,
+            "pedido",
+            ["id", "cliente.razao_social", "data", "frete", "id_status", "usuario.nome"]);
+
+
+    $scope.gerarCobranca = function () {
+
+        pedidoService.gerarCobranca($scope.pedido, function (r) {
+
+            if (r.sucesso) {
+                $("#retCob").html("Cobranca gerada com sucesso. <hr> " + r.retorno);
+            } else {
+                $("#retCob").html("Problema ao gerar cobranca");
+            }
+
+        })
+
+    }
+    
+    sistemaService.getLogisticas(function (rr) {
+
+        $scope.logisticas = rr.logisticas;
+
+    })
+
+    $scope.getLogs = function () {
+
+        logService.getLogs($scope.pedido, function (l) {
+
+            $scope.logs = l.logs;
+
+            $("#shLogs").children("*").each(function () {
+                $(this).remove();
+            })
+
+            for (var i = 0; i < $scope.logs.length; i++) {
+
+                var l = $scope.logs[i];
+
+                $("<div></div>").css('width', '100%').css('display', 'block').css('border-bottom', '1px solid Gray').css('padding', '10px').html(l.usuario + " / " + toTime(l.momento) + " / " + l.obs).appendTo($("#shLogs"));
+
+            }
+
+        })
+
+
+    }
+
+    $scope.getPesoBrutoPedido = function () {
+
+        var tot = 0;
+
+        for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+
+            var p = $scope.pedido.produtos[i];
+
+            tot += (p.produto.peso_bruto) * p.quantidade;
+
+        }
+
+        return tot;
+
+    }
+
+    $scope.getTotalPedido = function () {
+
+        var tot = 0;
+
+        for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+
+            var p = $scope.pedido.produtos[i];
+
+            tot += (p.valor_base + p.icms + p.ipi + p.juros + p.frete) * p.quantidade;
+
+        }
+
+        return tot;
+
+    }
+
+    $scope.formas_pagamento = {};
+
+    statusPedidoSaidaService.getStatus(function (st) {
+
+        $scope.status_pedido = st.status;
+
+    })
+
+    $scope.setPedido = function (pedido) {
+
+        $scope.pedido = pedido;
+
+        if (pedido.logistica !== null) {
+
+            equalize($scope.pedido, "logistica", $scope.logisticas);
+
+        }
+
+        if ($scope.pedido.logistica === null) {
+            produtoService.filtro_base = "produto.id_logistica=0";
+            transportadoraService.empresa = $scope.pedido.empresa;
+        } else {
+            produtoService.filtro_base = "produto.id_logistica=" + $scope.pedido.logistica.id;
+            transportadoraService.empresa = $scope.pedido.logistica;
+        }
+        
+        if ($scope.pedido.id === 0) {
+
+            $scope.pedido.status = $scope.status_pedido[0];
+
+            formaPagamentoService.getFormasPagamento($scope.pedido, function (f) {
+
+                $scope.formas_pagamento = f.formas;
+                $scope.pedido.forma_pagamento = $scope.formas_pagamento[0];
+
+            });
+
+            return;
+
+        }
+
+        acompanharPedidoService.getProdutos(pedido, function (p) {
+
+            pedido.produtos = p.produtos;
+            equalize(pedido, "status", $scope.status_pedido);
+
+            formaPagamentoService.getFormasPagamento($scope.pedido, function (f) {
+                $scope.formas_pagamento = f.formas;
+                equalize(pedido, "forma_pagamento", $scope.formas_pagamento);
+            })
+
+            var ic = $("#myIframe").contents();
+
+            ic.find("#logoEmpresa img").remove();
+            ic.find("#logoEmpresa").append($("#logo").clone().addClass("product-image"));
+            ic.find("#infoEmpresa").html(pedido.empresa.nome + ", " + pedido.empresa.endereco.cidade.nome + "-" + pedido.empresa.endereco.cidade.estado.sigla);
+            ic.find("#infoEmpresa2").html(pedido.empresa.endereco.bairro + ", " + pedido.empresa.endereco.cep.valor + " - " + pedido.empresa.telefone.numero);
+
+            ic.find("#idPedido").html($scope.pedido.id);
+            ic.find("#nomeUsuario").html($scope.pedido.usuario.nome);
+            ic.find("#nomeCliente").html($scope.pedido.cliente.razao_social);
+            ic.find("#cnpjCliente").html($scope.pedido.cliente.cnpj.valor);
+            ic.find("#ruaCliente").html($scope.pedido.cliente.endereco.rua);
+            ic.find("#cidadeCliente").html($scope.pedido.cliente.endereco.cidade.nome);
+
+
+            var p = ic.find("#produto").each(function () {
+                p = $(this);
+            });
+
+            p.hide();
+
+            ic.find("#produtos").find("tr").each(function () {
+                if (typeof $(this).data("gerado") !== 'undefined') {
+                    $(this).remove();
+                }
+            });
+
+            var p = p.clone();
+
+            var icms = 0;
+            var base = 0;
+            var total = 0;
+            for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+
+                p = p.clone();
+
+                var pro = $scope.pedido.produtos[i];
+                icms += pro.icms;
+                base += pro.base_calculo;
+                p.find("[data-tipo='nome']").html(pro.produto.nome);
+                p.find("[data-tipo='valor']").html((pro.valor_base + pro.frete + pro.juros + pro.icms).toFixed(2));
+                p.find("[data-tipo='quantidade']").html(pro.quantidade);
+                p.find("[data-tipo='validade']").html(toDate(pro.validade_minima));
+                p.find("[data-tipo='total']").html(((pro.valor_base + pro.frete + pro.ipi + pro.juros + pro.icms) * pro.quantidade).toFixed(2));
+                p.data("gerado", true);
+
+                ic.find("#produtos").append(p);
+                p.show();
+
+                total += (pro.valor_base + pro.frete + pro.juros + pro.ipi + pro.icms) * pro.quantidade;
+
+            }
+            var alicota = (icms * 100 / base).toFixed(2);
+
+            ic.find("#prazo").html(pedido.prazo);
+            ic.find("#alicota").html(alicota);
+            ic.find("#icms").html(icms);
+
+            ic.find("#tipoFrete").html(pedido.frete_incluso ? 'CIF' : 'FOB');
+            ic.find("#nomeTransportadora").html(pedido.transportadora.razao_social);
+            ic.find("#contato").html(pedido.transportadora.email.endereco);
+            ic.find("#valorFrete").html(pedido.frete);
+
+            ic.find("#observacoes").html(pedido.observacoes);
+            ic.find("#nomeUsuario2").html(pedido.usuario.nome);
+
+        })
+
+
+    }
+
+    $scope.deletePedido = function () {
+
+        baseService.delete($scope.pedido, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.pedido = angular.copy($scope.novo_pedido);
+                $scope.pedidos.attList();
+            } else {
+                msg.erro("Problema ao efetuar operacao");
+            }
+        });
+
+    }
+
+})
+
+
 rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabelaService, baseService, produtoService, sistemaService, statusPedidoSaidaService, formaPagamentoService, transportadoraService, clienteService, produtoPedidoService) {
 
     $scope.pedidos = createAssinc(pedidoService, 1, 10, 10);
@@ -3373,6 +3616,7 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
 
 
 })
+
 rtc.controller("crtListaPreco", function ($scope, listaPrecoProdutoService, listaPrecoPragaService, listaPrecoCulturaService) {
 
     $scope.produtos = createAssinc(listaPrecoProdutoService, 1, 3, 10);
@@ -5257,10 +5501,10 @@ rtc.controller("crtLogin", function ($scope, loginService) {
     $scope.senha = "";
     $scope.email = "";
     $scope.logar = function () {
-
+      
         loginService.login($scope.usuario, $scope.senha, function (r) {
 
-
+           
             if (r.usuario === null || !r.sucesso) {
                 msg.erro("Esse usuario nao existe");
             } else {

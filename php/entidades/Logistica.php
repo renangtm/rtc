@@ -719,35 +719,35 @@ class Logistica extends Empresa {
             $empresa->juros_mensal = $juros_mensal_empresa;
             $empresa->consigna = $consigna_empresa;
 
-            $endereco = new Endereco();
-            $endereco->id = $id_endereco_empresa;
-            $endereco->rua = $rua_empresa;
-            $endereco->bairro = $bairro_empresa;
-            $endereco->cep = new CEP($cep_empresa);
-            $endereco->numero = $numero_endereco_empresa;
+            $endereco_empresa = new Endereco();
+            $endereco_empresa->id = $id_endereco_empresa;
+            $endereco_empresa->rua = $rua_empresa;
+            $endereco_empresa->bairro = $bairro_empresa;
+            $endereco_empresa->cep = new CEP($cep_empresa);
+            $endereco_empresa->numero = $numero_endereco_empresa;
 
-            $cidade = new Cidade();
-            $cidade->id = $id_cidade_empresa;
-            $cidade->nome = $nome_cidade_empresa;
+            $cidade_empresa = new Cidade();
+            $cidade_empresa->id = $id_cidade_empresa;
+            $cidade_empresa->nome = $nome_cidade_empresa;
 
-            $estado = new Estado();
-            $estado->id = $id_estado_empresa;
-            $estado->sigla = $nome_estado_empresa;
+            $estado_empresa = new Estado();
+            $estado_empresa->id = $id_estado_empresa;
+            $estado_empresa->sigla = $nome_estado_empresa;
 
-            $cidade->estado = $estado_empresa;
+            $cidade_empresa->estado = $estado_empresa;
 
-            $endereco->cidade = $cidade_empresa;
+            $endereco_empresa->cidade = $cidade_empresa;
 
             $empresa->endereco = $endereco_empresa;
 
-            $email = new Email($endereco_email_empresa);
-            $email->id = $id_email_empresa;
-            $email->senha = $senha_email_empresa;
+            $email_empresa = new Email($endereco_email_empresa);
+            $email_empresa->id = $id_email_empresa;
+            $email_empresa->senha = $senha_email_empresa;
 
             $empresa->email = $email_empresa;
 
-            $telefone = new Telefone($numero_telefone_empresa);
-            $telefone->id = $id_telefone_empresa;
+            $telefone_empresa = new Telefone($numero_telefone_empresa);
+            $telefone_empresa->id = $id_telefone_empresa;
 
             $empresa->telefone = $telefone_empresa;
             
@@ -762,7 +762,6 @@ class Logistica extends Empresa {
             $cliente->pessoa_fisica = $pessoa_fisica == 1;
             $cliente->nome_fantasia = $nome_fantasia_cliente;
             $cliente->razao_social = $nome_cliente;
-            $cliente->empresa = $this;
             $cliente->email = new Email($email_cli_end);
             $cliente->email->id = $email_cli_id;
             $cliente->email->senha = $email_cli_senha;
@@ -774,7 +773,7 @@ class Logistica extends Empresa {
             $cliente->limite_credito = $limite;
             $cliente->inscricao_suframa = $i_suf;
             $cliente->suframado = $suf == 1;
-            $cliente->empresa = $this;
+            $cliente->empresa = $empresa;
             $cliente->inscricao_estadual = $ie;
 
             $end = new Endereco();
@@ -813,7 +812,7 @@ class Logistica extends Empresa {
             $transportadora->inscricao_estadual = $tra_ie;
             $transportadora->nome_fantasia = $tra_nome_fantasia;
             $transportadora->razao_social = $tra_nome;
-            $transportadora->empresa = $this;
+            $transportadora->empresa = $empresa;
 
             $end = new Endereco();
             $end->id = $end_tra_id;
@@ -850,7 +849,6 @@ class Logistica extends Empresa {
             $usuario->login = $login_usu;
             $usuario->senha = $senha_usu;
             $usuario->nome = $nome_usu;
-            $usuario->empresa = $this;
 
             $end = new Endereco();
             $end->id = $end_usu_id;

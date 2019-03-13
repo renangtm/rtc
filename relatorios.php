@@ -97,6 +97,7 @@ echo $relatorio;
                                         <div>
                                             <div class="product-btn m-b-20">
                                                 <div style="width:100%;text-align:right">
+                                                    <button class="btn btn-primary" ng-click="gerarXsd()"><i class="fas fa-table"></i>&nbspGerar Excel</button>
                                                     <button class="btn btn-primary" ng-click="gerarRelatorio()"><i class="fas fa-check"></i>&nbspGerar Relatorio</button>
                                                 </div>
                                                 <hr>
@@ -208,7 +209,23 @@ echo $relatorio;
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div class="modal fade" style="overflow-y:scroll" id="mdlXsd" tabindex="-1" role="dialog" aria-labelledby="mdlFilhos" aria-hidden="true">
+                                <div class="modal-dialog modal-sm">
+                                    <div class="modal-content" >
+                                        <div class="modal-header">
+                                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-table fa-3x"></i>&nbsp;&nbsp;&nbsp;Gerado com sucesso !</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            
+                                            <a download="{{relatorio._classe}}.xsd" href="{{xsd}}"><i class="fas fa-upload"></i>&nbsp Baixar Excel</a>
 
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="modal fade" style="overflow-y:scroll" id="mdlFilhos" tabindex="-1" role="dialog" aria-labelledby="mdlFilhos" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">

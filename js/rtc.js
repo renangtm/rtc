@@ -1,4 +1,4 @@
-var projeto = "http://192.168.18.121:888/novo_rtc_web";
+var projeto = "http://www.rtcagro.com.br/novo_rtc_web";
 
 function mtlCharAt(str, idx) {
     str += '';
@@ -25,7 +25,7 @@ function mtlCharAt(str, idx) {
     if (0xD800 <= code && code <= 0xDBFF) {
         hi = code;
         low = str.charCodeAt(idx + 1);
-        // VÃ¡ um adiante, jÃ¡ que um dos "characters" Ã© parte de um par substituto
+        // Vá um adiante, já que um dos "characters" é parte de um par substituto
         return ((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000;
     }
     return code;
@@ -822,7 +822,7 @@ function encode64SPEC(val) {
 }
 
 function decode64SPEC(val) {
-
+   
     var chrArr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#";
     var invMap = {};
     for (var i = 0; i < chrArr.length; i++) {
@@ -830,13 +830,13 @@ function decode64SPEC(val) {
     }
 
     var res = "";
-
+   
     for (var i = 0; i < val.length; i += 4) {
         var k = 0;
-
+        
         var x = 0;
         for (var u = 0; u < 4 && (i + u) < val.length; u++) {
-
+            
             if (val.charAt(i + u) != '*') {
                 if (typeof invMap["c" + val.charCodeAt(i + u)] === 'undefined') {
                     return "";
@@ -899,8 +899,13 @@ function baseService(http, q, obj, get, cancel, noloading) {
         }
 
         if (typeof obj["sucesso"] !== 'undefined') {
-
-            obj.sucesso(paraObjeto(decode64SPEC(exx.data)));
+            var d = exx.data;
+            if(d.length>2){
+                if(d.charCodeAt(0)===13 && d.charCodeAt(1)===10){
+                    d = d.substr(2);
+                }
+            }
+            obj.sucesso(paraObjeto(decode64SPEC(d)));
         }
 
 
@@ -1538,7 +1543,7 @@ rtc.directive('email', function () {
 
                 var emailEnvio = "";
 
-                //Nomes dos grupos devem condizer com a da classe Email.php, acoplado :(, por?ï¿½?ï¿½m infelizmente n?ï¿½?ï¿½o vai dar tempo de tomar uma abordagem mais correta;
+                //Nomes dos grupos devem condizer com a da classe Email.php, acoplado :(, por????m infelizmente n????o vai dar tempo de tomar uma abordagem mais correta;
                 //De qualquer forma, salvo este acoplamento nestes dois locais, essa abordagem nao tr??z prejuizos maiores;
 
                 var grupos = [{nome: "Emails Principais", enderecos: [], principal: true},

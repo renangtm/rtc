@@ -15,18 +15,72 @@ class Relatorio {
 
     public $id;
     public $nome;
-    
     public $campos;
     public $sql;
     public $order;
 
-    public function __construct($sql,$id) {
-        
+    public function __construct($sql, $id) {
+
         $this->id = $id;
         $this->sql = $sql;
         $this->campos = array();
         $this->order = "";
+    }
+
+    public function getXsd($con) {
+
+        $qtd = $this->getCount($con);
+
+        $mov = $this->getItens($con, 0, $qtd);
+
+        $t = round(microtime(true) * 1000);
+
+        $arquivo = get_class($this) . "_" . $t . ".xsd";
+
+        Sistema::mergeArquivo($arquivo, "<table>", false);
+
+        $a = false;
+
+        $buffer = "";
+        foreach ($mov as $key => $value) {
+
+            if (!$a) {
+
+                $buffer .= "<tr>";
+
+                foreach ($value->campos as $key2 => $value2) {
+
+                    $buffer .= "<td>" . $value2->titulo . "</td>";
+                }
+
+                $buffer .= "</tr>";
+
+                $a = true;
+            }
+
+            Sistema::mergeArquivo($arquivo, "<tr>", false);
+
+            foreach ($value->valores_campos as $key2 => $value2) {
+
+                $buffer .= "<td>" . $value2 . "</td>";
+            }
+
+            $buffer .= "</tr>";
+            
+            if(strlen($buffer) > 10000){
+                
+                Sistema::mergeArquivo($arquivo, $buffer,false);
+                $buffer = "";
+                
+            }
+            
+        }
+
+        $buffer .= "</table>";
+
+        Sistema::mergeArquivo($arquivo, $buffer,false);
         
+        return $arquivo;
     }
 
     public function getCount($con) {
@@ -70,8 +124,8 @@ class Relatorio {
         }
 
         $query = "SELECT COUNT(*) FROM ($query) kk";
-        
-        
+
+
 
         $ps = $con->getConexao()->prepare($query);
         $ps->execute();
@@ -144,8 +198,8 @@ class Relatorio {
         }
 
         $query .= " LIMIT $x1, " . ($x2 - $x1);
-        
-        
+
+
         $ps = mysqli_query($con->getConexao(), $query);
 
         $itens = array();

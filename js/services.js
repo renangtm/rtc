@@ -162,6 +162,14 @@ rtc.service('relatorioService', function ($http, $q) {
             falha: fn
         });
     }
+    this.getXsd = function (fn) {
+        baseService($http, $q, {
+            o: this.relatorio,
+            query: "$r->arquivo=$o->getXsd($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
         baseService($http, $q, {
             o: {x0: x0, x1: x1, relatorio: this.relatorio},
@@ -525,6 +533,56 @@ rtc.service('statusPedidoEntradaService', function ($http, $q) {
         });
     }
 })
+
+rtc.service('acompanharPedidoService', function ($http, $q) {
+    this.gerarCobranca = function (pedido, fn) {
+        baseService($http, $q, {
+            o: pedido,
+            query: "$r->retorno=$o->gerarCobranca()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.atualizarCustos = function (pedido, fn) {
+        baseService($http, $q, {
+            o: pedido,
+            query: "$o->atualizarCustos()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getProdutos = function (pedido, fn) {
+        var f = function (p) {
+            for (var i = 0; i < p.produtos.length; i++) {
+                p.produtos[i].pedido = pedido;
+            }
+            fn(p);
+        }
+        baseService($http, $q, {
+            o: pedido,
+            query: "$r->produtos=$o->getProdutos($c)",
+            sucesso: f,
+            falha: f
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=Sistema::getCountPedidosAcompanhamento($c,$empresa,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=Sistema::getPedidosAcompanhamento($c,$empresa,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+
 rtc.service('pedidoService', function ($http, $q) {
     this.getPedido = function (fn) {
         baseService($http, $q, {
@@ -580,6 +638,7 @@ rtc.service('pedidoService', function ($http, $q) {
         });
     }
 })
+
 rtc.service('produtoPedidoService', function ($http, $q) {
     this.getProdutoPedido = function (fn) {
         baseService($http, $q, {
@@ -1174,7 +1233,7 @@ rtc.service('produtoService', function ($http, $q) {
         });
     }
     this.remessaGetValidades = function (meses_validade_curta, produtos, fn) {
-        this.remessaGetLotes(produtos, 'lote.quantidade_real>0', 'lote.validade', function (l) {
+        this.remessaGetLotes(produtos, 'lote.quantidade_real>0 AND lote.validade>CURRENT_DATE', 'lote.validade', function (l) {
 
             for (var qq = 0; qq < produtos.length; qq++) {
 
@@ -1337,7 +1396,7 @@ rtc.service('produtoService', function ($http, $q) {
 
         }
 
-        this.getLotes(produto, 'lote.quantidade_real>0', 'lote.validade', function (l) {
+        this.getLotes(produto, 'lote.quantidade_real>0 AND lote.validade > CURRENT_DATE', 'lote.validade', function (l) {
 
             var lotes = l.lotes;
 
