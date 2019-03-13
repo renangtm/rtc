@@ -112,11 +112,11 @@
                                             <ol class="carousel-indicators">
                                                 <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active" style="cursor: pointer;"></li>
                                                 <li data-target="#carouselExampleIndicators" data-slide-to="1" style="cursor: pointer;"></li>
-<?php
-$i = 2; //manter sempre proximo numero inteiro apos o <li data-slide-to> anterior
+                                                <?php
+                                                $i = 2; //manter sempre proximo numero inteiro apos o <li data-slide-to> anterior
 
-for ($j = 0; $j < count($banners_frontais); $j++) {
-    ?>
+                                                for ($j = 0; $j < count($banners_frontais); $j++) {
+                                                    ?>
                                                     <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo ($j + $i); ?>" style="cursor: pointer;"></li>
                                                     <?php
                                                 }
@@ -133,15 +133,15 @@ for ($j = 0; $j < count($banners_frontais); $j++) {
                                                         <img class="d-block w-100" src="assets/images/banner_conheca_projeto_novos_rumos_784x295_v2.jpg" alt="Second slide">
                                                     </a>    
                                                 </div>
-<?php
-for ($j = 0; $j < count($banners_frontais); $j++) {
-    ?>
-                                                    <div class="carousel-item" style="height:22vw">
-                                                    <?php echo $banners_frontais[$j]; ?>
-                                                    </div>
-                                                        <?php
-                                                    }
+                                                <?php
+                                                for ($j = 0; $j < count($banners_frontais); $j++) {
                                                     ?>
+                                                    <div class="carousel-item" style="height:22vw">
+                                                        <?php echo $banners_frontais[$j]; ?>
+                                                    </div>
+                                                    <?php
+                                                }
+                                                ?>
                                             </div>
                                             <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
                                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -399,15 +399,15 @@ for ($j = 0; $j < count($banners_frontais); $j++) {
                                 <!-- sidebar BANNER 300x250  -->
                                 <!-- ============================================================== -->
 
-<?php foreach ($banners_laterais as $key => $value) { ?>
+                                <?php foreach ($banners_laterais as $key => $value) { ?>
                                     <div class="">
                                         <div class="" style="margin-bottom: 0px">
                                             <div style="">
-    <?php echo $value; ?>
+                                                <?php echo $value; ?>
                                             </div>
                                         </div>
                                     </div>
-<?php } ?>
+                                <?php } ?>
 
                             </div>
                         </div>
@@ -471,56 +471,62 @@ for ($j = 0; $j < count($banners_frontais); $j++) {
         <!-- Optional JavaScript -->
         <script>
 
-                            function filtro(f) {
-                                alert("dede")
-                                $("#filtro").val(f).change();
+                                                                    function filtro(f) {
 
-                            }
-
-
-                            var l = $('#loading');
-                            l.hide();
-
-
-                            var x = 0;
-                            var y = 0;
-
-                            $(document).mousemove(function (e) {
-
-                                x = e.clientX;
-                                y = e.clientY;
-
-                                var s = $(this).scrollTop();
-
-                                l.offset({top: (y + s), left: x});
-
-                            })
-
-                            var sh = false;
-                            var it = null;
-
-                            loading.show = function () {
-                                l.show();
-                                var s = $(document).scrollTop();
-
-                                l.offset({top: (y + s), left: x});
-
-                            }
-
-                            loading.close = function () {
-                                l.hide();
-                            }
-
-                            function fechaLoad(img) {
-
-                                var im = $(img);
-                                var num = im.attr('id').split('_')[1];
+                                                                        $("#filtro").val(f);
+                                                                        
+                                                                        $("#filtro")
+                                                                                .trigger('keydown')
+                                                                                .trigger('keyup')
+                                                                                .trigger('change');
 
 
-                                $("#sp_" + num).hide();
-                                im.css('display', 'initial');
+                                                                    }
 
-                            }
+
+                                                                    var l = $('#loading');
+                                                                    l.hide();
+
+
+                                                                    var x = 0;
+                                                                    var y = 0;
+
+                                                                    $(document).mousemove(function (e) {
+
+                                                                        x = e.clientX;
+                                                                        y = e.clientY;
+
+                                                                        var s = $(this).scrollTop();
+
+                                                                        l.offset({top: (y + s), left: x});
+
+                                                                    })
+
+                                                                    var sh = false;
+                                                                    var it = null;
+
+                                                                    loading.show = function () {
+                                                                        l.show();
+                                                                        var s = $(document).scrollTop();
+
+                                                                        l.offset({top: (y + s), left: x});
+
+                                                                    }
+
+                                                                    loading.close = function () {
+                                                                        l.hide();
+                                                                    }
+
+                                                                    function fechaLoad(img) {
+
+                                                                        var im = $(img);
+                                                                        var num = im.attr('id').split('_')[1];
+
+
+                                                                        $("#sp_" + num).hide();
+                                                                        im.css('display', 'initial');
+
+                                                                    }
 
 
 

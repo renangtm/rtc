@@ -35,7 +35,7 @@ class Relatorio {
 
         $t = round(microtime(true) * 1000);
 
-        $arquivo = get_class($this) . "_" . $t . ".xsd";
+        $arquivo = get_class($this) . "_" . $t . ".xls";
 
         Sistema::mergeArquivo($arquivo, "<table>", false);
 
@@ -58,7 +58,7 @@ class Relatorio {
                 $a = true;
             }
 
-            Sistema::mergeArquivo($arquivo, "<tr>", false);
+            $buffer .= "<tr>";
 
             foreach ($value->valores_campos as $key2 => $value2) {
 

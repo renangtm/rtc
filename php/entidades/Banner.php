@@ -99,7 +99,7 @@ class Banner {
                 }
                 
                 if($produto !== null && $att=='style'){
-                    $value = "\"cursor:pointer;".substr($value, 1);
+                    $value = $value{0}."cursor:pointer;".substr($value, 1);
                     $str = true;
                 }
 
@@ -108,7 +108,7 @@ class Banner {
             
             if($produto !== null){
                 
-                $tag .= " onclick=\"filtro('".$produto->nome."')\"";
+                $tag .= " onclick=\"filtro('".$produto->produto->nome."')\"";
                 
                 if(!$stl){
                     

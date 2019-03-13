@@ -504,6 +504,7 @@ function assincFuncs(lista, base, campos, filtro) {
 
         var f = "";
         var v = $(this).val();
+        
         for (var i = 0; i < campos.length; i++) {
 
             if (i > 0)
