@@ -1,4 +1,4 @@
-var projeto = "http://www.rtcagro.com.br/novo_rtc_web";
+var projeto = "http://192.168.0.19/novo_rtc_web";
 
 function mtlCharAt(str, idx) {
     str += '';
@@ -25,7 +25,7 @@ function mtlCharAt(str, idx) {
     if (0xD800 <= code && code <= 0xDBFF) {
         hi = code;
         low = str.charCodeAt(idx + 1);
-        // Vá um adiante, já que um dos "characters" é parte de um par substituto
+        // Vï¿½ um adiante, jï¿½ que um dos "characters" ï¿½ parte de um par substituto
         return ((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000;
     }
     return code;
@@ -886,7 +886,7 @@ function baseService(http, q, obj, get, cancel, noloading) {
         data: "c=" + encode64SPEC(obj.query) + ((typeof obj["o"] !== 'undefined') ? ("&o=" + encode64SPEC(paraJson(obj.o))) : ""),
         timeout: p.promise,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (exx) {
-
+        
         var m = 0;
         for (var i = 0; i < ids.length; i++) {
             if (ids[i] == idt) {
@@ -901,10 +901,12 @@ function baseService(http, q, obj, get, cancel, noloading) {
 
         if (typeof obj["sucesso"] !== 'undefined') {
             var d = exx.data;
-            if(d.length>2){
-                if(d.charCodeAt(0)===13 && d.charCodeAt(1)===10){
-                    d = d.substr(2);
+            while(d.length>1){
+                if(d.charCodeAt(0)===13 || d.charCodeAt(0)===10){
+                    d = d.substr(1);
+                    continue;
                 }
+                break;
             }
             obj.sucesso(paraObjeto(decode64SPEC(d)));
         }

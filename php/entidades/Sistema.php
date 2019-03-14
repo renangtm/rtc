@@ -145,6 +145,10 @@ class Sistema {
         return new Permissao(37, "RelatorioExportaLancamento");
     }
     
+    public static function P_RELATORIO_PRODUTO_LOGISTICA() {
+        return new Permissao(38, "RelatorioProdutoLogistica");
+    }
+    
     public static function getEmpresa($tipo) {
 
         $empresa = null;
@@ -179,7 +183,8 @@ class Sistema {
         $relatorios[] = new RelatorioFinanceiro($empresa);
         $relatorios[] = new RelatorioMovimento($empresa);
         $relatorios[] = new RelatorioExportaLancamento($empresa);
-
+        $relatorios[] = new RelatorioProdutoLogistica($empresa);
+        
         $permitidos = array();
 
         foreach ($relatorios as $key => $value) {

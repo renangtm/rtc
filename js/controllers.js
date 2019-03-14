@@ -2854,7 +2854,7 @@ rtc.controller("crtAcompanharPedidos", function ($scope, acompanharPedidoService
     assincFuncs(
             $scope.pedidos,
             "pedido",
-            ["id", "cliente.razao_social", "data", "frete", "id_status", "usuario.nome"]);
+            ["id", "empresa.nome", "data", "frete", "id_status", "usuario.nome"]);
 
 
     $scope.gerarCobranca = function () {

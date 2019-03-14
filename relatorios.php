@@ -219,7 +219,7 @@ echo $relatorio;
                                         </div>
                                         <div class="modal-body">
                                             
-                                            <a download="{{relatorio._classe}}.xsd" href="{{xsd}}"><i class="fas fa-upload"></i>&nbsp Baixar Excel</a>
+                                            <a download="{{relatorio._classe}}.xls" href="{{xsd}}"><i class="fas fa-upload"></i>&nbsp Baixar Excel</a>
 
                                         </div>
 
