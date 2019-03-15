@@ -1906,6 +1906,7 @@ class Sistema {
         $empresa->setRTC($con, $rtc);
 
         $u = new Usuario();
+        $u->nome = $empresa->nome;
         $u->empresa = $empresa;
         $u->email = Utilidades::copyId0($cliente->email);
         $u->endereco = Utilidades::copyId0($cliente->endereco);
