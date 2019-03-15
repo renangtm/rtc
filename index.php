@@ -78,14 +78,14 @@
                     <div class="card-footer-item card-footer-item-bordered">
                         <a href="#" class="footer-link" href="#" data-toggle="modal" data-target="#senha" onclick="limpaCamposEsqueceuSenha();">Esqueceu a senha?</a>
                     </div>
+                    <div class="card-footer-item card-footer-item-bordered">
+                        <a href="#" class="footer-link" href="#" data-toggle="modal" data-target="#cadastrar">Cadastre-se</a>
+                    </div>
                 </div>
             </div>
         </div>
 
-
-        <!-- Modal ESQUECEU SUA SENHA -->
-
-        <div class="modal fade" id="senha" tabindex="-1" role="dialog" aria-labelledby="senha" aria-hidden="true">
+        <div class="modal fade" id="senha" tabindex="-1" role="dialog" aria-labelledby="cadastro" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -117,6 +117,102 @@
 
             </div>
         </div>
+        <!-- Modal ESQUECEU SUA SENHA -->
+
+        <div class="modal fade" id="cadastrar" tabindex="-1" role="dialog" aria-labelledby="senha" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="modalRecuperaLabel">Cadastre-se</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">X</span>
+                        </button>
+                    </div>
+                    <div>
+                        <div class="modal-body"><br>
+                            <div id="loading2" class="alert alert-success" role="alert" style="display: block;">Digite seus dados</div>
+                            <div class="form-group row">
+                                <div class="col-md-9">
+                                    <input type="text" ng-model="email_cliente" class="form-control form-control-lg" id="txtEmail" placeholder="Insira aqui seu e-mail" style="text-align:center">
+                                </div>
+                                <div class="col-md-3" style="padding:2px">
+                                    <button class="btn btn-success" ng-click="buscar()"><i class="fas fa-male"></i>&nbsp Verificar</button>
+                                </div>
+                                <div ng-if="cliente !== null" style="width:100%">
+                                    <hr>
+                                    <table class="table table-striped" style="margin-right: auto;margin-left:auto">
+                                        <tr>
+                                            <td>
+                                                CPF
+                                            </td>
+                                            <td>
+                                                <input type="text" ng-model="cliente.cpf.valor" class="form-control form-control-lg" placeholder="CPF" style="text-align:center">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Login
+                                            </td>
+                                            <td>
+                                                <input type="text" ng-model="cliente.login" class="form-control form-control-lg" placeholder="Login" style="text-align:center">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Senha
+                                            </td>
+                                            <td>
+                                                <input type="password" ng-model="cliente.senha" class="form-control form-control-lg" placeholder="Senha" style="text-align:center">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Conf. Senha
+                                            </td>
+                                            <td>
+                                                <input type="password" ng-model="cliente.confirmacao_senha" class="form-control form-control-lg" placeholder="Confirmacao de senha" style="text-align:center">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Cliente
+                                            </td>
+                                            <td>
+                                                <strong>{{cliente.razao_social}}</strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                CNPJ
+                                            </td>
+                                            <td>
+                                                <input type="text" ng-model="cliente.cnpj.valor" class="form-control form-control-lg" placeholder="CNPJ" ng-disabled="true" style="text-align:center">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Email
+                                            </td>
+                                            <td>
+                                        <email entidade="Empresa" atributo="cliente.email" senha="true" alterar="true"></email>
+                                        </td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+                            </div>
+                            <br> 				  
+
+                        </div>
+                        <div class="modal-footer" style="text-align:center;">
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                            <button id="btRecuperar" ng-disabled="cliente === null" ng-click="cadastrar()" class="btn btn-primary"><i class="fas fa-check"></i>&nbspCadastrar</button>
+                        </div>
+                    </div>				  
+                </div>
+
+            </div>
+        </div>
 
 
         <!-- ============================================================== -->
@@ -135,6 +231,10 @@
                                             $("#loading").html("Processando...");
                                             $("#loading").removeClass("alert-success").removeClass("alert-danger").removeClass("alert-primary").addClass("alert-warning");
 
+                                            $("#loading2").html("Processando...");
+                                            $("#loading2").removeClass("alert-success").removeClass("alert-danger").removeClass("alert-primary").addClass("alert-warning");
+
+
                                         }
 
                                         loading.close = function () {
@@ -148,12 +248,18 @@
                                             $("#loading").removeClass("alert-warning").addClass("alert-danger");
                                             $("#loading").html(msg);
 
+                                            $("#loading2").removeClass("alert-warning").addClass("alert-danger");
+                                            $("#loading2").html(msg);
+
                                         }
 
                                         msg.alerta = function (msg) {
 
                                             $("#loading").removeClass("alert-warning").addClass("alert-primary");
                                             $("#loading").html(msg);
+
+                                            $("#loading2").removeClass("alert-warning").addClass("alert-primary");
+                                            $("#loading2").html(msg);
 
                                         }
 
@@ -165,7 +271,7 @@
                                         }
 
 
-                                       
+
 
         </script>
     </body>

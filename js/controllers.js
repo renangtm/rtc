@@ -416,16 +416,16 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
 
     }
     $scope.xsd = "";
-    $scope.gerarXsd = function(){
-        
+    $scope.gerarXsd = function () {
+
         relatorioService.relatorio = $scope.relatorio;
-        relatorioService.getXsd(function(x){
-            
-            $scope.xsd = projeto+"/php/uploads/"+x.arquivo;
+        relatorioService.getXsd(function (x) {
+
+            $scope.xsd = projeto + "/php/uploads/" + x.arquivo;
             $("#mdlXsd").modal('show');
-            
+
         });
-        
+
     }
 
     $scope.gerarRelatorio = function () {
@@ -1217,16 +1217,16 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
         })
     }
 
-    $scope.addLevel = function (op,filtro) {
+    $scope.addLevel = function (op, filtro) {
         op.selecionada++;
         op.selecionada = op.selecionada % 2;
-        
-        for(var i=0;i<filtro.opcoes.length;i++){
-            if(filtro.opcoes[i].selecionada>0 && filtro.opcoes[i].id !== op.id){
+
+        for (var i = 0; i < filtro.opcoes.length; i++) {
+            if (filtro.opcoes[i].selecionada > 0 && filtro.opcoes[i].id !== op.id) {
                 filtro.opcoes[i].selecionada = 0;
             }
         }
-        
+
         $scope.produtos.attList();
     }
 
@@ -1944,7 +1944,7 @@ rtc.controller("crtNotas", function ($scope, notaService, baseService, produtoSe
             msg.alerta("Data de emissao incorreta");
             return;
         }
-       
+
         baseService.merge(n, function (r) {
             if (r.sucesso) {
                 $scope.nota = r.o;
@@ -2854,7 +2854,7 @@ rtc.controller("crtAcompanharPedidos", function ($scope, acompanharPedidoService
     assincFuncs(
             $scope.pedidos,
             "pedido",
-            ["id", "cliente.razao_social", "data", "frete", "id_status", "usuario.nome"]);
+            ["id", "empresa.nome", "data", "frete", "id_status", "usuario.nome"]);
 
 
     $scope.gerarCobranca = function () {
@@ -2870,7 +2870,7 @@ rtc.controller("crtAcompanharPedidos", function ($scope, acompanharPedidoService
         })
 
     }
-    
+
     sistemaService.getLogisticas(function (rr) {
 
         $scope.logisticas = rr.logisticas;
@@ -2957,7 +2957,7 @@ rtc.controller("crtAcompanharPedidos", function ($scope, acompanharPedidoService
             produtoService.filtro_base = "produto.id_logistica=" + $scope.pedido.logistica.id;
             transportadoraService.empresa = $scope.pedido.logistica;
         }
-        
+
         if ($scope.pedido.id === 0) {
 
             $scope.pedido.status = $scope.status_pedido[0];
@@ -3728,33 +3728,33 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
         $scope.produto_campanha_novo = p.produto_campanha;
 
     })
-    
-    $scope.quantidadeNumero = function(campanha,cc){
-        
+
+    $scope.quantidadeNumero = function (campanha, cc) {
+
         var qtd = 0;
-        
+
         var numero = 0;
-        for(var i=0;i<campanha.campanhas.length;i++){
-            if(campanha.campanhas[i] === cc){
+        for (var i = 0; i < campanha.campanhas.length; i++) {
+            if (campanha.campanhas[i] === cc) {
                 numero = campanha.campanhas[i].id;
                 break;
             }
         }
-     
-        for(var i=0;i<campanha.produtos.length;i++){
-            
+
+        for (var i = 0; i < campanha.produtos.length; i++) {
+
             var p = campanha.produtos[i];
-            
-            if(p.numeracao === numero){
-                
+
+            if (p.numeracao === numero) {
+
                 qtd++;
-                
+
             }
-            
+
         }
-        
+
         return qtd;
-        
+
     }
 
     $scope.setAutoValidade = function (v) {
@@ -4041,27 +4041,27 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     }
 
     $scope.removeProdutoCamp = function (campanha, produto) {
-        
-        if(campanha.produtos.length===1){
+
+        if (campanha.produtos.length === 1) {
             msg.alerta("A Campanha nao pode ficar sem produtos");
             return;
         }
-        
+
         var np = [];
-        for(var i=0;i<campanha.produtos.length;i++){
-            if(campanha.produtos[i] !== produto){
+        for (var i = 0; i < campanha.produtos.length; i++) {
+            if (campanha.produtos[i] !== produto) {
                 np[np.length] = campanha.produtos[i];
             }
         }
         campanha.produtos = np;
-        
+
         $scope.addNumeracao(campanha.produtos[0]);
         $scope.removeNumeracao(campanha.produtos[0]);
         campanha.lista = createList(campanha.produtos, 1, 5, "produto.nome");
     }
 
     $scope.addProdutoCamp = function (campanha, produto) {
-        
+
         var produto_campanha = angular.copy($scope.produto_campanha_novo);
         produto_campanha.produto = produto;
         produto_campanha.validade = -1;
@@ -4075,9 +4075,9 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
         }
 
         campanha.produtos[campanha.produtos.length] = produto_campanha;
-        
+
         $scope.addNumeracao(produto_campanha);
-        
+
         campanha.lista.attList();
 
     }
@@ -5496,15 +5496,60 @@ rtc.controller("crtProdutos", function ($scope, culturaService, sistemaService, 
     })
 
 })
-rtc.controller("crtLogin", function ($scope, loginService) {
+rtc.controller("crtLogin", function ($scope, loginService, sistemaService) {
     $scope.usuario = "";
     $scope.senha = "";
     $scope.email = "";
+
+    $scope.email_cliente = "";
+    $scope.cliente = null;
+
+    $scope.cadastrar = function(){
+        
+        if($scope.cliente.senha === $scope.cliente.confirmacao_senha){
+            
+            sistemaService.inserirClienteRTC($scope.cliente,function(s){
+                
+                if(s.sucesso){
+                    $scope.cliente = null;
+                    $scope.email_cliente = "";
+                    msg.alerta("Cadastrado com sucesso, feche a tela e efetue o Login");
+                }else{
+                    msg.alerta("Erro: "+s.mensagem);
+                }
+                
+            });
+            
+        }else{
+            
+            msg.erro("A confirmacao de senha difere da senha");
+            
+        }
+        
+        
+    }
+
+    $scope.buscar = function () {
+  
+        sistemaService.getClienteCadastro($scope.email_cliente, function (f) {
+              
+            if (f.clientes.length > 0) {
+                $scope.cliente = f.clientes[0];
+                msg.alerta("Escolha o login e senha");
+            } else {
+                $scope.cliente = null;
+                msg.erro("Email nao cadastrado");
+            }
+            
+        });
+
+    }
+
     $scope.logar = function () {
-      
+
         loginService.login($scope.usuario, $scope.senha, function (r) {
 
-           
+
             if (r.usuario === null || !r.sucesso) {
                 msg.erro("Esse usuario nao existe");
             } else {

@@ -83,13 +83,10 @@
                                                 <thead>
                                                     <tr>
                                                         <th width="70px" data-ordem="pedido.id">Cod.</th>
-                                                        <th data-ordem="pedido.cliente.razao_social">Cliente</th>
+                                                        <th data-ordem="pedido.empresa.nome">Empresa</th>
                                                         <th data-ordem="pedido.data">Data</th>
                                                         <th width="70px" data-ordem="pedido.frete">frete</th>
                                                         <th data-ordem="pedido.id_status">Status</th>
-                                                        <?php if ($usuario->temPermissao(Sistema::P_EMPRESA_PEDIDO()->m('C'))) { ?>
-                                                            <th>Empresa</th>
-                                                        <?php } ?>
                                                         <th width="105px" data-ordem="pedido.usuario.nome">Usuario</th>
                                                         <th width="180px">Ação</th>
                                                     </tr>
@@ -97,7 +94,7 @@
                                                 <tbody>
                                                     <tr ng-repeat="pedid in pedidos.elementos">
                                                         <td>{{pedid[0].id}}</td>
-                                                        <td>{{pedid[0].cliente.razao_social}}</td>
+                                                        <td>{{pedid[0].empresa.nome}}</td>
                                                         <td>{{pedid[0].data| data}}</td>
                                                         <td>{{pedid[0].frete.toFixed(2)}}</td>
                                                         <td>{{pedid[0].status.nome}}</td>
@@ -115,13 +112,10 @@
                                                 <tfoot>
                                                     <tr>
                                                         <th>Cod.</th>
-                                                        <th>Cliente</th>
+                                                        <th>Empresa</th>
                                                         <th>Data</th>
                                                         <th>frete</th>
                                                         <th>Status</th>
-                                                        <?php if ($usuario->temPermissao(Sistema::P_EMPRESA_PEDIDO()->m('C'))) { ?>
-                                                            <th>Empresa</th>
-                                                        <?php } ?>
                                                         <th>Usuario</th>
                                                         <th>Ação</th>
                                                     </tr>

@@ -62,24 +62,28 @@ class Relatorio {
 
             foreach ($value->valores_campos as $key2 => $value2) {
 
+
+                if ($value->campos[$key2]->tipo === 'N') {
+
+                    $value2 = str_replace('.', ',', $value2 . "");
+                }
+
                 $buffer .= "<td>" . $value2 . "</td>";
             }
 
             $buffer .= "</tr>";
-            
-            if(strlen($buffer) > 10000){
-                
-                Sistema::mergeArquivo($arquivo, $buffer,false);
+
+            if (strlen($buffer) > 10000) {
+
+                Sistema::mergeArquivo($arquivo, $buffer, false);
                 $buffer = "";
-                
             }
-            
         }
 
         $buffer .= "</table>";
 
-        Sistema::mergeArquivo($arquivo, $buffer,false);
-        
+        Sistema::mergeArquivo($arquivo, $buffer, false);
+
         return $arquivo;
     }
 

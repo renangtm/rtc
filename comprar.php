@@ -471,14 +471,24 @@
         <!-- Optional JavaScript -->
         <script>
 
-                                                                    function filtro(f) {
+                                                                    function filtro(fi) {
 
-                                                                        $("#filtro").val(f);
-                                                                        
-                                                                        $("#filtro")
-                                                                                .trigger('keydown')
-                                                                                .trigger('keyup')
-                                                                                .trigger('change');
+                                                                        $('#filtro').each(function () {
+
+                                                                            // Make sure the select element reflects the change (as setting the option doesn't always do this properly).
+                                                                            $(this).val(fi);
+
+                                                                            // Now use the Angular API's triggerHandler function to call the change.
+                                                                            angular.element($(this)).triggerHandler('change');
+                                                                            $(this).change();
+                                                                            
+                                                                            var body = $("html, body");
+                                                                            body.stop().animate({scrollTop: 290}, 500, 'swing', function () {
+                                                                                
+                                                                            });
+
+                                                                        })
+
 
 
                                                                     }
