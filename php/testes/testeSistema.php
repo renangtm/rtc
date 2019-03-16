@@ -96,11 +96,9 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         //echo Utilidades::toJson($produtos);
         
-        $emp = new Empresa(1733);
+        $emp = Sistema::getClienteCadastro($con,"elias@agrofauna.com.br");
         
-        $pedidos = Sistema::getCountPedidosAcompanhamento($con, $emp);
-        
-        echo Utilidades::toJson($pedidos);
+        echo Utilidades::toJson($emp);
         
     }
 

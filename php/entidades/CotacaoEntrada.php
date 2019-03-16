@@ -24,6 +24,7 @@ class CotacaoEntrada {
     public $produtos;
     public $tratar_em_litros;
     public $observacao;
+    public $enviar_email;
     
     function __construct() {
 
@@ -37,6 +38,8 @@ class CotacaoEntrada {
         $this->empresa = null;
         $this->data = round(microtime(true) * 1000);
         $this->produtos = null;
+        $this->enviar_email = true;
+        
     }
 
     public function getProdutos($con) {
@@ -427,7 +430,7 @@ class CotacaoEntrada {
         }
 
 
-        if ($this->status->envia_email) {
+        if ($this->status->envia_email && $this->enviar_email) {
             try {
                 
                 $html = Sistema::getHtml("visualizar-cotacao-entrada", $this);

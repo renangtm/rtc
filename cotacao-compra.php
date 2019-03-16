@@ -206,7 +206,13 @@
 
                                         <input class="custom-control-input" id="chk1" style="display: inline-block;position:absolute;top:0px;left:5px" type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="cotacao.tratar_em_litros">
                                         <label class="custom-control-label" style="cursor:pointer;" for="chk1"><strong style="position:absolute;top:0px;left:27px">Tratar em litros/kilos com o fornecedor ao inves de embalagem</strong></label>
+                                     
+                                    </div>
+                                    <div class="form-row" style="position:relative;height:30px">			
 
+                                        <input class="custom-control-input" id="chk2" style="display: inline-block;position:absolute;top:0px;left:5px" type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="cotacao.enviar_email">
+                                        <label class="custom-control-label" style="cursor:pointer;" for="chk2"><strong style="position:absolute;top:0px;left:27px">Enviar email</strong></label>
+                                     
                                     </div>
                                     <hr>
                                     <br>

@@ -1603,12 +1603,28 @@ rtc.service('sistemaService', function ($http, $q) {
             falha: fn
         });
     }
+    this.inserirClienteRTC = function (cliente, fn) {
+        baseService($http, $q, {
+            o: cliente,
+            query: "Sistema::inserirClienteRTC($c,$o)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getMesesValidadeCurta = function (fn) {
         baseService($http, $q, {
             query: "$r->meses_validade_curta=Sistema::getMesesValidadeCurta()",
             sucesso: fn,
             falha: fn
         });
+    }
+    this.getClienteCadastro = function (parametro,fn) {
+        baseService($http, $q, {
+            o:{parametro:parametro},
+            query: "$r->clientes=Sistema::getClienteCadastro($c,$o->parametro)",
+            sucesso: fn,
+            falha: fn
+        },null,true);
     }
     this.getMarketings = function (fn) {
         baseService($http, $q, {

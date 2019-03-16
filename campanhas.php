@@ -609,7 +609,7 @@
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
-                                <input type="text" class="form-control" id="filtroProdutos" placeholder="Filtro">
+                                <input type="text" class="form-control" id="filtroProdutos2" placeholder="Filtro">
                                 <hr>
                                 <table class="table table-striped table-bordered first">
                                     <thead>
