@@ -21,11 +21,12 @@ class RelatorioExportaLancamento extends Relatorio {
         }
 
 
-        parent::__construct("SELECT movimento.id as 'id',movimento.data as 'data_movimento',CASE WHEN operacao.debito THEN fornecedor.codigo_contimatic ELSE banco.codigo_contimatic END as 'debito', CASE WHEN operacao.debito=false THEN cliente.codigo_contimatic ELSE banco.codigo_contimatic END as 'credito' ,(movimento.valor-movimento.descontos+movimento.juros) as 'valor',17 as 'historico',CASE WHEN operacao.debito THEN CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(fornecedor.codigo,' - '),fornecedor.nome),' NF: '),nota.numero),' ficha n.'),nota.ficha) ELSE CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(cliente.codigo,' - '),cliente.razao_social),' NF: '),nota.numero),' ficha n.'),nota.ficha) END as 'complemento' FROM movimento INNER JOIN vencimento ON vencimento.id=movimento.id_vencimento INNER JOIN nota ON vencimento.id_nota=nota.id INNER JOIN operacao ON movimento.id_operacao=operacao.id INNER JOIN historico ON movimento.id_historico=historico.id LEFT JOIN fornecedor ON fornecedor.id=nota.id_fornecedor LEFT JOIN cliente ON cliente.id =nota.id_cliente INNER JOIN banco ON banco.id = movimento.id_banco WHERE nota.id_empresa=$empresa->id AND nota.excluida=false", 2);
+        parent::__construct("SELECT movimento.id as 'id',banco.nome as 'banco',movimento.data as 'data_movimento',CASE WHEN operacao.debito THEN fornecedor.codigo_contimatic ELSE banco.codigo_contimatic END as 'debito', CASE WHEN operacao.debito=false THEN cliente.codigo_contimatic ELSE banco.codigo_contimatic END as 'credito' ,(movimento.valor-movimento.descontos+movimento.juros) as 'valor',17 as 'historico',CASE WHEN operacao.debito THEN CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(fornecedor.codigo,' - '),fornecedor.nome),' NF: '),nota.numero),' ficha n.'),nota.ficha) ELSE CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(cliente.codigo,' - '),cliente.razao_social),' NF: '),nota.numero),' ficha n.'),nota.ficha) END as 'complemento' FROM movimento INNER JOIN vencimento ON vencimento.id=movimento.id_vencimento INNER JOIN nota ON vencimento.id_nota=nota.id INNER JOIN operacao ON movimento.id_operacao=operacao.id INNER JOIN historico ON movimento.id_historico=historico.id LEFT JOIN fornecedor ON fornecedor.id=nota.id_fornecedor LEFT JOIN cliente ON cliente.id =nota.id_cliente INNER JOIN banco ON banco.id = movimento.id_banco WHERE nota.id_empresa=$empresa->id AND nota.excluida=false", 2);
 
         $this->nome = "Exportar Lancamentos";
 
         $id = new CampoRelatorio('id', 'Lancamento', 'N');
+        $banco = new CampoRelatorio('banco', 'Banco', 'T');
         $data = new CampoRelatorio('data_movimento', 'Data', 'D');
         $valor = new CampoRelatorio('valor', 'Valor', 'N');
         $debito = new CampoRelatorio('debito', 'Debito', 'N');
@@ -35,6 +36,7 @@ class RelatorioExportaLancamento extends Relatorio {
 
         $this->campos = array(
             $id,
+            $banco,
             $data,
             $valor,
             $debito,
