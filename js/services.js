@@ -1,6 +1,63 @@
 var debuger = function (l) {
     alert(paraJson(l));
 }
+rtc.service('observacaoTarefaService', function ($http, $q) {
+    this.getObservacaoTarefa = function (fn) {
+        baseService($http, $q, {
+            query: "$r->observacao_tarefa=new ObservacaoTarefa();",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('tarefaService', function ($http, $q) {
+    this.getTarefasAtivas = function (fn) {
+        baseService($http, $q, {
+            query: "$a=$usuario->getAusencias($c,'ausencia.fim>CURRENT_TIMESTAMP');$e=$usuario->getExpedientes($c);$r->tarefas=$usuario->getTarefas($c,'tarefa.porcentagem_conclusao<100','tarefa.ordem DESC');$r->tarefas=IATarefas::aplicar($e,$a,$r->tarefas)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.addObservacao = function (tarefa,observacao,fn) {
+        baseService($http, $q, {
+            o:{observacao:observacao,tarefa:tarefa},
+            query: "$o->tarefa->addObservacao($c,$usuario,$o->observacao);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getTarefa = function (fn) {
+        baseService($http, $q, {
+            query: "$r->tarefa=new Tarefa();",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.atribuirTarefaEmpresa = function (empresa, tarefa, fn) {
+        baseService($http, $q, {
+            o: {empresa: empresa, tarefa: tarefa},
+            query: "Sistema::novaTarefaEmpresa($c,$o->tarefa,$o->empresa)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.atribuirTarefaUsuario = function (usuario, tarefa, fn) {
+        baseService($http, $q, {
+            o: {usuario: usuario, tarefa: tarefa},
+            query: "Sistema::novaTarefaUsuario($c,$o->tarefa,$o->usuario)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.atribuirTarefaUsuarioSessao = function (tarefa, fn) {
+        baseService($http, $q, {
+            o: {tarefa: tarefa},
+            query: "Sistema::novaTarefaUsuario($c,$o->tarefa,$usuario)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('gerenciadorService', function ($http, $q) {
     var este = this;
     this.gerenciador = null;
@@ -179,6 +236,106 @@ rtc.service('relatorioService', function ($http, $q) {
         });
     }
 })
+rtc.service('expedienteService', function ($http, $q) {
+    this.getExpediente = function (fn) {
+        baseService($http, $q, {
+            query: "$r->expediente=new Expediente()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getExpedientes = function (usuario, fn) {
+        baseService($http, $q, {
+            o: {usuario: usuario},
+            query: "$r->expedientes=$o->usuario->getExpedientes($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.setExpedientes = function (usuario, expedientes, fn) {
+        baseService($http, $q, {
+            o: {usuario: usuario, expedientes: expedientes},
+            query: "$o->usuario->setExpedientes($c,$o->expedientes)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('ausenciaService', function ($http, $q) {
+    this.getAusencia = function (fn) {
+        baseService($http, $q, {
+            query: "$r->ausencia=new Ausencia()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getAusencias = function (usuario, fn) {
+        baseService($http, $q, {
+            o: {usuario: usuario},
+            query: "$r->ausencias=$o->usuario->getAusencias($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.setAusencias = function (usuario, ausencias, fn) {
+        baseService($http, $q, {
+            o: {usuario: usuario, ausencias: ausencias},
+            query: "$o->usuario->setAusencias($c,$o->ausencias)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('tipoTarefaService', function ($http, $q) {
+    var este = this;
+    this.empresa = null;
+    this.getTiposTarefaUsuario = function (fn) {
+        baseService($http, $q, {
+            query: "$r->tipos_tarefa=Sistema::getTiposTarefaUsuario($c,$usuario)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getTiposTarefa = function (fn) {
+        if (this.empresa === null) {
+            baseService($http, $q, {
+                query: "$r->tipos_tarefa=$empresa->getTiposTarefa($c)",
+                sucesso: fn,
+                falha: fn
+            });
+        } else {
+            baseService($http, $q, {
+                o: {empresa: este.empresa},
+                query: "$r->tipos_tarefa=$o->empresa->getTiposTarefa($c)",
+                sucesso: fn,
+                falha: fn
+            });
+        }
+    }
+    this.getTipoTarefa = function (fn) {
+        baseService($http, $q, {
+            query: "$r->tipo_tarefa=new TipoTarefa();$r->tipo_tarefa->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('cargoService', function ($http, $q) {
+    this.getCargos = function (fn) {
+        baseService($http, $q, {
+            query: "$r->cargos=$empresa->getCargos($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCargo = function (fn) {
+        baseService($http, $q, {
+            query: "$r->cargo=new Cargo();$r->cargo->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('logService', function ($http, $q) {
     this.getLogs = function (entidade, fn) {
         baseService($http, $q, {
@@ -209,6 +366,10 @@ rtc.service('permissaoService', function ($http, $q) {
     }
 })
 rtc.service('usuarioService', function ($http, $q) {
+    var este = this;
+    this.empresa = null;
+    this.filtro_base = "";
+
     this.getRTC = function (fn) {
         baseService($http, $q, {
             query: "$r->rtc=$empresa->getRTC($c)",
@@ -224,20 +385,38 @@ rtc.service('usuarioService', function ($http, $q) {
         });
     }
     this.getCount = function (filtro, fn) {
-        baseService($http, $q, {
-            o: {filtro: filtro},
-            query: "$r->qtd=$empresa->getCountUsuarios($c,$o->filtro)",
-            sucesso: fn,
-            falha: fn
-        });
+        if (this.filtro_base === "") {
+            baseService($http, $q, {
+                o: {filtro: filtro},
+                query: "$r->qtd=$empresa->getCountUsuarios($c,$o->filtro)",
+                sucesso: fn,
+                falha: fn
+            });
+        } else {
+            baseService($http, $q, {
+                o: {filtro: filtro + (filtro !== "" ? "AND " : "") + this["filtro_base"] + " ", empresa: este.empresa},
+                query: "$r->qtd=$o->empresa->getCountUsuarios($c,$o->filtro)",
+                sucesso: fn,
+                falha: fn
+            });
+        }
     }
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
-        baseService($http, $q, {
-            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
-            query: "$r->elementos=$empresa->getUsuarios($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
-            sucesso: fn,
-            falha: fn
-        });
+        if (this.filtro_base === "") {
+            baseService($http, $q, {
+                o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+                query: "$r->elementos=$empresa->getUsuarios($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+                sucesso: fn,
+                falha: fn
+            });
+        } else {
+            baseService($http, $q, {
+                o: {x0: x0, x1: x1, filtro: filtro + (filtro !== "" ? "AND " : "") + this["filtro_base"] + " ", ordem: ordem, empresa: este.empresa},
+                query: "$r->elementos=$o->empresa->getUsuarios($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+                sucesso: fn,
+                falha: fn
+            });
+        }
     }
 })
 rtc.service('produtoClienteLogisticService', function ($http, $q) {
@@ -1220,9 +1399,9 @@ rtc.service('produtoService', function ($http, $q) {
             falha: fn
         });
     }
-    this.remessaGetLotes = function(produtos,filtro,ordem,fn){
+    this.remessaGetLotes = function (produtos, filtro, ordem, fn) {
         var ids = [];
-        for(var i=0;i<produtos.length;i++){
+        for (var i = 0; i < produtos.length; i++) {
             ids[ids.length] = produtos[i].id;
         }
         baseService($http, $q, {
@@ -1259,11 +1438,11 @@ rtc.service('produtoService', function ($http, $q) {
                 //==============================================
 
                 var lotes = [];
-                
-                for(var i=0;i<l.remessas.length;i++){
-                    if(l.remessas[i].id_produto === produto.id){
+
+                for (var i = 0; i < l.remessas.length; i++) {
+                    if (l.remessas[i].id_produto === produto.id) {
                         lotes = l.remessas[i].lotes;
-                        for(var j=0;j<lotes.length;j++){
+                        for (var j = 0; j < lotes.length; j++) {
                             lotes[j].produto = produto;
                         }
                     }
@@ -1373,7 +1552,7 @@ rtc.service('produtoService', function ($http, $q) {
                 produto.validades = validades;
 
             }
-            
+
             fn();
 
         })
@@ -1618,13 +1797,13 @@ rtc.service('sistemaService', function ($http, $q) {
             falha: fn
         });
     }
-    this.getClienteCadastro = function (parametro,fn) {
+    this.getClienteCadastro = function (parametro, fn) {
         baseService($http, $q, {
-            o:{parametro:parametro},
+            o: {parametro: parametro},
             query: "$r->clientes=Sistema::getClienteCadastro($c,$o->parametro)",
             sucesso: fn,
             falha: fn
-        },null,true);
+        }, null, true);
     }
     this.getMarketings = function (fn) {
         baseService($http, $q, {
@@ -1714,6 +1893,13 @@ rtc.service('empresaService', function ($http, $q) {
     this.getEmpresasClientes = function (fn) {
         baseService($http, $q, {
             query: "$r->clientes=$empresa->getEmpresasClientes($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getGrupoEmpresarial = function (fn) {
+        baseService($http, $q, {
+            query: "$grupo=$empresa->getFiliais($c);$r->grupo=array($empresa);foreach($grupo as $key=>$value){$r->grupo[]=$value;}",
             sucesso: fn,
             falha: fn
         });

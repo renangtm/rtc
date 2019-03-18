@@ -172,7 +172,7 @@ function resolverRecursao(obj, pilha) {
 }
 
 function paraObjeto(json) {
-    
+
     json = json.split("\n").join(" ").split("\r").join(" ").split("\\").join(" ");
 
     return resolverRecursao(JSON.parse(json), []);
@@ -504,7 +504,7 @@ function assincFuncs(lista, base, campos, filtro) {
 
         var f = "";
         var v = $(this).val();
-        
+
         for (var i = 0; i < campos.length; i++) {
 
             if (i > 0)
@@ -664,6 +664,7 @@ function createList(lista, cols, rows, filterParam, comparator) {
 }
 
 var requests = [];
+var jsrequests = [];
 
 var loading = {
     show: function () {
@@ -823,7 +824,7 @@ function encode64SPEC(val) {
 }
 
 function decode64SPEC(val) {
-   
+
     var chrArr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#";
     var invMap = {};
     for (var i = 0; i < chrArr.length; i++) {
@@ -831,13 +832,13 @@ function decode64SPEC(val) {
     }
 
     var res = "";
-   
+
     for (var i = 0; i < val.length; i += 4) {
         var k = 0;
-        
+
         var x = 0;
         for (var u = 0; u < 4 && (i + u) < val.length; u++) {
-            
+
             if (val.charAt(i + u) != '*') {
                 if (typeof invMap["c" + val.charCodeAt(i + u)] === 'undefined') {
                     return "";
@@ -861,6 +862,84 @@ var ids = [];
 var id = 0;
 
 var teste = false;
+
+function jsBaseService(obj) {
+
+    var idt = ++id;
+
+    var params = {c: encode64SPEC(obj.query)};
+
+    if (typeof obj["o"] !== 'undefined') {
+        params["o"] = encode64SPEC(paraJson(obj["o"]));
+    }
+    $.post('php/controler/crt.php', params).done(function (resp) {
+       
+        var m = 0;
+        for (var i = 0; i < ids.length; i++) {
+            if (ids[i] == idt) {
+                ids[i] = 0;
+            } else if (m < ids[i]) {
+                m = ids[i];
+            }
+        }
+        if (m == 0) {
+            loading.close();
+        }
+        if (typeof obj["sucesso"] !== 'undefined') {
+            var d = resp;
+            while (d.length > 1) {
+                if (d.charCodeAt(0) === 13 || d.charCodeAt(0) === 10) {
+                    d = d.substr(1);
+                    continue;
+                }
+                break;
+            }
+            obj.sucesso(paraObjeto(decode64SPEC(d)));
+        }
+    }).fail(function (resp) {
+        var m = 0;
+        for (var i = 0; i < ids.length; i++) {
+            if (ids[i] == idt) {
+                ids[i] = 0;
+            } else if (m < ids[i]) {
+                m = ids[i];
+            }
+        }
+        if (m == 0) {
+            loading.close();
+        }
+        if (typeof obj["falha"] !== 'undefined') {
+            var d = resp;
+            while (d.length > 1) {
+                if (d.charCodeAt(0) === 13 || d.charCodeAt(0) === 10) {
+                    d = d.substr(1);
+                    continue;
+                }
+                break;
+            }
+            obj.falha(paraObjeto(decode64SPEC(d)));
+        }
+    })
+
+    var m = 0;
+    for (var i = 0; i < ids.length; i++) {
+        if (ids[i] > m) {
+            m = ids[i];
+        }
+    }
+    if (m == 0) {
+        loading.show();
+    }
+    for (var i = 0; i < jsrequests.length; i++) {
+        jsrequests[i].abort();
+        ids[i] = 0;
+    }
+    jsrequests = [];
+    ids[ids.length] = idt;
+    jsrequests[jsrequests.length] = p;
+
+}
+
 
 function baseService(http, q, obj, get, cancel, noloading) {
 
@@ -886,7 +965,7 @@ function baseService(http, q, obj, get, cancel, noloading) {
         data: "c=" + encode64SPEC(obj.query) + ((typeof obj["o"] !== 'undefined') ? ("&o=" + encode64SPEC(paraJson(obj.o))) : ""),
         timeout: p.promise,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (exx) {
-        
+
         var m = 0;
         for (var i = 0; i < ids.length; i++) {
             if (ids[i] == idt) {
@@ -901,8 +980,8 @@ function baseService(http, q, obj, get, cancel, noloading) {
 
         if (typeof obj["sucesso"] !== 'undefined') {
             var d = exx.data;
-            while(d.length>1){
-                if(d.charCodeAt(0)===13 || d.charCodeAt(0)===10){
+            while (d.length > 1) {
+                if (d.charCodeAt(0) === 13 || d.charCodeAt(0) === 10) {
                     d = d.substr(1);
                     continue;
                 }

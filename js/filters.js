@@ -26,9 +26,9 @@ rtc.filter('tempo', function () {
             str += s + " Dias ";
         }
 
-        str += horas + ":";
-        str += minutos + ":";
-        str += segundos;
+        str += horas + "h:";
+        str += minutos + "m:";
+        str += segundos + 's';
 
         return str;
 

@@ -27,6 +27,8 @@ class Empresa {
     public $tipo_empresa;
     public $tem_suframa;
     public $permissoes_especiais;
+    public $cargos_fixos;
+    public $tarefas_fixas;
 
     function __construct($id = 0, $cf = null) {
 
@@ -46,6 +48,8 @@ class Empresa {
         $this->endereco = new Endereco();
         $this->tipo_empresa = false;
         $this->permissoes_especiais = array();
+        $this->cargos_fixos = array(new CargoFixo(0, "Sem cargo", $this));
+        $this->tarefas_fixas = array("TT_ANALISE_CREDITO","TT_CONFIRMACAO_PAGAMENTO");
 
         if ($id > 0 && $cf !== null) {
 
@@ -84,11 +88,96 @@ class Empresa {
         return array();
     }
 
+    public function getTiposTarefa($con, $filtro = "") {
+        
+        Sistema::getCargo($con, $this, 0, false);
+
+        $sql = "SELECT "
+                . "tipo_tarefa.id,"
+                . "tipo_tarefa.nome,"
+                . "tipo_tarefa.tempo_medio,"
+                . "tipo_tarefa.prioridade,"
+                . "tc.id_cargo "
+                . "FROM tipo_tarefa "
+                . "LEFT JOIN tipo_tarefa_cargo tc ON tipo_tarefa.id=tc.id_tipo_tarefa WHERE tipo_tarefa.excluido=false AND tipo_tarefa.id_empresa=$this->id";
+
+        if ($filtro !== "") {
+
+            $sql .= " AND $filtro";
+        }
+
+        $sql .= " ORDER BY tipo_tarefa.nome";
+
+        $tarefas = array();
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id, $nome, $tempo_medio, $prioridade, $id_cargo);
+
+        while ($ps->fetch()) {
+
+            if (!isset($tarefas[$id])) {
+
+                $t = new TipoTarefa();
+                $t->id = $id;
+                $t->nome = $nome;
+                $t->tempo_medio = $tempo_medio;
+                $t->prioridade = $prioridade;
+                $t->empresa = $this;
+
+                $tarefas[$id] = $t;
+            }
+
+            $t = $tarefas[$id];
+
+            if ($id_cargo !== null) {
+
+                $t->cargos[] = Sistema::getCargo($con,$this,$id_cargo);
+                
+            }
+        }
+
+
+        $retorno = array();
+
+        foreach ($tarefas as $key => $value) {
+
+            $retorno[] = $value;
+        }
+
+        $retorno = Sistema::mesclarTarefas($this, $retorno);
+
+        return $retorno;
+    }
+
     public function setRTC($con, $rtc) {
 
         $ps = $con->getConexao()->prepare("UPDATE empresa SET rtc=$rtc->numero WHERE id=$this->id");
         $ps->execute();
         $ps->close();
+    }
+
+    public function getCargos($con) {
+
+        $ps = $con->getConexao()->prepare("SELECT id,nome FROM cargo WHERE id_empresa = $this->id AND excluido = false");
+        $ps->execute();
+        $ps->bind_result($id, $nome);
+
+        $cargos = Utilidades::copy($this->cargos_fixos);
+
+        while ($ps->fetch()) {
+
+            $cargo = new Cargo();
+            $cargo->empresa = $this;
+            $cargo->id = $id;
+            $cargo->nome = $nome;
+
+            $cargos[] = $cargo;
+        }
+
+        $ps->close();
+
+        return $cargos;
     }
 
     public function getRTC($con) {
@@ -4282,7 +4371,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_cliente,$cod_ctm, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $email_cli_id, $email_cli_end, $email_cli_senha);
+        $ps->bind_result($id_cliente, $cod_ctm, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $email_cli_id, $email_cli_end, $email_cli_senha);
 
         $clientes = array();
 
@@ -4394,8 +4483,12 @@ class Empresa {
 
     public function getUsuarios($con, $x1, $x2, $filtro = "", $ordem = "") {
 
+
+        Sistema::getCargo($con, $this, 0,false);
+
         $sql = "SELECT "
                 . "usuario.id,"
+                . "usuario.id_cargo,"
                 . " usuario.nome,"
                 . " usuario.login,"
                 . " usuario.senha,"
@@ -4430,10 +4523,10 @@ class Empresa {
         }
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
-
+        
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha);
+        $ps->bind_result($id_usu, $id_cargo, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha);
 
         $usuarios = array();
 
@@ -4442,6 +4535,7 @@ class Empresa {
             $usuario = new Usuario();
 
             $usuario->cpf = new CPF($cpf_usu);
+            $usuario->cargo = Sistema::getCargo($con, $this, $id_cargo);
             $usuario->email = new Email($email_usu_end);
             $usuario->email->id = $email_usu_id;
             $usuario->email->senha = $email_usu_senha;

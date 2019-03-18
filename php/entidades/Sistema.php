@@ -149,6 +149,350 @@ class Sistema {
         return new Permissao(38, "RelatorioProdutoLogistica");
     }
 
+    public static function P_CONTROLADOR_TAREFAS() {
+        return new Permissao(39, "Controlador de tarefas");
+    }
+
+    public static function P_ORGANOGRAMA() {
+        return new Permissao(40, "Organograma da equipe");
+    }
+
+    public static function P_ORGANOGRAMA_TOTAL() {
+        return new Permissao(41, "Organograma da empresa");
+    }
+
+    public static function P_EXPEDIENTE() {
+        return new Permissao(42, "Expediente dos colaboradores");
+    }
+
+    public static function TT_ANALISE_CREDITO($id_empresa) {
+
+        return new TTAnaliseCredito($id_empresa);
+    }
+
+    public static function TT_CONFIRMACAO_PAGAMENTO($id_empresa) {
+
+        return new TTConfirmacaoPagamento($id_empresa);
+    }
+
+    public static function getTarefasFixas($empresa) {
+
+        $tarefas = $empresa->tarefas_fixas;
+
+        $ret = array();
+
+        foreach ($tarefas as $key => $value) {
+
+            $t = call_user_func("self::" . $value, $empresa->id);
+            $t->empresa = $empresa;
+            $ret[] = $t;
+        }
+
+        return $ret;
+    }
+
+    public static function novaTarefaEmpresa($con, $tarefa, $empresa) {
+
+        $tarefa->realocavel = true;
+
+        $cargos = "(0";
+
+        foreach ($tarefa->tipo_tarefa->cargos as $key => $value) {
+
+            $cargos .= ",$value->id";
+        }
+
+        $cargos .= ")";
+
+        $usuarios = array();
+        $ps = $con->getConexao()->prepare("SELECT usuario.id FROM usuario WHERE id_empresa=$empresa->id AND id_cargo IN $cargos");
+        $ps->execute();
+        $ps->bind_result($id);
+        while ($ps->fetch()) {
+            $usuarios[] = $id;
+        }
+        $ps->close();
+
+        $in = "(0";
+
+        foreach ($usuarios as $key => $value) {
+            $in .= ",$value";
+        }
+
+        $in .= ")";
+
+        $tarefas = array();
+        $expedientes = array();
+        $ausencias = array();
+
+        $ps = $con->getConexao()->prepare("SELECT id,UNIX_TIMESTAMP(inicio)*1000,UNIX_TIMESTAMP(fim)*1000,id_usuario FROM ausencia WHERE id_usuario IN $in AND fim>CURRENT_TIMESTAMP");
+        $ps->execute();
+        $ps->bind_result($id, $inicio, $fim, $id_usuario);
+        while ($ps->fetch()) {
+
+            $a = new Ausencia();
+            $a->id = $id;
+            $a->inicio = $inicio;
+            $a->fim = $fim;
+
+            if (!isset($ausencias[$id_usuario])) {
+                $ausencias[$id_usuario] = array();
+            }
+
+            $ausencias[$id_usuario][] = $a;
+        }
+        $ps->close();
+
+
+        $ps = $con->getConexao()->prepare("SELECT id,inicio,fim,dia_semana,id_usuario FROM expediente WHERE id_usuario IN $in");
+        $ps->execute();
+        $ps->bind_result($id, $inicio, $fim, $dia_semana, $id_usuario);
+
+        while ($ps->fetch()) {
+            $e = new Expediente();
+            $e->id = $id;
+            $e->inicio = $inicio;
+            $e->fim = $fim;
+            $e->dia_semana = $dia_semana;
+
+            if (!isset($expedientes[$id_usuario])) {
+                $expedientes[$id_usuario] = array();
+            }
+
+            $expedientes[$id_usuario][] = $e;
+        }
+        $ps->close();
+
+        //------------------------
+
+        $tipos_tarefa = $empresa->getTiposTarefa($con);
+
+        $sql = "SELECT "
+                . "tarefa.id,"
+                . "UNIX_TIMESTAMP(tarefa.inicio_minimo)*1000,"
+                . "tarefa.ordem,"
+                . "tarefa.porcentagem_conclusao,"
+                . "tarefa.tipo_entidade_relacionada,"
+                . "tarefa.id_entidade_relacionada,"
+                . "tarefa.titulo,"
+                . "tarefa.descricao,"
+                . "tarefa.intervalos_execucao,"
+                . "tarefa.realocavel,"
+                . "tarefa.id_tipo_tarefa,"
+                . "tarefa.prioridade,"
+                . "observacao.id,"
+                . "observacao.porcentagem,"
+                . "UNIX_TIMESTAMP(observacao.momento), "
+                . "observacao.observacao,"
+                . "tarefa.id_usuario "
+                . "FROM tarefa LEFT JOIN (SELECT * FROM observacao WHERE observacao.excluida = false) observacao ON tarefa.id=observacao.id_tarefa "
+                . "WHERE tarefa.excluida=false AND tarefa.id_usuario IN $in";
+
+        $tmp = array();
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id, $inicio_minimo, $ordem, $porcentagem_conclusao, $tipo_entidade_relacionada, $id_entidade_relacionada, $titulo, $descricao, $intervalos_execucao, $realocavel, $id_tipo_tarefa, $prioridade, $id_observacao, $porcentagem_observacao, $momento_observacao, $observacao, $id_usuario);
+        while ($ps->fetch()) {
+
+            if (!isset($tmp[$id])) {
+
+                $t = new Tarefa();
+                $t->id = $id;
+                $t->inicio_minimo = $inicio_minimo;
+                $t->ordem = $ordem;
+                $t->porcentagem_conclusao = $porcentagem_conclusao;
+                $t->tipo_entidade_relacionada = $tipo_entidade_relacionada;
+                $t->id_entidade_relacionada = $id_entidade_relacionada;
+                $t->titulo = $titulo;
+                $t->descricao = $descricao;
+                $t->intervalos_execucao = $intervalos_execucao;
+                $t->realocavel = $realocavel == 1;
+
+                foreach ($tipos_tarefa as $key => $tipo) {
+                    if ($tipo->id === $id_tipo_tarefa) {
+                        $t->tipo_tarefa = $tipo;
+                        break;
+                    }
+                }
+
+                $t->prioridade = $prioridade;
+
+                $t->intervalos_execucao = explode(";", $t->intervalos_execucao);
+                $intervalos = array();
+                foreach ($t->intervalos_execucao as $key => $intervalo) {
+                    if ($intervalo === "")
+                        continue;
+                    $k = explode('@', $intervalo);
+                    $intervalos[] = array(doubleval($k[0]), doubleval($k[1]));
+                }
+                $t->intervalos_execucao = $intervalos;
+
+                $tmp[$id] = $t;
+
+                if (!isset($tarefas[$id_usuario])) {
+                    $tarefas[$id_usuario] = array();
+                }
+
+                $tarefas[$id_usuario][] = $t;
+            }
+
+            $t = $tmp[$id];
+
+            if ($id_observacao !== null) {
+
+                $obs = new ObservacaoTarefa();
+                $obs->id = $id_observacao;
+                $obs->momento = $momento_observacao;
+                $obs->porcentagem = $porcentagem_observacao;
+                $obs->observacao = $observacao;
+
+                $t->observacoes[] = $obs;
+            }
+        }
+        
+        $ps->close();
+
+        $menor = -1;
+        $tempo = -1;
+        $tasks = null;
+
+        foreach ($usuarios as $key => $usuario) {
+
+            $a = array();
+            $e = array();
+            $t = array();
+
+            if (isset($ausencias[$usuario])) {
+                $a = $ausencias[$usuario];
+            }
+
+            if (isset($expedientes[$usuario])) {
+                $e = $expedientes[$usuario];
+            }
+
+            if (isset($tarefas[$usuario])) {
+                $t = Utilidades::copy($tarefas[$usuario]);
+            }
+
+            $t[] = $tarefa;
+
+            IATarefas::aplicar($e, $a, $t);
+
+            if ($menor < 0) {
+
+                $menor = $usuario;
+                $tempo = $tarefa->calculado_momento_conclusao;
+                $tasks = $t;
+            } else {
+                if ($tempo > $tarefa->calculado_momento_conclusao) {
+                    $menor = $usuario;
+                    $tempo = $tarefa->calculado_momento_conclusao;
+                    $tasks = $t;
+                }
+            }
+        }
+
+        if ($menor === -1) {
+
+            throw new Exception('Sem usuarios para atribuir esta tarefa');
+        }
+
+        $tarefa->merge($con);
+        $ps = $con->getConexao()->prepare("UPDATE tarefa SET id_usuario=$menor,inicio_minimo=inicio_minimo WHERE id=$tarefa->id");
+        $ps->execute();
+        $ps->close();
+
+        foreach ($tasks as $key => $value) {
+            $ps = $con->getConexao()->prepare("UPDATE tarefa SET ordem=$value->ordem,inicio_minimo=inicio_minimo WHERE id=$value->id");
+            $ps->execute();
+            $ps->close();
+        }
+    }
+
+    public function getTiposTarefaUsuario($con, $usuario) {
+
+        $id_cargo = 0;
+        if ($usuario->cargo !== null) {
+            $id_cargo = $usuario->cargo->id;
+        }
+
+        $tipos_tarefa = $usuario->empresa->getTiposTarefa($con);
+
+        $possiveis = array();
+
+        foreach ($tipos_tarefa as $key => $value) {
+            foreach ($value->cargos as $key2 => $value2) {
+                if ($value2->id === $id_cargo) {
+                    $possiveis[] = $value;
+                    break;
+                }
+            }
+        }
+
+        return $possiveis;
+    }
+
+    public static function novaTarefaUsuario($con, $tarefa, $usuario) {
+
+        $usuario->addTarefa($con, $tarefa);
+
+        $tarefas = $usuario->getTarefas($con, 'tarefa.porcentagem_conclusao<100');
+        $expedientes = $usuario->getExpedientes($con);
+        $ausencias = $usuario->getAusencias($con, 'ausencia.fim>CURRENT_TIMESTAMP');
+
+        IATarefas::aplicar($expedientes, $ausencias, $tarefas);
+
+
+        foreach ($tarefas as $key => $value) {
+            $ps = $con->getConexao()->prepare("UPDATE tarefa SET ordem=$value->ordem,inicio_minimo=inicio_minimo WHERE id=$value->id");
+            $ps->execute();
+            $ps->close();
+        }
+    }
+
+    public static function getTarefaFixa($con, $empresa, $tarefa) {
+
+        $t = call_user_func("self::" . $tarefa, $empresa->id);
+        $tarefas = $empresa->getTiposTarefa($con, "tipo_tarefa.id=$t->id");
+
+        foreach ($tarefas as $key => $value) {
+
+            if ($value->id === $t->id) {
+
+                return $value;
+            }
+        }
+
+        return null;
+    }
+
+    public static function mesclarTarefas($empresa, $tarefas) {
+
+        $default = Sistema::getTarefasFixas($empresa);
+
+        foreach ($default as $key => $value) {
+
+            foreach ($tarefas as $key2 => $value2) {
+
+                if ($value->id === $value2->id) {
+
+                    $value->tempo_medio = $value2->tempo_medio;
+                    $value->prioridade = $value2->prioridade;
+                    $value->cargos = $value2->cargos;
+                    $value->empresa = $value2->empresa;
+
+                    $tarefas[$key2] = $value;
+
+                    continue 2;
+                }
+            }
+
+            $tarefas[] = $value;
+        }
+
+        return $tarefas;
+    }
+
     public static function getEmpresa($tipo) {
 
         $empresa = null;
@@ -176,6 +520,39 @@ class Sistema {
         }
 
         return $empresa;
+    }
+
+    public static function getCargo($con, $empresa, $id, $cache = true) {
+
+        $ses = new SessionManager();
+
+        if (($c = $ses->get("cargos_$empresa->id")) !== null && $cache) {
+
+            foreach ($c as $key => $cargo) {
+
+                if ($cargo->id === $id) {
+
+                    return $cargo;
+                }
+            }
+
+            return null;
+        } else {
+
+            $cargos = $empresa->getCargos($con);
+
+            $ses->set("cargos_$empresa->id", $cargos);
+
+            foreach ($cargos as $key => $cargo) {
+
+                if ($cargo->id === $id) {
+
+                    return $cargo;
+                }
+            }
+
+            return null;
+        }
     }
 
     public static function getRelatorios($empresa, $usuario) {
@@ -640,6 +1017,7 @@ class Sistema {
                                     $primeira_maior = $lote->validade;
                                 }
                             }
+                            $pp->aux = max(0,$pp->aux);
                             if ($pp->aux > 0 && $primeira_maior > 0) {
                                 $np = Utilidades::copyId0($pp);
                                 $np->quantidade = $pp->aux;
@@ -2294,7 +2672,11 @@ class Sistema {
                     )), new RTC(6, array(
                 Sistema::P_LOTE(),
                 Sistema::P_SEPARACAO(),
-                Sistema::P_EXPORTAR_LANCAMENTO()
+                Sistema::P_EXPORTAR_LANCAMENTO(),
+                Sistema::P_CONTROLADOR_TAREFAS(),
+                Sistema::P_ORGANOGRAMA(),
+                Sistema::P_ORGANOGRAMA_TOTAL(),
+                Sistema::P_EXPEDIENTE()
                     )), new RTC(7, array(
                 Sistema::P_GERENCIADOR()
         )));
