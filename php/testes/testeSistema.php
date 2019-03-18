@@ -92,14 +92,55 @@ class testeSistema extends PHPUnit_Framework_TestCase {
          * 
          */
 
-
-
         //echo Utilidades::toJson($produtos);
+        //essa regra de negocio aqui e bem trabalhosa de ser testada com acertividade.
+
+        /*
+          $empresa = new Empresa(1733);
+
+          $usuarios = $empresa->getUsuarios($con, 0, 1);
+          $usuarios = $usuarios[0];
+
+          $expediente = $usuarios->getExpedientes($con);
+          $ausencias = $usuarios->getAusencias($con);
+
+          $tarefa = new Tarefa();
+          $tarefa->intervalos_execucao = array(array(1552915200000,1553005200000),array(1553142000000,1553228400000));
+
+          $tarefa2 = new Tarefa();
+          $tarefa2->intervalos_execucao = array(array(1552915200000,1553005200000),array(1553142000000,1553228400000));
+          $tarefa2->prioridade=2;
+
+          $tarefa3 = new Tarefa();
+          $tarefa3->inicio_minimo += 24*60*60*1000;
+          $tarefa3->intervalos_execucao = array(array(1552915200000,1553005200000),array(1553142000000,1553228400000));
+          $tarefa3->prioridade=3;
+
+          $tarefa4 = new Tarefa();
+          $tarefa4->inicio_minimo += 4*60*60*1000;
+          $tarefa4->intervalos_execucao = array(array(1552915200000,1553005200000),array(1553142000000,1553228400000));
+          $tarefa4->prioridade=4;
+
+          // 18/03/2019 9:20 até  19/02/2019 10:20
+          // 21/03/2019 0:20 até 22/03/2019 0:20
+          //.18/03/2019 09:20:00--18/03/2019 12:00:00 @@@@@ 18/03/2019 13:12:00--18/03/2019 18:00:00 @@@@@ 19/03/2019 08:00:00--19/03/2019 10:20:00 @@@@@
+          $tarefas = array($tarefa,$tarefa2,$tarefa3,$tarefa4);
+
+          IATarefas::aplicar($expediente, $ausencias, $tarefas);
+         */
+
+        $emp = new Empresa(1733);
+        $usuario = $emp->getUsuarios($con, 0, 1);
+        $usuario = $usuario[0];
+
+        $tarefas = $usuario->getTarefas($con, 'tarefa.porcentagem_conclusao<100');
+        $expedientes = $usuario->getExpedientes($con);
+        $ausencias = $usuario->getAusencias($con, 'ausencia.fim>CURRENT_TIMESTAMP');
+
+        IATarefas::aplicar($expedientes, $ausencias, $tarefas);
         
-        $emp = Sistema::getClienteCadastro($con,"elias@agrofauna.com.br");
         
-        echo Utilidades::toJson($emp);
-        
+
     }
 
     public static function uniord($u) {

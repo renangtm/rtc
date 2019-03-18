@@ -1,3 +1,209 @@
+rtc.controller("crtTarefas", function ($scope, tarefaService, usuarioService, tipoTarefaService, empresaService) {
+
+    $scope.tarefas = {};
+
+    $scope.empresas = [];
+    $scope.empresa = null;
+
+    $scope.tipos_tarefa = [];
+    $scope.tipos_tarefa_usuario = [];
+
+    $scope.tipo_tarefa_usuario = null;
+    $scope.tipo_tarefa = null;
+
+    $scope.recorrencia = 0;
+
+    $scope.usuario = null;
+
+    $scope.empresarial = false;
+    $scope.tarefa_novo = null;
+    $scope.tarefa = null;
+
+    $scope.usuarios = createAssinc(usuarioService, 1, 5, 10);
+    assincFuncs(
+            $scope.usuarios,
+            "usuario",
+            ["id", "email_usu.endereco", "nome", "cpf", "rg", "login"]);
+
+    empresaService.getGrupoEmpresarial(function (f) {
+
+        $scope.empresas = f.grupo;
+
+        if ($scope.empresas.length > 0) {
+
+            $scope.setEmpresa($scope.empresas[0]);
+
+        }
+
+    })
+
+    tipoTarefaService.getTiposTarefaUsuario(function (t) {
+
+        $scope.tipos_tarefa_usuario = t.tipos_tarefa;
+
+        if (t.tipos_tarefa.length > 0) {
+            $scope.tipo_tarefa_usuario = t.tipos_tarefa[0];
+        }
+
+    })
+
+    tarefaService.getTarefasAtivas(function (t) {
+       
+        $scope.tarefas = createList(t.tarefas, 3, 5, "titulo");
+
+    })
+
+    tarefaService.getTarefa(function (t) {
+
+        $scope.tarefa = t.tarefa;
+        $scope.tarefa_novo = angular.copy(t.tarefa);
+
+    })
+
+    $scope.novaTarefa = function () {
+
+        $scope.tarefa = angular.copy($scope.tarefa_novo);
+
+    }
+
+    $scope.setUsuario = function (u) {
+
+        $scope.usuario = u;
+
+    }
+
+    $scope.setTipoTarefaUsuario = function (t) {
+
+        $scope.tipo_tarefa_usuario = t;
+
+    }
+
+    $scope.setTipoTarefa = function (t) {
+
+        $scope.tipo_tarefa = t;
+        usuarioService.empresa = $scope.empresa;
+
+        var filtro = "usuario.id_cargo IN (";
+
+        var a = false;
+        for (var i = 0; i < t.cargos.length; i++) {
+            if (a)
+                filtro += ",";
+            filtro += t.cargos[i].id;
+            a = true;
+        }
+
+        if (!a) {
+            filtro += '0';
+        }
+
+        filtro += ")";
+
+        if (!a) {
+
+            filtro += " AND false";
+
+        }
+
+        usuarioService.filtro_base = filtro;
+        $scope.usuario = null;
+
+        $scope.tarefa.prioridade = $scope.tipo_tarefa.prioridade;
+
+    }
+
+    $scope.setEmpresa = function (emp) {
+
+        $scope.empresa = emp;
+
+        tipoTarefaService.empresa = $scope.empresa;
+        tipoTarefaService.getTiposTarefa(function (t) {
+
+            $scope.tipos_tarefa = t.tipos_tarefa;
+            if ($scope.tipos_tarefa.length > 0) {
+                $scope.setTipoTarefa($scope.tipos_tarefa[0]);
+            }
+
+        })
+
+    }
+
+    $scope.salvarTarefaUsuario = function () {
+
+        $scope.tarefa.tipo_tarefa = $scope.tipo_tarefa_usuario;
+        $scope.tarefa.realocavel = false;
+
+        tarefaService.atribuirTarefaUsuarioSessao($scope.tarefa, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Operacao efetuada com sucesso");
+
+                tarefaService.getTarefasAtivas(function (t) {
+
+                    $scope.tarefas = createList(t.tarefas, 3, 5, "titulo");
+
+                })
+
+            } else {
+
+                msg.erro("Problema ao efetuar operacao");
+
+            }
+
+        })
+
+    }
+
+    $scope.salvarTarefa = function () {
+
+        $scope.tarefa.tipo_tarefa = $scope.tipo_tarefa;
+        $scope.tarefa.realocavel = $scope.empresarial;
+
+        if ($scope.empresarial) {
+
+            tarefaService.atribuirTarefaEmpresa($scope.empresa, $scope.tarefa, function (r) {
+
+                if (r.sucesso) {
+
+                    msg.alerta("Operacao efetuada com sucesso");
+
+                    tarefaService.getTarefasAtivas(function (t) {
+
+                        $scope.tarefas = createList(t.tarefas, 3, 5, "titulo");
+
+                    })
+
+                } else {
+
+                    msg.erro("Problema ao efetuar operacao");
+
+                }
+
+            })
+
+        } else {
+
+            tarefaService.atribuirTarefaUsuario($scope.usuario, $scope.tarefa, function (r) {
+
+                if (r.sucesso) {
+
+                    msg.alerta("Operacao efetuada com sucesso");
+
+                } else {
+
+                    msg.erro("Problema ao efetuar operacao");
+
+                }
+
+            })
+
+        }
+
+    }
+
+
+})
 rtc.controller("crtGerenciador", function ($scope, $interval, gerenciadorService) {
 
     $scope.ativos = null;
@@ -1268,8 +1474,178 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
 
 })
 
+rtc.controller("crtExpediente", function ($scope, $timeout, usuarioService, ausenciaService, expedienteService) {
 
-rtc.controller("crtUsuarios", function ($scope, $timeout, usuarioService, permissaoService, cidadeService, baseService, telefoneService) {
+    $scope.usuarios = createAssinc(usuarioService, 1, 3, 10);
+    $scope.usuarios.posload = function (e) {
+        if (e.length > 0) {
+            $timeout(function () {
+
+                $scope.setUsuario(e[0]);
+
+            }, 500)
+        }
+    }
+    $scope.usuarios.attList();
+    assincFuncs(
+            $scope.usuarios,
+            "usuario",
+            ["id", "email_usu.endereco", "nome", "cpf", "rg", "login"], "filtroUsuarios");
+
+    $scope.usuario = null;
+    $scope.ausencias = [];
+    $scope.expedientes = [];
+
+    $scope.dias = [
+        {id: 0, nome: "Dom"},
+        {id: 1, nome: "Seg"},
+        {id: 2, nome: "Ter"},
+        {id: 3, nome: "Qua"},
+        {id: 4, nome: "Qui"},
+        {id: 5, nome: "Sex"},
+        {id: 6, nome: "Sab"}];
+
+    $scope.ausencia_novo = {};
+
+    $scope.expediente_novo = {};
+
+    ausenciaService.getAusencia(function (a) {
+        $scope.ausencia_novo = a.ausencia;
+    })
+
+    expedienteService.getExpediente(function (e) {
+        $scope.expediente_novo = e.expediente;
+    })
+
+    $scope.setUsuario = function (usuario) {
+
+        $scope.usuario = usuario;
+
+        ausenciaService.getAusencias($scope.usuario, function (a) {
+
+            $scope.usuario.ausencias = a.ausencias;
+            $scope.ausencias = createList(a.ausencias, 1, 5);
+
+        })
+
+        expedienteService.getExpedientes($scope.usuario, function (e) {
+
+            $scope.usuario.expedientes = e.expedientes;
+            $scope.expedientes = createList(e.expedientes, 1, 14);
+
+        })
+
+        $scope.getTempo = function (t) {
+
+            var h = parseInt(t);
+            var m = ((t % 1) * 60).toFixed(0);
+
+            return h + "h:" + m + "m";
+
+        }
+
+    }
+
+    $scope.removeExpediente = function (ee) {
+
+        var ne = [];
+
+        for (var i = 0; i < $scope.usuario.expedientes.length; i++) {
+            var e = $scope.usuario.expedientes[i];
+            if (e !== ee) {
+                ne[ne.length] = e;
+            }
+        }
+
+        $scope.usuario.expedientes = ne;
+        $scope.expedientes = createList($scope.usuario.expedientes, 1, 14);
+
+    }
+
+    $scope.removeAusencia = function (aa) {
+
+        var na = [];
+
+        for (var i = 0; i < $scope.usuario.ausencias.length; i++) {
+            var a = $scope.usuario.ausencias[i];
+            if (a !== aa) {
+                na[na.length] = a;
+            }
+        }
+
+        $scope.usuario.ausencias = na;
+        $scope.ausencias = createList($scope.usuario.ausencias, 1, 5);
+
+    }
+
+    $scope.addAusencia = function () {
+
+        $scope.usuario.ausencias[$scope.usuario.ausencias.length] = angular.copy($scope.ausencia_novo);
+        $scope.ausencias.attList();
+
+    }
+
+    $scope.addExpediente = function () {
+
+        $scope.usuario.expedientes[$scope.usuario.expedientes.length] = angular.copy($scope.expediente_novo);
+        $scope.expedientes.attList();
+
+    }
+
+    $scope.confirmarExpedientes = function () {
+
+
+        expedienteService.setExpedientes($scope.usuario, $scope.usuario.expedientes, function (f) {
+
+            if (f.sucesso) {
+
+                msg.alerta("Operacao confirmada com sucesso");
+
+            } else {
+
+                msg.erro("Problema ao confirmar operacoes");
+
+            }
+
+        })
+
+    }
+
+    $scope.confirmarAusencias = function () {
+
+
+        ausenciaService.setAusencias($scope.usuario, $scope.usuario.ausencias, function (f) {
+
+            if (f.sucesso) {
+
+                msg.alerta("Operacao confirmada com sucesso");
+
+            } else {
+
+                msg.erro("Problema ao confirmar operacoes");
+
+            }
+
+        })
+
+    }
+
+
+})
+
+rtc.controller("crtOrganograma", function ($scope, usuarioService) {
+
+    $scope.usuarios = createAssinc(usuarioService, 1, 3, 10);
+    $scope.usuarios.attList();
+    assincFuncs(
+            $scope.usuarios,
+            "usuario",
+            ["id", "email_usu.endereco", "nome", "cpf", "rg", "login"], "filtroUsuarios");
+
+})
+
+
+rtc.controller("crtUsuarios", function ($scope, $timeout, usuarioService, permissaoService, cidadeService, baseService, telefoneService, cargoService, tipoTarefaService) {
 
     $scope.usuarios = createAssinc(usuarioService, 1, 3, 10);
     $scope.usuarios.posload = function (e) {
@@ -1291,6 +1667,61 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, usuarioService, permis
     $scope.usuario = {};
     $scope.estado = {};
 
+    $scope.tipo_tarefa = null;
+    $scope.tipo_tarefa_novo = {};
+
+    $scope.tipos_tarefa = [];
+
+    tipoTarefaService.getTipoTarefa(function (t) {
+
+        $scope.tipo_tarefa_novo = t.tipo_tarefa;
+
+    })
+
+
+    var attTiposTarefa = function () {
+        tipoTarefaService.getTiposTarefa(function (t) {
+
+            if ($scope.tipo_tarefa === null) {
+                if (t.tipos_tarefa.length > 0) {
+                    $scope.setTipoTarefa(t.tipos_tarefa[0]);
+                } else {
+                    $scope.tipo_tarefa = {};
+                }
+            }
+
+            $scope.tipos_tarefa = createList(t.tipos_tarefa, 1, 5, "nome");
+
+        })
+    }
+
+    attTiposTarefa();
+
+    $scope.cargos = [];
+    $scope.lstCargos = {};
+
+    $scope.cargo = {};
+    $scope.cargo_novo = {};
+
+    cargoService.getCargo(function (c) {
+
+        $scope.cargo = c.cargo;
+        $scope.cargo_novo = angular.copy(c.cargo);
+
+    })
+
+    var attCargos = function () {
+        cargoService.getCargos(function (c) {
+            $scope.cargos = c.cargos;
+            $scope.lstCargos = createList(angular.copy(c.cargos), 1, 5, "nome");
+            if ($scope.usuario !== null) {
+                $scope.setUsuario($scope.usuario);
+            }
+        })
+    }
+
+    attCargos();
+
     $scope.email = {};
 
     $scope.data_atual = new Date().getTime();
@@ -1306,6 +1737,45 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, usuarioService, permis
     permissaoService.getPermissoes(function (p) {
         $scope.permissoes = p.permissoes;
     })
+
+    $scope.cargo_tipo_tarefa = [];
+
+    $scope.addCargo = function (cargo) {
+
+        for (var i = 0; i < $scope.tipo_tarefa.cargos.length; i++) {
+            if ($scope.tipo_tarefa.cargos[i].id === cargo.id) {
+                msg.erro("Esse cargo ja esta relacionado com essa tarefa");
+                return;
+            }
+        }
+
+        $scope.tipo_tarefa.cargos[$scope.tipo_tarefa.cargos.length] = cargo;
+        $scope.setTipoTarefa($scope.tipo_tarefa);
+
+    }
+
+    $scope.removeCargoTarefa = function (cargo) {
+
+        var nc = [];
+
+        for (var i = 0; i < $scope.tipo_tarefa.cargos.length; i++) {
+            if ($scope.tipo_tarefa.cargos[i].id !== cargo.id) {
+                nc[nc.length] = $scope.tipo_tarefa.cargos[i];
+            }
+        }
+
+        $scope.tipo_tarefa.cargos = nc;
+
+        $scope.setTipoTarefa($scope.tipo_tarefa);
+
+    }
+
+    $scope.setTipoTarefa = function (tt) {
+
+        $scope.tipo_tarefa = tt;
+        $scope.cargos_tipo_tarefa = createList(tt.cargos, 1, 3, "nome");
+
+    }
 
     usuarioService.getUsuario(function (p) {
         $scope.usuario_novo = p.usuario;
@@ -1359,6 +1829,7 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, usuarioService, permis
 
         $scope.usuario = usuario;
 
+        equalize(usuario, "cargo", $scope.cargos);
 
         var dv = $("#dvUsuarios");
         var tr = $("#tr_" + $scope.usuario.id);
@@ -1374,6 +1845,67 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, usuarioService, permis
             $scope.estado = usuario.endereco.cidade.estado;
         }
 
+    }
+
+    $scope.novoTipoTarefa = function () {
+
+        $scope.tipo_tarefa = angular.copy($scope.tipo_tarefa_novo);
+        $scope.setTipoTarefa($scope.tipo_tarefa);
+
+    }
+
+    $scope.mergeTipoTarefa = function (tt) {
+        if (tt.nome === "") {
+            msg.erro("Digite o nome");
+            return;
+        }
+        baseService.merge(tt, function (r) {
+            if (r.sucesso) {
+                $scope.tipo_tarefa = r.o;
+                msg.alerta("Operacao efetuada com sucesso");
+                attTiposTarefa();
+            } else {
+                msg.erro("Problema ao efetuar operacao. " + r.mensagem);
+            }
+        });
+    }
+
+    $scope.deleteTipoTarefa = function (tt) {
+        baseService.delete(tt, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                attTiposTarefa();
+            } else {
+                msg.erro("Problema ao efetuar operacao");
+            }
+        });
+    }
+
+    $scope.mergeCargo = function (cargo) {
+        if (cargo.nome === "") {
+            msg.erro("Digite o nome");
+            return;
+        }
+        baseService.merge(cargo, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.cargo = angular.copy($scope.cargo_novo);
+                attCargos();
+            } else {
+                msg.erro("Problema ao efetuar operacao. " + r.mensagem);
+            }
+        });
+    }
+
+    $scope.deleteCargo = function (cargo) {
+        baseService.delete(cargo, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                attCargos();
+            } else {
+                msg.erro("Problema ao efetuar operacao");
+            }
+        });
     }
 
     $scope.mergeUsuario = function () {
@@ -1419,6 +1951,7 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, usuarioService, permis
     }
 
 })
+
 rtc.controller("crtEntrada", function ($scope, sistemaService, uploadService) {
 
     $scope.xmls = [];
@@ -5504,35 +6037,35 @@ rtc.controller("crtLogin", function ($scope, loginService, sistemaService) {
     $scope.email_cliente = "";
     $scope.cliente = null;
 
-    $scope.cadastrar = function(){
-        
-        if($scope.cliente.senha === $scope.cliente.confirmacao_senha){
-            
-            sistemaService.inserirClienteRTC($scope.cliente,function(s){
-                
-                if(s.sucesso){
+    $scope.cadastrar = function () {
+
+        if ($scope.cliente.senha === $scope.cliente.confirmacao_senha) {
+
+            sistemaService.inserirClienteRTC($scope.cliente, function (s) {
+
+                if (s.sucesso) {
                     $scope.cliente = null;
                     $scope.email_cliente = "";
                     msg.alerta("Cadastrado com sucesso, feche a tela e efetue o Login");
-                }else{
-                    msg.alerta("Erro: "+s.mensagem);
+                } else {
+                    msg.alerta("Erro: " + s.mensagem);
                 }
-                
+
             });
-            
-        }else{
-            
+
+        } else {
+
             msg.erro("A confirmacao de senha difere da senha");
-            
+
         }
-        
-        
+
+
     }
 
     $scope.buscar = function () {
-  
+
         sistemaService.getClienteCadastro($scope.email_cliente, function (f) {
-              
+
             if (f.clientes.length > 0) {
                 $scope.cliente = f.clientes[0];
                 msg.alerta("Escolha o login e senha");
@@ -5540,7 +6073,7 @@ rtc.controller("crtLogin", function ($scope, loginService, sistemaService) {
                 $scope.cliente = null;
                 msg.erro("Email nao cadastrado");
             }
-            
+
         });
 
     }

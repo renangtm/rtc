@@ -57,13 +57,13 @@
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="page-header">
-                                    <h2 class="pageheader-title">Colaboradores</h2>
+                                    <h2 class="pageheader-title">CFG</h2>
                                     <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
                                     <div class="page-breadcrumb">
                                         <nav aria-label="breadcrumb">
                                             <ol class="breadcrumb">      
                                                 <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">RTC</a></li>
-                                                <li class="breadcrumb-item active" aria-current="page">Colaboradores</li>
+                                                <li class="breadcrumb-item active" aria-current="page">CFG</li>
                                             </ol>
                                         </nav>
                                     </div>
@@ -89,153 +89,358 @@
                             }
 
                         </style>
-                        <div class="row">
-                            <!-- ============================================================== -->
-                            <!-- basic table  -->
-                            <!-- ============================================================== -->
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                <div class="card">
-                                    <div class="card-body row">
-                                        <div class="table-responsive col-md-7" id="dvUsuarios">
-                                            <div class="product-btn m-b-20">
-                                                <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ng-click="novoUsuario()"><i class="fas fa-plus-circle m-r-10"></i>Adicionar Colaborador</a>
-                                            </div>
-                                            <table id="clientes" class="table table-striped table-bordered first">
-                                                <thead>
+                        
+                            <div class="row">
+                                <!-- ============================================================== -->
+                                <!-- basic table  -->
+                                <!-- ============================================================== -->
+                                <?php if ($usuario->temPermissao(Sistema::P_CONTROLADOR_TAREFAS()->m('A'))) { ?>
+                                <div class="col-md-5">
+                                    <div class="card">
+                                        <div class="card-body row">
+                                            <div class="col-md-12">
+                                                <h4>Cargos</h4>
+                                                <hr>
+                                                <table style="width: 100%">
                                                     <tr>
-                                                        <th data-ordem="usuario.id">Cod.</th>
-                                                        <th data-ordem="usuario.nome">Nome</th>
-                                                        <th data-ordem="usuario.email_usu.endereco">Email</th>
-                                                        <th width="150px">Acao</th>
+                                                        <td><input type="text" class="form-control" placeholder="Nome do cargo" ng-model="cargo.nome" style="padding:10px"></td>
+                                                        <td><button class="btn btn-success" style="width:100%" ng-click="mergeCargo(cargo)"><i class="fas fa-plus-circle"></i></button></td>
                                                     </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr id="tr_{{usuari[0].id}}" class="{{usuari[0].id===usuario.id?'selecionado':'selecionavel'}}" ng-click="setUsuario(usuari[0])" ng-repeat-start="usuari in usuarios.elementos">
-                                                        <td>{{usuari[0].id}}</td>
-                                                        <td>{{usuari[0].nome}}</td>
-                                                        <td><email entidade="Usu&aacute;rio" atributo="usuari[0].email" senha="true" alterar="false"></email></td>
-                                                <th style="{{usuari[0].id===usuario.id?'border-right:2px solid #5F5F5F':''}}">
-                                                    <div class="product-btn">
-                                                        <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setUsuario(usuari[0])" data-target="#demo{{usuari[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
-                                                        <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setUsuario(usuari[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
-                                                        <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setUsuario(usuari[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
-                                                    </div>
-                                                </th>
-                                                </tr>
-                                                <tr ng-repeat-end>
-                                                    <td colspan="6" class="hiddenRow">
-                                                        <div class="accordian-body collapse" id="demo{{usuari[0].id}}">
-                                                            <div class="row mx-auto m-b-30">	
-                                                                <div class="col">
-                                                                    <table class="table-bordered w-100">
-                                                                        <tr>
-                                                                            <td>Login:</td>
-                                                                            <td>{{usuari[0].login}}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Senha:</td>
-                                                                            <td><?php
-                                                                                $str = "?>{{usuari[0].senha}}<?php";
-                                                                                echo md5($str);
-                                                                                ?></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>CPF:</td>
-                                                                            <td>{{usuari[0].cpf.valor}}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>RG:</td>
-                                                                            <td>{{usuari[0].rg.valor}}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Telefone:</td>
-                                                                            <td>{{usuari[0].telefones}}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Endereco:</td>
-                                                                            <td>{{usuari[0].endereco.rua}}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Numero:</td>
-                                                                            <td>{{usuari[0].endereco.numero}}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Bairro</td>
-                                                                            <td>{{usuari[0].endereco.bairro}}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Cidade</td>
-                                                                            <td>{{usuari[0].endereco.cidade.nome}}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Estado</td>
-                                                                            <td>{{usuari[0].endereco.cidade.estado.sigla}}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>CEP</td>
-                                                                            <td>{{usuari[0].endereco.cep.valor}}</td>
-                                                                        </tr>
-                                                                    </table>
-                                                                </div>																
-                                                            </div>	
-                                                        </div> 
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <th>Cod.</th>
-                                                        <th>Nome</th>
-                                                        <th>Email</th>
-                                                        <th>Acao</th>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
+                                                </table>
 
-                                            <!-- paginacao  -->
+                                                <hr>
+                                                <table id="cargos" class="table table-striped table-bordered first">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Cod</th>
+                                                            <th>Nome</th>
+                                                            <th>Acoes</th>
+                                                            <th><i class="fas fa-arrow-right"></i></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="c in lstCargos.elementos">
+                                                            <td>{{c[0].id<=0?'Fixo':c[0].id}}</td>
+                                                            <td ng-if="c[0].id <= 0">{{c[0].nome}}</td>
+                                                            <td ng-if="c[0].id > 0"><input type="text" class="form-control" ng-model="c[0].nome"></td>
+
+                                                            <th>
+                                                                <div class="product-btn" ng-if="c[0].id > 0">
+                                                                    <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="mergeCargo(c[0])"><i class="fas fa-pencil-alt"></i></a>
+                                                                    <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="deleteCargo(c[0])"><i class="fas fa-trash-alt"></i></a>
+                                                                </div>
+                                                                <div class="product-btn" ng-if="c[0].id <= 0">
+                                                                    Cargo Fixo
+                                                                </div>
+                                                            </th>
+                                                            <td>
+                                                                <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="addCargo(c[0])"><i class="fas fa-arrow-right"></i></a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>Cod.</th>
+                                                            <th>Nome</th>
+                                                            <th>Acoes</th>
+                                                            <th><i class="fas fa-arrow-right"></i></th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="usuarios.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in usuarios.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="usuarios.next()"><a class="page-link" href="">Proximo</a></li>
+                                                        <li class="page-item" ng-click="lstCargos.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                        <li class="page-item" ng-repeat="pg in lstCargos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                        <li class="page-item" ng-click="lstCargos.next()"><a class="page-link" href="">Próximo</a></li>
                                                     </ul>
                                                 </nav>
                                             </div>
+                                        </div>
+                                    </div>    
+                                </div>
+
+                                <style>
+
+                                    .selecionada{
+
+                                        background-color:steelblue !important;
+                                        color:#FFFFFF;
+                                        cursor:pointer;
+                                    }
+
+                                    .normal:hover{
+
+                                        background-color:#000000 !important;
+                                        color:#FFFFFF;
+                                        cursor:pointer;
+                                    }
+
+                                </style>
+
+                                <div class="col-md-7">
+                                    <div class="card">
+                                        <div class="card-body row">
+                                            <div class="col-md-5">
+                                                <h4 style="display: inline">{{tipo_tarefa.nome}} {{tipo_tarefa.id < 0 ? ' - (Fixa)' : ''}}</h4> &nbsp <button class="btn btn-success" style="display:inline" ng-click="mergeTipoTarefa(tipo_tarefa)"><i class="fas fa-check"></i>&nbsp Salvar</button>
+                                                <hr>
+                                                <table class="table table-striped">
+                                                    <tr>
+                                                        <td>
+                                                            Nome
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" ng-model="tipo_tarefa.nome" ng-disabled="tipo_tarefa.id < 0" placeholder="Nome tarefa" class="form-control">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Tempo médio (h)
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control" step="0.01" ng-model="tipo_tarefa.tempo_medio">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Prioridade
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control" ng-model="tipo_tarefa.prioridade">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" style="text-align:center">
+                                                            <i class="fas fa-random"></i>&nbsp Cargos Relacionados
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                <table id="cargos_tipo_tarefa" class="table table-striped table-bordered first">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Cod</th>
+                                                            <th>Nome</th>
+                                                            <th>Acao</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="c in cargos_tipo_tarefa.elementos">
+                                                            <td>{{c[0].id<=0?'Fixo':c[0].id}}</td>
+                                                            <td>{{c[0].nome}}</td>
+                                                            <td><button class="btn btn-danger" ng-click="removeCargoTarefa(c[0])"><i class="fas fa-trash"></i></button></td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>Cod</th>
+                                                            <th>Nome</th>
+                                                            <th>Acao</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                                    <nav aria-label="Page navigation example">
+                                                        <ul class="pagination justify-content-end">
+                                                            <li class="page-item" ng-click="cargos_tipo_tarefa.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                            <li class="page-item" ng-repeat="pg in cargos_tipo_tarefa.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                            <li class="page-item" ng-click="cargos_tipo_tarefa.next()"><a class="page-link" href="">Próximo</a></li>
+                                                        </ul>
+                                                    </nav>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-7">
+                                                <h4 style="display: inline">Tipos de Atividade</h4>&nbsp
+                                                <button class="btn btn-success" ng-click="novoTipoTarefa()"><i class="fas fa-plus-circle"></i></button>
+                                                <hr>
+                                                <table id="tipo_tarefa" class="table table-striped table-bordered first">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Cod</th>
+                                                            <th>Nome</th>
+                                                            <th>Tempo Medio</th>
+                                                            <th>Prioridade</th>
+                                                            <th><i class="fas fa-trash"></i></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-click="setTipoTarefa(t[0])" class="{{t[0].id===tipo_tarefa.id?'selecionada':'normal'}}" ng-repeat="t in tipos_tarefa.elementos">
+                                                            <td>{{t[0].id<=0?'Fixo':t[0].id}}</td>
+                                                            <td>{{t[0].nome}}</td>
+                                                            <td>{{t[0].tempo_medio}}h ({{(t[0].tempo_medio * 60)}} min)</td>
+                                                            <td>{{t[0].prioridade}}</td>
+                                                            <td><button ng-disabled="t[0].id<0" class="btn btn-danger" ng-click="deleteTipoTarefa(t[0])"><i class="fas fa-trash"></i></button></td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>Cod</th>
+                                                            <th>Nome</th>
+                                                            <th>Tempo Medio</th>
+                                                            <th>Prioridade</th>
+                                                            <th><i class="fas fa-trash"></i></th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                                    <nav aria-label="Page navigation example">
+                                                        <ul class="pagination justify-content-end">
+                                                            <li class="page-item" ng-click="lstCargos.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                            <li class="page-item" ng-repeat="pg in lstCargos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                            <li class="page-item" ng-click="lstCargos.next()"><a class="page-link" href="">Próximo</a></li>
+                                                        </ul>
+                                                    </nav>
+                                                </div>
+                                            </div>
 
                                         </div>
-                                        <div class="col-md-5" id="dvPermissoes" style="margin-top:{{marginTop}}px;border:2px solid #5F5F5F;padding:10px;margin-left:0px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-top-left-radius: 2px; border-bottom-left-radius: 10px">
-                                            Permiss&otilde;es do usu&aacute;rio: <strong>{{usuario.id}} - {{usuario.nome}}</strong>
-                                            <hr>
-                                            <button class="btn btn-outline-light" ng-click="mergeUsuario()"><i class="fas fa-check"></i>&nbspConfirmar alteracoes</button>
-                                            <hr>
-                                            <table id="clientes" class="table table-striped table-bordered first">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Nome</th>
-                                                        <th>Alt</th>
-                                                        <th>Inc</th>
-                                                        <th>Del</th>
-                                                        <th>Cons</th>
+                                    </div>    
+                                </div>
+                                 <?php } ?>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="card">
+                                        <div class="card-body row">
+                                            <div class="table-responsive col-md-7" id="dvUsuarios">
+                                                <div class="product-btn m-b-20">
+                                                    <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ng-click="novoUsuario()"><i class="fas fa-plus-circle m-r-10"></i>Adicionar Colaborador</a>
+                                                </div>
+                                                <table id="clientes" class="table table-striped table-bordered first">
+                                                    <thead>
+                                                        <tr>
+                                                            <th data-ordem="usuario.id">Cod.</th>
+                                                            <th data-ordem="usuario.nome">Nome</th>
+                                                            <th data-ordem="usuario.email_usu.endereco">Email</th>
+                                                            <th width="150px">Acao</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr id="tr_{{usuari[0].id}}" class="{{usuari[0].id===usuario.id?'selecionado':'selecionavel'}}" ng-click="setUsuario(usuari[0])" ng-repeat-start="usuari in usuarios.elementos">
+                                                            <td>{{usuari[0].id}}</td>
+                                                            <td>{{usuari[0].nome}}</td>
+                                                            <td><email entidade="Usu&aacute;rio" atributo="usuari[0].email" senha="true" alterar="false"></email></td>
+                                                    <th style="{{usuari[0].id===usuario.id?'border-right:2px solid #5F5F5F':''}}">
+                                                        <div class="product-btn">
+                                                            <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setUsuario(usuari[0])" data-target="#demo{{usuari[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
+                                                            <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setUsuario(usuari[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
+                                                            <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setUsuario(usuari[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
+                                                        </div>
+                                                    </th>
                                                     </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr ng-repeat="p in usuario.permissoes">
-                                                        <td>{{p.nome}}</td>
-                                                        <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.alt"></td>
-                                                        <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.in"></td>
-                                                        <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.del"></td>
-                                                        <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.cons"></td>
+                                                    <tr ng-repeat-end>
+                                                        <td colspan="6" class="hiddenRow">
+                                                            <div class="accordian-body collapse" id="demo{{usuari[0].id}}">
+                                                                <div class="row mx-auto m-b-30">	
+                                                                    <div class="col">
+                                                                        <table class="table-bordered w-100">
+                                                                            <tr>
+                                                                                <td>Login:</td>
+                                                                                <td>{{usuari[0].login}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Senha:</td>
+                                                                                <td><?php
+                                                                                    $str = "?>{{usuari[0].senha}}<?php";
+                                                                                    echo md5($str);
+                                                                                    ?></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>CPF:</td>
+                                                                                <td>{{usuari[0].cpf.valor}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>RG:</td>
+                                                                                <td>{{usuari[0].rg.valor}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Telefone:</td>
+                                                                                <td>{{usuari[0].telefones}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Endereco:</td>
+                                                                                <td>{{usuari[0].endereco.rua}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Numero:</td>
+                                                                                <td>{{usuari[0].endereco.numero}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Bairro</td>
+                                                                                <td>{{usuari[0].endereco.bairro}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Cidade</td>
+                                                                                <td>{{usuari[0].endereco.cidade.nome}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Estado</td>
+                                                                                <td>{{usuari[0].endereco.cidade.estado.sigla}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>CEP</td>
+                                                                                <td>{{usuari[0].endereco.cep.valor}}</td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </div>																
+                                                                </div>	
+                                                            </div> 
+                                                        </td>
                                                     </tr>
-                                                </tbody>
-                                            </table>
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>Cod.</th>
+                                                            <th>Nome</th>
+                                                            <th>Email</th>
+                                                            <th>Acao</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+
+                                                <!-- paginacao  -->
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                                    <nav aria-label="Page navigation example">
+                                                        <ul class="pagination justify-content-end">
+                                                            <li class="page-item" ng-click="usuarios.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                            <li class="page-item" ng-repeat="pg in usuarios.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                                            <li class="page-item" ng-click="usuarios.next()"><a class="page-link" href="">Proximo</a></li>
+                                                        </ul>
+                                                    </nav>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-5" id="dvPermissoes" style="margin-top:{{marginTop}}px;border:2px solid #5F5F5F;padding:10px;margin-left:0px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-top-left-radius: 2px; border-bottom-left-radius: 10px">
+                                                Permiss&otilde;es do usu&aacute;rio: <strong>{{usuario.id}} - {{usuario.nome}}</strong>
+                                                <hr>
+                                                <button class="btn btn-outline-light" ng-click="mergeUsuario()"><i class="fas fa-check"></i>&nbspConfirmar alteracoes</button>
+                                                <hr>
+                                                <table id="clientes" class="table table-striped table-bordered first">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nome</th>
+                                                            <th>Alt</th>
+                                                            <th>Inc</th>
+                                                            <th>Del</th>
+                                                            <th>Cons</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="p in usuario.permissoes">
+                                                            <td>{{p.nome}}</td>
+                                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.alt"></td>
+                                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.in"></td>
+                                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.del"></td>
+                                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.cons"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
 
-                        </div>	
+                            </div>	
+                       
                         <!-- ============================================================== -->
                         <!-- footer -->
                         <!-- ============================================================== -->
@@ -289,6 +494,14 @@
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label  class="col-3 col-lg-2 col-form-label text-left">Cargo</label>
+                                        <div class="col-9 col-lg-10">
+                                            <select ng-model="usuario.cargo" class="form-control">
+                                                <option ng-repeat="c in cargos" ng-value="c">{{c.nome}}</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -492,38 +705,38 @@
                 <!-- Optional JavaScript -->
                 <script>
 
-                                           var l = $('#loading');
-                                                            l.hide();
+                                            var l = $('#loading');
+                                            l.hide();
 
-                                                            
-                                                            var x = 0;
-                                                            var y = 0;
-                                                                
-                                                            $(document).mousemove(function (e) {
-                                                                
-                                                                x = e.clientX;
-                                                                y = e.clientY;
-                                                                
-                                                                var s = $(this).scrollTop();
 
-                                                                l.offset({top: (y + s), left: x});
+                                            var x = 0;
+                                            var y = 0;
 
-                                                            })
+                                            $(document).mousemove(function (e) {
 
-                                                            var sh = false;
-                                                            var it = null;
+                                                x = e.clientX;
+                                                y = e.clientY;
 
-                                                            loading.show = function () {
-                                                                l.show();
-                                                                var s = $(document).scrollTop();
+                                                var s = $(this).scrollTop();
 
-                                                                l.offset({top: (y + s), left: x});
-                                                                
-                                                            }
+                                                l.offset({top: (y + s), left: x});
 
-                                                            loading.close = function () {
-                                                                l.hide();
-                                                            }
+                                            })
+
+                                            var sh = false;
+                                            var it = null;
+
+                                            loading.show = function () {
+                                                l.show();
+                                                var s = $(document).scrollTop();
+
+                                                l.offset({top: (y + s), left: x});
+
+                                            }
+
+                                            loading.close = function () {
+                                                l.hide();
+                                            }
 
                                             $(document).ready(function () {
                                                 $('.btninfo').tooltip({title: "Mais informacoes", placement: "top"});

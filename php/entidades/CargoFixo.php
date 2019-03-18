@@ -11,27 +11,24 @@
  *
  * @author Renan
  */
-class CargoFixo extends Cargo{
+class CargoFixo extends Cargo {
 
     public $id;
     public $nome;
     public $empresa;
 
-    function __construct() {
+    function __construct($id = 0, $nome = "", $empresa = null) {
 
-        $this->id = 0;
-        $this->nome = "";
-        $this->empresa = null;
-        
+        $this->id = $id*-1;
+        $this->nome = $nome;
+        $this->empresa = $empresa;
     }
 
     public function merge($con) {
-
-        
         
     }
-    
-    public function delete($con){
+
+    public function delete($con) {
         
     }
 

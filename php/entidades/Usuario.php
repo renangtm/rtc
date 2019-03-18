@@ -25,6 +25,7 @@ class Usuario {
     public $senha;
     public $rg;
     public $permissoes;
+    public $cargo;
 
     function __construct() {
 
@@ -38,6 +39,213 @@ class Usuario {
         $this->email = new Email("");
         $this->empresa = null;
         $this->permissoes = array();
+        $this->cargo = null;
+    }
+
+    public function getTarefas($con,$filtro = "", $ordem = "") {
+
+        $tipos_tarefa = $this->empresa->getTiposTarefa($con);
+
+        $sql = "SELECT "
+                . "tarefa.id,"
+                . "UNIX_TIMESTAMP(tarefa.inicio_minimo)*1000,"
+                . "tarefa.ordem,"
+                . "tarefa.porcentagem_conclusao,"
+                . "tarefa.tipo_entidade_relacionada,"
+                . "tarefa.id_entidade_relacionada,"
+                . "tarefa.titulo,"
+                . "tarefa.descricao,"
+                . "tarefa.intervalos_execucao,"
+                . "tarefa.realocavel,"
+                . "tarefa.id_tipo_tarefa,"
+                . "tarefa.prioridade,"
+                . "observacao.id,"
+                . "observacao.porcentagem,"
+                . "UNIX_TIMESTAMP(observacao.momento), "
+                . "observacao.observacao "
+                . "FROM tarefa LEFT JOIN (SELECT * FROM observacao WHERE observacao.excluida = false) observacao ON tarefa.id=observacao.id_tarefa "
+                . "WHERE tarefa.excluida=false AND tarefa.id_usuario=$this->id";
+
+        if ($filtro !== "") {
+
+            $sql .= " AND $filtro";
+        }
+
+        if ($ordem !== "") {
+
+            $sql .= " ORDER BY $ordem";
+        }
+
+        $tarefas = array();
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id, $inicio_minimo, $ordem, $porcentagem_conclusao, $tipo_entidade_relacionada, $id_entidade_relacionada, $titulo, $descricao, $intervalos_execucao, $realocavel, $id_tipo_tarefa, $prioridade, $id_observacao, $porcentagem_observacao, $momento_observacao, $observacao);
+        while ($ps->fetch()) {
+
+            if (!isset($tarefas[$id])) {
+
+                $t = new Tarefa();
+                $t->id = $id;
+                $t->inicio_minimo = $inicio_minimo;
+                $t->ordem = $ordem;
+                $t->porcentagem_conclusao = $porcentagem_conclusao;
+                $t->tipo_entidade_relacionada = $tipo_entidade_relacionada;
+                $t->id_entidade_relacionada = $id_entidade_relacionada;
+                $t->titulo = $titulo;
+                $t->descricao = $descricao;
+                $t->intervalos_execucao = $intervalos_execucao;
+                $t->realocavel = $realocavel == 1;
+
+                foreach ($tipos_tarefa as $key => $tipo) {
+                    if ($tipo->id === $id_tipo_tarefa) {
+                        $t->tipo_tarefa = $tipo;
+                        break;
+                    }
+                }
+
+                $t->prioridade = $prioridade;
+
+                $t->intervalos_execucao = explode(";",$t->intervalos_execucao);
+                $intervalos = array();
+                foreach ($t->intervalos_execucao as $key => $intervalo) {
+                    if ($intervalo === "")
+                        continue;
+                    $k = explode('@', $intervalo);
+                    $intervalos[] = array(doubleval($k[0]), doubleval($k[1]));
+                }
+                $t->intervalos_execucao = $intervalos;
+
+                $tarefas[$id] = $t;
+            }
+
+            $t = $tarefas[$id];
+
+            if ($id_observacao !== null) {
+
+                $obs = new ObservacaoTarefa();
+                $obs->id = $id_observacao;
+                $obs->momento = $momento_observacao;
+                $obs->porcentagem = $porcentagem_observacao;
+                $obs->observacao = $observacao;
+
+                $t->observacoes[] = $obs;
+            }
+        }
+
+        $retorno = array();
+
+        foreach ($tarefas as $key => $value) {
+
+            $retorno[] = $value;
+        }
+
+        return $retorno;
+    }
+
+    public function addTarefa($con, $tarefa) {
+
+        $tarefa->merge($con);
+
+        $ps = $con->getConexao()->prepare("UPDATE tarefa SET id_usuario = $this->id,inicio_minimo=inicio_minimo WHERE id=$tarefa->id");
+        $ps->execute();
+        $ps->close();
+    }
+
+    public function getAusencias($con,$filtro = "") {
+
+        $sql = "SELECT id,UNIX_TIMESTAMP(inicio)*1000,UNIX_TIMESTAMP(fim)*1000 FROM ausencia WHERE id_usuario=$this->id";
+        
+        if($filtro !== ""){
+            
+            $sql .= " AND $filtro";
+            
+        }
+        
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id, $inicio, $fim);
+        $ausencias = array();
+        while ($ps->fetch()) {
+
+            $a = new Ausencia();
+            $a->id = $id;
+            $a->inicio = $inicio;
+            $a->fim = $fim;
+            $ausencias[] = $a;
+        }
+        $ps->close();
+
+        return $ausencias;
+    }
+
+    public function getExpedientes($con) {
+
+        $ps = $con->getConexao()->prepare("SELECT id,inicio,fim,dia_semana FROM expediente WHERE id_usuario=$this->id");
+        $ps->execute();
+        $ps->bind_result($id, $inicio, $fim, $dia_semana);
+        $expedientes = array();
+        while ($ps->fetch()) {
+
+            $e = new Expediente();
+            $e->id = $id;
+            $e->inicio = $inicio;
+            $e->fim = $fim;
+            $e->dia_semana = $dia_semana;
+            $expedientes[] = $e;
+        }
+        $ps->close();
+
+        return $expedientes;
+    }
+
+    public function setExpedientes($con, $expedientes) {
+
+        $in = "(-1";
+
+        foreach ($expedientes as $key => $value) {
+
+            $in .= ",$value->id";
+        }
+
+        $in .= ")";
+
+        $ps = $con->getConexao()->prepare("DELETE FROM expediente WHERE id_usuario=$this->id AND id NOT IN $in");
+        $ps->execute();
+        $ps->close();
+
+        foreach ($expedientes as $key => $value) {
+
+            $value->merge($con);
+
+            $ps = $con->getConexao()->prepare("UPDATE expediente SET id_usuario=$this->id WHERE id=$value->id");
+            $ps->execute();
+            $ps->close();
+        }
+    }
+
+    public function setAusencias($con, $ausencias) {
+
+        $in = "(-1";
+
+        foreach ($ausencias as $key => $value) {
+
+            $in .= ",$value->id";
+        }
+
+        $in .= ")";
+
+        $ps = $con->getConexao()->prepare("DELETE FROM ausencia WHERE id_usuario=$this->id AND id NOT IN $in");
+        $ps->execute();
+        $ps->close();
+
+        foreach ($ausencias as $key => $value) {
+
+            $value->merge($con);
+
+            $ps = $con->getConexao()->prepare("UPDATE ausencia SET id_usuario=$this->id WHERE id=$value->id");
+            $ps->execute();
+            $ps->close();
+        }
     }
 
     public function merge($con) {
@@ -53,12 +261,19 @@ class Usuario {
         $ps->close();
 
         if ($this->id == 0) {
-            $ps = $con->getConexao()->prepare("INSERT INTO usuario(login,senha,nome,cpf,excluido,id_empresa,rg) VALUES('" . addslashes($this->login) . "','" . addslashes($this->senha) . "','" . addslashes($this->nome) . "','" . $this->cpf->valor . "',false," . $this->empresa->id . ",'" . addslashes($this->rg->valor) . "')");
+            $ps = $con->getConexao()->prepare("INSERT INTO usuario(login,senha,nome,cpf,excluido,id_empresa,rg,id_cargo) VALUES('" . addslashes($this->login) . "','" . addslashes($this->senha) . "','" . addslashes($this->nome) . "','" . $this->cpf->valor . "',false," . $this->empresa->id . ",'" . addslashes($this->rg->valor) . "')");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
             $ps = $con->getConexao()->prepare("UPDATE usuario SET login='" . addslashes($this->login) . "',senha='" . addslashes($this->senha) . "', nome = '" . addslashes($this->nome) . "', cpf='" . $this->cpf->valor . "',excluido=false, id_empresa=" . $this->empresa->id . ",rg='" . addslashes($this->rg->valor) . "' WHERE id = " . $this->id);
+            $ps->execute();
+            $ps->close();
+        }
+
+        if ($this->cargo !== null) {
+
+            $ps = $con->getConexao()->prepare("UPDATE usuario SET id_cargo=" . $this->cargo->id . " WHERE id=" . $this->id);
             $ps->execute();
             $ps->close();
         }
