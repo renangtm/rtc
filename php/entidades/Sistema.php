@@ -264,7 +264,7 @@ class Sistema {
         $ps->close();
 
         //------------------------
-
+        
         $tipos_tarefa = $empresa->getTiposTarefa($con);
 
         $sql = "SELECT "
@@ -287,7 +287,7 @@ class Sistema {
                 . "tarefa.id_usuario "
                 . "FROM tarefa LEFT JOIN (SELECT * FROM observacao WHERE observacao.excluida = false) observacao ON tarefa.id=observacao.id_tarefa "
                 . "WHERE tarefa.excluida=false AND tarefa.id_usuario IN $in";
-
+        
         $tmp = array();
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
@@ -351,11 +351,11 @@ class Sistema {
         }
         
         $ps->close();
-
+       
         $menor = -1;
         $tempo = -1;
         $tasks = null;
-
+        
         foreach ($usuarios as $key => $usuario) {
 
             $a = array();
@@ -391,12 +391,12 @@ class Sistema {
                 }
             }
         }
-
+        
         if ($menor === -1) {
 
             throw new Exception('Sem usuarios para atribuir esta tarefa');
         }
-
+        
         $tarefa->merge($con);
         $ps = $con->getConexao()->prepare("UPDATE tarefa SET id_usuario=$menor,inicio_minimo=inicio_minimo WHERE id=$tarefa->id");
         $ps->execute();
@@ -2747,7 +2747,7 @@ class Sistema {
         $cat = new CategoriaProduto();
         $cat->nome = "Agricola";
         $cat->id = 1164;
-        $cat->base_calculo = 60;
+        $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
         $cat->loja = true;
         return $cat;
@@ -2771,7 +2771,7 @@ class Sistema {
         $cat = new CategoriaProduto();
         $cat->nome = "Agricola Fora de Linha";
         $cat->id = 2;
-        $cat->base_calculo = 60;
+        $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
         $cat->loja = false;
         return $cat;

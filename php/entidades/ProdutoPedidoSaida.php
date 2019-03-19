@@ -337,24 +337,26 @@ class ProdutoPedidoSaida {
 
         if ($this->pedido->cliente != null) {
 
+            $this->base_calculo = ($cat->base_calculo / 100) * ($this->valor_base + $this->juros);
+
             $icms = Sistema::getIcmsEstado($this->pedido->cliente->endereco->cidade->estado);
 
             if ($emp->endereco->cidade->estado->id == $this->pedido->cliente->endereco->cidade->estado->id || $this->pedido->cliente->suframado) {
 
-                $icms = 0;
+                $this->icms = 0;
+                
+            } else {
+
+                $base = ($cat->base_calculo / 100) * ($icms / 100);
+
+                if (!$this->produto->categoria->icms_normal) {
+
+                    $base = ($cat->base_calculo / 100) * ($this->produto->categoria->icms / 100);
+                }
+
+
+                $this->icms = round(($this->valor_base + $this->juros) * $base, 2);
             }
-
-            $base = ($cat->base_calculo / 100) * ($icms / 100);
-
-            $this->base_calculo = ($cat->base_calculo / 100) * ($this->valor_base + $this->juros);
-
-            if (!$this->produto->categoria->icms_normal) {
-
-                $base = ($cat->base_calculo / 100) * ($this->produto->categoria->icms / 100);
-            }
-
-
-            $this->icms = round(($this->valor_base + $this->juros) * $base, 2);
         }
 
         $this->ipi = ($this->valor_base + $this->juros + $this->icms) * ($this->produto->categoria->ipi / 100);

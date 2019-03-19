@@ -1,3 +1,27 @@
+rtc.controller("crtCobranca", function ($scope, $timeout, tarefaService) {
+
+    $scope.cobrancas = [];
+    $scope.cobrar = false;
+
+    var att = function () {
+        tarefaService.getTarefasAtivas(function (t) {
+
+            $scope.cobrancas = t.tarefas;
+            if ($scope.cobrancas.length > 0) {
+                $scope.cobrar = true;
+            }else{
+                $scope.cobrar = false;
+            }
+            
+        })
+    }
+   
+
+    $timeout(function () {
+        att();
+    }, 10000);
+
+})
 rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaService, usuarioService, tipoTarefaService, empresaService) {
 
     $scope.tarefas = {};
@@ -34,15 +58,16 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
     }
 
     $scope.addObservacao = function () {
-        
-        if($scope.observacao_tarefa.observacao === ""){
-            
+
+        if ($scope.observacao_tarefa.observacao === "") {
+            msg.alerta("Digite uma observacao");
+            return;
         }
-        
+
         var c = $scope.tarefa.porcentagem_conclusao;
-        var dif = $scope.observacao_tarefa.porcentagem-c;
+        var dif = $scope.observacao_tarefa.porcentagem - c;
         $scope.observacao_tarefa.porcentagem = dif;
-        
+
         tarefaService.addObservacao($scope.tarefa, $scope.observacao_tarefa, function (f) {
 
             if (f.sucesso) {
@@ -53,7 +78,7 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
 
                     $scope.tarefas = createList(t.tarefas, 1, 5, "titulo");
                     $scope.tarefa_principal = t.tarefas[0];
-                    
+
                 })
 
             } else {
@@ -105,7 +130,7 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
 
         $scope.tarefas = createList(t.tarefas, 1, 5, "titulo");
         $scope.tarefa_principal = t.tarefas[0];
-        
+
     })
 
     tarefaService.getTarefa(function (t) {
@@ -198,7 +223,7 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
 
                     $scope.tarefas = createList(t.tarefas, 1, 5, "titulo");
                     $scope.tarefa_principal = t.tarefas[0];
-                    
+
                 })
 
             } else {
@@ -4154,8 +4179,8 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
                 p = p.clone();
 
                 var pro = $scope.pedido.produtos[i];
-                icms += pro.icms;
-                base += pro.base_calculo;
+                icms += pro.icms * pro.quantidade;
+                base += pro.base_calculo * pro.quantidade;
                 p.find("[data-tipo='nome']").html(pro.produto.nome);
                 p.find("[data-tipo='valor']").html((pro.valor_base + pro.frete + pro.juros + pro.icms).toFixed(2));
                 p.find("[data-tipo='quantidade']").html(pro.quantidade);
@@ -4169,11 +4194,11 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
                 total += (pro.valor_base + pro.frete + pro.juros + pro.ipi + pro.icms) * pro.quantidade;
 
             }
-            var alicota = (icms * 100 / base).toFixed(2);
+            var alicota = (icms * 100 / base);
 
             ic.find("#prazo").html(pedido.prazo);
-            ic.find("#alicota").html(alicota);
-            ic.find("#icms").html(icms);
+            ic.find("#alicota").html(alicota.toFixed(0));
+            ic.find("#icms").html(icms.toFixed(2));
 
             ic.find("#tipoFrete").html(pedido.frete_incluso ? 'CIF' : 'FOB');
             ic.find("#nomeTransportadora").html(pedido.transportadora.razao_social);
@@ -4201,7 +4226,6 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
         });
 
     }
-
 
 
 })

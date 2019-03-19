@@ -135,16 +135,10 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         $t = new Tarefa();
         
-        $emp = new Empresa(1733);
+        $tt = $emp->getTiposTarefa($con);
         
-        $usu = $emp->getUsuarios($con, 0, 1);
-        $usu = $usu[0];
+        $t->tipo_tarefa = $tt[0];
         
-        $expedientes = $usu->getExpedientes($con);
-        $ausencias = $usu->getAusencias($con);
-        $tarefas = $usu->getTarefas($con);
-        
-        $tarefas = IATarefas::aplicar($expedientes, $ausencias, $tarefas);
         
         
         Sistema::novaTarefaEmpresa($con, $t, $emp);
