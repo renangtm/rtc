@@ -259,7 +259,7 @@ class Sistema {
                 $expedientes[$id_usuario] = array();
             }
 
-            $expedientes[$id_usuario][] = $a;
+            $expedientes[$id_usuario][] = $e;
         }
         $ps->close();
 
@@ -349,6 +349,8 @@ class Sistema {
                 $t->observacoes[] = $obs;
             }
         }
+        
+        $ps->close();
 
         $menor = -1;
         $tempo = -1;
@@ -369,7 +371,7 @@ class Sistema {
             }
 
             if (isset($tarefas[$usuario])) {
-                $e = Utilidades::copy($tarefas[$usuario]);
+                $t = Utilidades::copy($tarefas[$usuario]);
             }
 
             $t[] = $tarefa;
