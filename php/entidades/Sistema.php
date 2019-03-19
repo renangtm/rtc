@@ -1017,6 +1017,7 @@ class Sistema {
                                     $primeira_maior = $lote->validade;
                                 }
                             }
+                            $pp->aux = max(0,$pp->aux);
                             if ($pp->aux > 0 && $primeira_maior > 0) {
                                 $np = Utilidades::copyId0($pp);
                                 $np->quantidade = $pp->aux;

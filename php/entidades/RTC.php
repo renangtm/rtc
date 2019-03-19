@@ -38,7 +38,7 @@ class RTC {
         }
 
         $this->numero = $numero;
-        $this->nome = "RTC v2.1 m$numero";
+        $this->nome = "RTC W2.1 m$numero";
         $this->permissoes = $permissoes;
 
 

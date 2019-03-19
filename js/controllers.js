@@ -1,4 +1,4 @@
-rtc.controller("crtTarefas", function ($scope, tarefaService, usuarioService, tipoTarefaService, empresaService) {
+rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaService, usuarioService, tipoTarefaService, empresaService) {
 
     $scope.tarefas = {};
 
@@ -19,6 +19,54 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, usuarioService, ti
     $scope.tarefa_novo = null;
     $scope.tarefa = null;
 
+    $scope.tarefa_principal = null;
+
+    $scope.observacao_tarefa = {};
+
+    $scope.novaObservacaoTarefa = function () {
+
+        observacaoTarefaService.getObservacaoTarefa(function (o) {
+
+            $scope.observacao_tarefa = o.observacao_tarefa;
+
+        })
+
+    }
+
+    $scope.addObservacao = function () {
+        
+        if($scope.observacao_tarefa.observacao === ""){
+            
+        }
+        
+        var c = $scope.tarefa.porcentagem_conclusao;
+        var dif = $scope.observacao_tarefa.porcentagem-c;
+        $scope.observacao_tarefa.porcentagem = dif;
+        
+        tarefaService.addObservacao($scope.tarefa, $scope.observacao_tarefa, function (f) {
+
+            if (f.sucesso) {
+
+                msg.alerta("Operacao efetuada com sucesso");
+
+                tarefaService.getTarefasAtivas(function (t) {
+
+                    $scope.tarefas = createList(t.tarefas, 1, 5, "titulo");
+                    $scope.tarefa_principal = t.tarefas[0];
+                    
+                })
+
+            } else {
+
+                msg.erro("Falha ao efetuar operacao");
+
+            }
+
+
+        })
+
+    }
+
     $scope.usuarios = createAssinc(usuarioService, 1, 5, 10);
     assincFuncs(
             $scope.usuarios,
@@ -37,6 +85,12 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, usuarioService, ti
 
     })
 
+    $scope.setTarefa = function (tarefa) {
+
+        $scope.tarefa = tarefa;
+
+    }
+
     tipoTarefaService.getTiposTarefaUsuario(function (t) {
 
         $scope.tipos_tarefa_usuario = t.tipos_tarefa;
@@ -48,9 +102,10 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, usuarioService, ti
     })
 
     tarefaService.getTarefasAtivas(function (t) {
-       
-        $scope.tarefas = createList(t.tarefas, 3, 5, "titulo");
 
+        $scope.tarefas = createList(t.tarefas, 1, 5, "titulo");
+        $scope.tarefa_principal = t.tarefas[0];
+        
     })
 
     tarefaService.getTarefa(function (t) {
@@ -141,8 +196,9 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, usuarioService, ti
 
                 tarefaService.getTarefasAtivas(function (t) {
 
-                    $scope.tarefas = createList(t.tarefas, 3, 5, "titulo");
-
+                    $scope.tarefas = createList(t.tarefas, 1, 5, "titulo");
+                    $scope.tarefa_principal = t.tarefas[0];
+                    
                 })
 
             } else {
@@ -170,7 +226,7 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, usuarioService, ti
 
                     tarefaService.getTarefasAtivas(function (t) {
 
-                        $scope.tarefas = createList(t.tarefas, 3, 5, "titulo");
+                        $scope.tarefas = createList(t.tarefas, 1, 5, "titulo");
 
                     })
 
@@ -1362,7 +1418,7 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
             return;
         }
 
-        $scope.qtd = parseInt(($scope.qtd + "").split(".")[0]);
+        $scope.qtd = parseInt(($scope.qtd + ""));
 
         $scope.val = validade;
 

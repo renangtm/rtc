@@ -1,10 +1,27 @@
 var debuger = function (l) {
     alert(paraJson(l));
 }
+rtc.service('observacaoTarefaService', function ($http, $q) {
+    this.getObservacaoTarefa = function (fn) {
+        baseService($http, $q, {
+            query: "$r->observacao_tarefa=new ObservacaoTarefa();",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('tarefaService', function ($http, $q) {
     this.getTarefasAtivas = function (fn) {
         baseService($http, $q, {
-            query: "$a=$usuario->getAusencias($c,'ausencia.fim>CURRENT_TIMESTAMP');$e=$usuario->getExpedientes($c);$r->tarefas=$usuario->getTarefas($c,'tarefa.porcentagem_conclusao<100','tarefa.ordem DESC');IATarefas::aplicar($e,$a,$r->tarefas)",
+            query: "$a=$usuario->getAusencias($c,'ausencia.fim>CURRENT_TIMESTAMP');$e=$usuario->getExpedientes($c);$r->tarefas=$usuario->getTarefas($c,'tarefa.porcentagem_conclusao<100','tarefa.ordem DESC');$r->tarefas=IATarefas::aplicar($e,$a,$r->tarefas)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.addObservacao = function (tarefa,observacao,fn) {
+        baseService($http, $q, {
+            o:{observacao:observacao,tarefa:tarefa},
+            query: "$o->tarefa->addObservacao($c,$usuario,$o->observacao);",
             sucesso: fn,
             falha: fn
         });

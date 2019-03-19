@@ -111,7 +111,7 @@ class Usuario {
                     if ($intervalo === "")
                         continue;
                     $k = explode('@', $intervalo);
-                    $intervalos[] = array(doubleval($k[0]), doubleval($k[1]));
+                    $intervalos[] = array($k[0]+0, $k[1]+0);
                 }
                 $t->intervalos_execucao = $intervalos;
 

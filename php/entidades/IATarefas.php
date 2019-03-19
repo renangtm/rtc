@@ -13,7 +13,7 @@
  */
 class IATarefas {
 
-    private static $PRIORIDADE_VS_TEMPO = 5;
+    private static $PRIORIDADE_VS_TEMPO = 2;
 
     // Prioridade tem um valor X vezes maior do que o tempo pequeno sobre a formula de ordenacao
     // Ou seja, tarefas prioritaritarias, tem preferencia sob tarefas curtas, ate certo ponto obviamente
@@ -125,6 +125,7 @@ class IATarefas {
             $tarefa->calculado_tempo_util_faltante = $tarefa->calculado_previsao_util_conclusao - $tarefa->calculado_horas_uteis_dispendidas;
 
             $tarefa->ordem = round((($tarefa->prioridade * self::$PRIORIDADE_VS_TEMPO) / ($tarefa->calculado_tempo_util_faltante / 10000)), 11);
+            $tarefa->ordem_teste = $tarefa->ordem;
         }
 
         //ordenando tarefas;
@@ -144,6 +145,7 @@ class IATarefas {
                     $k = $tarefas_ativas_passivas[$vetor][$i];
                     $tarefas_ativas_passivas[$vetor][$i] = $tarefas_ativas_passivas[$vetor][$i - 1];
                     $tarefas_ativas_passivas[$vetor][$i - 1] = $k;
+                    $i--;
                 } else {
                     break;
                 }
@@ -152,7 +154,6 @@ class IATarefas {
 
         $tarefas_ativas = $tarefas_ativas_passivas[0];
         $tarefas_passivas = $tarefas_ativas_passivas[1];
-
 
         foreach ($tarefas_passivas as $key => $value) {
             $agora = round(microtime(true) * 1000);
@@ -175,7 +176,10 @@ class IATarefas {
                 $tarefas_ativas[$j] = $tarefas_ativas[$j - 1];
             }
             $tarefas_ativas[$i] = $value;
+            
         }
+        
+        
 
         $x1 = round(microtime(true) * 1000);
         foreach ($tarefas_ativas as $key => $value) {
@@ -238,6 +242,11 @@ class IATarefas {
 
                 foreach ($itv_dia_uteis as $key => $value2) {
 
+                    if ($value->calculado_previsao_inicio === 0) {
+
+                        $value->calculado_previsao_inicio = $value2[0];
+                    }
+
                     $d = min($value2[1] - $value2[0], $ajuste);
                     $ajuste -= $d;
                     $x2 = $value2[0] + $d;
@@ -253,6 +262,9 @@ class IATarefas {
 
             $x1 = $x2;
         }
+        
+        return $tarefas_ativas;
+        
     }
 
 }

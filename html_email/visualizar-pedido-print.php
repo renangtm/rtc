@@ -161,7 +161,7 @@
                                                                     </tr>
 
                                                                     <?php
-                                                                    $valor_icms += $value->icms;
+                                                                    $valor_icms += $value->icms*$value->quantidade;
                                                                     $valor_total += $value->quantidade * ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete);
                                                                     $base_calculo += $value->base_calculo;
 

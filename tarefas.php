@@ -75,14 +75,35 @@
                         <!-- ============================================================== -->
                         <style>
                             .tarefa{
+                                display: inline-block;
                                 text-align: center;
-                                height:240px;
+                                height:310px;
                                 border:1px dashed;
                                 width:calc(33% - 20px) !important;
                                 margin-left:20px !important;
                                 padding:10px;
                                 border-radius: 3px;
                             }
+                            .tarefa_principal{
+                                display: inline-block;
+                                text-align: center;
+                                height:310px;
+                                border:1px dashed;
+                                width:calc(70% - 20px) !important;
+                                margin-left:20px !important;
+                                padding:10px;
+                                border-radius: 3px;
+                                margin-bottom:20px
+                                
+                            }
+                            
+                            .la td{
+                                text-align:left;
+                            }
+                            .la{
+                                width:100%;
+                            }
+                            
                         </style>
                         <div class="row">
                             <!-- ============================================================== -->
@@ -98,23 +119,27 @@
                                             </div>
                                             <hr>
 
-                                            <div class="row" ng-repeat="linha in tarefas.elementos" style="margin:20px">
-                                                <div class="tarefa" ng-repeat="t in linha">
-                                                    <i class="fas fa-align-left" style="display: inline"></i>&nbsp<h4 style="display: inline">{{t.titulo}}</h4>
-                                                    <hr>
-                                                    <table>
+                                            
+                                                <div class="{{t[0].id===tarefa_principal.id?'tarefa_principal':'tarefa'}}" ng-repeat="t in tarefas.elementos">
+                                                    <div style="margin:5px;background-color: #DADADA;border-top-left-radius: 3px">
+                                                        <i class="fas fa-align-left" style="display: inline"></i>&nbsp<h4 style="display: inline">{{t[0].id+' - '+t[0].titulo}}</h4>
+                                                        <button class="btn btn-success"  ng-click="setTarefa(t[0])" data-toggle="modal" data-target="#tarefa" style="float:right"><i class="fas fa-envelope-open"></i>&nbsp;Abrir</button>
+
+                                                    </div>
+
+                                                    <table class="la">
                                                         <tr>
                                                             <td>
                                                                 Realizado:
                                                             </td>
                                                             <td>
-                                                                <h4 style="margin-top:12px;color:{{t.porcentagem_conclusao===0?'Red':(t.porcentagem_conclusao>50?'Green':'Orange')}}">{{t.porcentagem_conclusao}} %</h4>
+                                                                <h4 style="margin-top:12px;color:{{t[0].porcentagem_conclusao===0?'Red':(t[0].porcentagem_conclusao>50?'Green':'Orange')}}">{{t[0].porcentagem_conclusao}} %</h4>
                                                             </td>
-                                                            <td style="padding-left:20px">
+                                                            <td>
                                                                 Tempo Util Utilizado:
                                                             </td>
                                                             <td>
-                                                                <h4 style="margin-top:12px">{{t.calculado_horas_uteis_dispendidas | tempo}} </h4>
+                                                                <h4 style="margin-top:12px">{{t[0].calculado_horas_uteis_dispendidas| tempo}} </h4>
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -122,13 +147,28 @@
                                                                 Previsao conclusao:
                                                             </td>
                                                             <td>
-                                                                <h4 style="margin-top:12px">{{t.calculado_momento_conclusao | data}} </h4>
+                                                                <h4 style="margin-top:12px">{{t[0].calculado_momento_conclusao| data}} </h4>
                                                             </td>
                                                             <td>
-                                                                Tempo previsto:
+                                                                Tempo Util previsto:
                                                             </td>
                                                             <td>
-                                                                <h4 style="margin-top:12px">{{t.calculado_previsao_util_conclusao | tempo}} </h4>
+                                                                <h4 style="margin-top:12px">{{t[0].calculado_previsao_util_conclusao| tempo}} </h4>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Previsao Inicio:
+                                                            </td>
+                                                            <td>
+                                                                <h4 style="margin-top:12px" ng-if="tarefa_principal.id!==t[0].id">{{t[0].calculado_previsao_inicio| data}} </h4>
+                                                                <div ng-if="tarefa_principal.id===t[0].id">Iniciada...</div>
+                                                            </td>
+                                                            <td>
+                                                                Tempo Util Faltante
+                                                            </td>
+                                                            <td>
+                                                                <h4 style="margin-top:12px">{{t[0].calculado_tempo_util_faltante| tempo}} </h4>
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -136,12 +176,12 @@
                                                                 Tipo:
                                                             </td>
                                                             <td colspan="3">
-                                                                <h4 style="margin-top:12px">{{t.tipo_tarefa.nome}} - ({{t.tipo_tarefa.tempo_medio*60}}m em media) </h4>
+                                                                <h4 style="margin-top:12px">{{t[0].tipo_tarefa.nome}} - ({{t[0].tipo_tarefa.tempo_medio * 60}}m em media) </h4>
                                                             </td>
                                                         </tr>
                                                     </table>          
                                                 </div>
-                                            </div>
+                                            
 
                                             <!-- paginação  -->
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
@@ -423,6 +463,81 @@
                     </div>
                 </div>
 
+                <div class="modal fade" id="tarefa" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-eye fa-3x"></i>&nbsp;&nbsp;&nbsp;Detalhes da Tarefa</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+
+                                <table style="width:100%" class="table table-striped">
+                                    <tr>
+                                        <td style="width:20%">
+                                            Titulo:
+                                        </td>
+                                        <td style="text-align: center;text-decoration: underline">
+                                            <h4 style="margin-top:12px">{{tarefa.titulo}}</h4>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:20%">
+                                            Descricao:
+                                        </td>
+                                        <td style="text-align: center">
+                                            {{tarefa.descricao}}
+                                        </td>
+                                    </tr>
+                                </table>
+                                <hr>
+                                <i class="fas fa-random" style="display: inline"></i>&nbsp<h4 style="display: inline">Andamento</h4>
+
+                                <button class="btn btn-success" style="display: inline;float:right"  data-toggle="modal" data-target="#observacao" ng-click="novaObservacaoTarefa()"><i class="fas fa-plus-circle"></i>&nbsp Cadastrar Andamento</button>
+                                <br>
+                                <hr>
+                                <div ng-if="tarefa.observacoes.length === 0">
+
+                                    Sem nenhum tipo de andamento
+
+                                </div>
+                                <div ng-repeat="obs in tarefa.observacoes" style="border:1px dashed;border-radius:3px;padding:10px">
+                                    Porcentagem: <strong>{{obs.porcentage}} %</strong>
+                                    <hr>
+                                    Data: <strong>{{obs.momento| data}}</strong>
+                                    <hr>
+                                    Descricao: <strong>{{obs.observacao}}</strong>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="modal fade" id="observacao" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Nova observacao para a tarefa</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                Data: <strong>{{observacao_tarefa.momento| data}}</strong>
+                                <hr>
+                                Porcentagem: <input style="width:30%;text-align:center" type="number" class="form-control" ng-model="observacao_tarefa.porcentagem"></input>
+                                <hr>
+                                <textarea placeholder="Observacao" ng-model="observacao_tarefa.observacao" class="form-control" style="width:100%" rows="10">
+                                    
+                                </textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-sucess" data-dismiss="modal" aria-label="Close" ng-click="addObservacao()"><i class="fas fa-check"></i>&nbspCadastrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- /.modal-content DELETE --> 
                 <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
