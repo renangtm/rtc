@@ -70,7 +70,7 @@ class IATarefas {
                     }
                 }
             }
-
+             
             $intervalos_realmente_uteis = array();
             foreach ($intervalos_uteis as $key => $intervalo) {
                 $pilha = array($intervalo);
@@ -103,7 +103,7 @@ class IATarefas {
                     }
                 }
             }
-
+           
             //------ intervalos_realmente_uteis contem os intervalos dentro do expediente e sem ausencias
 
             $tempo_util = 0;
@@ -129,7 +129,7 @@ class IATarefas {
         }
 
         //ordenando tarefas;
-
+         
         $tarefas_ativas_passivas = array(array(), array());
 
         foreach ($tarefas as $key => $tarefa) {
@@ -151,7 +151,7 @@ class IATarefas {
                 }
             }
         }
-
+        
         $tarefas_ativas = $tarefas_ativas_passivas[0];
         $tarefas_passivas = $tarefas_ativas_passivas[1];
 
@@ -180,7 +180,6 @@ class IATarefas {
         }
         
         
-
         $x1 = round(microtime(true) * 1000);
         foreach ($tarefas_ativas as $key => $value) {
 

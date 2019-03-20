@@ -502,7 +502,7 @@
 
                                 </div>
                                 <div ng-repeat="obs in tarefa.observacoes" style="border:1px dashed;border-radius:3px;padding:10px">
-                                    Porcentagem: <strong>{{obs.porcentage}} %</strong>
+                                    Porcentagem: <strong>{{obs.porcentagem}} %</strong>
                                     <hr>
                                     Data: <strong>{{obs.momento| data}}</strong>
                                     <hr>

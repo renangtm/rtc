@@ -161,12 +161,16 @@
                                                                     </tr>
 
                                                                     <?php
+                                                                    
                                                                     $valor_icms += $value->icms*$value->quantidade;
                                                                     $valor_total += $value->quantidade * ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete);
-                                                                    $base_calculo += $value->base_calculo;
+                                                                    $base_calculo += $value->base_calculo*$value->quantidade;
 
-                                                                    $alicota = round($valor_icms * 100 / $base_calculo, 2);
+                                                                    
                                                                 }
+                                                                
+                                                                $alicota = round($valor_icms * 100 / $base_calculo, 0);
+                                                                
                                                                 ?> 
                                                                 <tfoot style=""> 
                                                                     <tr style=""> 

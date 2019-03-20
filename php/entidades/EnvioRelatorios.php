@@ -11,7 +11,7 @@
  *
  * @author Renan
  */
-class TarefasCronometroAutomaticas {
+class EnvioRelatorios {
 
     public $dia;
     public $mes;

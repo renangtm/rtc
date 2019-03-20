@@ -38,7 +38,7 @@ class TipoTarefa {
         $this->excluido = false;
     }
 
-    public function aoFinalizar() {
+    public function aoFinalizar($tarefa) {
         
     }
 

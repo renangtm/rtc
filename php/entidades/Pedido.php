@@ -491,10 +491,13 @@ class Pedido {
     public function gerarCobranca(){
         
         $retorno = $this->forma_pagamento->aoFinalizarPedido($this);
-        $log = Logger::gerarLog($this, "Cobranca via ".$this->forma_pagamento->nome.", gerada $retorno");        
-        $this->empresa->email->enviarEmail($this->empresa->email->filtro(Email::$FINANCEIRO),"Cobranca de pagamento",$log->toHtml());
-        $this->empresa->email->enviarEmail($this->cliente->email->filtro(Email::$FINANCEIRO),"Cobranca de pagamento",$log->toHtml());
-        
+        $log = Logger::gerarLog($this, "Cobranca via ".$this->forma_pagamento->nome.", gerada $retorno");
+        try{
+            $this->empresa->email->enviarEmail($this->empresa->email->filtro(Email::$FINANCEIRO),"Cobranca de pagamento",$log->toHtml());
+            $this->empresa->email->enviarEmail($this->cliente->email->filtro(Email::$FINANCEIRO),"Cobranca de pagamento",$log->toHtml());
+        }catch(Exception $ex){
+            
+        }
         return $retorno;
         
     }

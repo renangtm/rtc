@@ -165,6 +165,10 @@ class Sistema {
         return new Permissao(42, "Expediente dos colaboradores");
     }
 
+    public static function P_TAREFAS() {
+        return new Permissao(43, "Tarefas");
+    }
+
     public static function TT_ANALISE_CREDITO($id_empresa) {
 
         return new TTAnaliseCredito($id_empresa);
@@ -175,22 +179,80 @@ class Sistema {
         return new TTConfirmacaoPagamento($id_empresa);
     }
 
-    public static function avisoDEVS($aviso){
-        
+    public static function TT_PROBLEMA_INTERNET($id_empresa) {
+
+        return new TTProblemaInternet($id_empresa);
+    }
+
+    public static function TT_PROBLEMA_ENVIO_EMAIL($id_empresa) {
+
+        return new TTProblemaEnvioEmail($id_empresa);
+    }
+
+    public static function TT_PROBLEMA_MAQUINA($id_empresa) {
+
+        return new TTProblemaMaquina($id_empresa);
+    }
+
+    public static function TT_MODIFICACAO_SIMPLES_SISTEMA($id_empresa) {
+
+        return new TTModificacaoSimplesSistema($id_empresa);
+    }
+
+    public static function TT_MODIFICACAO_SISTEMA($id_empresa) {
+
+        return new TTModificacaoSistema($id_empresa);
+    }
+
+    public static function TT_MODIFICACAO_COMPLEXA_SISTEMA($id_empresa) {
+
+        return new TTModificacaoComplexaSistema($id_empresa);
+    }
+
+    public static function TT_ATIVIDADE_COMUM($id_empresa) {
+
+        return new TTAtividadeComum($id_empresa);
+    }
+
+    public static function TT_PROSPECCAO_CLIENTE($id_empresa) {
+
+        return new TTProspeccaoDeCliente($id_empresa);
+    }
+
+    public static function TT_RECEPCAO_CLIENTE($id_empresa) {
+
+        return new TTRecepcaoCliente($id_empresa);
+    }
+
+    public static function TT_SUPORTE_CLIENTE($id_empresa) {
+
+        return new TTSuporteCliente($id_empresa);
+    }
+
+    public static function TT_FAQ_CLIENTE($id_empresa) {
+
+        return new TTFAQCliente($id_empresa);
+    }
+
+    public static function TT_ATENDIMENTO_POSVENDA($id_empresa) {
+
+        return new TTAtendimentoPosVenda($id_empresa);
+    }
+
+    public static function avisoDEVS($aviso) {
+
         $email = new Email("renan.miranda@agrofauna.com.br");
-        $email->senha="5hynespt";
+        $email->senha = "5hynespt";
         $destino = new Email("renan_goncalves@outlook.com.br");
-        
-        try{
-            
+
+        try {
+
             $email->enviarEmail($destino, 'Aviso', $aviso);
-            
-        }catch(Exception $ex){
+        } catch (Exception $ex) {
             
         }
-        
     }
-    
+
     public static function getTarefasFixas($empresa) {
 
         $tarefas = $empresa->tarefas_fixas;
@@ -365,7 +427,7 @@ class Sistema {
                 $t->observacoes[] = $obs;
             }
         }
-        
+
         $ps->close();
 
         $menor = -1;
@@ -528,6 +590,8 @@ class Sistema {
             $empresa = new Agronomia();
         } else if ($tipo === 7) {
             $empresa = new Empresa();
+        } else if ($tipo === 8) {
+            $empresa = new Tecnologia();
         }
 
         if ($empresa !== null) {
@@ -907,8 +971,10 @@ class Sistema {
         $grupos = array();
         $campanhas = array();
 
-
         foreach ($carrinho as $key => $item) {
+
+            if ($item->quantidade_comprada <= 0)
+                continue;
 
             $hash = "e" . $item->empresa->id;
 
@@ -1033,7 +1099,7 @@ class Sistema {
                                     $primeira_maior = $lote->validade;
                                 }
                             }
-                            $pp->aux = max(0,$pp->aux);
+                            $pp->aux = max(0, $pp->aux);
                             if ($pp->aux > 0 && $primeira_maior > 0) {
                                 $np = Utilidades::copyId0($pp);
                                 $np->quantidade = $pp->aux;
@@ -1308,7 +1374,7 @@ class Sistema {
         global $obj;
         $obj = $p;
 
-        $servico = realpath('../html_email');
+        $servico = realpath('../../html_email');
         $servico .= "/$nom.php";
 
         ob_start();
@@ -2692,7 +2758,8 @@ class Sistema {
                 Sistema::P_CONTROLADOR_TAREFAS(),
                 Sistema::P_ORGANOGRAMA(),
                 Sistema::P_ORGANOGRAMA_TOTAL(),
-                Sistema::P_EXPEDIENTE()
+                Sistema::P_EXPEDIENTE(),
+                Sistema::P_TAREFAS()
                     )), new RTC(7, array(
                 Sistema::P_GERENCIADOR()
         )));
@@ -2763,7 +2830,7 @@ class Sistema {
         $cat = new CategoriaProduto();
         $cat->nome = "Agricola";
         $cat->id = 1164;
-        $cat->base_calculo = 60;
+        $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
         $cat->loja = true;
         return $cat;
@@ -2787,7 +2854,7 @@ class Sistema {
         $cat = new CategoriaProduto();
         $cat->nome = "Agricola Fora de Linha";
         $cat->id = 2;
-        $cat->base_calculo = 60;
+        $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
         $cat->loja = false;
         return $cat;

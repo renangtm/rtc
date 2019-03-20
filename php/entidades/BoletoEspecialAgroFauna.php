@@ -61,7 +61,7 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
             $valor += $value->quantidade * ($value->valor_base + $value->ipi + $value->frete + $value->juros + $value->icms);
         }
         $agora = round(microtime(true) * 1000);
-        $momento = $agora + $pedido->prazo * 24 * 60 * 60 * 1000;
+        $momento = $agora + ($pedido->prazo+1) * 24 * 60 * 60 * 1000;
 
         if ($bairro === "") {
             $bairro = "sem bairro";
@@ -88,7 +88,7 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
 
         $lk = $objeto->link;
 
-        return "<a style='margin-left:10px' href='$lk'><i class='fas fa-download'></i>&nbsp Abrir boleto</a>";
+        return "<a target='_blank' style='margin-left:10px' href='$lk'><i class='fas fa-download'></i>&nbsp Abrir boleto</a>";
     }
 
     public function habilitada($pedido) {

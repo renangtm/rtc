@@ -96,6 +96,13 @@ class Tarefa {
         $ps = $con->getConexao()->prepare("UPDATE tarefa SET intervalos_execucao='$intervalos',inicio_minimo=inicio_minimo,porcentagem_conclusao=$porcentagem WHERE id=$this->id");
         $ps->execute();
         $ps->close();
+        
+        if($this->porcentagem_conclusao >= 100){
+
+            $this->tipo_tarefa->aoFinalizar($this);
+            
+        }
+        
     }
 
     public function merge($con) {

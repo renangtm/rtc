@@ -95,6 +95,11 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         $cr = new TarefasCronometroAutomaticas();
         $cr->executar($con);
         
+        
+        Sistema::novaTarefaEmpresa($con, $t, $emp);
+        
+       
+
     }
 
     public static function uniord($u) {

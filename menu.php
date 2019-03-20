@@ -218,42 +218,26 @@ $possiveis[0] = $rtc;
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item dropdown notification">
-                    <a style="display:none" class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-fw fa-bell"></i> <span class="indicator"></span></a>
+                <li class="nav-item dropdown notification" ng-controller="crtCobranca">
+                    <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-fw fa-bell"></i> <span ng-if="cobrar" class="indicator"></span></a>
                     <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
                         <li>
-                            <div class="notification-title"> Notification</div>
+                            <div class="notification-title"> Notificacoes</div>
                             <div class="notification-list">
                                 <div class="list-group">
-                                    <a href="#" class="list-group-item list-group-item-action active">
+                                    <a href="tarefas.php" style="margin-bottom: 10px" class="list-group-item list-group-item-action active" ng-if="cobrar" ng-repeat="cobranca in cobrancas">
                                         <div class="notification-info">
-                                            <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Jeremy Rakestraw</span>accepted your invitation to join the team.
-                                                <div class="notification-date">2 min ago</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="notification-info">
-                                            <div class="notification-list-user-img"><img src="assets/images/avatar-3.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                            <div class="notification-list-user-block"><span class="notification-list-user-name">John Abraham </span>is now following you
-                                                <div class="notification-date">2 days ago</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="notification-info">
-                                            <div class="notification-list-user-img"><img src="assets/images/avatar-4.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Monaan Pechi</span> is watching your main repository
-                                                <div class="notification-date">2 min ago</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="notification-info">
-                                            <div class="notification-list-user-img"><img src="assets/images/avatar-5.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Jessica Caruso</span>accepted your invitation to join the team.
-                                                <div class="notification-date">2 min ago</div>
+                                            <div class="notification-list-user-block">
+                                                <i style="display:inline" class="fas fa-clock"></i>&nbsp<h4 style="display:inline">{{cobranca.titulo}}</h4>
+                                                <br>
+                                                {{cobranca.tipo_tarefa.nome}}
+                                                <br>
+                                                Prazo: <strong>{{cobranca.calculado_momento_conclusao | data}}</strong>
+                                                <div class="notification-date">{{cobranca.porcentagem_conclusao}} % concluida</div>
+                                                <div ng-if="cobranca.id===cobrancas[0].id" style="width:100%;text-align: center;font-style: italic">
+                                                    <hr>
+                                                    De Atençao a esta pendencia.
+                                                </div>
                                             </div>
                                         </div>
                                     </a>
@@ -261,7 +245,7 @@ $possiveis[0] = $rtc;
                             </div>
                         </li>
                         <li>
-                            <div class="list-footer"> <a href="#">View all notifications</a></div>
+                            <div class="list-footer"> <a href="tarefas.php">Ver todas tarefas</a></div>
                         </li>
                     </ul>
                 </li>
@@ -338,9 +322,11 @@ $possiveis[0] = $rtc;
                             <a class="nav-link" href="cfg.php" ><button class="btn btn-warning" onmousedown="tutorial('CFG', 'Aqui � onde voc� cria novos usuarios para a sua empresa, atribui autoriza��es e retira')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-male mr-2"></i>CFG</a>
                         </li>         
                     <?php } ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="tarefas.php" ><button class="btn btn-warning" onmousedown="tutorial('Tarefas', 'Aqui e onde voce ve suas tarefas e cria novas tarefas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks mr-2"></i>Tarefas</a>
-                        </li>
+                    <?php if ($usuario->temPermissao(Sistema::P_TAREFAS()->m("C"))) { ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="tarefas.php" ><button class="btn btn-warning" onmousedown="tutorial('Tarefas', 'Aqui e onde voce ve suas tarefas e cria novas tarefas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks mr-2"></i>Tarefas</a>
+                    </li>
+                    <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_ORGANOGRAMA()->m("C")) || $usuario->temPermissao(Sistema::P_ORGANOGRAMA_TOTAL()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="organograma.php" ><button class="btn btn-warning" onmousedown="tutorial('Organograma', 'Aqui e onde voce cria as relacoes hierarquicas de sua empresa')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-sitemap mr-2"></i>Organograma</a>

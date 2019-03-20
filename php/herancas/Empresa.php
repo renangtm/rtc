@@ -13,6 +13,54 @@
  */
 class Empresa {
 
+    public static function CF_SEM_CARGO($emp) {
+        return new CargoFixo(0, "Sem cargo", $emp);
+    }
+
+    public static function CF_DIRETOR($emp) {
+        return new CargoFixo(1, "Diretor", $emp);
+    }
+
+    public static function CF_FAXINEIRA($emp) {
+        return new CargoFixo(2, "Faxineira", $emp);
+    }
+
+    public static function CF_PORTEIRO($emp) {
+        return new CargoFixo(3, "Porteiro", $emp);
+    }
+
+    public static function CF_ESTAGIARIO_TI($emp) {
+        return new CargoFixo(4, "Estagiario de TI", $emp);
+    }
+
+    public static function CF_ESTAGIARIO_LOGISTICA($emp) {
+        return new CargoFixo(5, "Estagiario de Logistica", $this);
+    }
+
+    public static function CF_AUXILIAR_ADM($emp) {
+        return new CargoFixo(6, "Auxiliar Administrativo", $this);
+    }
+
+    public static function CF_ENCARREGADO_LOGISTICA($emp) {
+        return new CargoFixo(7, "Encarregado de Logistica", $this);
+    }
+
+    public static function CF_COORDENADOR_LOGISTICA($emp) {
+        return new CargoFixo(8, "Coordenador de Logistica", $this);
+    }
+
+    public static function CF_SUPERVISOR_LOGISTICA($emp) {
+        return new CargoFixo(9, "Supervisor de Logistica", $this);
+    }
+
+    public static function CF_FINANCEIRO($emp) {
+        return new CargoFixo(10, "Financeiro", $this);
+    }
+
+    public static function CF_SEPARADOR($emp) {
+        return new CargoFixo(11, "Separador", $this);
+    }
+
     public $id;
     public $nome;
     public $email;
@@ -48,8 +96,23 @@ class Empresa {
         $this->endereco = new Endereco();
         $this->tipo_empresa = false;
         $this->permissoes_especiais = array();
-        $this->cargos_fixos = array(new CargoFixo(0, "Sem cargo", $this));
-        $this->tarefas_fixas = array("TT_ANALISE_CREDITO", "TT_CONFIRMACAO_PAGAMENTO");
+        $this->cargos_fixos = array(
+            Empresa::CF_SEM_CARGO($this),
+            Empresa::CF_DIRETOR($this),
+            Empresa::CF_FAXINEIRA($this),
+            Empresa::CF_PORTEIRO($this),
+            Empresa::CF_ESTAGIARIO_TI($this),
+            Empresa::CF_ESTAGIARIO_LOGISTICA($this),
+            Empresa::CF_AUXILIAR_ADM($this),
+            Empresa::CF_ENCARREGADO_LOGISTICA($this),
+            Empresa::CF_COORDENADOR_LOGISTICA($this),
+            Empresa::CF_SUPERVISOR_LOGISTICA($this),
+            Empresa::CF_FINANCEIRO($this),
+            Empresa::CF_SEPARADOR($this)
+        );
+        $this->tarefas_fixas = array(
+            "TT_ATIVIDADE_COMUM"
+        );
 
         if ($id > 0 && $cf !== null) {
 
