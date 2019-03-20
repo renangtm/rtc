@@ -17,8 +17,6 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
     public function testSimple() {
 
-
-
         $con = new ConnectionFactory();
         /*
           $estados = Sistema::getEstados($con);
@@ -92,21 +90,10 @@ class testeSistema extends PHPUnit_Framework_TestCase {
          * 
          */
 
-
-
         //echo Utilidades::toJson($produtos);
-        
-        $emp = new Empresa(1733);
-        
-        $usu = $emp->getUsuarios($con, 0, 1);
-        $usu = $usu[0];
-        
-        $expedientes = $usu->getExpedientes($con);
-        $ausencias = $usu->getAusencias($con);
-        $tarefas = $usu->getTarefas($con);
-        
-        $tarefas = IATarefas::aplicar($expedientes, $ausencias, $tarefas);
-        
+                
+        $cr = new TarefasCronometroAutomaticas();
+        $cr->executar($con);
         
     }
 

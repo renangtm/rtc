@@ -144,7 +144,7 @@ class Email {
     }
 
     public function enviarEmail($destino, $titulo, $conteudo) {
-
+        
         $enderecos = $destino->getEnderecos();
 
         $th = $this->getEnderecos();

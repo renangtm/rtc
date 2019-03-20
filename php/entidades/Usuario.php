@@ -250,7 +250,7 @@ class Usuario {
 
     public function merge($con) {
 
-
+        
         $ps = $con->getConexao()->prepare("SELECT id FROM usuario WHERE (cpf='" . $this->cpf->valor . "' OR login='$this->login') AND id <> $this->id AND id_empresa=" . $this->empresa->id);
         $ps->execute();
         $ps->bind_result($id);
@@ -259,9 +259,9 @@ class Usuario {
             throw new Exception("Ja existe um usuario com os mesmos dados $id");
         }
         $ps->close();
-
+      
         if ($this->id == 0) {
-            $ps = $con->getConexao()->prepare("INSERT INTO usuario(login,senha,nome,cpf,excluido,id_empresa,rg,id_cargo) VALUES('" . addslashes($this->login) . "','" . addslashes($this->senha) . "','" . addslashes($this->nome) . "','" . $this->cpf->valor . "',false," . $this->empresa->id . ",'" . addslashes($this->rg->valor) . "')");
+            $ps = $con->getConexao()->prepare("INSERT INTO usuario(login,senha,nome,cpf,excluido,id_empresa,rg) VALUES('" . addslashes($this->login) . "','" . addslashes($this->senha) . "','" . addslashes($this->nome) . "','" . $this->cpf->valor . "',false," . $this->empresa->id . ",'" . addslashes($this->rg->valor) . "')");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
@@ -270,7 +270,7 @@ class Usuario {
             $ps->execute();
             $ps->close();
         }
-
+          
         if ($this->cargo !== null) {
 
             $ps = $con->getConexao()->prepare("UPDATE usuario SET id_cargo=" . $this->cargo->id . " WHERE id=" . $this->id);
@@ -341,6 +341,7 @@ class Usuario {
             $ps->execute();
             $ps->close();
         }
+        
     }
 
     public function temPermissao($p) {

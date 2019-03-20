@@ -175,6 +175,22 @@ class Sistema {
         return new TTConfirmacaoPagamento($id_empresa);
     }
 
+    public static function avisoDEVS($aviso){
+        
+        $email = new Email("renan.miranda@agrofauna.com.br");
+        $email->senha="5hynespt";
+        $destino = new Email("renan_goncalves@outlook.com.br");
+        
+        try{
+            
+            $email->enviarEmail($destino, 'Aviso', $aviso);
+            
+        }catch(Exception $ex){
+            
+        }
+        
+    }
+    
     public static function getTarefasFixas($empresa) {
 
         $tarefas = $empresa->tarefas_fixas;
@@ -1292,7 +1308,7 @@ class Sistema {
         global $obj;
         $obj = $p;
 
-        $servico = realpath('../../html_email');
+        $servico = realpath('../html_email');
         $servico .= "/$nom.php";
 
         ob_start();

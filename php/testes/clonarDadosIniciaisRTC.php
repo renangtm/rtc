@@ -1417,327 +1417,327 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         $filial = new Empresa(1733, $con);
         $matriz = new Empresa(1734, $con);
 
-/*
-        $empresas = array();
-
-        $ps = $con->getConexao()->prepare("SELECT id FROM empresa WHERE id > 1735");
-        $ps->execute();
-        $ps->bind_result($ide);
-        while ($ps->fetch()) {
-            $empresas[] = $ide;
-        }
-        $ps->close();
-
-        $transportadoras = $matriz->getTransportadoras($con, 0, 100000, "", "");
-        foreach ($transportadoras as $key => $value) {
-
-            foreach ($value->telefones as $key2 => $value2) {
-                $value2->id = 0;
-            }
-            foreach ($empresas as $ke => $ide) {
-                $value->id = 0;
-                $value->tabela = null;
-                $value->endereco->id = 0;
-                $value->email->id = 0;
-                $value->empresa = new stdClass();
-                $value->empresa->id = $ide;
-                $value->merge($con);
-            }
-        }
-*/
-        
         /*
-        $g = new Getter($filial);
+          $empresas = array();
 
-        $clienteFiltradoMatriz = new Cliente();
-        $clienteFiltradoMatriz->id = 126280;
-        
-        $clienteFiltradoFilial = new Cliente();
-        $clienteFiltradoFilial->id = 23;
-        
-        $clientes_cnpj = array();
-        $fornecedores_cnpj = array();
-        $transportadoras_cnpj = array();
-        $notas = array();
+          $ps = $con->getConexao()->prepare("SELECT id FROM empresa WHERE id > 1735");
+          $ps->execute();
+          $ps->bind_result($ide);
+          while ($ps->fetch()) {
+          $empresas[] = $ide;
+          }
+          $ps->close();
 
-        $nota = new Nota();
+          $transportadoras = $matriz->getTransportadoras($con, 0, 100000, "", "");
+          foreach ($transportadoras as $key => $value) {
 
-        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,IFNULL(n.P_OBSERV1,'') like '%Cancel%',c.CGCCPF,UNIX_TIMESTAMP(n.P_DATAMOV)*1000,n.P_ATIVIDAD,n.P_NUMCHEC,t.CNPJ,UNIX_TIMESTAMP(IFNULL(p.VENCTO,n.P_DATAMOV))*1000,IFNULL(p.VALOR,n.P_VALOR) FROM db_agrofauna_filial17.CADPED n INNER JOIN db_agrofauna_filial17.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO LEFT JOIN db_agrofauna_filial17.PARCFIC p ON p.FICHA=n.P_NRCONTRO WHERE n.P_DATAMOV >= '2019-2-22' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> ''");
-        $ps->execute();
-        $ps->bind_result($ficha, $cancelada, $cnpj, $data, $es, $nf, $cnpj_transportadora, $vencimento, $valor);
-        while ($ps->fetch()) {
+          foreach ($value->telefones as $key2 => $value2) {
+          $value2->id = 0;
+          }
+          foreach ($empresas as $ke => $ide) {
+          $value->id = 0;
+          $value->tabela = null;
+          $value->endereco->id = 0;
+          $value->email->id = 0;
+          $value->empresa = new stdClass();
+          $value->empresa->id = $ide;
+          $value->merge($con);
+          }
+          }
+         */
 
-            if (!isset($notas[$ficha])) {
+        /*
+          $g = new Getter($filial);
 
-                $nota = new Nota();
-                $nota->interferir_estoque = false;
+          $clienteFiltradoMatriz = new Cliente();
+          $clienteFiltradoMatriz->id = 126280;
 
-                $cliente = null;
+          $clienteFiltradoFilial = new Cliente();
+          $clienteFiltradoFilial->id = 23;
 
-                if (isset($clientes_cnpj[$cnpj])) {
-                    $cliente = $clientes_cnpj[$cnpj];
-                } else {
-                    $cliente = $g->getClienteViaCnpj($con, new CNPJ($cnpj));
-                    if ($cliente === null) {
-                        $cliente = $clienteFiltradoFilial;
-                    }
-                    $clientes_cnpj[$cnpj] = $cliente;
-                }
+          $clientes_cnpj = array();
+          $fornecedores_cnpj = array();
+          $transportadoras_cnpj = array();
+          $notas = array();
 
-                if ($es === 'E') {
-                    if (isset($fornecedores_cnpj[$cnpj])) {
-                        $cliente = $fornecedores_cnpj[$cnpj];
-                    } else {
-                        $cliente = $g->getFornecedorViaCliente($con, $cliente);
-                        if ($cliente === null) {
-                            continue;
-                             echo "Ficha $ficha, parou por fornecedor ou cliente ";
-                        }
-                        $fornecedores_cnpj[$cnpj] = $cliente;
-                    }
-                    $nota->fornecedor = $cliente;
-                } else {
-                    $nota->cliente = $cliente;
-                }
+          $nota = new Nota();
 
-                $transportadora = null;
-                if (isset($transportadoras_cnpj[$cnpj_transportadora])) {
-                    $transportadora = $transportadoras_cnpj[$cnpj_transportadora];
-                } else {
-                    $transportadora = $g->getTransportadoraViaCnpj($con, new CNPJ($cnpj_transportadora));
-                    $transportadoras_cnpj[$cnpj_transportadora] = $transportadora;
-                }
+          $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,IFNULL(n.P_OBSERV1,'') like '%Cancel%',c.CGCCPF,UNIX_TIMESTAMP(n.P_DATAMOV)*1000,n.P_ATIVIDAD,n.P_NUMCHEC,t.CNPJ,UNIX_TIMESTAMP(IFNULL(p.VENCTO,n.P_DATAMOV))*1000,IFNULL(p.VALOR,n.P_VALOR) FROM db_agrofauna_filial17.CADPED n INNER JOIN db_agrofauna_filial17.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO LEFT JOIN db_agrofauna_filial17.PARCFIC p ON p.FICHA=n.P_NRCONTRO WHERE n.P_DATAMOV >= '2019-2-22' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> ''");
+          $ps->execute();
+          $ps->bind_result($ficha, $cancelada, $cnpj, $data, $es, $nf, $cnpj_transportadora, $vencimento, $valor);
+          while ($ps->fetch()) {
 
-                if ($transportadora === null) {
-                    echo "Ficha $ficha, parou por transportadora ";
-                    continue;
-                }
+          if (!isset($notas[$ficha])) {
 
-                $nota->cancelada = $cancelada == 1;
-                $nota->emitida = true;
-                $nota->data_emissao = $data;
-                $nota->empresa = $filial;
-                $nota->ficha = $ficha;
-                $nota->numero = $nf;
-                $nota->saida = $es === 'S';
-                $nota->transportadora = $transportadora;
-                $nota->forma_pagamento = Sistema::getFormasPagamento();
-                $nota->forma_pagamento = $nota->forma_pagamento[0];
-                $nota->frete_destinatario_remetente = false;
-                $nota->vencimentos = array();
-                $nota->produtos = array();
+          $nota = new Nota();
+          $nota->interferir_estoque = false;
 
-                $notas[$ficha] = $nota;
-            }
+          $cliente = null;
 
-            $nota = $notas[$ficha];
+          if (isset($clientes_cnpj[$cnpj])) {
+          $cliente = $clientes_cnpj[$cnpj];
+          } else {
+          $cliente = $g->getClienteViaCnpj($con, new CNPJ($cnpj));
+          if ($cliente === null) {
+          $cliente = $clienteFiltradoFilial;
+          }
+          $clientes_cnpj[$cnpj] = $cliente;
+          }
 
-            $v = new Vencimento();
-            $v->valor = $valor;
-            $v->data = $vencimento;
-            $v->nota = $nota;
+          if ($es === 'E') {
+          if (isset($fornecedores_cnpj[$cnpj])) {
+          $cliente = $fornecedores_cnpj[$cnpj];
+          } else {
+          $cliente = $g->getFornecedorViaCliente($con, $cliente);
+          if ($cliente === null) {
+          continue;
+          echo "Ficha $ficha, parou por fornecedor ou cliente ";
+          }
+          $fornecedores_cnpj[$cnpj] = $cliente;
+          }
+          $nota->fornecedor = $cliente;
+          } else {
+          $nota->cliente = $cliente;
+          }
 
-            $nota->vencimentos[] = $v;
-        }
-        $ps->close();
+          $transportadora = null;
+          if (isset($transportadoras_cnpj[$cnpj_transportadora])) {
+          $transportadora = $transportadoras_cnpj[$cnpj_transportadora];
+          } else {
+          $transportadora = $g->getTransportadoraViaCnpj($con, new CNPJ($cnpj_transportadora));
+          $transportadoras_cnpj[$cnpj_transportadora] = $transportadora;
+          }
 
-        $categoria_default = Sistema::getCategoriaProduto($con);
-        $categoria_default = $categoria_default[2];
+          if ($transportadora === null) {
+          echo "Ficha $ficha, parou por transportadora ";
+          continue;
+          }
 
-        $produtos = array();
+          $nota->cancelada = $cancelada == 1;
+          $nota->emitida = true;
+          $nota->data_emissao = $data;
+          $nota->empresa = $filial;
+          $nota->ficha = $ficha;
+          $nota->numero = $nf;
+          $nota->saida = $es === 'S';
+          $nota->transportadora = $transportadora;
+          $nota->forma_pagamento = Sistema::getFormasPagamento();
+          $nota->forma_pagamento = $nota->forma_pagamento[0];
+          $nota->frete_destinatario_remetente = false;
+          $nota->vencimentos = array();
+          $nota->produtos = array();
 
-        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,p.QTDPRO,p.VALUNI,p.NATOPE,pi.F_DESCRICA,pi.F_CODPROD FROM db_agrofauna_filial17.CADPED n INNER JOIN db_agrofauna_filial17.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna_filial17.COMFPFIC p ON p.CONTRO=n.P_NRCONTRO INNER JOIN db_agrofauna_filial17.PRODUTO pi ON pi.F_CODPROD=p.CODPRO INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO WHERE n.P_DATAMOV > '2014-19-02' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> '' AND n.P_DATMOV >= '2019-2-22'");
-        $ps->execute();
-        $ps->bind_result($ficha, $qtd, $val, $cfop, $nom, $id);
-        while ($ps->fetch()) {
-            if (!isset($notas[$ficha]))
-                continue;
+          $notas[$ficha] = $nota;
+          }
 
+          $nota = $notas[$ficha];
 
-            $nota = $notas[$ficha];
+          $v = new Vencimento();
+          $v->valor = $valor;
+          $v->data = $vencimento;
+          $v->nota = $nota;
 
-            if (!isset($produtos[$id])) {
-                $prod = new Produto();
-                $prod->id_universal = $id;
-                $prod->nome = $nom;
-                $prod->categoria = $categoria_default;
-                $prod->empresa = $filial;
+          $nota->vencimentos[] = $v;
+          }
+          $ps->close();
 
-                $produtos[$id] = $prod;
-            }
+          $categoria_default = Sistema::getCategoriaProduto($con);
+          $categoria_default = $categoria_default[2];
 
-            $prod = $produtos[$id];
+          $produtos = array();
 
-            $pn = new ProdutoNota();
-            $pn->nota = $nota;
-            $pn->produto = $prod;
-            $pn->quantidade = $qtd;
-            $pn->valor_unitario = $val;
-            $pn->valor_total = $qtd * $val;
-            $pn->cfop = $cfop;
-
-            $nota->produtos[] = $pn;
-        }
-        $ps->close();
-
-        $produtos = $g->getProdutoViaProduto($con, $produtos);
-
-        foreach ($produtos as $key => $value) {
-            $produtos[$value->id_universal] = $value;
-        }
-
-        foreach ($notas as $key => $value) {
-            foreach ($value->produtos as $key2 => $value2) {
-                $value2->produto = $produtos[$value2->produto->id_universal];
-            }
-            $value->calcularImpostosAutomaticamente();
-            $value->validar = false;
-            $value->merge($con);
-            echo "Inserida a NFE de ficha $value->ficha";
-        }
+          $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,p.QTDPRO,p.VALUNI,p.NATOPE,pi.F_DESCRICA,pi.F_CODPROD FROM db_agrofauna_filial17.CADPED n INNER JOIN db_agrofauna_filial17.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna_filial17.COMFPFIC p ON p.CONTRO=n.P_NRCONTRO INNER JOIN db_agrofauna_filial17.PRODUTO pi ON pi.F_CODPROD=p.CODPRO INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO WHERE n.P_DATAMOV > '2014-19-02' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> '' AND n.P_DATMOV >= '2019-2-22'");
+          $ps->execute();
+          $ps->bind_result($ficha, $qtd, $val, $cfop, $nom, $id);
+          while ($ps->fetch()) {
+          if (!isset($notas[$ficha]))
+          continue;
 
 
-        $g = new Getter($matriz);
+          $nota = $notas[$ficha];
 
-        $clientes_cnpj = array();
-        $fornecedores_cnpj = array();
-        $transportadoras_cnpj = array();
-        $notas = array();
+          if (!isset($produtos[$id])) {
+          $prod = new Produto();
+          $prod->id_universal = $id;
+          $prod->nome = $nom;
+          $prod->categoria = $categoria_default;
+          $prod->empresa = $filial;
 
-        $nota = new Nota();
+          $produtos[$id] = $prod;
+          }
 
-        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,IFNULL(n.P_OBSERV1,'') like '%Cancel%',c.CGCCPF,UNIX_TIMESTAMP(n.P_DATAMOV)*1000,n.P_ATIVIDAD,n.P_NUMCHEC,t.CNPJ,UNIX_TIMESTAMP(IFNULL(p.VENCTO,n.P_DATAMOV))*1000,IFNULL(p.VALOR,n.P_VALOR) FROM db_agrofauna.CADPED n INNER JOIN db_agrofauna.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO LEFT JOIN db_agrofauna.PARCFIC p ON p.FICHA=n.P_NRCONTRO WHERE n.P_DATAMOV >= '2019-2-22' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> ''");
-        $ps->execute();
-        $ps->bind_result($ficha, $cancelada, $cnpj, $data, $es, $nf, $cnpj_transportadora, $vencimento, $valor);
-        while ($ps->fetch()) {
+          $prod = $produtos[$id];
 
-            if (!isset($notas[$ficha])) {
+          $pn = new ProdutoNota();
+          $pn->nota = $nota;
+          $pn->produto = $prod;
+          $pn->quantidade = $qtd;
+          $pn->valor_unitario = $val;
+          $pn->valor_total = $qtd * $val;
+          $pn->cfop = $cfop;
 
-                $nota = new Nota();
-                $nota->interferir_estoque = false;
+          $nota->produtos[] = $pn;
+          }
+          $ps->close();
 
-                $cliente = null;
+          $produtos = $g->getProdutoViaProduto($con, $produtos);
 
-                if (isset($clientes_cnpj[$cnpj])) {
-                    $cliente = $clientes_cnpj[$cnpj];
-                } else {
-                    $cliente = $g->getClienteViaCnpj($con, new CNPJ($cnpj));
-                    if ($cliente === null) {
-                        $cliente = $clienteFiltradoMatriz;
-                    }
-                    $clientes_cnpj[$cnpj] = $cliente;
-                }
+          foreach ($produtos as $key => $value) {
+          $produtos[$value->id_universal] = $value;
+          }
 
-                if ($es === 'E') {
-                    if (isset($fornecedores_cnpj[$cnpj])) {
-                        $cliente = $fornecedores_cnpj[$cnpj];
-                    } else {
-                        $cliente = $g->getFornecedorViaCliente($con, $cliente);
-                        if ($cliente === null) {
-                            continue;
-                        }
-                        $fornecedores_cnpj[$cnpj] = $cliente;
-                    }
-                    $nota->fornecedor = $cliente;
-                } else {
-                    $nota->cliente = $cliente;
-                }
-
-                $transportadora = null;
-                if (isset($transportadoras_cnpj[$cnpj_transportadora])) {
-                    $transportadora = $transportadoras_cnpj[$cnpj_transportadora];
-                } else {
-                    $transportadora = $g->getTransportadoraViaCnpj($con, new CNPJ($cnpj_transportadora));
-                    $transportadoras_cnpj[$cnpj_transportadora] = $transportadora;
-                }
-
-                if ($transportadora === null) {
-                    continue;
-                }
-
-                $nota->cancelada = $cancelada == 1;
-                $nota->emitida = true;
-                $nota->data_emissao = $data;
-                $nota->empresa = $matriz;
-                $nota->ficha = $ficha;
-                $nota->numero = $nf;
-                $nota->saida = $es === 'S';
-                $nota->transportadora = $transportadora;
-                $nota->forma_pagamento = Sistema::getFormasPagamento();
-                $nota->forma_pagamento = $nota->forma_pagamento[0];
-                $nota->frete_destinatario_remetente = false;
-                $nota->vencimentos = array();
-                $nota->produtos = array();
-
-                $notas[$ficha] = $nota;
-            }
-
-            $nota = $notas[$ficha];
-
-            $v = new Vencimento();
-            $v->valor = $valor;
-            $v->data = $vencimento;
-            $v->nota = $nota;
-
-            $nota->vencimentos[] = $v;
-        }
-        $ps->close();
-
-        $categoria_default = Sistema::getCategoriaProduto($con);
-        $categoria_default = $categoria_default[2];
-
-        $produtos = array();
-
-        $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,p.QTDPRO,p.VALUNI,p.NATOPE,pi.F_DESCRICA,pi.F_CODPROD FROM db_agrofauna.CADPED n INNER JOIN db_agrofauna.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna.COMFPFIC p ON p.CONTRO=n.P_NRCONTRO INNER JOIN db_agrofauna.PRODUTO pi ON pi.F_CODPROD=p.CODPRO INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO WHERE n.P_DATAMOV >= '2019-02-22' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> ''");
-        $ps->execute();
-        $ps->bind_result($ficha, $qtd, $val, $cfop, $nom, $id);
-        while ($ps->fetch()) {
-            if (!isset($notas[$ficha]))
-                continue;
+          foreach ($notas as $key => $value) {
+          foreach ($value->produtos as $key2 => $value2) {
+          $value2->produto = $produtos[$value2->produto->id_universal];
+          }
+          $value->calcularImpostosAutomaticamente();
+          $value->validar = false;
+          $value->merge($con);
+          echo "Inserida a NFE de ficha $value->ficha";
+          }
 
 
-            $nota = $notas[$ficha];
+          $g = new Getter($matriz);
 
-            if (!isset($produtos[$id])) {
-                $prod = new Produto();
-                $prod->id_universal = $id;
-                $prod->nome = $nom;
-                $prod->categoria = $categoria_default;
-                $prod->empresa = $filial;
+          $clientes_cnpj = array();
+          $fornecedores_cnpj = array();
+          $transportadoras_cnpj = array();
+          $notas = array();
 
-                $produtos[$id] = $prod;
-            }
+          $nota = new Nota();
 
-            $prod = $produtos[$id];
+          $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,IFNULL(n.P_OBSERV1,'') like '%Cancel%',c.CGCCPF,UNIX_TIMESTAMP(n.P_DATAMOV)*1000,n.P_ATIVIDAD,n.P_NUMCHEC,t.CNPJ,UNIX_TIMESTAMP(IFNULL(p.VENCTO,n.P_DATAMOV))*1000,IFNULL(p.VALOR,n.P_VALOR) FROM db_agrofauna.CADPED n INNER JOIN db_agrofauna.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO LEFT JOIN db_agrofauna.PARCFIC p ON p.FICHA=n.P_NRCONTRO WHERE n.P_DATAMOV >= '2019-2-22' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> ''");
+          $ps->execute();
+          $ps->bind_result($ficha, $cancelada, $cnpj, $data, $es, $nf, $cnpj_transportadora, $vencimento, $valor);
+          while ($ps->fetch()) {
 
-            $pn = new ProdutoNota();
-            $pn->nota = $nota;
-            $pn->produto = $prod;
-            $pn->quantidade = $qtd;
-            $pn->valor_unitario = $val;
-            $pn->valor_total = $qtd * $val;
-            $pn->cfop = $cfop;
+          if (!isset($notas[$ficha])) {
 
-            $nota->produtos[] = $pn;
-        }
-        $ps->close();
+          $nota = new Nota();
+          $nota->interferir_estoque = false;
 
-        $produtos = $g->getProdutoViaProduto($con, $produtos);
+          $cliente = null;
 
-        foreach ($produtos as $key => $value) {
-            $produtos[$value->id_universal] = $value;
-        }
+          if (isset($clientes_cnpj[$cnpj])) {
+          $cliente = $clientes_cnpj[$cnpj];
+          } else {
+          $cliente = $g->getClienteViaCnpj($con, new CNPJ($cnpj));
+          if ($cliente === null) {
+          $cliente = $clienteFiltradoMatriz;
+          }
+          $clientes_cnpj[$cnpj] = $cliente;
+          }
 
-        foreach ($notas as $key => $value) {
-            foreach ($value->produtos as $key2 => $value2) {
-                $value2->produto = $produtos[$value2->produto->id_universal];
-            }
-            $value->calcularImpostosAutomaticamente();
-            $value->validar = false;
-            $value->merge($con);
-            echo "Inserida a NFE de ficha $value->ficha";
-        }
-        */
+          if ($es === 'E') {
+          if (isset($fornecedores_cnpj[$cnpj])) {
+          $cliente = $fornecedores_cnpj[$cnpj];
+          } else {
+          $cliente = $g->getFornecedorViaCliente($con, $cliente);
+          if ($cliente === null) {
+          continue;
+          }
+          $fornecedores_cnpj[$cnpj] = $cliente;
+          }
+          $nota->fornecedor = $cliente;
+          } else {
+          $nota->cliente = $cliente;
+          }
+
+          $transportadora = null;
+          if (isset($transportadoras_cnpj[$cnpj_transportadora])) {
+          $transportadora = $transportadoras_cnpj[$cnpj_transportadora];
+          } else {
+          $transportadora = $g->getTransportadoraViaCnpj($con, new CNPJ($cnpj_transportadora));
+          $transportadoras_cnpj[$cnpj_transportadora] = $transportadora;
+          }
+
+          if ($transportadora === null) {
+          continue;
+          }
+
+          $nota->cancelada = $cancelada == 1;
+          $nota->emitida = true;
+          $nota->data_emissao = $data;
+          $nota->empresa = $matriz;
+          $nota->ficha = $ficha;
+          $nota->numero = $nf;
+          $nota->saida = $es === 'S';
+          $nota->transportadora = $transportadora;
+          $nota->forma_pagamento = Sistema::getFormasPagamento();
+          $nota->forma_pagamento = $nota->forma_pagamento[0];
+          $nota->frete_destinatario_remetente = false;
+          $nota->vencimentos = array();
+          $nota->produtos = array();
+
+          $notas[$ficha] = $nota;
+          }
+
+          $nota = $notas[$ficha];
+
+          $v = new Vencimento();
+          $v->valor = $valor;
+          $v->data = $vencimento;
+          $v->nota = $nota;
+
+          $nota->vencimentos[] = $v;
+          }
+          $ps->close();
+
+          $categoria_default = Sistema::getCategoriaProduto($con);
+          $categoria_default = $categoria_default[2];
+
+          $produtos = array();
+
+          $ps = $this->getConexao()->prepare("SELECT n.P_NRCONTRO,p.QTDPRO,p.VALUNI,p.NATOPE,pi.F_DESCRICA,pi.F_CODPROD FROM db_agrofauna.CADPED n INNER JOIN db_agrofauna.FATFCLIE c ON c.CODCLI=n.P_CODCLI INNER JOIN db_agrofauna.COMFPFIC p ON p.CONTRO=n.P_NRCONTRO INNER JOIN db_agrofauna.PRODUTO pi ON pi.F_CODPROD=p.CODPRO INNER JOIN db_agrofauna.FATFTRAN t ON t.CODTRA=n.P_TRANSPO WHERE n.P_DATAMOV >= '2019-02-22' AND c.CGCCPF IS NOT NULL AND c.CGCCPF <> '' AND n.P_TRANSPO IS NOT NULL AND n.P_TRANSPO <> ''");
+          $ps->execute();
+          $ps->bind_result($ficha, $qtd, $val, $cfop, $nom, $id);
+          while ($ps->fetch()) {
+          if (!isset($notas[$ficha]))
+          continue;
+
+
+          $nota = $notas[$ficha];
+
+          if (!isset($produtos[$id])) {
+          $prod = new Produto();
+          $prod->id_universal = $id;
+          $prod->nome = $nom;
+          $prod->categoria = $categoria_default;
+          $prod->empresa = $filial;
+
+          $produtos[$id] = $prod;
+          }
+
+          $prod = $produtos[$id];
+
+          $pn = new ProdutoNota();
+          $pn->nota = $nota;
+          $pn->produto = $prod;
+          $pn->quantidade = $qtd;
+          $pn->valor_unitario = $val;
+          $pn->valor_total = $qtd * $val;
+          $pn->cfop = $cfop;
+
+          $nota->produtos[] = $pn;
+          }
+          $ps->close();
+
+          $produtos = $g->getProdutoViaProduto($con, $produtos);
+
+          foreach ($produtos as $key => $value) {
+          $produtos[$value->id_universal] = $value;
+          }
+
+          foreach ($notas as $key => $value) {
+          foreach ($value->produtos as $key2 => $value2) {
+          $value2->produto = $produtos[$value2->produto->id_universal];
+          }
+          $value->calcularImpostosAutomaticamente();
+          $value->validar = false;
+          $value->merge($con);
+          echo "Inserida a NFE de ficha $value->ficha";
+          }
+         */
         /*
           $filial = new Empresa(104);
           $matriz = new Empresa(105);
@@ -1790,252 +1790,292 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
           $ps->close();
           }
          */
-        
-        
+
+
         /*
-        $ps = $con->getConexao()->prepare("DELETE FROM movimento");
+          $ps = $con->getConexao()->prepare("DELETE FROM movimento");
+          $ps->execute();
+          $ps->close();
+
+          $filial = new Empresa(1733);
+          $matriz = new Empresa(1734);
+
+
+          $bancos = $filial->getBancos($con, 0, 1000, "", "");
+
+          $fichas_filial = "(-1";
+
+          $ps = $con->getConexao()->prepare("SELECT ficha FROM nota WHERE id_empresa=$filial->id");
+          $ps->execute();
+          $ps->bind_result($ficha);
+          while ($ps->fetch()) {
+          $fichas_filial .= ",$ficha";
+          }
+          $ps->close();
+
+          $fichas_filial .= ")";
+          $datas = array();
+          $movimentos = array();
+          $ps = $this->getConexao()->prepare("SELECT ID_FICHA,ID_BANCO,ID_OPERACAO,ID_HISTORICO,VALOR,JUROS,DESCONTO,SALDO,NUMERO_PARCELA,UNIX_TIMESTAMP(DATA)*1000 FROM AF_financeiro_filial17.MOVIMENTO WHERE ID_FICHA IN $fichas_filial ORDER BY DATA,NUMERO_PARCELA");
+          $ps->execute();
+          $ps->bind_result($ficha, $banco, $op, $hist, $val, $jur, $desc, $saldo, $parc, $data);
+          while ($ps->fetch()) {
+
+          if (!isset($datas[$data])) {
+          $datas[$data] = 0;
+          }
+
+          $b = null;
+          foreach ($bancos as $key => $value) {
+          if ($value->codigo === $banco) {
+          $b = $value;
+          break;
+          }
+          }
+          if ($b === null)
+          continue;
+
+          $m = new Movimento();
+          $m->banco = $b;
+          $m->data = $data + $datas[$data];
+          $m->descontos = $desc;
+          $m->valor = $val;
+          $m->juros = $jur;
+          $m->operacao = new stdClass();
+          $m->operacao->id = $op;
+          $m->historico = new stdClass();
+          $m->historico->id = $hist;
+          $m->ficha = $ficha;
+          $m->numero_parcela = $parc;
+          $m->saldo_anterior = $saldo;
+
+          $movimentos[] = $m;
+          $datas[$data] += 1000;
+          }
+          $ps->close();
+
+
+          $vencimentos = array();
+
+          $ps = $con->getConexao()->prepare("SELECT vencimento.id,nota.ficha FROM vencimento INNER JOIN nota ON nota.id=vencimento.id_nota");
+          $ps->execute();
+          $ps->bind_result($id, $ficha);
+          while ($ps->fetch()) {
+
+          if (!isset($vencimentos[$ficha])) {
+          $vencimentos[$ficha] = array();
+          }
+
+          $vencimentos[$ficha][] = $id;
+          }
+
+          $ps->close();
+
+          $mp = array();
+
+          foreach ($movimentos as $key => $value) {
+
+          if (!isset($mp[$value->ficha])) {
+          $mp[$value->ficha] = 0;
+          }
+
+          $m = $mp[$value->ficha] = 0;
+
+
+          if (!isset($vencimentos[$value->ficha][$m])) {
+          continue;
+          }
+
+
+
+          $value->vencimento = new stdClass();
+          $value->vencimento->id = $vencimentos[$value->ficha][$m];
+
+          $mp[$value->ficha] ++;
+
+          $value->insert($con, true);
+          }
+
+          $bancos = $matriz->getBancos($con, 0, 1000, "", "");
+
+          $fichas_filial = "(-1";
+
+          $ps = $con->getConexao()->prepare("SELECT ficha FROM nota WHERE id_empresa=$matriz->id");
+          $ps->execute();
+          $ps->bind_result($ficha);
+          while ($ps->fetch()) {
+          $fichas_filial .= ",$ficha";
+          }
+          $ps->close();
+
+          $fichas_filial .= ")";
+
+          $movimentos = array();
+          $datas = array();
+          $ps = $this->getConexao()->prepare("SELECT ID_FICHA,ID_BANCO,ID_OPERACAO,ID_HISTORICO,VALOR,JUROS,DESCONTO,SALDO,NUMERO_PARCELA,UNIX_TIMESTAMP(DATA)*1000 FROM AF_financeiro.MOVIMENTO WHERE ID_FICHA IN $fichas_filial ORDER BY DATA, NUMERO_PARCELA");
+          $ps->execute();
+          $ps->bind_result($ficha, $banco, $op, $hist, $val, $jur, $desc, $saldo, $parc, $data);
+          while ($ps->fetch()) {
+          if (!isset($datas[$data])) {
+          $datas[$data] = 0;
+          }
+
+          $b = null;
+          foreach ($bancos as $key => $value) {
+          if ($value->codigo === $banco) {
+          $b = $value;
+          break;
+          }
+          }
+          if ($b === null)
+          continue;
+
+          $m = new Movimento();
+          $m->banco = $b;
+          $m->data = $data + $datas[$data];
+          $m->descontos = $desc;
+          $m->valor = $val;
+          $m->juros = $jur;
+          $m->operacao = new stdClass();
+          $m->operacao->id = $op;
+          $m->historico = new stdClass();
+          $m->historico->id = $hist;
+          $m->ficha = $ficha;
+          $m->numero_parcela = $parc;
+          $m->saldo_anterior = $saldo;
+
+          $movimentos[] = $m;
+          $datas[$data] += 1000;
+          }
+          $ps->close();
+
+
+
+          $mp = array();
+
+          foreach ($movimentos as $key => $value) {
+
+          if (!isset($mp[$value->ficha])) {
+          $mp[$value->ficha] = 0;
+          }
+
+          $m = $mp[$value->ficha] = 0;
+
+
+          if (!isset($vencimentos[$value->ficha][$m])) {
+          continue;
+          }
+
+
+
+          $value->vencimento = new stdClass();
+          $value->vencimento->id = $vencimentos[$value->ficha][$m];
+
+          $mp[$value->ficha] ++;
+
+          $value->insert($con, true);
+          }
+         */
+
+        $empresas = array();
+        $ps = $con->getConexao()->prepare("SELECT id FROM empresa WHERE id IN (2072,2071,2070,2069,2068)");
         $ps->execute();
-        $ps->close();
-
-        $filial = new Empresa(1733);
-        $matriz = new Empresa(1734);
-
-
-        $bancos = $filial->getBancos($con, 0, 1000, "", "");
-
-        $fichas_filial = "(-1";
-
-        $ps = $con->getConexao()->prepare("SELECT ficha FROM nota WHERE id_empresa=$filial->id");
-        $ps->execute();
-        $ps->bind_result($ficha);
+        $ps->bind_result($id);
         while ($ps->fetch()) {
-            $fichas_filial .= ",$ficha";
+            $empresas[] = $id;
         }
         $ps->close();
 
-        $fichas_filial .= ")";
-        $datas = array();
-        $movimentos = array();
-        $ps = $this->getConexao()->prepare("SELECT ID_FICHA,ID_BANCO,ID_OPERACAO,ID_HISTORICO,VALOR,JUROS,DESCONTO,SALDO,NUMERO_PARCELA,UNIX_TIMESTAMP(DATA)*1000 FROM AF_financeiro_filial17.MOVIMENTO WHERE ID_FICHA IN $fichas_filial ORDER BY DATA,NUMERO_PARCELA");
-        $ps->execute();
-        $ps->bind_result($ficha, $banco, $op, $hist, $val, $jur, $desc, $saldo, $parc, $data);
-        while ($ps->fetch()) {
+        $permissoes = Sistema::getRTCS();
+        $permissoes = $permissoes[count($permissoes) - 1];
+        $permissoes = $permissoes->permissoes;
 
-            if (!isset($datas[$data])) {
-                $datas[$data] = 0;
-            }
+        foreach ($empresas as $key => $value) {
 
-            $b = null;
-            foreach ($bancos as $key => $value) {
-                if ($value->codigo === $banco) {
-                    $b = $value;
-                    break;
-                }
-            }
-            if ($b === null)
-                continue;
+            $empresa = new Empresa($value);
 
-            $m = new Movimento();
-            $m->banco = $b;
-            $m->data = $data + $datas[$data];
-            $m->descontos = $desc;
-            $m->valor = $val;
-            $m->juros = $jur;
-            $m->operacao = new stdClass();
-            $m->operacao->id = $op;
-            $m->historico = new stdClass();
-            $m->historico->id = $hist;
-            $m->ficha = $ficha;
-            $m->numero_parcela = $parc;
-            $m->saldo_anterior = $saldo;
+            $usuarios = $empresa->getUsuarios($con, 0, 1);
 
-            $movimentos[] = $m;
-            $datas[$data] += 1000;
-        }
-        $ps->close();
-
-
-        $vencimentos = array();
-
-        $ps = $con->getConexao()->prepare("SELECT vencimento.id,nota.ficha FROM vencimento INNER JOIN nota ON nota.id=vencimento.id_nota");
-        $ps->execute();
-        $ps->bind_result($id, $ficha);
-        while ($ps->fetch()) {
-
-            if (!isset($vencimentos[$ficha])) {
-                $vencimentos[$ficha] = array();
-            }
-
-            $vencimentos[$ficha][] = $id;
-        }
-
-        $ps->close();
-
-        $mp = array();
-
-        foreach ($movimentos as $key => $value) {
-
-            if (!isset($mp[$value->ficha])) {
-                $mp[$value->ficha] = 0;
-            }
-
-            $m = $mp[$value->ficha] = 0;
-
-
-            if (!isset($vencimentos[$value->ficha][$m])) {
+            if (count($usuarios) === 0) {
                 continue;
             }
 
+            $perms = Utilidades::copy($permissoes);
 
-
-            $value->vencimento = new stdClass();
-            $value->vencimento->id = $vencimentos[$value->ficha][$m];
-
-            $mp[$value->ficha] ++;
-
-            $value->insert($con, true);
-        }
-
-        $bancos = $matriz->getBancos($con, 0, 1000, "", "");
-
-        $fichas_filial = "(-1";
-
-        $ps = $con->getConexao()->prepare("SELECT ficha FROM nota WHERE id_empresa=$matriz->id");
-        $ps->execute();
-        $ps->bind_result($ficha);
-        while ($ps->fetch()) {
-            $fichas_filial .= ",$ficha";
-        }
-        $ps->close();
-
-        $fichas_filial .= ")";
-
-        $movimentos = array();
-        $datas = array();
-        $ps = $this->getConexao()->prepare("SELECT ID_FICHA,ID_BANCO,ID_OPERACAO,ID_HISTORICO,VALOR,JUROS,DESCONTO,SALDO,NUMERO_PARCELA,UNIX_TIMESTAMP(DATA)*1000 FROM AF_financeiro.MOVIMENTO WHERE ID_FICHA IN $fichas_filial ORDER BY DATA, NUMERO_PARCELA");
-        $ps->execute();
-        $ps->bind_result($ficha, $banco, $op, $hist, $val, $jur, $desc, $saldo, $parc, $data);
-        while ($ps->fetch()) {
-            if (!isset($datas[$data])) {
-                $datas[$data] = 0;
+            foreach ($perms as $key2 => $value2) {
+                $value2->in = true;
+                $value2->del = true;
+                $value2->alt = true;
+                $value2->cons = true;
             }
 
-            $b = null;
-            foreach ($bancos as $key => $value) {
-                if ($value->codigo === $banco) {
-                    $b = $value;
-                    break;
-                }
-            }
-            if ($b === null)
-                continue;
+            $usuario = $usuarios[0];
 
-            $m = new Movimento();
-            $m->banco = $b;
-            $m->data = $data + $datas[$data];
-            $m->descontos = $desc;
-            $m->valor = $val;
-            $m->juros = $jur;
-            $m->operacao = new stdClass();
-            $m->operacao->id = $op;
-            $m->historico = new stdClass();
-            $m->historico->id = $hist;
-            $m->ficha = $ficha;
-            $m->numero_parcela = $parc;
-            $m->saldo_anterior = $saldo;
+            $usuario->permissoes = $perms;
 
-            $movimentos[] = $m;
-            $datas[$data] += 1000;
+            $usuario->merge($con);
         }
-        $ps->close();
+
+        /*
+          $ps = $con->getConexao()->prepare("DELETE FROM campanha");
+          $ps->execute();
+          $ps->close();
+
+          $validades = array();
+          $ps = $con->getConexao()->prepare("SELECT id_produto,UNIX_TIMESTAMP(validade)*1000 FROM lote WHERE validade > DATE_ADD(CURRENT_DATE, INTERVAL 4 MONTH) ORDER BY validade ASC");
+          $ps->execute();
+          $ps->bind_result($id_produto,$validade);
+          while($ps->fetch()){
+          if(!isset($validades[$id_produto])){
+          $validades[$id_produto] = $validade;
+          }
+          }
+          $ps->close();
+
+          $campanhas = array();
+          $ps = $this->getConexao()->prepare("SELECT c.id_campanha,c.nm_campanha,UNIX_TIMESTAMP(c.dt_inicial)*1000,UNIX_TIMESTAMP(c.dt_final)*1000,p.id_produto,p.vl_preco_campanha,p.limite FROM db_agro_matriz.campanha c INNER JOIN db_agro_matriz.campanha_produto p ON p.id_campanha=c.id_campanha WHERE c.dt_final > CURRENT_TIMESTAMP AND c.sn_status=1");
+          $ps->execute();
+          $ps->bind_result($id,$nome,$inicio,$fim,$produto,$preco,$limite);
+          while($ps->fetch()){
+
+          if(!isset($validades[$produto]))
+          continue;
+
+          $v = $validades[$produto];
+
+          if(!isset($campanhas[$id])){
+
+          $c = new Campanha();
+          $c->nome = $nome;
+          $c->inicio = $inicio;
+          $c->fim = $fim;
+          $c->prazo = 0;
+          $c->parcelas = 1;
+          $c->empresa = $filial;
+
+          $campanhas[$id] = $c;
+
+          }
+
+          $c = $campanhas[$id];
+          $p = new ProdutoCampanha();
+          $p->campanha = $c;
+          $p->produto = new stdClass();
+          $p->produto->id = $produto;
+          $p->validade = $v;
+          $p->valor = $preco;
+
+          $c->produtos[] = $p;
 
 
 
-        $mp = array();
+          }
+          $ps->close();
 
-        foreach ($movimentos as $key => $value) {
-
-            if (!isset($mp[$value->ficha])) {
-                $mp[$value->ficha] = 0;
-            }
-
-            $m = $mp[$value->ficha] = 0;
-
-
-            if (!isset($vencimentos[$value->ficha][$m])) {
-                continue;
-            }
-
-
-
-            $value->vencimento = new stdClass();
-            $value->vencimento->id = $vencimentos[$value->ficha][$m];
-
-            $mp[$value->ficha] ++;
-
-            $value->insert($con, true);
-        }
-        */
-        
-        $ps = $con->getConexao()->prepare("DELETE FROM campanha");
-        $ps->execute();
-        $ps->close();
-        
-        $validades = array();
-        $ps = $con->getConexao()->prepare("SELECT id_produto,UNIX_TIMESTAMP(validade)*1000 FROM lote WHERE validade > DATE_ADD(CURRENT_DATE, INTERVAL 4 MONTH) ORDER BY validade ASC");
-        $ps->execute();
-        $ps->bind_result($id_produto,$validade);
-        while($ps->fetch()){
-            if(!isset($validades[$id_produto])){
-                $validades[$id_produto] = $validade;
-            }
-        }
-        $ps->close();
-        
-        $campanhas = array();
-        $ps = $this->getConexao()->prepare("SELECT c.id_campanha,c.nm_campanha,UNIX_TIMESTAMP(c.dt_inicial)*1000,UNIX_TIMESTAMP(c.dt_final)*1000,p.id_produto,p.vl_preco_campanha,p.limite FROM db_agro_matriz.campanha c INNER JOIN db_agro_matriz.campanha_produto p ON p.id_campanha=c.id_campanha WHERE c.dt_final > CURRENT_TIMESTAMP AND c.sn_status=1");
-        $ps->execute();
-        $ps->bind_result($id,$nome,$inicio,$fim,$produto,$preco,$limite);
-        while($ps->fetch()){
-            
-            if(!isset($validades[$produto]))
-                continue;
-            
-            $v = $validades[$produto];
-            
-            if(!isset($campanhas[$id])){
-                
-                $c = new Campanha();
-                $c->nome = $nome;
-                $c->inicio = $inicio;
-                $c->fim = $fim;
-                $c->prazo = 0;
-                $c->parcelas = 1;
-                $c->empresa = $filial;
-                
-                $campanhas[$id] = $c;
-                
-            }
-            
-            $c = $campanhas[$id];
-            $p = new ProdutoCampanha();
-            $p->campanha = $c;
-            $p->produto = new stdClass();
-            $p->produto->id = $produto;
-            $p->validade = $v;
-            $p->valor = $preco;
-            
-            $c->produtos[] = $p;
-            
-            
-            
-        }
-        $ps->close();
-        
-        foreach($campanhas as $key=>$value){
-            $value->merge($con);
-        }
-        
+          foreach($campanhas as $key=>$value){
+          $value->merge($con);
+          }
+         */
     }
 
 }

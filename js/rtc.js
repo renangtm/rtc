@@ -497,6 +497,19 @@ function createAssinc(lista, cols, rows, maxPage) {
 
 function assincFuncs(lista, base, campos, filtro) {
 
+
+    var ordemInicial = "";
+    if (campos[0].indexOf('.') == -1) {
+
+        ordemInicial += base + "." + campos[0] + " DESC";
+
+    } else {
+
+        ordemInicial += campos[j] + " DESC";
+
+    }
+    lista.ordem = ordemInicial;
+
     var b = [];
     var e = [];
 
@@ -873,7 +886,7 @@ function jsBaseService(obj) {
         params["o"] = encode64SPEC(paraJson(obj["o"]));
     }
     $.post('php/controler/crt.php', params).done(function (resp) {
-       
+
         var m = 0;
         for (var i = 0; i < ids.length; i++) {
             if (ids[i] == idt) {

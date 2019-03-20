@@ -108,6 +108,14 @@ rtc.service('gerenciadorService', function ($http, $q) {
             falha: fn
         });
     }
+    this.getCountForaGruopo = function (filtro, fn, gerenciador) {
+        baseService($http, $q, {
+            o: {gerenciador: (typeof gerenciador === 'undefined') ? este.gerenciador : gerenciador, filtro: filtro},
+            query: "$r->qtd=$o->gerenciador->getQuantidadeUsuariosAtivosForaGrupo($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getElementos = function (x1, x2, filtro, ordem, fn, gerenciador) {
         baseService($http, $q, {
             o: {gerenciador: (typeof gerenciador === 'undefined') ? este.gerenciador : gerenciador, x1: x1, x2: x2, filtro: filtro, ordem: ordem},

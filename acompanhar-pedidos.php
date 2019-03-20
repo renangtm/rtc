@@ -171,6 +171,8 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Configure os dados de seu Pedido de Venda ({{pedido.id}})</h5>
+                                
+                                <a href="#" style="position:absolute;top:5px;right:50px" class="btn btn-outline-success" data-title="logs" data-toggle="modal" ng-click="getLogs()" data-target="#logs"><i class="fas fa-clipboard-list"></i>&nbsp;Logs do pedido (Segunda via de boleto)</a>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">×</span>
                                 </button>
@@ -369,7 +371,7 @@
                                                 </select>
                                             </div>
                                             <div class="form-inline col-3" style="">
-                                                <a href="#" class="btn btn-outline-success" data-title="logs" data-toggle="modal" ng-click="getLogs()" data-target="#logs"><i class="fas fa-clipboard-list"></i>&nbsp;Logs do pedido (Segunda via de boleto)</a>
+                                                
                                             </div>
 
                                         </div>

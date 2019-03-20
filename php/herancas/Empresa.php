@@ -49,7 +49,7 @@ class Empresa {
         $this->tipo_empresa = false;
         $this->permissoes_especiais = array();
         $this->cargos_fixos = array(new CargoFixo(0, "Sem cargo", $this));
-        $this->tarefas_fixas = array("TT_ANALISE_CREDITO","TT_CONFIRMACAO_PAGAMENTO");
+        $this->tarefas_fixas = array("TT_ANALISE_CREDITO", "TT_CONFIRMACAO_PAGAMENTO");
 
         if ($id > 0 && $cf !== null) {
 
@@ -80,6 +80,18 @@ class Empresa {
                 $this->endereco = $endereco;
             }
             $ps->close();
+
+            $ps = $cf->getConexao()->prepare("SELECT id,endereco,senha FROM email WHERE tipo_entidade='EMP' AND id_entidade=$this->id");
+            $ps->execute();
+            $ps->bind_result($id, $endereco, $senha);
+            if ($ps->fetch()) {
+
+                $em = new Email($endereco);
+                $em->id = $id;
+                $em->senha = $senha;
+                $this->email = $em;
+            }
+            $ps->close();
         }
     }
 
@@ -89,7 +101,7 @@ class Empresa {
     }
 
     public function getTiposTarefa($con, $filtro = "") {
-        
+
         Sistema::getCargo($con, $this, 0, false);
 
         $sql = "SELECT "
@@ -132,8 +144,7 @@ class Empresa {
 
             if ($id_cargo !== null) {
 
-                $t->cargos[] = Sistema::getCargo($con,$this,$id_cargo);
-                
+                $t->cargos[] = Sistema::getCargo($con, $this, $id_cargo);
             }
         }
 
@@ -4484,7 +4495,7 @@ class Empresa {
     public function getUsuarios($con, $x1, $x2, $filtro = "", $ordem = "") {
 
 
-        Sistema::getCargo($con, $this, 0,false);
+        Sistema::getCargo($con, $this, 0, false);
 
         $sql = "SELECT "
                 . "usuario.id,"
@@ -4523,7 +4534,7 @@ class Empresa {
         }
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
-        
+
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
         $ps->bind_result($id_usu, $id_cargo, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha);

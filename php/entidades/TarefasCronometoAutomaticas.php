@@ -1,0 +1,120 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of RegraTabela
+ *
+ * @author Renan
+ */
+class TarefasCronometroAutomaticas {
+
+    public $dia;
+    public $mes;
+    public $ano;
+    public $hora;
+    public $minuto;
+    public $segundo;
+    public $momento;
+
+    public function __construct() {
+
+        date_default_timezone_set("America/Sao_Paulo");
+
+        $this->momento = round(microtime(true) * 1000);
+
+        $str = explode(':', date('d:m:Y:H:i:s', $this->momento / 1000));
+        $this->dia = intval($str[0]);
+        $this->mes = intval($str[1]);
+        $this->ano = intval($str[2]);
+        $this->hora = intval($str[3]);
+        $this->minuto = intval($str[4]);
+        $this->segundo = intval($str[5]);
+    }
+
+    public function executar($con) {
+
+        $empresas = array();
+        $empresas_inteiras = array();
+        $ps = $con->getConexao()->prepare("SELECT id FROM empresa");
+        $ps->execute();
+        $ps->bind_result($id);
+        while ($ps->fetch()) {
+            $empresas[] = new Empresa($id);
+        }
+        $ps->close();
+
+        foreach ($empresas as $key => $empresa) {
+
+            $usuarios = $empresa->getUsuarios($con, 0, 10000);
+
+            foreach ($usuarios as $key2 => $usuario) {
+
+                $tarefas = $usuario->getTarefas($con, '(observacao.momento IS NULL OR observacao.momento)', '');
+
+                if (count($tarefas) === 0) {
+                    continue;
+                }
+
+                if (isset($empresas_inteiras[$empresa->id])) {
+                    $empresa = $empresas_inteiras[$empresa->id];
+                } else {
+                    $empresas_inteiras[$empresa->id] = new Empresa($empresa->id, $con);
+                    $empresa = $empresas_inteiras[$empresa->id];
+                }
+
+                $ausencias = $usuario->getAusencias($con, 'ausencia.fim>CURRENT_TIMESTAMP');
+                $expedientes = $usuario->getExpedientes($con);
+
+                $tarefas = IATarefas::aplicar($expedientes, $ausencias, $tarefas);
+
+                $obj_relatorio = new stdClass();
+                $obj_relatorio->empresa = $empresa;
+                $obj_relatorio->usuario = $usuario;
+                $obj_relatorio->tarefas = $tarefas;
+
+                $html = Sistema::getHtml('relatorio_servico', $obj_relatorio);
+
+                $org = new Organograma($empresa);
+                $superiores = $org->getSuperiores($con, $usuario);
+                if ($superiores === null)
+                    continue;
+
+                $emails = "(-1";
+                foreach ($superiores as $key => $value) {
+                    $emails .= ",$value->id_usuario";
+                }
+                $emails .= ")";
+
+                $ps = $con->getConexao()->prepare("SELECT id,endereco,senha FROM email WHERE excluido=false AND tipo_entidade='USU' AND id_entidade IN $emails");
+                $ps->execute();
+                $ps->bind_result($id, $endereco, $senha);
+                $emails = array();
+                while ($ps->fetch()) {
+
+                    $e = new Email($endereco);
+                    $e->id = $id;
+                    $e->senha = $senha;
+                    $emails[] = $e;
+                }
+                $ps->close();
+
+                foreach ($emails as $key3 => $value3) {
+
+                    try {
+                        echo ". Tarefa do usuario de '" . $empresa->email->endereco . "' '$usuario->nome' para '$value3->endereco'";
+                        $empresa->email->enviarEmail($value3, 'Relatorio do ' . $usuario->nome, $html);
+                    } catch (Exception $ex) {
+
+                        Sistema::avisoDEVS('Erro no envio de email dos relatorios, ' . $ex->getMessage());
+                    }
+                }
+            }
+        }
+    }
+
+}

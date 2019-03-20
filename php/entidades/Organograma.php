@@ -40,14 +40,20 @@ class Organograma {
         $superiores = array();
 
         $nodo = $this->getNodo($con, $usuario);
-        $nodo = $nodo->pai;
-
-        while ($nodo !== null) {
+        
+        if($nodo === null){
+            return null;
+        }
+        
+        $aux = $nodo->pai;
+        
+        while ($nodo != null) {
             $superiores[] = $nodo;
             $nodo = $nodo->pai;
         }
 
         return $superiores;
+    
     }
 
     public function getInferiores($con, $usuario) {

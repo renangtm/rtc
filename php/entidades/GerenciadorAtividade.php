@@ -41,6 +41,39 @@ class GerenciadorAtividade {
         }
     }
 
+    public function getQuantidadeUsuariosAtivosForaGrupo($con, $filtro = "") {
+
+        $filiais = $empresa->getFiliais($con);
+        $filiais[] = $empresa;
+
+        $in = "(-1";
+
+        foreach ($filiais as $key => $value) {
+            $in .= ",$value->id";
+        }
+
+        $in .= ")";
+
+        $sql = "SELECT COUNT(*) FROM (SELECT a.id FROM atividade_usuario a INNER JOIN usuario u ON u.id=a.id_usuario INNER JOIN empresa e ON e.id=u.id_empresa WHERE a.momento>FROM_UNIXTIME($this->periodo_inicial/1000) AND a.momento<FROM_UNIXTIME($this->periodo_final/1000) WHERE usuario.id_empresa NOT IN $in";
+
+        if ($filtro !== "") {
+
+            $sql .= "AND $filtro ";
+        }
+
+        $sql .= "GROUP BY id_usuario) k";
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($qtd);
+        if ($ps->fetch()) {
+            $ps->close();
+            return $qtd;
+        }
+        $ps->close();
+        return 0;
+    }
+
     public function getQuantidadeUsuariosAtivos($con, $filtro = "") {
 
         $sql = "SELECT COUNT(*) FROM (SELECT a.id FROM atividade_usuario a INNER JOIN usuario u ON u.id=a.id_usuario INNER JOIN empresa e ON e.id=u.id_empresa WHERE a.momento>FROM_UNIXTIME($this->periodo_inicial/1000) AND a.momento<FROM_UNIXTIME($this->periodo_final/1000) ";
@@ -119,8 +152,8 @@ class GerenciadorAtividade {
     }
 
     public function getMaximoUsuariosOnline($con) {
-        
-        
+
+
         $ps = $con->getConexao()->prepare("SELECT MAX(l.tt) FROM (SELECT COUNT(*) as 'tt' FROM (SELECT ROUND(UNIX_TIMESTAMP(a1.momento)/70) as 'm' FROM atividade_usuario a1 WHERE a1.momento > FROM_UNIXTIME($this->periodo_inicial/1000) AND a1.momento < FROM_UNIXTIME($this->periodo_final/1000) GROUP BY ROUND(UNIX_TIMESTAMP(a1.momento)/70),a1.id_usuario) k GROUP BY k.m) l");
         $ps->execute();
         $ps->bind_result($qtd);
@@ -131,6 +164,7 @@ class GerenciadorAtividade {
         $ps->close();
         return 0;
     }
+
     public function getTempo_Usuarios($con, $intervalo) {
 
         $atividades = array();
@@ -152,8 +186,8 @@ class GerenciadorAtividade {
 
         for (; $inicio <= $fim; $inicio += $intervalo) {
 
-            $fn = $inicio+$intervalo;
-            
+            $fn = $inicio + $intervalo;
+
             $qtd = 0;
             $usuarios = array();
 
@@ -175,7 +209,7 @@ class GerenciadorAtividade {
                         $aa = $atividades[$i];
                         if ($aa[1] > $fn)
                             break;
-                        
+
 
                         if (isset($usuarios[$aa[0]]))
                             continue;
@@ -208,81 +242,82 @@ class GerenciadorAtividade {
 
         return $pontos;
     }
+
     /*
-    public function getTempo_Usuarios($con, $intervalo) {
+      public function getTempo_Usuarios($con, $intervalo) {
 
-        $atividades = array();
+      $atividades = array();
 
-        $ps = $con->getConexao()->prepare("SELECT id_usuario,UNIX_TIMESTAMP(momento)*1000 FROM atividade_usuario WHERE momento>=FROM_UNIXTIME($this->periodo_inicial/1000) AND momento<=FROM_UNIXTIME($this->periodo_final/1000) ORDER BY momento");
-        $ps->execute();
-        $ps->bind_result($id_usuario, $momento);
-        while ($ps->fetch()) {
+      $ps = $con->getConexao()->prepare("SELECT id_usuario,UNIX_TIMESTAMP(momento)*1000 FROM atividade_usuario WHERE momento>=FROM_UNIXTIME($this->periodo_inicial/1000) AND momento<=FROM_UNIXTIME($this->periodo_final/1000) ORDER BY momento");
+      $ps->execute();
+      $ps->bind_result($id_usuario, $momento);
+      while ($ps->fetch()) {
 
-            $atividades[] = array($id_usuario, $momento);
-        }
-        $ps->close();
-
-
-        $pontos = array();
-
-        $inicio = $this->periodo_inicial;
-        $fim = $this->periodo_final;
-
-        for (; $inicio <= $fim; $inicio += $intervalo) {
-
-            $qtd = 0;
-            $usuarios = array();
-
-            $i = 0;
-            $f = count($atividades);
-
-            while (($f - $i) > 1) {
-
-                $m = floor(($i + $f) / 2);
-                $a = $atividades[$m];
-                if (($a[1] + self::$TIME_SINAL) < $inicio) {
-                    $i = $m;
-                } else if ($a[1] > $inicio) {
-                    $f = $m;
-                } else {
-
-                    for ($i = $m; $i < $f; $i++) {
-
-                        $aa = $atividades[$i];
-                        if (($aa[1] + self::$TIME_SINAL) < $inicio)
-                            break;
-                        
-
-                        if (isset($usuarios[$aa[0]]))
-                            continue;
-
-                        $qtd++;
-                        $usuarios[$aa[0]] = true;
-                    }
-
-                    for ($i = $m; $i >= 0; $i--) {
-
-                        $aa = $atividades[$i];
-
-                        if ($aa[1] > $inicio)
-                            break;
-
-                        if (isset($usuarios[$aa[0]]))
-                            continue;
-
-                        $qtd++;
-                        $usuarios[$aa[0]] = true;
-                    }
+      $atividades[] = array($id_usuario, $momento);
+      }
+      $ps->close();
 
 
-                    break;
-                }
-            }
+      $pontos = array();
 
-            $pontos[] = $qtd;
-        }
+      $inicio = $this->periodo_inicial;
+      $fim = $this->periodo_final;
 
-        return $pontos;
-    }
-    */
+      for (; $inicio <= $fim; $inicio += $intervalo) {
+
+      $qtd = 0;
+      $usuarios = array();
+
+      $i = 0;
+      $f = count($atividades);
+
+      while (($f - $i) > 1) {
+
+      $m = floor(($i + $f) / 2);
+      $a = $atividades[$m];
+      if (($a[1] + self::$TIME_SINAL) < $inicio) {
+      $i = $m;
+      } else if ($a[1] > $inicio) {
+      $f = $m;
+      } else {
+
+      for ($i = $m; $i < $f; $i++) {
+
+      $aa = $atividades[$i];
+      if (($aa[1] + self::$TIME_SINAL) < $inicio)
+      break;
+
+
+      if (isset($usuarios[$aa[0]]))
+      continue;
+
+      $qtd++;
+      $usuarios[$aa[0]] = true;
+      }
+
+      for ($i = $m; $i >= 0; $i--) {
+
+      $aa = $atividades[$i];
+
+      if ($aa[1] > $inicio)
+      break;
+
+      if (isset($usuarios[$aa[0]]))
+      continue;
+
+      $qtd++;
+      $usuarios[$aa[0]] = true;
+      }
+
+
+      break;
+      }
+      }
+
+      $pontos[] = $qtd;
+      }
+
+      return $pontos;
+      }
+     */
 }

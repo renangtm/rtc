@@ -191,7 +191,7 @@ class IATarefas {
 
             $x2 = max($x1, $value->inicio_minimo);
 
-            while ($ajuste > 0) {
+            while ($ajuste > 0 && count($expedientes)>0) {
 
                 $normalizado = self::normalizarDia($x2);
 
