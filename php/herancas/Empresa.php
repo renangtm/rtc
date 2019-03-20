@@ -13,6 +13,54 @@
  */
 class Empresa {
 
+    public static function CF_SEM_CARGO($emp) {
+        return new CargoFixo(0, "Sem cargo", $emp);
+    }
+
+    public static function CF_DIRETOR($emp) {
+        return new CargoFixo(1, "Diretor", $emp);
+    }
+
+    public static function CF_FAXINEIRA($emp) {
+        return new CargoFixo(2, "Faxineira", $emp);
+    }
+
+    public static function CF_PORTEIRO($emp) {
+        return new CargoFixo(3, "Porteiro", $emp);
+    }
+
+    public static function CF_ESTAGIARIO_TI($emp) {
+        return new CargoFixo(4, "Estagiario de TI", $emp);
+    }
+
+    public static function CF_ESTAGIARIO_LOGISTICA($emp) {
+        return new CargoFixo(5, "Estagiario de Logistica", $this);
+    }
+
+    public static function CF_AUXILIAR_ADM($emp) {
+        return new CargoFixo(6, "Auxiliar Administrativo", $this);
+    }
+
+    public static function CF_ENCARREGADO_LOGISTICA($emp) {
+        return new CargoFixo(7, "Encarregado de Logistica", $this);
+    }
+
+    public static function CF_COORDENADOR_LOGISTICA($emp) {
+        return new CargoFixo(8, "Coordenador de Logistica", $this);
+    }
+
+    public static function CF_SUPERVISOR_LOGISTICA($emp) {
+        return new CargoFixo(9, "Supervisor de Logistica", $this);
+    }
+
+    public static function CF_FINANCEIRO($emp) {
+        return new CargoFixo(10, "Financeiro", $this);
+    }
+
+    public static function CF_SEPARADOR($emp) {
+        return new CargoFixo(11, "Separador", $this);
+    }
+
     public $id;
     public $nome;
     public $email;
@@ -48,8 +96,20 @@ class Empresa {
         $this->endereco = new Endereco();
         $this->tipo_empresa = false;
         $this->permissoes_especiais = array();
-        $this->cargos_fixos = array(new CargoFixo(0, "Sem cargo", $this));
-        $this->tarefas_fixas = array("TT_ANALISE_CREDITO","TT_CONFIRMACAO_PAGAMENTO");
+        $this->cargos_fixos = array(
+            Empresa::CF_SEM_CARGO($this),
+            Empresa::CF_DIRETOR($this),
+            Empresa::CF_FAXINEIRA($this),
+            Empresa::CF_PORTEIRO($this),
+            Empresa::CF_ESTAGIARIO_TI($this),
+            Empresa::CF_ESTAGIARIO_LOGISTICA($this),
+            Empresa::CF_AUXILIAR_ADM($this),
+            Empresa::CF_ENCARREGADO_LOGISTICA($this),
+            Empresa::CF_COORDENADOR_LOGISTICA($this),
+            Empresa::CF_SUPERVISOR_LOGISTICA($this),
+            Empresa::CF_FINANCEIRO($this),
+            Empresa::CF_SEPARADOR($this)
+        );
 
         if ($id > 0 && $cf !== null) {
 
@@ -89,7 +149,7 @@ class Empresa {
     }
 
     public function getTiposTarefa($con, $filtro = "") {
-        
+
         Sistema::getCargo($con, $this, 0, false);
 
         $sql = "SELECT "
@@ -132,8 +192,7 @@ class Empresa {
 
             if ($id_cargo !== null) {
 
-                $t->cargos[] = Sistema::getCargo($con,$this,$id_cargo);
-                
+                $t->cargos[] = Sistema::getCargo($con, $this, $id_cargo);
             }
         }
 
@@ -4484,7 +4543,7 @@ class Empresa {
     public function getUsuarios($con, $x1, $x2, $filtro = "", $ordem = "") {
 
 
-        Sistema::getCargo($con, $this, 0,false);
+        Sistema::getCargo($con, $this, 0, false);
 
         $sql = "SELECT "
                 . "usuario.id,"
@@ -4523,7 +4582,7 @@ class Empresa {
         }
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
-        
+
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
         $ps->bind_result($id_usu, $id_cargo, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha);

@@ -174,6 +174,36 @@ class Sistema {
 
         return new TTConfirmacaoPagamento($id_empresa);
     }
+    
+    public static function TT_PROBLEMA_INTERNET($id_empresa) {
+
+        return new TTProblemaInternet($id_empresa);
+    }
+    
+    public static function TT_PROBLEMA_ENVIO_EMAIL($id_empresa) {
+
+        return new TTProblemaEnvioEmail($id_empresa);
+    }
+    
+    public static function TT_PROBLEMA_MAQUINA($id_empresa) {
+
+        return new TTProblemaMaquina($id_empresa);
+    }
+    
+    public static function TT_MODIFICACAO_SIMPLES_SISTEMA($id_empresa) {
+
+        return new TTModificacaoSimplesSistema($id_empresa);
+    }
+    
+    public static function TT_MODIFICACAO_SISTEMA($id_empresa) {
+
+        return new TTModificacaoSistema($id_empresa);
+    }
+    
+    public static function TT_MODIFICACAO_COMPLEXA_SISTEMA($id_empresa) {
+
+        return new TTModificacaoComplexaSistema($id_empresa);
+    }
 
     public static function getTarefasFixas($empresa) {
 
@@ -512,6 +542,8 @@ class Sistema {
             $empresa = new Agronomia();
         } else if ($tipo === 7) {
             $empresa = new Empresa();
+        }else if ($tipo === 8) {
+            $empresa = new Tecnologia();
         }
 
         if ($empresa !== null) {
