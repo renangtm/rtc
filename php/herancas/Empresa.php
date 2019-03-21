@@ -34,31 +34,31 @@ class Empresa {
     }
 
     public static function CF_ESTAGIARIO_LOGISTICA($emp) {
-        return new CargoFixo(5, "Estagiario de Logistica", $this);
+        return new CargoFixo(5, "Estagiario de Logistica", $emp);
     }
 
     public static function CF_AUXILIAR_ADM($emp) {
-        return new CargoFixo(6, "Auxiliar Administrativo", $this);
+        return new CargoFixo(6, "Auxiliar Administrativo", $emp);
     }
 
     public static function CF_ENCARREGADO_LOGISTICA($emp) {
-        return new CargoFixo(7, "Encarregado de Logistica", $this);
+        return new CargoFixo(7, "Encarregado de Logistica", $emp);
     }
 
     public static function CF_COORDENADOR_LOGISTICA($emp) {
-        return new CargoFixo(8, "Coordenador de Logistica", $this);
+        return new CargoFixo(8, "Coordenador de Logistica", $emp);
     }
 
     public static function CF_SUPERVISOR_LOGISTICA($emp) {
-        return new CargoFixo(9, "Supervisor de Logistica", $this);
+        return new CargoFixo(9, "Supervisor de Logistica", $emp);
     }
 
     public static function CF_FINANCEIRO($emp) {
-        return new CargoFixo(10, "Financeiro", $this);
+        return new CargoFixo(10, "Financeiro", $emp);
     }
 
     public static function CF_SEPARADOR($emp) {
-        return new CargoFixo(11, "Separador", $this);
+        return new CargoFixo(11, "Separador", $emp);
     }
 
     public $id;

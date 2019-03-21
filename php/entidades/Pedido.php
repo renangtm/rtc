@@ -481,6 +481,7 @@ class Pedido {
             $pn->valor_total = $pn->valor_unitario * $pn->quantidade;
 
             $produtos_nota[] = $pn;
+            
         }
 
         $nota->produtos = $produtos_nota;

@@ -92,13 +92,8 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         //echo Utilidades::toJson($produtos);
                 
-        $cr = new TarefasCronometroAutomaticas();
-        $cr->executar($con);
-        
-        
-        Sistema::novaTarefaEmpresa($con, $t, $emp);
-        
-       
+        $e = new RoboVirtual();
+        $e->executar($con);
 
     }
 

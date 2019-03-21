@@ -13,6 +13,21 @@
  */
 class Sistema {
 
+    public static function getTrabalhosCronometrados() {
+
+        $trabalhos = array();
+
+        $relatorios = new EnvioRelatorios();
+        $relatorios->cronoExpression = "(19h:00m)";
+        $trabalhos[] = $relatorios;
+
+        $prospeccao = new RoboVirtual();
+        $prospeccao->cronoExpression = "c(60m)";
+        $trabalhos[] = $prospeccao;
+
+        return $trabalhos;
+    }
+
     public static function P_PEDIDO_ENTRADA() {
         return new Permissao(1, "pedido_entrada");
     }
