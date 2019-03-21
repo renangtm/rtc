@@ -288,7 +288,7 @@
 
                                         </td>
                                         <td style="text-align: right">
-                                            <button style="width:50%" class="btn btn-success" ng-click="salvarTarefaUsuario()"><i class="fas fa-check"></i>&nbsp;Salvar</button>
+                                            <button style="width:50%" class="btn btn-success" ng-click="salvarTarefaUsuario()" data-dismiss="modal" aria-label="Close"><i class="fas fa-check"></i>&nbsp;Salvar</button>
                                         </td>
                                     </tr>
                                 </table>
@@ -401,7 +401,7 @@
 
                                         </td>
                                         <td style="text-align: right">
-                                            <button style="width:50%" class="btn btn-success" ng-click="salvarTarefa()"><i class="fas fa-check"></i>&nbsp;Salvar</button>
+                                            <button style="width:50%" class="btn btn-success" ng-click="salvarTarefa()" data-dismiss="modal" aria-label="Close"><i class="fas fa-check"></i>&nbsp;Salvar</button>
                                         </td>
                                     </tr>
                                 </table>

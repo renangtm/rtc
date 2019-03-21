@@ -20,22 +20,8 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
     }
 
     public function aoFinalizarPedido($pedido) {
-
-        set_time_limit(0);
-
-        ob_implicit_flush();
-
-        $address = 'www.tratordecompras.com.br';
-        $service_port = 10000;
-
-        if (($sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) === false) {
-            echo "socket_create() failed: reason: " . socket_strerror(socket_last_error()) . "\n";
-        }
-
-        if (socket_connect($sock, $address, $service_port) === false) {
-            echo "socket_bind() failed: reason: " . socket_strerror(socket_last_error($sock)) . "\n";
-        }
-
+        
+        
 
         $inscricao = $pedido->cliente->inscricao_estadual;
         $cep = $pedido->cliente->endereco->cep->valor;
@@ -75,15 +61,11 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
             $logadouro = "sem rua";
         }
 
+       
+        $in = "itau;tipo:em;bairro:$bairro;cep:$cep;cidade:$cidade;estado:$estado;inscricao:$inscricao;logadouro:$logadouro;nome:$nome;documento:$documento;valor:$valor;vencimento:$momento";
 
-
-        $in = "itau;tipo:em;bairro:$bairro;cep:$cep;cidade:$cidade;estado:$estado;inscricao:$inscricao;logadouro:$logadouro;nome:$nome;documento:$documento;valor:$valor;vencimento:$momento\n";
-
-        socket_write($sock, $in, strlen($in));
-
-        $out = socket_read($sock, 2048);
-        socket_close($sock);
-
+        $out = Sistema::getMicroServicoJava('ServidorBoletosRTC',$in);
+        
         $objeto = json_decode($out);
 
         $lk = $objeto->link;
