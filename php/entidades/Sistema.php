@@ -273,11 +273,13 @@ class Sistema {
 
         $tarefa->realocavel = true;
 
-        $cargos = "(0";
+        $cargos = "(";
 
         foreach ($tarefa->tipo_tarefa->cargos as $key => $value) {
-
-            $cargos .= ",$value->id";
+            if ($cargos !== "(") {
+                $cargos .= ",";
+            }
+            $cargos .= "$value->id";
         }
 
         $cargos .= ")";
@@ -487,7 +489,7 @@ class Sistema {
         }
     }
 
-    public function getTiposTarefaUsuario($con, $usuario) {
+    public static function getTiposTarefaUsuario($con, $usuario) {
 
         $id_cargo = 0;
         if ($usuario->cargo !== null) {
@@ -620,7 +622,6 @@ class Sistema {
         } else {
 
             $cargos = $empresa->getCargos($con);
-
             $ses->set("cargos_$empresa->id", $cargos);
 
             foreach ($cargos as $key => $cargo) {
@@ -2221,7 +2222,7 @@ class Sistema {
         fclose($handle);
     }
 
-    private static function getMicroServicoJava($nome, $parametros = null) {
+    public static function getMicroServicoJava($nome, $parametros = null) {
 
         $servico = realpath('../micro_servicos_java');
         $servico .= "/$nome.jar";
@@ -2234,6 +2235,7 @@ class Sistema {
         }
 
         exec($comando, $output);
+
         return $output[0];
     }
 
@@ -2935,12 +2937,15 @@ class Sistema {
 
     public static function getUsuario($filtro) {
 
+
+
         $con = new ConnectionFactory();
 
         $ses = new SessionManager();
 
         $sql = "SELECT "
                 . "usuario.id,"
+                . "usuario.id_cargo,"
                 . "usuario.nome,"
                 . "usuario.login,"
                 . "usuario.senha,"
@@ -2994,7 +2999,7 @@ class Sistema {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id_usu, $id_cargo, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $usuarios = array();
 
@@ -3002,6 +3007,7 @@ class Sistema {
 
             $usuario = new Usuario();
 
+            $usuario->id_cargo = $id_cargo;
             $usuario->cpf = new CPF($cpf_usu);
             $usuario->email = new Email($email_usu_end);
             $usuario->email->id = $email_usu_id;
@@ -3147,6 +3153,8 @@ class Sistema {
 
             $u = $real[0];
 
+            $u->cargo = Sistema::getCargo($con, $u->empresa, $u->id_cargo);
+
             $ses->set("usuario", $u);
             $ses->set("empresa", $u->empresa);
 
@@ -3284,222 +3292,8 @@ class Sistema {
 
     public static function logar($login, $senha) {
 
-        $con = new ConnectionFactory();
-
-        $ses = new SessionManager();
-
-        $sql = "SELECT "
-                . "usuario.id,"
-                . "usuario.nome,"
-                . "usuario.login,"
-                . "usuario.senha,"
-                . "usuario.cpf,"
-                . "endereco_usuario.id,"
-                . "endereco_usuario.rua,"
-                . "endereco_usuario.numero,"
-                . "endereco_usuario.bairro,"
-                . "endereco_usuario.cep,"
-                . "cidade_usuario.id,"
-                . "cidade_usuario.nome,"
-                . "estado_usuario.id,"
-                . "estado_usuario.sigla,"
-                . "email_usu.id,"
-                . "email_usu.endereco,"
-                . "email_usu.senha,"
-                . "empresa.id,"
-                . "empresa.tipo_empresa,"
-                . "empresa.nome,"
-                . "empresa.inscricao_estadual,"
-                . "empresa.consigna,"
-                . "empresa.aceitou_contrato,"
-                . "empresa.juros_mensal,"
-                . "empresa.cnpj,"
-                . "endereco.numero,"
-                . "endereco.id,"
-                . "endereco.rua,"
-                . "endereco.bairro,"
-                . "endereco.cep,"
-                . "cidade.id,"
-                . "cidade.nome,"
-                . "estado.id,"
-                . "estado.sigla,"
-                . "email.id,"
-                . "email.endereco,"
-                . "email.senha,"
-                . "telefone.id,"
-                . "telefone.numero "
-                . "FROM usuario "
-                . "INNER JOIN endereco endereco_usuario ON endereco_usuario.id_entidade=usuario.id AND endereco_usuario.tipo_entidade='USU' "
-                . "INNER JOIN cidade cidade_usuario ON endereco_usuario.id_cidade=cidade_usuario.id "
-                . "INNER JOIN estado estado_usuario ON estado_usuario.id=cidade_usuario.id_estado "
-                . "INNER JOIN email email_usu ON email_usu.id_entidade=usuario.id AND email_usu.tipo_entidade='USU' "
-                . "INNER JOIN empresa ON usuario.id_empresa=empresa.id "
-                . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
-                . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
-                . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
-                . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
-                . "INNER JOIN estado ON cidade.id_estado = estado.id "
-                . "WHERE usuario.login = '" . addslashes($login) . "' AND usuario.senha='" . addslashes($senha) . "' ";
-
-
-        $ps = $con->getConexao()->prepare($sql);
-        $ps->execute();
-        $ps->bind_result($id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
-
-        $usuarios = array();
-
-        while ($ps->fetch()) {
-
-            $usuario = new Usuario();
-
-            $usuario->cpf = new CPF($cpf_usu);
-            $usuario->email = new Email($email_usu_end);
-            $usuario->email->id = $email_usu_id;
-            $usuario->email->senha = $email_usu_senha;
-            $usuario->id = $id_usu;
-            $usuario->login = $login_usu;
-            $usuario->senha = $senha_usu;
-            $usuario->nome = $nome_usu;
-
-            $end = new Endereco();
-            $end->id = $end_usu_id;
-            $end->bairro = $end_usu_bairro;
-            $end->cep = new CEP($end_usu_cep);
-            $end->numero = $end_usu_numero;
-            $end->rua = $end_usu_numero;
-
-            $end->cidade = new Cidade();
-            $end->cidade->id = $cid_usu_id;
-            $end->cidade->nome = $cid_usu_nome;
-
-            $end->cidade->estado = new Estado();
-            $end->cidade->estado->id = $est_usu_id;
-            $end->cidade->estado->sigla = $est_usu_nome;
-
-            $usuario->endereco = $end;
-
-            $empresa = Sistema::getEmpresa($tipo_empresa);
-
-            $empresa->id = $id_empresa;
-            $empresa->cnpj = new CNPJ($cnpj);
-            $empresa->inscricao_estadual = $inscricao_empresa;
-            $empresa->nome = $nome_empresa;
-            $empresa->aceitou_contrato = $aceitou_contrato;
-            $empresa->juros_mensal = $juros_mensal;
-            $empresa->consigna = $consigna;
-
-            $endereco = new Endereco();
-            $endereco->id = $id_endereco;
-            $endereco->rua = $rua;
-            $endereco->bairro = $bairro;
-            $endereco->cep = new CEP($cep);
-            $endereco->numero = $numero_endereco;
-
-            $cidade = new Cidade();
-            $cidade->id = $id_cidade;
-            $cidade->nome = $nome_cidade;
-
-            $estado = new Estado();
-            $estado->id = $id_estado;
-            $estado->sigla = $nome_estado;
-
-            $cidade->estado = $estado;
-
-            $endereco->cidade = $cidade;
-
-            $empresa->endereco = $endereco;
-
-            $email = new Email($endereco_email);
-            $email->id = $id_email;
-            $email->senha = $senha_email;
-
-            $empresa->email = $email;
-
-            $telefone = new Telefone($numero_telefone);
-            $telefone->id = $id_telefone;
-
-            $empresa->telefone = $telefone;
-
-            $usuario->empresa = $empresa;
-
-            $usuarios[$usuario->id] = $usuario;
-        }
-
-        $ps->close();
-
-        $in_usu = "-1";
-        foreach ($usuarios as $id => $usuario) {
-            $in_usu .= ",";
-            $in_usu .= $id;
-        }
-
-        $ps = $con->getConexao()->prepare("SELECT telefone.id_entidade, telefone.tipo_entidade, telefone.id, telefone.numero FROM telefone WHERE (telefone.id_entidade IN ($in_usu) AND telefone.tipo_entidade='USU') AND telefone.excluido = false");
-        $ps->execute();
-        $ps->bind_result($id_entidade, $tipo_entidade, $id, $numero);
-        while ($ps->fetch()) {
-
-            $v = $usuarios;
-            $telefone = new Telefone();
-            $telefone->id = $id;
-            $telefone->numero = $numero;
-
-            $v[$id_entidade]->telefones[] = $telefone;
-        }
-        $ps->close();
-
-        foreach ($usuarios as $key => $value) {
-            $value->permissoes = Sistema::getPermissoes($value->empresa);
-        }
-
-        $ps = $con->getConexao()->prepare("SELECT id_usuario, id_permissao,incluir,deletar,alterar,consultar FROM usuario_permissao WHERE id_usuario IN ($in_usu)");
-        $ps->execute();
-        $ps->bind_result($id_usuario, $id_permissao, $incluir, $deletar, $alterar, $consultar);
-
-        while ($ps->fetch()) {
-
-            $permissoes = $usuarios[$id_usuario]->permissoes;
-
-            $p = null;
-
-            foreach ($permissoes as $key => $perm) {
-                if ($perm->id == $id_permissao) {
-                    $p = $perm;
-                    break;
-                }
-            }
-
-            if ($p == null) {
-
-                continue;
-            }
-
-            $p->alt = $alterar == 1;
-            $p->in = $incluir == 1;
-            $p->del = $deletar == 1;
-            $p->cons = $consultar == 1;
-        }
-
-        $ps->close();
-
-        $real = array();
-
-        foreach ($usuarios as $key => $value) {
-
-            $real[] = $value;
-        }
-
-        if (count($real) > 0) {
-
-            $u = $real[0];
-
-            $u->empresa->getRTC($con);
-            $ses->set("usuario", $u);
-            $ses->set("empresa", $u->empresa);
-
-            return $u;
-        }
-
-        return null;
+        return Sistema::getUsuario("usuario.login='$login' AND usuario.senha='$senha'");
+        
     }
 
     public static function getCidades($con) {

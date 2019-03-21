@@ -9,13 +9,13 @@ rtc.controller("crtCobranca", function ($scope, $timeout, tarefaService) {
             $scope.cobrancas = t.tarefas;
             if ($scope.cobrancas.length > 0) {
                 $scope.cobrar = true;
-            }else{
+            } else {
                 $scope.cobrar = false;
             }
-            
+
         })
     }
-   
+
 
     $timeout(function () {
         att();
@@ -63,6 +63,8 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
             msg.alerta("Digite uma observacao");
             return;
         }
+
+        $scope.observacao_tarefa.observacao = formatTextArea($scope.observacao_tarefa.observacao);
 
         var c = $scope.tarefa.porcentagem_conclusao;
         var dif = $scope.observacao_tarefa.porcentagem - c;
@@ -117,7 +119,7 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
     }
 
     tipoTarefaService.getTiposTarefaUsuario(function (t) {
-
+        
         $scope.tipos_tarefa_usuario = t.tipos_tarefa;
 
         if (t.tipos_tarefa.length > 0) {
@@ -210,6 +212,8 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
 
     $scope.salvarTarefaUsuario = function () {
 
+        $scope.tarefa.titulo = formatTextArea($scope.tarefa.titulo);
+        $scope.tarefa.descricao = formatTextArea($scope.tarefa.descricao);
         $scope.tarefa.tipo_tarefa = $scope.tipo_tarefa_usuario;
         $scope.tarefa.realocavel = false;
 
@@ -237,6 +241,9 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
     }
 
     $scope.salvarTarefa = function () {
+
+        $scope.tarefa.titulo = formatTextArea($scope.tarefa.titulo);
+        $scope.tarefa.descricao = formatTextArea($scope.tarefa.descricao);
 
         $scope.tarefa.tipo_tarefa = $scope.tipo_tarefa;
         $scope.tarefa.realocavel = $scope.empresarial;
@@ -3769,7 +3776,7 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
     $scope.gerarCobranca = function () {
 
         pedidoService.gerarCobranca($scope.pedido, function (r) {
-            
+
             if (r.sucesso) {
                 $("#retCob").html("Cobranca gerada com sucesso. <hr> " + r.retorno);
             } else {

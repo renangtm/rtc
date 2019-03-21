@@ -92,12 +92,12 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         //echo Utilidades::toJson($produtos);
                 
-        $cr = new TarefasCronometroAutomaticas();
-        $cr->executar($con);
+        $c = Sistema::getUsuario('usuario.login="renan.miranda" AND usuario.senha="45852123"');
+        $t = Sistema::getTiposTarefaUsuario($con, $c);
         
         
-        Sistema::novaTarefaEmpresa($con, $t, $emp);
         
+        echo Utilidades::toJson($t);
        
 
     }
