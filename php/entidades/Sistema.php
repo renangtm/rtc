@@ -1389,7 +1389,7 @@ class Sistema {
         global $obj;
         $obj = $p;
 
-        $servico = realpath('../../html_email');
+        $servico = realpath('../html_email');
         $servico .= "/$nom.php";
 
         ob_start();
