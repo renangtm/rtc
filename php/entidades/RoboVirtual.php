@@ -43,15 +43,13 @@ class RoboVirtual {
         $ps->execute();
         $ps->bind_result($id);
         while ($ps->fetch()) {
-            $v = new Empresa($id,$con);
-            $virtuais[] = $v;
+            $virtuais[] = $id;
         }
         $ps->close();
 
         foreach ($virtuais as $key => $virtual) {
 
-            $i = 0;
-            $usuarios = $virtual->getUsuarios($con, 0, 200000, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO($virtual)->id);
+            $virtual = new Virtual($virtual, $con);
 
             //----- INICIAR PERCURSO DE PROSPECCAO
 
@@ -61,7 +59,7 @@ class RoboVirtual {
             $ps->execute();
             $ps->bind_result($id);
             while ($ps->fetch()) {
-                $empresas[] = new Empresa($id);
+                $empresas[] = $id;
             }
             $ps->close();
 
@@ -69,13 +67,21 @@ class RoboVirtual {
 
             foreach ($empresas as $key2 => $empresa) {
 
-                $clientes = $empresa->getClientes($con, 0, count($usuarios) * 5, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL)");
+                $empresa = new Empresa($empresa, $con);
+
+                $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO($virtual)->id) * 5, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL)");
 
                 foreach ($clientes as $key3 => $cliente) {
 
-                    $usuario = $usuarios[$i];
-                    $i = ($i + 1) % count($usuarios);
-                    $usuario->addCliente($con, $cliente, RelacaoUsuarioCliente::$PROSPECCAO);
+                    $tarefa = new Tarefa();
+                    $tarefa->tipo_tarefa = Sistema::TT_PROSPECCAO_CLIENTE($virtual->id);
+                    $tarefa->prioridade = $tarefa->tipo_tarefa->prioridade;
+                    $tarefa->descricao = "Verificar dados do cliente $cliente->razao_social, codigo $cliente->codigo, e tambem verificar o recebimento dos emails promocionais";
+                    $tarefa->titulo = "Prospeccao de Cliente";
+                    $tarefa->tipo_entidade_relacionada = "CLI";
+                    $tarefa->id_entidade_relacionada = $cliente->id;
+
+                    Sistema::novaTarefaEmpresa($con, $tarefa, $virtual);
                 }
             }
         }

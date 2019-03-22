@@ -369,7 +369,7 @@ class Usuario {
                 . "tarefa.prioridade,"
                 . "observacao.id,"
                 . "observacao.porcentagem,"
-                . "UNIX_TIMESTAMP(observacao.momento), "
+                . "UNIX_TIMESTAMP(observacao.momento)*1000, "
                 . "observacao.observacao "
                 . "FROM tarefa LEFT JOIN (SELECT * FROM observacao WHERE observacao.excluida = false) observacao ON tarefa.id=observacao.id_tarefa "
                 . "WHERE tarefa.excluida=false AND tarefa.id_usuario=$this->id";
@@ -453,10 +453,13 @@ class Usuario {
     public function addTarefa($con, $tarefa) {
 
         $tarefa->merge($con);
-
+        
         $ps = $con->getConexao()->prepare("UPDATE tarefa SET id_usuario = $this->id,inicio_minimo=inicio_minimo WHERE id=$tarefa->id");
         $ps->execute();
         $ps->close();
+        
+        $tarefa->tipo_tarefa->aoAtribuir($this->id,$tarefa);
+        
     }
 
     public function getAusencias($con, $filtro = "") {

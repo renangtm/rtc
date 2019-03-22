@@ -29,9 +29,10 @@ class Virtual extends Empresa {
         return new CargoFixo(15, "Assistente Virtual de Pos Venda", $emp);
     }
 
-    function __construct() {
+    function __construct($id=0,$con=null) {
 
-        parent::__construct();
+        parent::__construct($id,$con);
+
         $this->cargos_fixos[] = Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO($this);
         $this->cargos_fixos[] = Virtual::CF_ASSISTENTE_VIRTUAL_RECEPCAO($this);
         $this->cargos_fixos[] = Virtual::CF_ASSISTENTE_VIRTUAL_SUPORTE($this);

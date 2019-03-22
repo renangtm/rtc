@@ -37,6 +37,10 @@ class TipoTarefa {
         $this->empresa = null;
         $this->excluido = false;
     }
+    
+    public function aoAtribuir($id_usuario,$tarefa) {
+        
+    }
 
     public function aoFinalizar($tarefa) {
         

@@ -184,9 +184,9 @@ class Sistema {
         return new Permissao(43, "Tarefas");
     }
 
-    public static function TT_ANALISE_CREDITO($id_empresa) {
+    public static function TT_COMPRA($id_empresa) {
 
-        return new TTAnaliseCredito($id_empresa);
+        return new TTCompra($id_empresa);
     }
 
     public static function TT_CONFIRMACAO_PAGAMENTO($id_empresa) {
@@ -248,11 +248,38 @@ class Sistema {
 
         return new TTFAQCliente($id_empresa);
     }
-
+    
     public static function TT_ATENDIMENTO_POSVENDA($id_empresa) {
 
         return new TTAtendimentoPosVenda($id_empresa);
     }
+    
+    public static function TT_ANALISE_CREDITO($id_empresa) {
+
+        return new TTAnaliseCredito($id_empresa);
+    }
+    
+    public static function TT_FATURAMENTO($id_empresa) {
+
+        return new TTFaturamento($id_empresa);
+    }
+    
+    public static function TT_SEPARACAO($id_empresa) {
+
+        return new TTSeparacao($id_empresa);
+    }
+    
+    public static function TT_SOLICITACAO_COLETA($id_empresa) {
+
+        return new TTSolicitacaoColeta($id_empresa);
+    }
+    
+    public static function TT_RASTREIO($id_empresa) {
+
+        return new TTRastreio($id_empresa);
+    }
+    
+    
 
     public static function avisoDEVS($aviso) {
 
@@ -496,7 +523,8 @@ class Sistema {
         $ps = $con->getConexao()->prepare("UPDATE tarefa SET id_usuario=$menor,inicio_minimo=inicio_minimo WHERE id=$tarefa->id");
         $ps->execute();
         $ps->close();
-
+        $tarefa->tipo_tarefa->aoAtribuir($menor,$tarefa);
+        
         foreach ($tasks as $key => $value) {
             $ps = $con->getConexao()->prepare("UPDATE tarefa SET ordem=$value->ordem,inicio_minimo=inicio_minimo WHERE id=$value->id");
             $ps->execute();

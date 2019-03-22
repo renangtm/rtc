@@ -123,9 +123,15 @@ class IATarefas {
             }
 
             $tarefa->calculado_tempo_util_faltante = $tarefa->calculado_previsao_util_conclusao - $tarefa->calculado_horas_uteis_dispendidas;
-
-            $tarefa->ordem = round((($tarefa->prioridade * self::$PRIORIDADE_VS_TEMPO) / ($tarefa->calculado_tempo_util_faltante / 10000)), 11);
-            $tarefa->ordem_teste = $tarefa->ordem;
+        
+            if($tarefa->calculado_tempo_util_faltante == 0){
+                $tarefa->ordem = 0;
+                $tarefa->ordem_teste = 0;
+            }else{
+                $tarefa->ordem = round((($tarefa->prioridade * self::$PRIORIDADE_VS_TEMPO) / ($tarefa->calculado_tempo_util_faltante / 10000)), 11);
+                $tarefa->ordem_teste = $tarefa->ordem;
+            }
+            
         }
 
         //ordenando tarefas;
@@ -241,7 +247,7 @@ class IATarefas {
 
                 foreach ($itv_dia_uteis as $key => $value2) {
 
-                    if ($value->calculado_previsao_inicio === 0) {
+                    if ($value->calculado_previsao_inicio == 0) {
 
                         $value->calculado_previsao_inicio = $value2[0];
                     }

@@ -147,9 +147,11 @@
                                                                                             echo 'Em Andamento...';
                                                                                             
                                                                                         }else{
-                                                                                            
-                                                                                            echo date('d/m/Y H:i:s',$tarefa->calculado_previsao_inicio/1000);
-                                                                                            
+                                                                                            if($tarefa->calculado_previsao_inicio > 0){
+                                                                                                echo date('d/m/Y H:i:s',$tarefa->calculado_previsao_inicio/1000);
+                                                                                            }else{
+                                                                                                echo "Tarefa ja concluida";
+                                                                                            }
                                                                                         }
                                                                                     
                                                                                     ?>

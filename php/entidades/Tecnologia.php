@@ -53,9 +53,9 @@ class Tecnologia extends Empresa {
         return new CargoFixo(21, "Analista de testes", $emp);
     }
 
-    function __construct() {
+    function __construct($id=0,$con=null) {
 
-        parent::__construct();
+        parent::__construct($id,$con);
 
 
         $this->cargos_fixos[] = Tecnologia::CF_DESENVOLVEDOR_TRAINEE($this);

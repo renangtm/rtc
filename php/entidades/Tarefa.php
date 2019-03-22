@@ -32,7 +32,8 @@ class Tarefa {
     public $calculado_horas_uteis_dispendidas; //calculado
     public $calculado_horas_reais_dispendidas; //calculado
     public $calculado_tempo_util_faltante; //calculado
-
+    public $calculado_previsao_inicio; //calculado
+    
     public function __construct() {
 
         $this->id = 0;
@@ -69,6 +70,7 @@ class Tarefa {
 
         $porcentagem = $observacao->porcentagem + $this->porcentagem_conclusao;
         $inicio = $this->inicio_minimo;
+        $this->porcentagem_conclusao = $porcentagem;
 
         $ps = $con->getConexao()->prepare("SELECT UNIX_TIMESTAMP(ultima_execucao)*1000 FROM usuario WHERE id=$usuario->id");
         $ps->execute();

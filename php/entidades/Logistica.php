@@ -13,14 +13,15 @@
  */
 class Logistica extends Empresa {
 
-    function __construct() {
+    function __construct($id=0,$con=null) {
 
-        parent::__construct();
+        parent::__construct($id,$con);
         
         $this->permissoes_especiais[] = array(
             Sistema::P_PRODUTO_CLIENTE(),
             Sistema::P_EMPRESA_PEDIDO(),
             Sistema::P_RELATORIO_PRODUTO_LOGISTICA());
+        
         
     }
 

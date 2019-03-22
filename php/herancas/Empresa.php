@@ -111,7 +111,14 @@ class Empresa {
             Empresa::CF_SEPARADOR($this)
         );
         $this->tarefas_fixas = array(
-            "TT_ATIVIDADE_COMUM"
+            "TT_ATIVIDADE_COMUM",
+            "TT_COMPRA",
+            "TT_ANALISE_CREDITO",
+            "TT_CONFIRMACAO_PAGAMENTO",
+            "TT_FATURAMENTO",
+            "TT_RASTREIO",
+            "TT_SEPARACAO",
+            "TT_SOLICITACAO_COLETA"
         );
 
         if ($id > 0 && $cf !== null) {

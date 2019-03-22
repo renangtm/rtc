@@ -11,13 +11,13 @@
  *
  * @author Renan
  */
-class TTAnaliseCredito extends TipoTarefa {
+class TTRastreio extends TipoTarefa {
 
     function __construct($id_empresa) {
         
-        parent::__construct(22, $id_empresa);
+        parent::__construct(26, $id_empresa);
         
-        $this->nome = "Analise de Credito";
+        $this->nome = "Rastreio";
         $this->tempo_medio = 0.2;
         $this->prioridade = 2;
         

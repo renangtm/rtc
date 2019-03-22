@@ -25,7 +25,21 @@ class TTRecepcaoCliente extends TipoTarefa {
         );
     }
 
-    public function aoFinalizar() {
+    public function aoAtribuir($id_usuario,$tarefa) {
+
+        $con = new ConnectionFactory();
+        $relacionamento = new RelacaoUsuarioCliente();
+        $relacionamento->situacao = RelacaoUsuarioCliente::$RECEPCAO;
+        $relacionamento->cliente = new stdClass();
+        $relacionamento->cliente->id = $tarefa->id_entidade_relacionada;
+        $relacionamento->merge($con);
+
+        $ps = $con->getConexao()->prepare("UPDATE usuario_cliente SET id_usuario=$id_usuario WHERE id=$relacionamento->id");
+        $ps->execute();
+        $ps->close();
+    }
+
+    public function aoFinalizar($tarefa) {
         
     }
 

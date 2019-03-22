@@ -92,8 +92,9 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         //echo Utilidades::toJson($produtos);
                 
-        $e = new EnvioRelatorios();
+        $e = new RoboVirtual();
         $e->executar($con);
+        
     }
 
     public static function uniord($u) {

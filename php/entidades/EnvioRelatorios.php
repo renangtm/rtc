@@ -40,11 +40,13 @@ class EnvioRelatorios {
 
         $empresas = array();
         $empresas_inteiras = array();
-        $ps = $con->getConexao()->prepare("SELECT id FROM empresa");
+        $ps = $con->getConexao()->prepare("SELECT id,tipo_empresa FROM empresa AND rtc>=6");
         $ps->execute();
-        $ps->bind_result($id);
+        $ps->bind_result($id,$tipo_empresa);
         while ($ps->fetch()) {
-            $empresas[] = new Empresa($id);
+            $e = Sistema::getEmpresa($tipo_empresa);
+            $e->id = $id;
+            $empresas[] = $e;
         }
         $ps->close();
 
@@ -54,7 +56,7 @@ class EnvioRelatorios {
 
             foreach ($usuarios as $key2 => $usuario) {
 
-                $tarefas = $usuario->getTarefas($con, '(observacao.momento IS NULL OR observacao.momento)', '');
+                $tarefas = $usuario->getTarefas($con, '(tarefa.porcentagem_conclusao < 100 OR (DATE(observacao.momento)=DATE(CURRENT_DATE) AND MONTH(observacao.momento)=MONTH(CURRENT_DATE) AND YEAR(observacao.momento)=YEAR(CURRENT_DATE)))', '');
 
                 if (count($tarefas) === 0) {
                     continue;
@@ -106,7 +108,6 @@ class EnvioRelatorios {
                 foreach ($emails as $key3 => $value3) {
 
                     try {
-                        echo ". Tarefa do usuario de '" . $empresa->email->endereco . "' '$usuario->nome' para '$value3->endereco'";
                         $empresa->email->enviarEmail($value3, 'Relatorio do ' . $usuario->nome, $html);
                     } catch (Exception $ex) {
 
