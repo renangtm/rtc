@@ -123,9 +123,6 @@
 
                 <!-- /.modal-content --> 
 
-                <!-- /.modal-content LOADING --> 
-                <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
-
                 <!-- jquery 3.3.1 -->
                 <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
                 <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
@@ -155,9 +152,141 @@
 
                 <!-- Optional JavaScript -->
                 <script>
-                    
-                    
+                
 
+                function executarTarefa(tarefa) {
+                    
+                    var s = function () {
+
+                    }
+                    /*
+                    jsBaseService(
+                            {
+                                o: tarefa,
+                                query: '$o->executar($c)',
+                                sucesso: s,
+                                falha: s
+                            }
+                    )
+                    */
+                   alert(tarefa._classe)
+                }
+
+                function convertTime(t) {
+                    
+                    t = t.substr(1, t.length - 2);
+                    var dt = new Date();
+                    t = t.split(":");
+
+                    for (var i = 0; i < t.length; i++) {
+
+                        var l = t[i];   
+                        
+                        var tipo = l.charAt(l.length - 1);
+                        var numero = parseInt(l.substr(0, l.length - 1));
+                     
+                        if (tipo === "m") {
+                            if(numero === 60)numero--;
+                            dt.setMinutes(numero)
+                        } else if (tipo === "s") {
+                            if(numero===60)numero--;
+                            dt.setSeconds(numero);
+                        } else if (tipo === "h") {
+                            if(numero === 24)numero--;
+                            dt.setHours(numero);
+                        }
+
+                    }
+                   
+                    return dt;
+
+                }
+
+                var rotinas_executadas = [];
+
+                var req_time = 15 * 60 * 1000;
+
+                function req() {
+
+                    var agora = new Date();
+
+                    var s = function (r) {
+
+                        var tarefas = r.tasks;
+
+                        lbl:
+                                for (var i = 0; i < tarefas.length; i++) {
+
+                            var ce = tarefas[i].cronoExpression;
+
+                            var tipo = ce.substr(0, 2);
+                            var expressao = ce.substr(2, ce.length);
+                            var data = convertTime(expressao);
+
+                            if (tipo === "at") {
+
+                                for (var j = 0; j < rotinas_executadas.length; j++) {
+                                    var rotina = rotinas_executadas[j];
+                                    if (rotina.nome === tarefas[i]._classe) {
+                                        if (rotina.data.getDate().getTime() === data.getTime()) {
+                                            continue lbl;
+                                        }
+                                    }
+                                }
+
+                                if (agora.getTime() >= data.getTime()) {
+
+                                    var rotina = {nome: tarefas[i]._classe, data: data, real: agora, rec: 0};
+                                    rotinas_executadas[rotinas_executadas.length] = rotina;
+
+                                    executarTarefa(tarefas[i]);
+
+                                }
+
+                            } else if (tipo === "re") {
+                                
+                                var tempo_atual = agora.getHours() * 60 * 60 * 1000 + agora.getMinutes() * 60 * 1000 + agora.getSeconds() * 1000;
+                                var tempo_rec = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000;
+                                var rec = (tempo_atual - (tempo_atual % tempo_rec)) / tempo_rec;
+                          
+                                for (var j = 0; j < rotinas_executadas.length; j++) {
+                                    var rotina = rotinas_executadas[j];
+                                    if (rotina.nome === tarefas[i]._classe && rotina.data.getTime()===data.getTime()) {
+                                        if (rotina.rec === rec) {
+                                            continue lbl;
+                                        }
+                                    }
+                                }
+
+                                var rotina = {nome: tarefas[i]._classe, data: data, real: agora, rec: rec};
+                                rotinas_executadas[rotinas_executadas.length] = rotina;
+
+                                executarTarefa(tarefas[i]);
+
+                            }
+
+
+                        }
+
+                    }
+
+                    jsBaseService(
+                            {
+                                query: '$r->tasks=Sistema::getTrabalhosCronometrados()',
+                                sucesso: s,
+                                falha: s
+                            }
+                    )
+
+                }
+
+                req();
+
+                setInterval(function () {
+
+                    req();
+
+                }, 2000);
 
                 </script>
 

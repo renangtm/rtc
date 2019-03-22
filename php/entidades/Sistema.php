@@ -17,12 +17,8 @@ class Sistema {
 
         $trabalhos = array();
 
-        $relatorios = new EnvioRelatorios();
-        $relatorios->cronoExpression = "(19h:00m)";
-        $trabalhos[] = $relatorios;
-
         $prospeccao = new RoboVirtual();
-        $prospeccao->cronoExpression = "c(60m)";
+        $prospeccao->cronoExpression = "re(60m)";
         $trabalhos[] = $prospeccao;
 
         return $trabalhos;

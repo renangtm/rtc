@@ -295,12 +295,18 @@ class ProdutoPedidoSaida {
     }
 
     public function atualizarCustos() {
-
-        if ($this->id == 0) {
+      
+       if ($id === 0) {
+           
             $campanha = null;
             $valor_oferta = 0;
             foreach ($this->produto->ofertas as $key => $value) {
-                if ($value->validade == $this->validade_minima) {
+                $kc = $value->validade == $this->validade_minima;
+                if(!$kc && $this->validade_minima > $value->validade){
+                    $agora = round(microtime(true)*1000)+(Sistema::getMesesValidadeCurta()*30*24*60*60*1000);
+                    $kc = $value->validade > $agora; 
+                }
+                if ($kc) {
                     $campanha = $value->campanha;
                     $valor_oferta = $value->valor;
                     break;

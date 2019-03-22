@@ -20,10 +20,15 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
     }
 
     public function aoFinalizarPedido($pedido) {
-        
-        
 
-        $inscricao = $pedido->cliente->inscricao_estadual;
+
+
+        $inscricao = $pedido->cliente->cnpj->valor;
+
+        if ($pedido->cliente->pessoa_fisica) {
+            $inscricao = $pedido->cliente->cpf->valor;
+        }
+
         $cep = $pedido->cliente->endereco->cep->valor;
 
         if ($inscricao === "") {
@@ -37,7 +42,7 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
         $bairro = $pedido->cliente->endereco->bairro;
         $cep = str_replace(array("-"), array(""), $cep);
         $estado = $pedido->cliente->endereco->cidade->estado->sigla;
-        $inscricao = substr(str_replace(array(".", "-", "/"), array("", "", ""), $inscricao), 0, 11);
+        $inscricao = substr(str_replace(array(".", "-", "/"), array("", "", ""), $inscricao), 0, 14);
         $nome = $pedido->cliente->razao_social;
         $documento = $pedido->id;
         $cidade = $pedido->cliente->endereco->cidade->nome;
@@ -47,7 +52,7 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
             $valor += $value->quantidade * ($value->valor_base + $value->ipi + $value->frete + $value->juros + $value->icms);
         }
         $agora = round(microtime(true) * 1000);
-        $momento = $agora + ($pedido->prazo+1) * 24 * 60 * 60 * 1000;
+        $momento = $agora + ($pedido->prazo + 1) * 24 * 60 * 60 * 1000;
 
         if ($bairro === "") {
             $bairro = "sem bairro";
@@ -61,11 +66,11 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
             $logadouro = "sem rua";
         }
 
-       
+
         $in = "itau;tipo:em;bairro:$bairro;cep:$cep;cidade:$cidade;estado:$estado;inscricao:$inscricao;logadouro:$logadouro;nome:$nome;documento:$documento;valor:$valor;vencimento:$momento";
 
-        $out = Sistema::getMicroServicoJava('ServidorBoletosRTC',$in);
-        
+        $out = Sistema::getMicroServicoJava('ServidorBoletosRTC', $in);
+
         $objeto = json_decode($out);
 
         $lk = $objeto->link;

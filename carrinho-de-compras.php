@@ -142,10 +142,10 @@
                                                             <label for="">Transportadora</label>
                                                             <div class="form-row">
                                                                 <div class="col-2">
-                                                                    <input ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" type="text" class="form-control" placeholder="Cod." ng-model="pedido.transportadora.id" disabled>
+                                                                    <input ng-disabled="true" type="text" class="form-control" placeholder="Cod." ng-model="pedido.transportadora.id" disabled>
                                                                 </div>
                                                                 <div class="col-5">
-                                                                    <input ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" type="text" class="form-control" ng-model="pedido.transportadora.razao_social" placeholder="Nome da Transportadora" disabled>
+                                                                    <input ng-disabled="true" type="text" class="form-control" ng-model="pedido.transportadora.razao_social" placeholder="Nome da Transportadora" disabled>
                                                                 </div>
                                                                 <div class="col-1">
                                                                     <button ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" ng-if="!pedido.frete_incluso" ng-click="setPedidoContexto(pedido)" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#transportadoras" ng-disabled="!pedido.status.altera" style="padding: .375rem .75rem;"><i class="fas fa-search"></i><span class="indicator" ng-if="pedido.transportadora === null"></span></button>   
