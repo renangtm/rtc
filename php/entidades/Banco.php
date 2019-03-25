@@ -31,7 +31,85 @@ class Banco {
         $this->excluido = false;
         $this->codigo_contimatic = 0;
     }
+    
+    public function getValorFechamento($con){
+        
+        $anterior = 0;
+        $data_anterior = '1970-01-01';
+        
+        $ps = $con->getConexao()->prepare("SELECT valor,data FROM fechamento_caixa WHERE id_banco=$this->id ORDER BY data DESC");
+        $ps->execute();
+        $ps->bind_result($valor,$data);
+        if($ps->fetch()){
+            $anterior = $valor;
+            $data_anterior = $data;
+        }
+        $ps->close();
+        
+        $ps = $con->getConexao()->prepare("SELECT SUM((CASE WHEN operacao.debito THEN -1 ELSE 1 END)*(movimento.valor-movimento.descontos+movimento.juros)) FROM movimento "
+                . "INNER JOIN operacao ON movimento.id_operacao=operacao.id "
+                . "WHERE movimento.id_banco=$this->id AND movimento.data>$data_anterior");
+        $ps->execute();
+        $ps->bind_result($valor);
+        
+        if($ps->fetch()){
+            $anterior += $valor;
+        }
+        
+        $ps->close();
+        
+        return $anterior;
+        
+    }
+    
+    public function getCountMovimentosFechamento($con,$filtro2=""){
+        
+        $filtro = "";
+        
+        $ps = $con->getConexao()->prepare("SELECT MAX(data) FROM fechamento_caixa WHERE id_banco=$this->id");
+        $ps->execute();
+        $ps->bind_result($dt);
+        if($ps->fetch()){
+            $filtro .= "movimento.data>$dt";
+        }
+        $ps->close();
+        
+        if($filtro2 !== ""){
+            
+            $filtro .= " AND $filtro2";
+            
+        }
+        
+        $qtd = $this->empresa->getCountMovimentos($con, $filtro);
+        
+        return $qtd;
+        
+    }
 
+    public function getMovimentosFechamento($con,$x1,$x2,$filtro2="",$ordem=""){
+        
+        $filtro = "";
+        
+        $ps = $con->getConexao()->prepare("SELECT MAX(data) FROM fechamento_caixa WHERE id_banco=$this->id");
+        $ps->execute();
+        $ps->bind_result($dt);
+        if($ps->fetch()){
+            $filtro .= "movimento.data>$dt";
+        }
+        $ps->close();
+        
+        if($filtro2 !== ""){
+            
+            $filtro .= " AND $filtro2";
+            
+        }
+        
+        $movimentos = $this->empresa->getMovimentos($con,$x1, $x2,$filtro,$ordem);
+        
+        return $movimentos;
+        
+    }
+    
     public function atualizaSaldo($con) {
 
         $ps = $con->getConexao()->prepare("SELECT saldo FROM banco WHERE id = $this->id");

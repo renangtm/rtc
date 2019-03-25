@@ -1830,7 +1830,7 @@ rtc.service('loginService', function ($http, $q) {
     this.recuperar = function (email, fn) {
         baseService($http, $q, {
             o: {email: email},
-            query: "$u=Sistema::getUsuario(\"email_usu.endereco='\".$o->email.\"'\");if($u==null)throw new Exception('');$s=Sistema::getEmailSistema();$s->enviarEmail($u->email,'Recuperacao de Senha','Sua senha do RTC: '.$u->senha)",
+            query: "$u=Sistema::getUsuario(\"email_usu.endereco='\".$o->email.\"'\");if($u==null)throw new Exception('');$s=Sistema::getEmailSistema();$s->enviarEmail($u->email,'Recuperacao de Senha','Segue seus acessos: <hr> Login:'.$u->login.' <br> Senha: '.$u->senha)",
             sucesso: fn,
             falha: fn
         });

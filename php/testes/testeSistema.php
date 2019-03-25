@@ -92,7 +92,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         //echo Utilidades::toJson($produtos);
                 
-        $u = new RoboVirtual();
+        $e = new Empresa(1733,$con);
         
     }
 

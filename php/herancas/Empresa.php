@@ -4562,6 +4562,96 @@ class Empresa {
         return 0;
     }
 
+    public function getCountFechamento($con, $filtro) {
+
+        $sql = "SELECT "
+                . "COUNT(*) "
+                . "FROM fechamento_caixa "
+                . "INNER JOIN banco ON banco.id=fechamento_caixa.id_banco "
+                . "WHERE banco.id_empresa = $this->id ";
+
+        if ($filtro !== "") {
+
+            $sql .= "AND $filtro";
+        }
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($qtd);
+
+        if ($ps->fetch()) {
+
+            $ps->close();
+
+            return $qtd;
+        }
+
+        $ps->close();
+
+        return 0;
+    }
+
+    public function getFechamentosCaixa($con, $x1, $x2, $filtro = "", $ordem = "") {
+
+        $sql = "SELECT "
+                . "fechamento_caixa.id,"
+                . "fechamento_caixa.valor,"
+                . "UNIX_TIMESTAMP(fechamento_caixa.data)*1000,"
+                . "banco.id,"
+                . "banco.nome,"
+                . "IFNULL(banco.saldo,0),"
+                . "banco.conta,"
+                . "banco.codigo,"
+                . "banco.agencia,"
+                . "banco.codigo_contimatic "
+                . "FROM fechamento_caixa "
+                . "INNER JOIN banco ON banco.id=fechamento_caixa.id_banco "
+                . "WHERE banco.id_empresa=$this->id ";
+
+        if ($filtro !== "") {
+
+            $sql .= "AND $filtro ";
+        }
+
+        if ($ordem !== "") {
+
+            $sql .= "ORDER BY $ordem ";
+        }
+
+        $sql .= "LIMIT $x1, " . ($x2 - $x1);
+
+        $fechamentos = array();
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id, $valor, $data, $id_banco, $nome_banco, $saldo_banco, $conta_banco, $agencia_banco, $codigo_contimatic_banco);
+
+        while ($ps->fetch()) {
+
+            $f = new FechamentoCaixa();
+            $f->id = $id;
+            $f->valor = $valor;
+            $f->data = $data;
+
+            $b = new Banco();
+            $b->id = $id_banco;
+            $b->nome = $nome_banco;
+            $b->saldo = $saldo_banco;
+            $b->conta = $conta_banco;
+            $b->agencia = $agencia_banco;
+            $b->codigo_contimatic = $codigo_contimatic_banco;
+            $b->empresa = $this;
+
+            $f->banco = $b;
+
+            $fechamentos[] = $f;
+        }
+
+        $ps->close();
+
+        return $fechamentos;
+    }
+
     public function getUsuarios($con, $x1, $x2, $filtro = "", $ordem = "") {
 
 
