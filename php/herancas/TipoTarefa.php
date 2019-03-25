@@ -42,7 +42,7 @@ class TipoTarefa {
         
     }
 
-    public function aoFinalizar($tarefa) {
+    public function aoFinalizar($tarefa,$usuario) {
         
     }
 

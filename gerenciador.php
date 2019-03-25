@@ -102,7 +102,17 @@
                                         <div class="table-responsive"  style="overflow: visible">
                                             <div class="product-btn m-b-20">
 
-                                                <h4>Ativides de Usuarios &nbsp<i class="fas fa-male"></i></h4>
+                                                <h4>Atividades de Usuarios &nbsp<i class="fas fa-male"></i></h4>
+                                                <input type="checkbox" id="chkClientes" ng-model="grupo" ng-true-value="false" ng-false-value="true" ng-change="attGrupo()">
+                                                <label for="chkClientes">
+                                                    Outras Empresas
+                                                </label>
+                                               
+                                                <input type="checkbox" id="chkEmpresa" ng-model="grupo" ng-true-value="true" ng-false-value="false" ng-change="attGrupo()" style="margin-left:20px">
+                                                <label for="chkEmpresa">
+                                                    Grupo Empresarial
+                                                </label>
+                                                <hr>
                                                 OBS: Pode ter um delay de até <strong>60 segundos</strong> para o sistema computar a saída de um usuário.
                                                 <hr>
 
@@ -249,6 +259,7 @@
                                             </div>
                                             <calendario max-width="1630" change="attEstat()" inicio="gerenciadorEstat.periodo_inicial" fim="gerenciadorEstat.periodo_final" botao="true" tempo="true" refresh="gerenciadorEstat"></calendario>
                                             <div style="margin-top:20px">
+                                                <h4 style="text-decoration: underline">Numero de empresas: <strong style="color:steelblue">{{numero_empresas}}</strong></h4>
                                                 <h4 style="text-decoration: underline">Acessos de Usuarios: <strong>{{qtdAcessos}}</strong></h4>
                                                 <h4 style="text-decoration: underline">Max de Usuarios Simultaneos: <strong>{{maximoUsuariosOnline}}</strong></h4>
                                             </div>

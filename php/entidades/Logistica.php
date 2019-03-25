@@ -20,7 +20,8 @@ class Logistica extends Empresa {
         $this->permissoes_especiais[] = array(
             Sistema::P_PRODUTO_CLIENTE(),
             Sistema::P_EMPRESA_PEDIDO(),
-            Sistema::P_RELATORIO_PRODUTO_LOGISTICA());
+            Sistema::P_RELATORIO_PRODUTO_LOGISTICA(),
+            Sistema::P_RELATORIO_MAX_PALET());
         
         
     }

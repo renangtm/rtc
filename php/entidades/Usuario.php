@@ -69,18 +69,17 @@ class Usuario {
 
         return 0;
     }
-    
-    public function addCliente($con,$cliente,$situacao){
-        
+
+    public function addCliente($con, $cliente, $situacao) {
+
         $uc = new RelacaoUsuarioCliente();
         $uc->cliente = $cliente;
         $uc->situacao = $situacao;
         $uc->merge($con);
-        
+
         $ps = $con->getConexao()->prepare("UPDATE usuario_cliente SET data_inicio=data_inicio,data_fim=data_fim,id_usuario=$this->id WHERE id=$uc->id");
         $ps->execute();
         $ps->close();
-            
     }
 
     public function getClientes($con, $x1, $x2, $filtro = "", $ordem = "") {
@@ -154,7 +153,7 @@ class Usuario {
                 . "INNER JOIN cidade cidade_empresa ON endereco_empresa.id_cidade=cidade_empresa.id "
                 . "INNER JOIN estado estado_empresa ON cidade_empresa.id_estado = estado_empresa.id "
                 . "INNER JOIN usuario_cliente ON cliente.id=usuario_cliente.id_cliente AND usuario_cliente.id_usuario=$this->id "
-                . "WHERE cliente.excluido=false AND usuario_cliene.data_fim IS NULL ";
+                . "WHERE cliente.excluido=false AND usuario_cliente.data_fim IS NULL ";
 
         if ($filtro != "") {
 
@@ -313,6 +312,8 @@ class Usuario {
 
     public function getAtividadeUsuarioClienteAtual($con) {
 
+        $auc = null;
+
         $ps = $con->getConexao()->prepare("SELECT "
                 . "id,"
                 . "data_referente,"
@@ -320,6 +321,7 @@ class Usuario {
                 . "FROM usuario_atividade "
                 . "WHERE "
                 . "id_usuario=$this->id AND "
+                . "DATE(data_referente)=DATE(CURRENT_DATE) AND "
                 . "MONTH(data_referente)=MONTH(CURRENT_DATE) AND "
                 . "YEAR(data_referente)=YEAR(CURRENT_DATE)");
         $ps->execute();
@@ -331,10 +333,7 @@ class Usuario {
             $auc->id = $id;
             $auc->data_referente = $data_referente;
             $auc->pontos_atendimento = $pontos_atendimento;
-
             $ps->close();
-
-            return $auc;
         } else {
 
             $ps->close();
@@ -345,9 +344,24 @@ class Usuario {
             $ps = $con->getConexao()->prepare("UPDATE usuario_atividade SET id_usuario=$this->id WHERE id=$auc->id");
             $ps->execute();
             $ps->close();
-
-            return $auc;
         }
+
+        $ps = $con->getConexao()->prepare("SELECT SUM(pontos_atendimento) FROM usuario_atividade "
+                . "WHERE id_usuario=$this->id AND "
+                . "MONTH(data_referente)=MONTH(FROM_UNIXTIME($auc->data_referente/1000)) AND "
+                . "YEAR(data_referente)=YEAR(FROM_UNIXTIME($auc->data_referente/1000))");
+        $ps->execute();
+        $ps->bind_result($pontos_mes);
+        if ($ps->fetch()) {
+            if($pontos_mes !== null){
+                $auc->pontos_mes = $pontos_mes;
+            }
+        }
+        $ps->close();
+
+        $auc->calcularMetaDiaria();
+
+        return $auc;
     }
 
     public function getTarefas($con, $filtro = "", $ordem = "") {
@@ -453,13 +467,12 @@ class Usuario {
     public function addTarefa($con, $tarefa) {
 
         $tarefa->merge($con);
-        
+
         $ps = $con->getConexao()->prepare("UPDATE tarefa SET id_usuario = $this->id,inicio_minimo=inicio_minimo WHERE id=$tarefa->id");
         $ps->execute();
         $ps->close();
-        
-        $tarefa->tipo_tarefa->aoAtribuir($this->id,$tarefa);
-        
+
+        $tarefa->tipo_tarefa->aoAtribuir($this->id, $tarefa);
     }
 
     public function getAusencias($con, $filtro = "") {

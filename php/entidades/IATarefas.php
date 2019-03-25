@@ -175,7 +175,7 @@ class IATarefas {
                         break;
                     }
                 }
-                $agora += $tarefa->calculado_tempo_util_faltante * ($tempo_real / $tempo_util);
+                $agora += $tarefa->calculado_tempo_util_faltante * (($tempo_util>0)?($tempo_real / $tempo_util):1.5);
             }
 
             for ($j = count($tarefas_ativas); $j > $i; $j--) {

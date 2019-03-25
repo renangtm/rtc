@@ -12,6 +12,8 @@
  * @author Renan
  */
 class RoboVirtual {
+    
+    private static $NUMERO_PROSPECCOES_EXTERNAS = 3;
 
     public $dia;
     public $mes;
@@ -69,7 +71,7 @@ class RoboVirtual {
 
                 $empresa = new Empresa($empresa, $con);
 
-                $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO($virtual)->id) * 5, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL)");
+                $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO($virtual)->id) * 5, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL) AND cliente.prospectar_ignorar_pular=0");
 
                 foreach ($clientes as $key3 => $cliente) {
 
@@ -83,6 +85,36 @@ class RoboVirtual {
 
                     Sistema::novaTarefaEmpresa($con, $tarefa, $virtual);
                 }
+                
+                $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_RECEPCAO($virtual)->id) * 5, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL) AND cliente.prospectar_ignorar_pular=2");
+
+                foreach ($clientes as $key3 => $cliente) {
+
+                    $tarefa = new Tarefa();
+                    $tarefa->tipo_tarefa = Sistema::TT_RECEPCAO_CLIENTE($virtual->id);
+                    $tarefa->prioridade = $tarefa->tipo_tarefa->prioridade;
+                    $tarefa->descricao = "Recepcione o cliente $cliente->razao_social, codigo $cliente->codigo, verifique se ja se encontra no RTC, caso nao esteja apresente o sistema para ele";
+                    $tarefa->titulo = "Recepcao de Cliente";
+                    $tarefa->tipo_entidade_relacionada = "CLI";
+                    $tarefa->id_entidade_relacionada = $cliente->id;
+
+                    Sistema::novaTarefaEmpresa($con, $tarefa, $virtual);
+                }
+                
+                for($i=0;$i<self::$NUMERO_PROSPECCOES_EXTERNAS;$i++){
+                    
+                    $tarefa = new Tarefa();
+                    $tarefa->tipo_tarefa = Sistema::TT_PROSPECCAO_EXTERNA_CLIENTE($virtual->id);
+                    $tarefa->prioridade = $tarefa->tipo_tarefa->prioridade;
+                    $tarefa->descricao = "Cadastre um cliente externo na $empresa->nome, para cumprir a atividade de prospeccao externa";
+                    $tarefa->titulo = "Prosp. Externa";
+                    $tarefa->tipo_entidade_relacionada = "EMP";
+                    $tarefa->id_entidade_relacionada = $empresa->id;
+                    
+                    Sistema::novaTarefaEmpresa($con, $tarefa, $virtual);
+                    
+                }
+                
             }
         }
     }

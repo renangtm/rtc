@@ -493,11 +493,13 @@
                                     <thead>
                                     <th data-ordem="cliente.codigo">Cod.</th>
                                     <th data-ordem="cliente.razao_social">Nome</th>
+                                    <th>Estado</th>
                                     <th>Selecionar</th>
                                     </thead>
                                     <tr ng-repeat="cli in clientes.elementos">
                                         <th>{{cli[0].codigo}}</th>
                                         <th>{{cli[0].razao_social}}</th>
+                                        <th>{{cli[0].endereco.cidade.estado.sigla}}</th>
                                         <th><button class="btn btn-success" ng-click="setCliente(cli[0])"><i class="fa fa-info"></i></button></th>
                                     </tr> 
                                 </table>

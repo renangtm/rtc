@@ -17,8 +17,10 @@ class GerenciadorAtividade {
     public $empresa_consultora;
     public $periodo_inicial;
     public $periodo_final;
-
-    public function __construct($empresa, $periodo_inicial = -1, $periodo_final = -1) {
+    public $grupo;
+    public $cnpjs;
+    
+    public function __construct($empresa=null, $periodo_inicial = -1, $periodo_final = -1) {
 
         $this->empresa_consultora = $empresa;
         $this->periodo_inicial = $periodo_inicial;
@@ -26,7 +28,7 @@ class GerenciadorAtividade {
 
         $hora = 1000 * 60 * 60;
         $dia = $hora * 24;
-
+        
 
         if ($this->periodo_inicial < 0) {
 
@@ -39,44 +41,67 @@ class GerenciadorAtividade {
 
             $this->periodo_final = ($this->periodo_inicial - fmod($this->periodo_inicial + $hora * 21, $dia)) + $dia;
         }
+        
+        if($empresa !== null){
+            
+            $filiais = $empresa->getFiliais(new ConnectionFactory());
+            
+            $this->cnpjs = "('".$empresa->cnpj->valor."'";
+            
+            foreach($filiais as $key=>$value){
+                $this->cnpjs .= ",'".$value->cnpj->valor."'";
+            }
+            
+            $this->cnpjs .= ")";
+            
+        }
+        
+        $this->grupo = false;
+        
     }
-
-    public function getQuantidadeUsuariosAtivosForaGrupo($con, $filtro = "") {
-
-        $filiais = $empresa->getFiliais($con);
-        $filiais[] = $empresa;
-
-        $in = "(-1";
-
-        foreach ($filiais as $key => $value) {
-            $in .= ",$value->id";
+    
+    public function getNumeroEmpresas($con){
+        
+        $r = "";
+        
+        if($this->grupo){
+            
+            $r = "e.cnpj IN $this->cnpjs";
+            
+        }else{
+            
+            $r = "e.cnpj NOT IN $this->cnpjs";
+            
         }
-
-        $in .= ")";
-
-        $sql = "SELECT COUNT(*) FROM (SELECT a.id FROM atividade_usuario a INNER JOIN usuario u ON u.id=a.id_usuario INNER JOIN empresa e ON e.id=u.id_empresa WHERE a.momento>FROM_UNIXTIME($this->periodo_inicial/1000) AND a.momento<FROM_UNIXTIME($this->periodo_final/1000) WHERE usuario.id_empresa NOT IN $in";
-
-        if ($filtro !== "") {
-
-            $sql .= "AND $filtro ";
-        }
-
-        $sql .= "GROUP BY id_usuario) k";
-
-        $ps = $con->getConexao()->prepare($sql);
+        
+        $ps = $con->getConexao()->prepare("SELECT COUNT(*) FROM empresa e WHERE $r");
         $ps->execute();
         $ps->bind_result($qtd);
-        if ($ps->fetch()) {
+        if($ps->fetch()){
             $ps->close();
             return $qtd;
         }
         $ps->close();
         return 0;
+        
     }
 
-    public function getQuantidadeUsuariosAtivos($con, $filtro = "") {
 
-        $sql = "SELECT COUNT(*) FROM (SELECT a.id FROM atividade_usuario a INNER JOIN usuario u ON u.id=a.id_usuario INNER JOIN empresa e ON e.id=u.id_empresa WHERE a.momento>FROM_UNIXTIME($this->periodo_inicial/1000) AND a.momento<FROM_UNIXTIME($this->periodo_final/1000) ";
+    public function getQuantidadeUsuariosAtivos($con, $filtro = "") {
+        
+        $r = "";
+        
+        if($this->grupo){
+            
+            $r = "e.cnpj IN $this->cnpjs";
+            
+        }else{
+            
+            $r = "e.cnpj NOT IN $this->cnpjs";
+            
+        }
+
+        $sql = "SELECT COUNT(*) FROM (SELECT a.id FROM atividade_usuario a INNER JOIN usuario u ON u.id=a.id_usuario INNER JOIN empresa e ON e.id=u.id_empresa WHERE a.momento>FROM_UNIXTIME($this->periodo_inicial/1000) AND a.momento<FROM_UNIXTIME($this->periodo_final/1000) AND $r";
 
         if ($filtro !== "") {
 
@@ -97,6 +122,18 @@ class GerenciadorAtividade {
     }
 
     public function getUsuariosAtivos($con, $x1, $x2, $filtro = "", $ordem = "") {
+        
+        $r = "";
+        
+        if($this->grupo){
+            
+            $r = "e.cnpj IN $this->cnpjs";
+            
+        }else{
+            
+            $r = "e.cnpj NOT IN $this->cnpjs";
+            
+        }
 
         $sql = "SELECT "
                 . "u.id,"
@@ -108,7 +145,7 @@ class GerenciadorAtividade {
                 . "a.online "
                 . "FROM "
                 . "(SELECT id_usuario,MAX(momento) as 'mom',ABS(UNIX_TIMESTAMP(CURRENT_TIMESTAMP)-UNIX_TIMESTAMP(MAX(momento)))<" . self::$TIME_SINAL . "/1000 as 'online' FROM atividade_usuario WHERE tipo=" . Atividade::$SINAL . " AND momento>FROM_UNIXTIME($this->periodo_inicial/1000) AND momento<FROM_UNIXTIME($this->periodo_final/1000) GROUP BY id_usuario) a "
-                . "INNER JOIN usuario u ON u.id=a.id_usuario INNER JOIN empresa e ON e.id=u.id_empresa WHERE a.id_usuario >= 0";
+                . "INNER JOIN usuario u ON u.id=a.id_usuario INNER JOIN empresa e ON e.id=u.id_empresa WHERE a.id_usuario >= 0 AND $r";
 
 
         if ($filtro !== "") {
@@ -152,9 +189,21 @@ class GerenciadorAtividade {
     }
 
     public function getMaximoUsuariosOnline($con) {
+        
+        $r = "";
+        
+        if($this->grupo){
+            
+            $r = "e.cnpj IN $this->cnpjs";
+            
+        }else{
+            
+            $r = "e.cnpj NOT IN $this->cnpjs";
+            
+        }
 
 
-        $ps = $con->getConexao()->prepare("SELECT MAX(l.tt) FROM (SELECT COUNT(*) as 'tt' FROM (SELECT ROUND(UNIX_TIMESTAMP(a1.momento)/70) as 'm' FROM atividade_usuario a1 WHERE a1.momento > FROM_UNIXTIME($this->periodo_inicial/1000) AND a1.momento < FROM_UNIXTIME($this->periodo_final/1000) GROUP BY ROUND(UNIX_TIMESTAMP(a1.momento)/70),a1.id_usuario) k GROUP BY k.m) l");
+        $ps = $con->getConexao()->prepare("SELECT MAX(l.tt) FROM (SELECT COUNT(*) as 'tt' FROM (SELECT ROUND(UNIX_TIMESTAMP(a1.momento)/70) as 'm' FROM atividade_usuario a1 INNER JOIN usuario u ON u.id=a1.id_usuario INNER JOIN empresa e ON e.id=u.id_empresa AND $r WHERE a1.momento > FROM_UNIXTIME($this->periodo_inicial/1000) AND a1.momento < FROM_UNIXTIME($this->periodo_final/1000) GROUP BY ROUND(UNIX_TIMESTAMP(a1.momento)/70),a1.id_usuario) k GROUP BY k.m) l");
         $ps->execute();
         $ps->bind_result($qtd);
         if ($ps->fetch()) {
@@ -166,10 +215,22 @@ class GerenciadorAtividade {
     }
 
     public function getTempo_Usuarios($con, $intervalo) {
+        
+        $r = "";
+        
+        if($this->grupo){
+            
+            $r = "e.cnpj IN $this->cnpjs";
+            
+        }else{
+            
+            $r = "e.cnpj NOT IN $this->cnpjs";
+            
+        }
 
         $atividades = array();
 
-        $ps = $con->getConexao()->prepare("SELECT id_usuario,UNIX_TIMESTAMP(momento)*1000 FROM atividade_usuario WHERE momento>=FROM_UNIXTIME($this->periodo_inicial/1000) AND momento<=FROM_UNIXTIME($this->periodo_final/1000) ORDER BY momento");
+        $ps = $con->getConexao()->prepare("SELECT id_usuario,UNIX_TIMESTAMP(momento)*1000 FROM atividade_usuario INNER JOIN usuario u ON atividade_usuario.id_usuario=u.id INNER JOIN empresa e ON e.id=u.id_empresa AND $r WHERE momento>=FROM_UNIXTIME($this->periodo_inicial/1000) AND momento<=FROM_UNIXTIME($this->periodo_final/1000) ORDER BY momento");
         $ps->execute();
         $ps->bind_result($id_usuario, $momento);
         while ($ps->fetch()) {

@@ -15,13 +15,41 @@ class AtividadeUsuarioCliente {
 
     public $id;
     public $data_referente;
+    
     public $pontos_atendimento;
+    public $meta;
+    
+    public $pontos_mes;
+    public $meta_mes;
 
     function __construct() {
 
         $this->id = 0;
         $this->data_referente = round(microtime(true)*1000);
         $this->pontos_atendimento = 0;
+        $this->meta = 0;
+        
+        $this->meta_mes = 2640;
+        $this->pontos_mes = 0;
+        
+    }
+    
+    public function calcularMetaDiaria(){
+        
+        $agora = round(microtime(true));
+        $mes = intval(date('m',$agora));
+        $aux = $mes;
+        $dias = 0;
+        while($mes==$aux){
+            $dia_semana = intval(date('w',$agora));
+            if($dia_semana !== 0 && $dia_semana !== 6){
+                $dias++;
+            }
+            $agora += 24*60*60;
+            $aux = intval(date('m',$agora));
+        }
+        
+        $this->meta = max(($this->meta_mes-$this->pontos_mes)/$dias,120);
         
     }
 

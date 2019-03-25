@@ -18,9 +18,9 @@ rtc.service('tarefaService', function ($http, $q) {
             falha: fn
         });
     }
-    this.addObservacao = function (tarefa,observacao,fn) {
+    this.addObservacao = function (tarefa, observacao, fn) {
         baseService($http, $q, {
-            o:{observacao:observacao,tarefa:tarefa},
+            o: {observacao: observacao, tarefa: tarefa},
             query: "$o->tarefa->addObservacao($c,$usuario,$o->observacao);",
             sucesso: fn,
             falha: fn
@@ -76,10 +76,19 @@ rtc.service('gerenciadorService', function ($http, $q) {
             falha: fn
         });
     }
+
     this.getAtividadeUsuario = function (usuario, intervalo, fn) {
         baseService($http, $q, {
             o: {usuario: usuario, intervalo: intervalo},
             query: "$r->pontos = $o->usuario->getAtividade($c,$o->intervalo)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getNumeroEmpresas = function (gerenciador, fn) {
+        baseService($http, $q, {
+            o: gerenciador,
+            query: "$r->qtd=$o->getNumeroEmpresas($c)",
             sucesso: fn,
             falha: fn
         });
@@ -373,6 +382,51 @@ rtc.service('permissaoService', function ($http, $q) {
         });
     }
 })
+
+rtc.service('relacaoClienteService', function ($http, $q) {
+    this.getAtividadeUsuarioClienteAtual = function (fn) {
+        baseService($http, $q, {
+            query: "$r->atividade=$usuario->getAtividadeUsuarioClienteAtual($c)",
+            sucesso: fn,
+            falha: fn
+        });
+
+    }
+    this.getContato = function (fn) {
+        baseService($http, $q, {
+            query: "$r->contato=new Contato()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getContatos = function (relacao, fn) {
+        baseService($http, $q, {
+            o: relacao,
+            query: "$r->contatos=$o->getContatos($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$usuario->getCountClientes($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$usuario->getClientes($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+
+    }
+})
+
 rtc.service('usuarioService', function ($http, $q) {
     var este = this;
     this.empresa = null;
@@ -385,6 +439,7 @@ rtc.service('usuarioService', function ($http, $q) {
             falha: fn
         });
     }
+
     this.getUsuario = function (fn) {
         baseService($http, $q, {
             query: "$r->usuario=new Usuario();$r->usuario->empresa=$empresa",
@@ -1786,6 +1841,22 @@ rtc.service('sistemaService', function ($http, $q) {
         baseService($http, $q, {
             o: pedido,
             query: "Sistema::finalizarCompraParceiros($c,$o,$empresa);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.aoCadastrarCliente = function (cliente, fn) {
+        baseService($http, $q, {
+            o: cliente,
+            query: "Sistema::aoCadastrarCliente($usuario,$o);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.aoAlterarCliente = function (cliente, fn) {
+        baseService($http, $q, {
+            o: cliente,
+            query: "Sistema::aoAlterarCliente($usuario,$o);",
             sucesso: fn,
             falha: fn
         });

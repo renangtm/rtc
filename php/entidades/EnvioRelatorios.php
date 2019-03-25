@@ -40,7 +40,7 @@ class EnvioRelatorios {
 
         $empresas = array();
         $empresas_inteiras = array();
-        $ps = $con->getConexao()->prepare("SELECT id,tipo_empresa FROM empresa AND rtc>=6");
+        $ps = $con->getConexao()->prepare("SELECT id,tipo_empresa FROM empresa WHERE rtc>=6");
         $ps->execute();
         $ps->bind_result($id,$tipo_empresa);
         while ($ps->fetch()) {

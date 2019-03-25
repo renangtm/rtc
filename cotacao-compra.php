@@ -363,11 +363,13 @@
                                     <thead>
                                     <th data-ordem="fornecedor.codigo">Cod.</th>
                                     <th data-ordem="fornecedor.nome">Nome</th>
+                                    <th>Estado</th>
                                     <th>Selecionar</th>
                                     </thead>
                                     <tr ng-repeat="f in fornecedores.elementos">
                                         <th>{{f[0].codigo}}</th>
                                         <th>{{f[0].nome}}</th>
+                                        <th>{{f[0].endereco.cidade.estado.sigla}}</th>
                                         <th><button class="btn btn-success" ng-click="setFornecedor(f[0])"><i class="fa fa-info"></i></button></th>
                                     </tr> 
                                 </table>

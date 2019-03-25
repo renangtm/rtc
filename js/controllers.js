@@ -1,3 +1,77 @@
+rtc.controller("crtRelacaoCliente", function ($scope, relacaoClienteService, baseService) {
+
+
+    $scope.relacaoCliente = null;
+    $scope.contatos = [];
+
+    $scope.contato_novo = null;
+    $scope.contato = null;
+
+    $scope.clientes = createAssinc(relacaoClienteService, 1, 5, 10);
+    assincFuncs(
+            $scope.clientes,
+            "cliente",
+            ["codigo", "email.endereco", "razao_social", "cnpj", "cpf", "empresa.nome"]);
+    $scope.clientes.attList();
+
+
+    $scope.atividade = null;
+
+    relacaoClienteService.getContato(function (c) {
+
+        $scope.contato_novo = c.contato;
+        $scope.contato = angular.copy(c.contato);
+
+    })
+
+    $scope.novoContato = function () {
+
+        $scope.contato = angular.copy($scope.contato_novo);
+
+    }
+
+    $scope.mergeContato = function (c) {
+        
+        c.descricao = formatTextArea(c.descricao);
+        c.relacao = $scope.relacaoCliente;
+
+        baseService.merge(c, function (r) {
+            if (r.sucesso) {
+
+                $scope.contato = r.o;
+
+                msg.alerta("Operacao efetuada com sucesso.");
+
+
+            } else {
+                msg.erro("Problema ao efetuar operacao. ");
+            }
+        });
+
+    }
+
+    relacaoClienteService.getAtividadeUsuarioClienteAtual(function (r) {
+
+        $scope.atividade = r.atividade;
+
+    })
+
+    $scope.setRelacaoCliente = function (r) {
+
+        $scope.relacaoCliente = r;
+
+        relacaoClienteService.getContatos(r, function (c) {
+            
+            $scope.contatos = c.contatos;
+
+        })
+
+    }
+
+
+
+
+})
 rtc.controller("crtCobranca", function ($scope, $timeout, tarefaService) {
 
     $scope.cobrancas = [];
@@ -78,7 +152,7 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
 
                 tarefaService.getTarefasAtivas(function (t) {
 
-                    $scope.tarefas = createList(t.tarefas, 1, 5, "titulo");
+                    $scope.tarefas = createList(t.tarefas, 1, 7, "titulo");
                     $scope.tarefa_principal = t.tarefas[0];
 
                 })
@@ -119,7 +193,7 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
     }
 
     tipoTarefaService.getTiposTarefaUsuario(function (t) {
-        
+
         $scope.tipos_tarefa_usuario = t.tipos_tarefa;
 
         if (t.tipos_tarefa.length > 0) {
@@ -130,7 +204,7 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
 
     tarefaService.getTarefasAtivas(function (t) {
 
-        $scope.tarefas = createList(t.tarefas, 1, 5, "titulo");
+        $scope.tarefas = createList(t.tarefas, 1, 7, "titulo");
         $scope.tarefa_principal = t.tarefas[0];
 
     })
@@ -308,11 +382,29 @@ rtc.controller("crtGerenciador", function ($scope, $interval, gerenciadorService
     $scope.selecionado = null;
     $scope.informacoes = null;
 
+    $scope.numero_empresas = 0;
+
+    $scope.grupo = false;
+
+    $scope.attGrupo = function () {
+
+
+
+        $scope.gerenciadorUsuarios.grupo = $scope.grupo;
+        $scope.gerenciadorEstat.grupo = $scope.grupo;
+
+        $scope.ativos.attList();
+        $scope.attEstat();
+        $scope.attInfoUsu();
+
+
+    }
 
     $scope.selecionar = function (atv) {
 
         $scope.selecionado = atv;
         $scope.attInfoUsu();
+
 
     }
 
@@ -320,7 +412,6 @@ rtc.controller("crtGerenciador", function ($scope, $interval, gerenciadorService
 
         $scope.gerenciadorUsuarios = g.gerenciador;
         $scope.gerenciadorEstat = angular.copy(g.gerenciador);
-
         gerenciadorService.gerenciador = $scope.gerenciadorUsuarios;
 
         $scope.ativos = createAssinc(gerenciadorService, 1, 10, 10);
@@ -337,11 +428,12 @@ rtc.controller("crtGerenciador", function ($scope, $interval, gerenciadorService
             }
 
         }
-        $scope.ativos.attList();
         assincFuncs(
                 $scope.ativos,
                 "a",
-                ["u.id", "u.nome", "e.id", "e.nome", "e.cnpj"]);
+                ["u.id", "u.nome", "e.id", "e.nome", "e.cnpj"], "filtro", false);
+
+        $scope.ativos.attList();
 
         $scope.attEstat();
 
@@ -363,6 +455,12 @@ rtc.controller("crtGerenciador", function ($scope, $interval, gerenciadorService
     }
 
     $scope.attInfoUsu = function () {
+
+        gerenciadorService.getNumeroEmpresas($scope.gerenciadorEstat, function (q) {
+
+            $scope.numero_empresas = q.qtd;
+
+        })
 
         gerenciadorService.getAtividadeUsuario($scope.selecionado, $scope.intervaloInfoUsu, function (p) {
 
@@ -415,6 +513,8 @@ rtc.controller("crtGerenciador", function ($scope, $interval, gerenciadorService
 
     }
 
+    var interval = false;
+
     $scope.attEstat = function () {
 
         gerenciadorService.getCount('', function (r) {
@@ -442,17 +542,25 @@ rtc.controller("crtGerenciador", function ($scope, $interval, gerenciadorService
 
         })
 
+        if (!interval) {
+
+            $interval(function () {
+
+                $scope.ativos.attList();
+                $scope.attEstat();
+                $scope.attInfoUsu();
+
+            }, 30000);
+
+            interval = true;
+
+        }
+
     }
 
 
 
-    $interval(function () {
 
-        $scope.ativos.attList();
-        $scope.attEstat();
-        $scope.attInfoUsu();
-
-    }, 30000);
 
 });
 
@@ -4337,6 +4445,12 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
             "produto",
             ["codigo", "nome", "estoque", "disponivel"], "filtroProdutos");
 
+    $scope.produtos2 = createAssinc(produtoService, 1, 3, 4);
+    assincFuncs(
+            $scope.produtos2,
+            "produto",
+            ["codigo", "nome", "estoque", "disponivel"], "filtroProdutos2");
+
     $scope.agora = new Date().getTime();
     $scope.campanha = {inicio: $scope.agora, fim: $scope.agora, id: 0};
     $scope.campanha_nova = {};
@@ -5694,14 +5808,14 @@ rtc.controller("crtTransportadoras", function ($scope, clienteService, transport
     }
 
 })
-rtc.controller("crtClientes", function ($scope, clienteService, categoriaClienteService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
+rtc.controller("crtClientes", function ($scope, clienteService, sistemaService, empresaService, categoriaClienteService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
 
     $scope.clientes = createAssinc(clienteService, 1, 20, 10);
     $scope.clientes.attList();
     assincFuncs(
             $scope.clientes,
             "cliente",
-            ["codigo", "razao_social", "nome_fantasia", "inscricao_estadual", "cnpj", "cpf", "limite_credito", "termino_limite"]);
+            ["codigo", "razao_social", "nome_fantasia", "inscricao_estadual", "cnpj", "cpf", "limite_credito", "termino_limite", "empresa.nome"]);
 
     $scope.cliente_novo = {};
     $scope.cliente = {};
@@ -5722,6 +5836,15 @@ rtc.controller("crtClientes", function ($scope, clienteService, categoriaCliente
     $scope.categorias_documento = [];
     $scope.estados = [];
     $scope.cidades = [];
+
+
+    $scope.empresas_clientes = [];
+
+    empresaService.getEmpresasClientes(function (e) {
+
+        $scope.empresas_clientes = e.clientes;
+
+    })
 
     $("#uploaderDocumentoCliente").change(function () {
 
@@ -5799,6 +5922,7 @@ rtc.controller("crtClientes", function ($scope, clienteService, categoriaCliente
     $scope.novoCliente = function () {
 
         $scope.cliente = angular.copy($scope.cliente_novo);
+        equalize($scope.cliente, "empresa", $scope.empresas_clientes);
 
     }
 
@@ -5807,6 +5931,7 @@ rtc.controller("crtClientes", function ($scope, clienteService, categoriaCliente
         $scope.cliente = cliente;
 
         equalize($scope.cliente, "categoria", $scope.categorias_cliente);
+        equalize($scope.cliente, "empresa", $scope.empresas_clientes);
 
         clienteService.getDocumentos($scope.cliente, function (d) {
             $scope.cliente["documentos"] = d.documentos;
@@ -5837,6 +5962,8 @@ rtc.controller("crtClientes", function ($scope, clienteService, categoriaCliente
             return;
         }
 
+        var alterar = $scope.cliente.id > 0;
+
         baseService.merge($scope.cliente, function (r) {
             if (r.sucesso) {
                 $scope.cliente = r.o;
@@ -5845,8 +5972,20 @@ rtc.controller("crtClientes", function ($scope, clienteService, categoriaCliente
                     if (rr.sucesso) {
 
                         msg.alerta("Operacao efetuada com sucesso");
+
+                        if (alterar) {
+
+                            sistemaService.aoAlterarCliente($scope.cliente, function (c) {});
+
+                        } else {
+
+                            sistemaService.aoCadastrarCliente($scope.cliente, function (c) {});
+
+                        }
+
                         $scope.setCliente($scope.cliente);
                         $scope.clientes.attList();
+
 
                     } else {
                         msg.erro("Cliente alterado, porem ocorreu um problema ao subir os documentos");

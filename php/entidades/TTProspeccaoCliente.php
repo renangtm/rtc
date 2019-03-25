@@ -37,13 +37,13 @@ class TTProspeccaoDeCliente extends TipoTarefa {
         $relacionamento->cliente->id = $tarefa->id_entidade_relacionada;
         $relacionamento->merge($con);
         
-        $ps = $con->getConexao()->prepare("UPDATE usuario_cliente SET id_usuario=$id_usuario WHERE id=$relacionamento->id");
+        $ps = $con->getConexao()->prepare("UPDATE usuario_cliente SET id_usuario=$id_usuario,data_inicio=data_inicio,data_fim=data_fim WHERE id=$relacionamento->id");
         $ps->execute();
         $ps->close();
         
     }
 
-    public function aoFinalizar($tarefa) {
+    public function aoFinalizar($tarefa,$usuario) {
         
         $con = new ConnectionFactory();
         
@@ -56,7 +56,7 @@ class TTProspeccaoDeCliente extends TipoTarefa {
         
         Sistema::novaTarefaEmpresa(new ConnectionFactory(), $tarefa_, new Virtual($this->id_empresa,$con));
         
-        $ps = $con->getConexao()->prepare("UPDATE usuario_cliente SET data_inicio=data_inicio, data_fim=CURRENT_TIMESTAMP WHERE id_cliente=$tarefa->id_entidade_relacionada AND situacao=".RelacaoUsuarioCliente::$RECEPCAO);
+        $ps = $con->getConexao()->prepare("UPDATE usuario_cliente SET data_inicio=data_inicio, data_fim=CURRENT_TIMESTAMP WHERE id_usuario=$usuario->id AND id_cliente=$tarefa->id_entidade_relacionada");
         $ps->execute();
         $ps->close();
         

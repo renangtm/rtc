@@ -156,20 +156,17 @@
 
                 function executarTarefa(tarefa) {
                     
-                    var s = function () {
+                    var ss = function () {
 
                     }
-                    /*
                     jsBaseService(
                             {
-                                o: tarefa,
+                                o:tarefa,
                                 query: '$o->executar($c)',
-                                sucesso: s,
-                                falha: s
-                            }
+                                sucesso: ss,
+                                falha: ss
+                            },false
                     )
-                    */
-                   alert(tarefa._classe)
                 }
 
                 function convertTime(t) {
@@ -177,6 +174,11 @@
                     t = t.substr(1, t.length - 2);
                     var dt = new Date();
                     t = t.split(":");
+                    
+                    dt.setHours(0);
+                    dt.setMinutes(0);
+                    dt.setSeconds(0);
+                    dt.setMilliseconds(0);
 
                     for (var i = 0; i < t.length; i++) {
 
@@ -194,6 +196,9 @@
                         } else if (tipo === "h") {
                             if(numero === 24)numero--;
                             dt.setHours(numero);
+                        }else if(tipo === "q"){
+                            if(numero === 1000)numero--;
+                            dt.setMilliseconds(numero);
                         }
 
                     }
@@ -204,8 +209,6 @@
 
                 var rotinas_executadas = [];
 
-                var req_time = 15 * 60 * 1000;
-
                 function req() {
 
                     var agora = new Date();
@@ -213,10 +216,10 @@
                     var s = function (r) {
 
                         var tarefas = r.tasks;
-
+                        
                         lbl:
                                 for (var i = 0; i < tarefas.length; i++) {
-
+                                
                             var ce = tarefas[i].cronoExpression;
 
                             var tipo = ce.substr(0, 2);
@@ -228,7 +231,7 @@
                                 for (var j = 0; j < rotinas_executadas.length; j++) {
                                     var rotina = rotinas_executadas[j];
                                     if (rotina.nome === tarefas[i]._classe) {
-                                        if (rotina.data.getDate().getTime() === data.getTime()) {
+                                        if (rotina.data.getTime() === data.getTime()) {
                                             continue lbl;
                                         }
                                     }
@@ -248,26 +251,26 @@
                                 var tempo_atual = agora.getHours() * 60 * 60 * 1000 + agora.getMinutes() * 60 * 1000 + agora.getSeconds() * 1000;
                                 var tempo_rec = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000;
                                 var rec = (tempo_atual - (tempo_atual % tempo_rec)) / tempo_rec;
-                          
+                             
                                 for (var j = 0; j < rotinas_executadas.length; j++) {
                                     var rotina = rotinas_executadas[j];
-                                    if (rotina.nome === tarefas[i]._classe && rotina.data.getTime()===data.getTime()) {
+                                    if (rotina.nome === tarefas[i]._classe && rotina.data.getTime() === data.getTime()) {
                                         if (rotina.rec === rec) {
                                             continue lbl;
                                         }
                                     }
                                 }
-
+                               
                                 var rotina = {nome: tarefas[i]._classe, data: data, real: agora, rec: rec};
                                 rotinas_executadas[rotinas_executadas.length] = rotina;
-
+                                 
                                 executarTarefa(tarefas[i]);
-
+                                
                             }
 
 
                         }
-
+                        
                     }
 
                     jsBaseService(
@@ -277,16 +280,16 @@
                                 falha: s
                             }
                     )
-
+                     
                 }
 
                 req();
-
+               
                 setInterval(function () {
 
                     req();
 
-                }, 2000);
+                },2000);
 
                 </script>
 

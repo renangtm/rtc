@@ -1,4 +1,4 @@
-var projeto = "http://www.rtcagro.com.br/novo_rtc_web";
+var projeto = "http://192.168.0.17/novo_rtc_web";
 
 function mtlCharAt(str, idx) {
     str += '';
@@ -495,20 +495,32 @@ function createAssinc(lista, cols, rows, maxPage) {
 
 }
 
-function assincFuncs(lista, base, campos, filtro) {
+function assincFuncs(lista, base, campos, filtro, initialOrder) {
 
 
-    var ordemInicial = "";
-    if (campos[0].indexOf('.') == -1) {
+    var ini = true;
+    
+    if(initialOrder === false){
+        
+        ini = initialOrder;
+        
+    }
 
-        ordemInicial += base + "." + campos[0] + " DESC";
+    if (ini) {
 
-    } else {
+        var ordemInicial = "";
+        if (campos[0].indexOf('.') == -1) {
 
-        ordemInicial += campos[j] + " DESC";
+            ordemInicial += base + "." + campos[0] + " DESC";
+
+        } else {
+
+            ordemInicial += campos[0] + " DESC";
+
+        }
+        lista.ordem = ordemInicial;
 
     }
-    lista.ordem = ordemInicial;
 
     var b = [];
     var e = [];
@@ -876,7 +888,15 @@ var id = 0;
 
 var teste = false;
 
-function jsBaseService(obj) {
+function jsBaseService(obj,ab) {
+
+    var abt = true;
+    
+    if(ab === false){
+        
+        abt = ab;
+        
+    }
 
     var idt = ++id;
 
@@ -885,7 +905,7 @@ function jsBaseService(obj) {
     if (typeof obj["o"] !== 'undefined') {
         params["o"] = encode64SPEC(paraJson(obj["o"]));
     }
-    $.post('php/controler/crt.php', params).done(function (resp) {
+    var p = $.post('php/controler/crt.php', params).done(function (resp) {
 
         var m = 0;
         for (var i = 0; i < ids.length; i++) {
@@ -940,13 +960,18 @@ function jsBaseService(obj) {
             m = ids[i];
         }
     }
+
     if (m == 0) {
         loading.show();
     }
+
     for (var i = 0; i < jsrequests.length; i++) {
-        jsrequests[i].abort();
-        ids[i] = 0;
+        if(abt){
+            jsrequests[i].abort();
+            ids[i] = 0;
+        }
     }
+
     jsrequests = [];
     ids[ids.length] = idt;
     jsrequests[jsrequests.length] = p;

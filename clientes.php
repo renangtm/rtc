@@ -98,6 +98,9 @@
                                                         <th data-ordem="cliente.cpf">CPF</th>
                                                         <th data-ordem="cliente.limite_credito">Lim Cre</th>
                                                         <th data-ordem="cliente.termino_limite">Fim Lim</th>
+                                                        <?php if ($usuario->temPermissao(Sistema::P_EMPRESA_CLIENTE()->m("C"))) { ?>
+                                                        <th data-ordem="cliente.empresa.nome">Empresa</th>
+                                                        <?php } ?>
                                                         <th width="150px">Ação</th>
                                                     </tr>
                                                 </thead>
@@ -111,6 +114,9 @@
                                                         <td>{{cliente[0].pessoa_fisica?cliente[0].cpf.valor:'------'}}</td>
                                                         <td>{{cliente[0].limite_credito}}</td>
                                                         <td style="{{(cliente[0].inicio_limite > data_atual|| cliente[0].termino_limite<data_atual)?'background-color:#71748d;color:#FFFFFF':'' }}">{{cliente[0].termino_limite| data}}<button class="btn btn-default" style="float:right" ng-if="cliente[0].inicio_limite > data_atual || cliente[0].termino_limite < data_atual"><i class="fa fa-address-card"></i></button></td>
+                                                        <?php if ($usuario->temPermissao(Sistema::P_EMPRESA_CLIENTE()->m("C"))) { ?>
+                                                        <td>{{cliente[0].empresa.nome}}</td>
+                                                        <?php } ?>
                                                         <th>
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setCliente(cliente[0])" data-target="#demo{{cliente[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
@@ -186,6 +192,9 @@
                                                         <th>CPF</th>
                                                         <th>Lim Cre</th>
                                                         <th>Fim Lim</th>
+                                                        <?php if ($usuario->temPermissao(Sistema::P_EMPRESA_CLIENTE()->m("C"))) { ?>
+                                                        <th>Empresa</th>
+                                                        <?php } ?>
                                                         <th width="180px">Ação</th>
                                                     </tr>
                                                 </tfoot>
@@ -245,6 +254,19 @@
                             </div>
                             <div class="modal-body">
                                 <form id="add-form" ng-submit="mergeCliente()" parsley-validate>
+                                    <?php if ($usuario->temPermissao(Sistema::P_EMPRESA_CLIENTE()->m("C"))) { ?>
+                                    <div class="form-group row">
+                                        <label  class="col-3 col-lg-4 col-form-label text-left">Empresa</label>
+                                        <div class="col-9 col-lg-8">
+                                            <select ng-model="cliente.empresa" class="form-control">
+                                                <option ng-repeat="e in empresas_clientes" ng-value="e">{{e.nome}}</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php } ?>
                                     <div class="form-group row">
                                         <label for="txtname" class="col-3 col-lg-3 col-form-label text-left">Codigo</label>
                                         <div class="col-9 col-lg-9">

@@ -312,107 +312,44 @@ $possiveis[0] = $rtc;
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         <?php echo $empresa->nome; ?>
                     </li>
-                    <?php if ($usuario->temPermissao(Sistema::P_CONFIGURACAO_EMPRESA()->m("C"))) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="configuracao-empresa.php" ><button class="btn btn-warning" onmousedown="tutorial('Configuracao da Empresa', 'Aqui � onde voc� cadastra os dados da sua empresa, para que o sistema deixe algumas coisas automaticas para voc�, caso voc� tenha o modulo de emiss�o de nota tamb�m ira cadastrar o seu certificado digitao aqui')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-compass"></i>Config. Empresa</a>
-                        </li>         
-                    <?php } ?>
-                    <?php if ($usuario->temPermissao(Sistema::P_CFG()->m("C"))) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="cfg.php" ><button class="btn btn-warning" onmousedown="tutorial('CFG', 'Aqui � onde voc� cria novos usuarios para a sua empresa, atribui autoriza��es e retira')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-male mr-2"></i>CFG</a>
-                        </li>         
-                    <?php } ?>
-                    <?php if ($usuario->temPermissao(Sistema::P_TAREFAS()->m("C"))) { ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="tarefas.php" ><button class="btn btn-warning" onmousedown="tutorial('Tarefas', 'Aqui e onde voce ve suas tarefas e cria novas tarefas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks mr-2"></i>Tarefas</a>
-                    </li>
-                    <?php } ?>
-                    <?php if ($usuario->temPermissao(Sistema::P_ORGANOGRAMA()->m("C")) || $usuario->temPermissao(Sistema::P_ORGANOGRAMA_TOTAL()->m("C"))) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="organograma.php" ><button class="btn btn-warning" onmousedown="tutorial('Organograma', 'Aqui e onde voce cria as relacoes hierarquicas de sua empresa')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-sitemap mr-2"></i>Organograma</a>
-                        </li>
-                    <?php } ?>
-                    <?php if ($usuario->temPermissao(Sistema::P_EXPEDIENTE()->m("C"))) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="expediente.php" ><button class="btn btn-warning" onmousedown="tutorial('Expediente', 'Aqui voce cadastra o expediente, e faltas de seus colaboradores')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-clock mr-2"></i>Expediente</a>
-                        </li>
-                    <?php } ?>
-                    <?php if ($usuario->temPermissao(Sistema::P_LISTA_PRECO()->m("C"))) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="lista-de-preco.php" ><button class="btn btn-warning" onmousedown="tutorial('Lista de pre�o', 'Esta � uma pagina de consulta para que voc� consiga fazer o seu receituario, contem todas as rela��es de praga, produto e cultura')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-clipboard-list"></i>Receituario</a>
-                        </li>
-                    <?php } ?>
-                    <?php if ($usuario->temPermissao(Sistema::P_CAMPANHA()->m("C"))) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="campanhas.php" ><button class="btn btn-warning" onmousedown="tutorial('Campanhas', 'Aqui � onde voc� define promo��es para os seus produtos, e tamb�m pode consultar e alterar parametros promocionais')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-anchor"></i>Campanhas</a>
-                        </li>
-                    <?php } ?>
-                    <?php if ($usuario->temPermissao(Sistema::P_GERENCIADOR()->m("C"))) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="gerenciador.php" ><button class="btn btn-warning" onmousedown="tutorial('Gerenciador', 'Aqui voc� consegue ver os usuarios que estao online no per�odo selecionado, ou que entraram no periodo selecionado, apareceram com uma bolinha verde os que estiverem online, e uma vermelha para os que ja sairam, al�m disso aqui voc� consegue ver parametros como a quantidade maxima de usuarios que acessam simultaneamente o RTC em um periodo, tamb�m consegue checar dados de um usu�rio especifico, ver sua pontua��o seus logs de acesso, e tamb�m via grafico, a frequencia de sua atividade')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-chart-bar"></i>Gerenciador</a>
-                        </li>
-                    <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_BANNERS()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="banners.php" ><button class="btn btn-warning" onmousedown="tutorial('Banners', 'Aqui voc� consegue confeccionar banners din�micos para entrar no RTC da sua empresa e serem enviados por email, esses banners tem que estar em formato HTML, e talvez precise de um profissional de marketing para criar esse HTML para voc�, mas depois que � criado o pr�prio sistema faz adapta��es nele para servir para qualquer situa��o')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-image"></i>Banners</a>
-                        </li>
-                    <?php } ?>
-                    <?php if ($usuario->temPermissao(Sistema::P_FORNECEDOR()->m("C"))) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="fornecedores.php" ><button class="btn btn-warning" onmousedown="tutorial('Fornecedores', 'Aqui voc� faz o cadastro de seus fornecedores, altera��o, exclus�o, habilita��o e desabilita��o')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-industry"></i>Fornecedores</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_BANCO()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="bancos.php" ><button class="btn btn-warning" onmousedown="tutorial('Bancos', 'Aqui voc� faz o cadastro de seus bancos com saldos, agencia, conta e outros dados, pode alterar e excluir tamb�m')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-calculator"></i>Bancos</a>
                         </li>
-                    <?php } ?>
-                    <?php if ($usuario->temPermissao(Sistema::P_MOVIMENTO()->m("C"))) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="movimentos_banco.php" ><button class="btn btn-warning" onmousedown="tutorial('Movimentos', 'Aqui voc� faz as baixas das notas fiscais, cadastrando o movimento para ela, o mesmo relacionado a um banco, um c�digo de opera��o e hist�rico, ele ja faz a corre��o de saldo automaticamente tamb�m')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-money-bill-alt"></i>Movimentos Financeiro</a>
-                        </li>
-                    <?php } ?>
-                    <li class="nav-item" ng-repeat="relatorio in relatorios">
-                        <a class="nav-link" href="relatorios.php?rel={{relatorio.id}}" ><button class="btn btn-warning" onmousedown="tutorial('Relatorios', 'Essa � uma parte destinada a gera��o de relatorios, voc� pode solicitar o relat�rio que desejar para a equipe da Agrofauna T�cnologia.')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-paper-plane"></i>{{relatorio.nome}}</a>
-                    </li>
-                    <?php if ($usuario->temPermissao(Sistema::P_PRODUTO_CLIENTE()->m("C"))) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="produto-cliente-logistic.php"><button class="btn btn-warning" onmousedown="tutorial('Produtos Logistic', 'Aqui � onde a empresa de armazenamento, ve os produtos de seus clientes, com respectivos estoques que est�o armazenados no armaz�n')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-camera"></i>Produtos cliente Logistic</a>
-                        </li>
-                    <?php } ?>
+                    <?php } ?>   
                     <?php if ($usuario->temPermissao(Sistema::P_PRODUTO()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="cadastro-de-produtos.php"><button class="btn btn-warning" onmousedown="tutorial('Cadastro de Produtos', 'Aqui � onde seus produtos s�o cadastrados, podem ser excluidos e/ou alterados tamb�m. ')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-cube"></i>Cadastro de Produtos</a>
                         </li>
-                    <?php } ?>
-                    <?php if ($usuario->temPermissao(Sistema::P_NOTA()->m("C"))) { ?>
+                    <?php } ?>    
+                    <?php if ($usuario->temPermissao(Sistema::P_CAMPANHA()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="notas.php"><button class="btn btn-warning" onmousedown="tutorial('Notas', 'Aqui est�o todas as fichas, de sa�da e entrada, podem ser cadastradas quando for necess�rio, realizam movimenta��o no estoque, e tamb�m � a parte do sistema destinada a emiss�o de nota, onde o pr�prio sistema emite as notas aqui inseridas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-book"></i>Notas</a>
-                        </li>                  
-                    <?php } ?>
-                    <?php if ($usuario->temPermissao(Sistema::P_LOTE()->m("C"))) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="lotes.php"><button class="btn btn-warning" onmousedown="tutorial('Lotes', 'Aqui � onde s�o administrados os lotes de cada um dos produtos que utilizam o sistema de lotes, podem ser cadastrados, e ter impressas as etiquetas de cada um deles')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-cubes"></i>Lotes</a>
+                            <a class="nav-link" href="campanhas.php" ><button class="btn btn-warning" onmousedown="tutorial('Campanhas', 'Aqui � onde voc� define promo��es para os seus produtos, e tamb�m pode consultar e alterar parametros promocionais')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-anchor"></i>Campanhas</a>
                         </li>
+                    <?php } ?>
+                         <?php if ($usuario->temPermissao(Sistema::P_CFG()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="cfg.php" ><button class="btn btn-warning" onmousedown="tutorial('CFG', 'Aqui � onde voc� cria novos usuarios para a sua empresa, atribui autoriza��es e retira')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-male mr-2"></i>CFG</a>
+                        </li>         
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_CLIENTE()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="clientes.php" ><button class="btn btn-warning" onmousedown="tutorial('Clientes', 'Aqui � o cadastro de clientes, onde voc� pode cadastrar, excluir e alterar seus clientes')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-users"></i>Clientes</a>
                         </li>
-                    <?php } ?>
-                    <?php if ($usuario->temPermissao(Sistema::P_TRANSPORTADORA()->m("C"))) { ?>
+                    <?php } ?>    
+                    <?php if ($usuario->temPermissao(Sistema::P_CONFIGURACAO_EMPRESA()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="transportadoras.php" ><button class="btn btn-warning" onmousedown="tutorial('Transportadoras', 'Aqui � onde ficam cadastradas todas as suas transportadoras, � poss�vel tamb�m alterar e excluir, al�m disso o RTC conta com um sistema de calculo de frete bastante interessante onde voc� pode cadastrar sua tabela atrav�s de express�es matem�ticas, e o sistema ent�o passa a calcular seu frete automaticamente, nos seus pedidos para os seus clientes, al�m disso a consulta de tabela fica disponivel aqui mesmo para fazer uma simula��o de frete')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-truck"></i>Transportadoras</a>
-                        </li>
+                            <a class="nav-link" href="configuracao-empresa.php" ><button class="btn btn-warning" onmousedown="tutorial('Configuracao da Empresa', 'Aqui � onde voc� cadastra os dados da sua empresa, para que o sistema deixe algumas coisas automaticas para voc�, caso voc� tenha o modulo de emiss�o de nota tamb�m ira cadastrar o seu certificado digitao aqui')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-compass"></i>Config. Empresa</a>
+                        </li>         
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_COTACAO()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="cotacao-compra.php"><button class="btn btn-warning" onmousedown="tutorial('Cotacao', 'Aqui � onde voc� pode fazer uma cota��o com os seus fornecedores, quando voc� finaliza a cota��o, ele envia um email para o seu fornecedor, com a poss�bilidade dele responder pelo pr�prio email, e quando isso acontece a resposta dele ja entra no seu sistema automaticamente.')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-check-square"></i>Cotacao</a>
-                        </li>
-                    <?php } ?>
-                    <?php if ($usuario->temPermissao(Sistema::P_PEDIDO_ENTRADA()->m("C"))) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="visualizar-pedidos-compra.php"><button class="btn btn-warning" onmousedown="tutorial('Pedido de compra', 'Aqui � onde ficam seus pedidos de compra, com o seu fornecedor, tamb�m � enviado um email de confirma��o de pedido ap�s a conclus�o do mesmo, o pedido gera interfer�ncia no estoque e � a partir dele que a entrada de NFe vai acontecer')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks"></i>Pedidos de Compra</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_ENTRADA_NFE()->m("C"))) { ?>
@@ -420,11 +357,90 @@ $possiveis[0] = $rtc;
                             <a class="nav-link" href="entrada_nota.php"><button class="btn btn-warning" onmousedown="tutorial('Entrada de Nota', 'Aqui � onde voc� da a entrada nas suas notas, aqui ocorre rela��o com o pedido de compra para que as altera��es de estoque sejam computadas de forma integra, sem depender da nota do fornecedor, portanto � necess�rio sempre um pedido de compra para dar entrada em uma NFe')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-code"></i>Entrada NFe</a>
                         </li>
                     <?php } ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_EXPEDIENTE()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="expediente.php" ><button class="btn btn-warning" onmousedown="tutorial('Expediente', 'Aqui voce cadastra o expediente, e faltas de seus colaboradores')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-clock mr-2"></i>Expediente</a>
+                        </li>
+                    <?php } ?>    
+                    <?php if ($usuario->temPermissao(Sistema::P_FORNECEDOR()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="fornecedores.php" ><button class="btn btn-warning" onmousedown="tutorial('Fornecedores', 'Aqui voc� faz o cadastro de seus fornecedores, altera��o, exclus�o, habilita��o e desabilita��o')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-industry"></i>Fornecedores</a>
+                        </li>
+                    <?php } ?>    
+                    <?php if ($usuario->temPermissao(Sistema::P_GERENCIADOR()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="gerenciador.php" ><button class="btn btn-warning" onmousedown="tutorial('Gerenciador', 'Aqui voc� consegue ver os usuarios que estao online no per�odo selecionado, ou que entraram no periodo selecionado, apareceram com uma bolinha verde os que estiverem online, e uma vermelha para os que ja sairam, al�m disso aqui voc� consegue ver parametros como a quantidade maxima de usuarios que acessam simultaneamente o RTC em um periodo, tamb�m consegue checar dados de um usu�rio especifico, ver sua pontua��o seus logs de acesso, e tamb�m via grafico, a frequencia de sua atividade')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-chart-bar"></i>Gerenciador</a>
+                        </li>
+                    <?php } ?>    
+                            
+
+                        
+                    
+                    
+                    
+                    <?php if ($usuario->temPermissao(Sistema::P_LISTA_PRECO()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="lista-de-preco.php" ><button class="btn btn-warning" onmousedown="tutorial('Lista de pre�o', 'Esta � uma pagina de consulta para que voc� consiga fazer o seu receituario, contem todas as rela��es de praga, produto e cultura')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-clipboard-list"></i>Receituario</a>
+                        </li>
+                    <?php } ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_LOTE()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="lotes.php"><button class="btn btn-warning" onmousedown="tutorial('Lotes', 'Aqui � onde s�o administrados os lotes de cada um dos produtos que utilizam o sistema de lotes, podem ser cadastrados, e ter impressas as etiquetas de cada um deles')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-cubes"></i>Lotes</a>
+                        </li>
+                    <?php } ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_MOVIMENTO()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="movimentos_banco.php" ><button class="btn btn-warning" onmousedown="tutorial('Movimentos', 'Aqui voc� faz as baixas das notas fiscais, cadastrando o movimento para ela, o mesmo relacionado a um banco, um c�digo de opera��o e hist�rico, ele ja faz a corre��o de saldo automaticamente tamb�m')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-money-bill-alt"></i>Movimentos Financeiro</a>
+                        </li>
+                    <?php } ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_NOTA()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="notas.php"><button class="btn btn-warning" onmousedown="tutorial('Notas', 'Aqui est�o todas as fichas, de sa�da e entrada, podem ser cadastradas quando for necess�rio, realizam movimenta��o no estoque, e tamb�m � a parte do sistema destinada a emiss�o de nota, onde o pr�prio sistema emite as notas aqui inseridas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-book"></i>Notas</a>
+                        </li>                  
+                    <?php } ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_ORGANOGRAMA()->m("C")) || $usuario->temPermissao(Sistema::P_ORGANOGRAMA_TOTAL()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="organograma.php" ><button class="btn btn-warning" onmousedown="tutorial('Organograma', 'Aqui e onde voce cria as relacoes hierarquicas de sua empresa')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-sitemap mr-2"></i>Organograma</a>
+                        </li>
+                    <?php } ?>    
+                    <?php if ($usuario->temPermissao(Sistema::P_PRODUTO_CLIENTE()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="produto-cliente-logistic.php"><button class="btn btn-warning" onmousedown="tutorial('Produtos Logistic', 'Aqui � onde a empresa de armazenamento, ve os produtos de seus clientes, com respectivos estoques que est�o armazenados no armaz�n')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-camera"></i>Produtos cliente Logistic</a>
+                        </li>
+                    <?php } ?>
+                        
+                    <?php if ($usuario->temPermissao(Sistema::P_RELACAO_CLIENTE()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="relacao_clientes.php"><button class="btn btn-warning" onmousedown="tutorial('Relacao Cliente', 'Aqui e onde voce ve a situacao dos clientes das empresas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-male"></i>Relacao Clientes</a>
+                        </li>
+                    <?php } ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_TAREFAS()->m("C"))) { ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="tarefas.php" ><button class="btn btn-warning" onmousedown="tutorial('Tarefas', 'Aqui e onde voce ve suas tarefas e cria novas tarefas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks mr-2"></i>Tarefas</a>
+                    </li>
+                    <?php } ?>    
+                    <?php if ($usuario->temPermissao(Sistema::P_TRANSPORTADORA()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="transportadoras.php" ><button class="btn btn-warning" onmousedown="tutorial('Transportadoras', 'Aqui � onde ficam cadastradas todas as suas transportadoras, � poss�vel tamb�m alterar e excluir, al�m disso o RTC conta com um sistema de calculo de frete bastante interessante onde voc� pode cadastrar sua tabela atrav�s de express�es matem�ticas, e o sistema ent�o passa a calcular seu frete automaticamente, nos seus pedidos para os seus clientes, al�m disso a consulta de tabela fica disponivel aqui mesmo para fazer uma simula��o de frete')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-truck"></i>Transportadoras</a>
+                        </li>
+                    <?php } ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_PEDIDO_ENTRADA()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="visualizar-pedidos-compra.php"><button class="btn btn-warning" onmousedown="tutorial('Pedido de compra', 'Aqui � onde ficam seus pedidos de compra, com o seu fornecedor, tamb�m � enviado um email de confirma��o de pedido ap�s a conclus�o do mesmo, o pedido gera interfer�ncia no estoque e � a partir dele que a entrada de NFe vai acontecer')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks"></i>Pedidos de Compra</a>
+                        </li>
+                    <?php } ?>
+                    
                     <?php if ($usuario->temPermissao(Sistema::P_PEDIDO_SAIDA()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="visualizar-pedidos-venda.php"><button class="btn btn-warning" onmousedown="tutorial('Pedido de Venda', 'Aqui � onde voc� cria os pedidos de venda para os seus clientes, j� levando em considera��o suas promo��es e fazendo as movimenta��es de estoque conforme necess�rio')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks"></i>Pedidos de Venda</a>
                         </li>
                     <?php } ?>
+                    <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
+                        Relatorios
+                    </li>   
+                    <li class="nav-item" ng-repeat="relatorio in relatorios">
+                        <a class="nav-link" href="relatorios.php?rel={{relatorio.id}}" ><button class="btn btn-warning" onmousedown="tutorial('Relatorios', 'Essa � uma parte destinada a gera��o de relatorios, voc� pode solicitar o relat�rio que desejar para a equipe da Agrofauna T�cnologia.')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-paper-plane"></i>{{relatorio.nome}}</a>
+                    </li>    
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         Administrativo RTC
                     </li>

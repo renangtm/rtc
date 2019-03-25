@@ -557,7 +557,7 @@
 
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-outline-light" data-target="#addProdutoMontagem" data-toggle="modal" ng-click="produtos.attList()"><i class="fas fa-plus-circle"></i></button>
+                                <button class="btn btn-outline-light" data-target="#addProdutoMontagem" data-toggle="modal" ng-click="produtos2.attList()"><i class="fas fa-plus-circle"></i></button>
                                 <button class="btn btn-primary" ng-click="terminarCadastro()" ng-if="!campanha.terminada"><i class="fas fa-check"></i>&nbsp; Terminar</button>
                                 <button class="btn btn-warning" data-dismiss="modal" aria-label="Close" ng-if="campanha.terminada"><i class="fas fa-check"></i>&nbsp; Campanha ja esta formada</button>
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
@@ -619,7 +619,7 @@
                                     <th>Valor</th>
                                     <th>Ver Validades</th>
                                     </thead>
-                                    <tr ng-repeat="produto in produtos.elementos">
+                                    <tr ng-repeat="produto in produtos2.elementos">
                                         <th>{{produto[0].id}}</th>
                                         <th>{{produto[0].nome}}</th>
                                         <th class="text-center">{{produto[0].disponivel}}</th>
@@ -631,9 +631,9 @@
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
                                     <nav aria-label="Page navigation example">
                                         <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-click="produtos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                            <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Próximo</a></li>
+                                            <li class="page-item" ng-click="produtos2.prev()"><a class="page-link" href="">Anterior</a></li>
+                                            <li class="page-item" ng-repeat="pg in produtos2.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                            <li class="page-item" ng-click="produtos2.next()"><a class="page-link" href="">Próximo</a></li>
                                         </ul>
                                     </nav>
                                 </div>
