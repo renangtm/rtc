@@ -6,10 +6,10 @@ rtc.controller("crtFechamentoCaixa", function ($scope, baseService, fechamentoCa
             "fechamento_caixa",
             ["id", "valor", "data", "banco.codigo", "banco.nome", "banco.saldo"]);
     $scope.fechamentos.attList();
-
+   
     $scope.movimentos = createAssinc(movimentosFechamentoService, 1, 5, 10);
     assincFuncs(
-            $scope.fechamentos,
+            $scope.movimentos,
             "movimento"
             ["id", "valor", "juros", "descontos", "data", "saldo_anterior", "operacao.nome", "historico.nome"]);
 

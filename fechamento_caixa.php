@@ -101,7 +101,7 @@
                                                         <td>{{f[0].id}}</td>
                                                         <td>{{f[0].valor}}</td>
                                                         <td>{{f[0].data | data}}</td>
-                                                        <td>{{f[0].banco.coigo}}</td>
+                                                        <td>{{f[0].banco.codigo}}</td>
                                                         <td>{{f[0].banco.nome}}</td>
                                                         <td>{{f[0].banco.saldo}}</td>
                                                     </tr>
@@ -122,9 +122,9 @@
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="movimentos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in movimentos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="movimentos.next()"><a class="page-link" href="">Próximo</a></li>
+                                                        <li class="page-item" ng-click="fechamentos.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                        <li class="page-item" ng-repeat="pg in fechamentos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                        <li class="page-item" ng-click="fechamentos.next()"><a class="page-link" href="">Próximo</a></li>
                                                     </ul>
                                                 </nav>
                                             </div>
