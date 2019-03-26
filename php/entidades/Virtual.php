@@ -308,7 +308,7 @@ class Virtual extends Empresa {
             $end->bairro = $end_cli_bairro;
             $end->cep = new CEP($end_cli_cep);
             $end->numero = $end_cli_numero;
-            $end->rua = $end_cli_numero;
+            $end->rua = $end_cli_rua;
 
             $end->cidade = new Cidade();
             $end->cidade->id = $cid_cli_id;

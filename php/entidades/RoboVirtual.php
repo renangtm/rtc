@@ -12,9 +12,8 @@
  * @author Renan
  */
 class RoboVirtual {
-    
-    private static $NUMERO_PROSPECCOES_EXTERNAS = 3;
 
+    private static $NUMERO_PROSPECCOES_EXTERNAS = 3;
     public $dia;
     public $mes;
     public $ano;
@@ -71,21 +70,38 @@ class RoboVirtual {
 
                 $empresa = new Empresa($empresa, $con);
 
-                $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO($virtual)->id) * 5, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL) AND cliente.prospectar_ignorar_pular=0");
+                $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO($virtual)->id) * 10, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL) AND cliente.prospectar_ignorar_pular=0 AND cliente.pessoa_fisica=false");
 
                 foreach ($clientes as $key3 => $cliente) {
+
+                    if (count($cliente->telefones) === 0) {
+                        continue;
+                    }
+
+                    if ($cliente->telefones[0]->numero === "0000-0000") {
+                        continue;
+                    }
 
                     $tarefa = new Tarefa();
                     $tarefa->tipo_tarefa = Sistema::TT_PROSPECCAO_CLIENTE($virtual->id);
                     $tarefa->prioridade = $tarefa->tipo_tarefa->prioridade;
-                    $tarefa->descricao = "Verificar dados do cliente $cliente->razao_social, codigo $cliente->codigo, e tambem verificar o recebimento dos emails promocionais";
-                    $tarefa->titulo = "Prospeccao de Cliente";
+                    $tarefa->descricao = "Cliente: $cliente->razao_social, Codigo: $cliente->codigo,"
+                            . " Rua: " . $cliente->endereco->rua . ", Bairro: " . $cliente->endereco->bairro . ","
+                            . " Estado: " . $cliente->endereco->cidade->estado->sigla . ","
+                            . " Cidade: " . $cliente->endereco->cidade->nome . ","
+                            . " Numero: " . $cliente->endereco->numero . ", Telefone(s): ";
+
+                    foreach ($cliente->telefones as $tk => $tel) {
+                        $tarefa->descricao .= $tel->numero . "; ";
+                    }
+
+                    $tarefa->titulo = "Prospeccao $cliente->razao_social";
                     $tarefa->tipo_entidade_relacionada = "CLI";
                     $tarefa->id_entidade_relacionada = $cliente->id;
 
                     Sistema::novaTarefaEmpresa($con, $tarefa, $virtual);
                 }
-                
+
                 $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_RECEPCAO($virtual)->id) * 5, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL) AND cliente.prospectar_ignorar_pular=2");
 
                 foreach ($clientes as $key3 => $cliente) {
@@ -100,9 +116,9 @@ class RoboVirtual {
 
                     Sistema::novaTarefaEmpresa($con, $tarefa, $virtual);
                 }
-                
-                for($i=0;$i<self::$NUMERO_PROSPECCOES_EXTERNAS;$i++){
-                    
+
+                for ($i = 0; $i < self::$NUMERO_PROSPECCOES_EXTERNAS; $i++) {
+
                     $tarefa = new Tarefa();
                     $tarefa->tipo_tarefa = Sistema::TT_PROSPECCAO_EXTERNA_CLIENTE($virtual->id);
                     $tarefa->prioridade = $tarefa->tipo_tarefa->prioridade;
@@ -110,11 +126,9 @@ class RoboVirtual {
                     $tarefa->titulo = "Prosp. Externa";
                     $tarefa->tipo_entidade_relacionada = "EMP";
                     $tarefa->id_entidade_relacionada = $empresa->id;
-                    
+
                     Sistema::novaTarefaEmpresa($con, $tarefa, $virtual);
-                    
                 }
-                
             }
         }
     }

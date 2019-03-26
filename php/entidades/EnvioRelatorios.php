@@ -37,6 +37,8 @@ class EnvioRelatorios {
     }
 
     public function executar($con) {
+        
+        $data = 'CURRENT_DATE';
 
         $empresas = array();
         $empresas_inteiras = array();
@@ -56,7 +58,7 @@ class EnvioRelatorios {
 
             foreach ($usuarios as $key2 => $usuario) {
 
-                $tarefas = $usuario->getTarefas($con, '(tarefa.porcentagem_conclusao < 100 OR (DATE(observacao.momento)=DATE(CURRENT_DATE) AND MONTH(observacao.momento)=MONTH(CURRENT_DATE) AND YEAR(observacao.momento)=YEAR(CURRENT_DATE)))', '');
+                $tarefas = $usuario->getTarefas($con, '(tarefa.porcentagem_conclusao < 100 OR (DATE(observacao.momento)=DATE('.$data.') AND MONTH(observacao.momento)=MONTH('.$data.') AND YEAR(observacao.momento)=YEAR('.$data.')))', '');
 
                 if (count($tarefas) === 0) {
                     continue;

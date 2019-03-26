@@ -190,6 +190,16 @@
                             <div class="modal-body">
                                 <form id="add-form" ng-submit="mergeBanco()" parsley-validate>
                                     <div class="form-group row">
+                                        
+                                        <div class="col-9 col-lg-10">
+                                            <input type="checkbox" ng-model="banco.fechamento" id="fechamento">
+                                            <label for="fechamento" class="col-3 col-lg-2 col-form-label text-left">Tem fechamento</label>
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
                                         <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Codigo</label>
                                         <div class="col-9 col-lg-10">
                                             <inteiro model="banco.codigo"></inteiro>

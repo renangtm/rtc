@@ -41,7 +41,12 @@
             <!-- ============================================================== -->
             <!-- left sidebar -->
             <!-- ============================================================== -->
-            <?php include("menu.php") ?>
+
+            <?php
+            $filtro = "ng-model='tarefas.filtro' ng-change='tarefas.attList()'";
+
+            include("menu.php")
+            ?>
             <!-- ============================================================== -->
             <!-- end left sidebar -->
             <!-- ============================================================== -->
@@ -94,16 +99,16 @@
                                 padding:10px;
                                 border-radius: 3px;
                                 margin-bottom:20px
-                                
+
                             }
-                            
+
                             .la td{
                                 text-align:left;
                             }
                             .la{
                                 width:100%;
                             }
-                            
+
                         </style>
                         <div class="row">
                             <!-- ============================================================== -->
@@ -119,69 +124,69 @@
                                             </div>
                                             <hr>
 
-                                            
-                                                <div class="{{t[0].id===tarefa_principal.id?'tarefa_principal':'tarefa'}}" ng-repeat="t in tarefas.elementos">
-                                                    <div style="margin:5px;background-color: #DADADA;border-top-left-radius: 3px">
-                                                        <i class="fas fa-align-left" style="display: inline"></i>&nbsp<h4 style="display: inline">{{t[0].id+' - '+t[0].titulo}}</h4>
-                                                        <button class="btn btn-success"  ng-click="setTarefa(t[0])" data-toggle="modal" data-target="#tarefa" style="float:right"><i class="fas fa-envelope-open"></i>&nbsp;Abrir</button>
 
-                                                    </div>
+                                            <div class="{{t[0].id===tarefa_principal.id?'tarefa_principal':'tarefa'}}" ng-repeat="t in tarefas.elementos">
+                                                <div style="margin:5px;background-color: #DADADA;border-top-left-radius: 3px">
+                                                    <i class="fas fa-align-left" style="display: inline"></i>&nbsp<h4 style="display: inline">{{t[0].id + ' - ' + t[0].titulo}}</h4>
+                                                    <button class="btn btn-success"  ng-click="setTarefa(t[0])" data-toggle="modal" data-target="#tarefa" style="float:right"><i class="fas fa-envelope-open"></i>&nbsp;Abrir</button>
 
-                                                    <table class="la">
-                                                        <tr>
-                                                            <td>
-                                                                Realizado:
-                                                            </td>
-                                                            <td>
-                                                                <h4 style="margin-top:12px;color:{{t[0].porcentagem_conclusao===0?'Red':(t[0].porcentagem_conclusao>50?'Green':'Orange')}}">{{t[0].porcentagem_conclusao}} %</h4>
-                                                            </td>
-                                                            <td>
-                                                                Tempo Util Utilizado:
-                                                            </td>
-                                                            <td>
-                                                                <h4 style="margin-top:12px">{{t[0].calculado_horas_uteis_dispendidas| tempo}} </h4>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Previsao conclusao:
-                                                            </td>
-                                                            <td>
-                                                                <h4 style="margin-top:12px">{{t[0].calculado_momento_conclusao| data}} </h4>
-                                                            </td>
-                                                            <td>
-                                                                Tempo Util previsto:
-                                                            </td>
-                                                            <td>
-                                                                <h4 style="margin-top:12px">{{t[0].calculado_previsao_util_conclusao| tempo}} </h4>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Previsao Inicio:
-                                                            </td>
-                                                            <td>
-                                                                <h4 style="margin-top:12px" ng-if="tarefa_principal.id!==t[0].id">{{t[0].calculado_previsao_inicio| data}} </h4>
-                                                                <div ng-if="tarefa_principal.id===t[0].id">Iniciada...</div>
-                                                            </td>
-                                                            <td>
-                                                                Tempo Util Faltante
-                                                            </td>
-                                                            <td>
-                                                                <h4 style="margin-top:12px">{{t[0].calculado_tempo_util_faltante| tempo}} </h4>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Tipo:
-                                                            </td>
-                                                            <td colspan="3">
-                                                                <h4 style="margin-top:12px">{{t[0].tipo_tarefa.nome}} - ({{t[0].tipo_tarefa.tempo_medio * 60}}m em media) </h4>
-                                                            </td>
-                                                        </tr>
-                                                    </table>          
                                                 </div>
-                                            
+
+                                                <table class="la">
+                                                    <tr>
+                                                        <td>
+                                                            Realizado:
+                                                        </td>
+                                                        <td>
+                                                            <h4 style="margin-top:12px;color:{{t[0].porcentagem_conclusao===0?'Red':(t[0].porcentagem_conclusao>50?'Green':'Orange')}}">{{t[0].porcentagem_conclusao}} %</h4>
+                                                        </td>
+                                                        <td>
+                                                            Tempo Util Utilizado:
+                                                        </td>
+                                                        <td>
+                                                            <h4 style="margin-top:12px">{{t[0].calculado_horas_uteis_dispendidas| tempo}} </h4>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Previsao conclusao:
+                                                        </td>
+                                                        <td>
+                                                            <h4 style="margin-top:12px">{{t[0].calculado_momento_conclusao| data}} </h4>
+                                                        </td>
+                                                        <td>
+                                                            Tempo Util previsto:
+                                                        </td>
+                                                        <td>
+                                                            <h4 style="margin-top:12px">{{t[0].calculado_previsao_util_conclusao| tempo}} </h4>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Previsao Inicio:
+                                                        </td>
+                                                        <td>
+                                                            <h4 style="margin-top:12px" ng-if="tarefa_principal.id !== t[0].id">{{t[0].calculado_previsao_inicio| data}} </h4>
+                                                            <div ng-if="tarefa_principal.id === t[0].id">Iniciada...</div>
+                                                        </td>
+                                                        <td>
+                                                            Tempo Util Faltante
+                                                        </td>
+                                                        <td>
+                                                            <h4 style="margin-top:12px">{{t[0].calculado_tempo_util_faltante| tempo}} </h4>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Tipo:
+                                                        </td>
+                                                        <td colspan="3">
+                                                            <h4 style="margin-top:12px">{{t[0].tipo_tarefa.nome}} - ({{t[0].tipo_tarefa.tempo_medio * 60}}m em media) </h4>
+                                                        </td>
+                                                    </tr>
+                                                </table>          
+                                            </div>
+
 
                                             <!-- paginação  -->
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
@@ -492,8 +497,18 @@
                                 </table>
                                 <hr>
                                 <i class="fas fa-random" style="display: inline"></i>&nbsp<h4 style="display: inline">Andamento</h4>
-
-                                <button class="btn btn-success" style="display: inline;float:right"  data-toggle="modal" data-target="#observacao" ng-click="novaObservacaoTarefa()"><i class="fas fa-plus-circle"></i>&nbsp Cadastrar Andamento</button>
+                                <br>
+                                <div class="modal-body">
+                                    Data: <strong>{{observacao_tarefa.momento| data}}</strong>
+                                    <hr>
+                                    Porcentagem: <input style="width:30%;text-align:center" type="number" class="form-control" ng-model="observacao_tarefa.porcentagem"></input>
+                                    <hr>
+                                    <textarea placeholder="Observacao" ng-model="observacao_tarefa.observacao" class="form-control" style="width:100%" rows="5">
+                                    
+                                    </textarea>
+                                    <hr>
+                                    <button class="btn btn-sucess" ng-click="addObservacao()"><i class="fas fa-check"></i>&nbspCadastrar</button>
+                                </div>
                                 <br>
                                 <hr>
                                 <div ng-if="tarefa.observacoes.length === 0">
@@ -523,17 +538,9 @@
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Nova observacao para a tarefa</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
-                            <div class="modal-body">
-                                Data: <strong>{{observacao_tarefa.momento| data}}</strong>
-                                <hr>
-                                Porcentagem: <input style="width:30%;text-align:center" type="number" class="form-control" ng-model="observacao_tarefa.porcentagem"></input>
-                                <hr>
-                                <textarea placeholder="Observacao" ng-model="observacao_tarefa.observacao" class="form-control" style="width:100%" rows="10">
-                                    
-                                </textarea>
-                            </div>
+
                             <div class="modal-footer">
-                                <button class="btn btn-sucess" data-dismiss="modal" aria-label="Close" ng-click="addObservacao()"><i class="fas fa-check"></i>&nbspCadastrar</button>
+                                
                             </div>
                         </div>
                     </div>

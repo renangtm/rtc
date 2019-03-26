@@ -22,7 +22,8 @@ class Banco {
     public $excluido;
     public $empresa;
     public $codigo_contimatic;
-
+    public $fechamento;
+    
     function __construct() {
 
         $this->id = 0;
@@ -30,6 +31,8 @@ class Banco {
         $this->codigo = 0;
         $this->excluido = false;
         $this->codigo_contimatic = 0;
+        $this->fechamento = false;
+        
     }
     
     public function getValorFechamento($con){
@@ -46,6 +49,7 @@ class Banco {
         }
         $ps->close();
         
+        
         $ps = $con->getConexao()->prepare("SELECT SUM((CASE WHEN operacao.debito THEN -1 ELSE 1 END)*(movimento.valor-movimento.descontos+movimento.juros)) FROM movimento "
                 . "INNER JOIN operacao ON movimento.id_operacao=operacao.id "
                 . "WHERE movimento.id_banco=$this->id AND movimento.data>$data_anterior");
@@ -58,7 +62,12 @@ class Banco {
         
         $ps->close();
         
-        return $anterior;
+        $fechamento = new FechamentoCaixa();
+        $fechamento->valor = $anterior;
+        $fechamento->data = round(microtime(true)*1000);
+        $fechamento->banco = $this;
+        
+        return $fechamento;
         
     }
     
@@ -70,7 +79,9 @@ class Banco {
         $ps->execute();
         $ps->bind_result($dt);
         if($ps->fetch()){
-            $filtro .= "movimento.data>$dt";
+            if($dt !== null){
+                $filtro .= "movimento.data>$dt";
+            }
         }
         $ps->close();
         
@@ -94,7 +105,9 @@ class Banco {
         $ps->execute();
         $ps->bind_result($dt);
         if($ps->fetch()){
-            $filtro .= "movimento.data>$dt";
+            if($dt !== null){
+                $filtro .= "movimento.data>$dt";
+            }
         }
         $ps->close();
         
@@ -125,13 +138,13 @@ class Banco {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO banco(nome,conta,saldo,excluido,id_empresa,codigo,agencia) VALUES('$this->nome','$this->conta',$this->saldo,false," . $this->empresa->id . ",$this->codigo,'" . addslashes($this->agencia) . "')");
+            $ps = $con->getConexao()->prepare("INSERT INTO banco(nome,conta,saldo,excluido,id_empresa,codigo,agencia,fechamento) VALUES('$this->nome','$this->conta',$this->saldo,false," . $this->empresa->id . ",$this->codigo,'" . addslashes($this->agencia) . "',".($this->fechamento?"true":"false").")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE banco SET nome='$this->nome',conta='$this->conta',saldo=$this->saldo,excluido = false,codigo=$this->codigo, id_empresa=" . $this->empresa->id . ",agencia='" . addslashes($this->agencia) . "' WHERE id=$this->id");
+            $ps = $con->getConexao()->prepare("UPDATE banco SET nome='$this->nome',conta='$this->conta',saldo=$this->saldo,excluido = false,codigo=$this->codigo, id_empresa=" . $this->empresa->id . ",agencia='" . addslashes($this->agencia) . "',fechamento=".($this->fechamento?"true":"false")." WHERE id=$this->id");
             $ps->execute();
             $ps->close();
         }

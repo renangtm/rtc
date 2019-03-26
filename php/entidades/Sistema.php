@@ -25,6 +25,10 @@ class Sistema {
         $relatorios->cronoExpression = "at(19h)";
         $trabalhos[] = $relatorios;
 
+        $relatorios = new EnvioRelatorios();
+        $relatorios->cronoExpression = "at(6h)";
+        $trabalhos[] = $relatorios;
+
         $attdias = new AtualizaDiasCorridos();
         $attdias->cronoExpression = "at(1h)";
         $trabalhos[] = $attdias;
@@ -200,6 +204,10 @@ class Sistema {
         return new Permissao(46, "Relacao cliente");
     }
 
+    public static function P_FECHAMENTO_CAIXA() {
+        return new Permissao(47, "Fechamento caixa");
+    }
+
     public static function TT_COMPRA($id_empresa) {
 
         return new TTCompra($id_empresa);
@@ -301,22 +309,22 @@ class Sistema {
     }
 
     public static function aoCadastrarCliente($usuario, $cliente) {
-        
+
         $con = new ConnectionFactory();
-        
+
         $tt = Sistema::TT_PROSPECCAO_EXTERNA_CLIENTE($usuario->empresa->id)->id;
-        
-        $tarefa = $usuario->getTarefas($con,"tarefa.id_tipo_tarefa=$tt AND tarefa.tipo_entidade_relacionada='EMP' AND tarefa.id_entidade_relacionada=".$cliente->empresa->id);
-        
-        if(count($tarefa)>0){
-            
+
+        $tarefa = $usuario->getTarefas($con, "tarefa.id_tipo_tarefa=$tt AND tarefa.tipo_entidade_relacionada='EMP' AND tarefa.id_entidade_relacionada=" . $cliente->empresa->id);
+
+        if (count($tarefa) > 0) {
+
             $tarefa = $tarefa[0];
-            
+
             $obs = new ObservacaoTarefa();
             $obs->porcentagem = 100;
             $obs->observacao = "Cliente $cliente->razao_social codigo $cliente->codigo, cadastrado para cumprimento de tarefa de prospeccao externa.";
             $tarefa->addObservacao($con, $usuario, $obs);
-            
+
             $tarefa = new Tarefa();
             $tarefa->tipo_entidade_relacionada = "CLI";
             $tarefa->id_entidade_relacionada = $cliente->id;
@@ -324,11 +332,9 @@ class Sistema {
             $tarefa->prioridade = $tarefa->tipo_tarefa->prioridade;
             $tarefa->titulo = "Recepcao de cliente";
             $tarefa->descricao = "Efetue a recepcao do cliente que acabou de ser cadastrado, $cliente->razao_social codigo $cliente->codigo";
-            
+
             Sistema::novaTarefaEmpresa($con, $tarefa, $usuario->empresa);
-            
         }
-        
     }
 
     public static function aoAlterarCliente($usuario, $cliente) {
@@ -1473,7 +1479,7 @@ class Sistema {
         global $obj;
         $obj = $p;
 
-        $servico = realpath('../html_email');
+        $servico = realpath('../../html_email');
         $servico .= "/$nom.php";
 
         ob_start();
@@ -2850,7 +2856,8 @@ class Sistema {
                 Sistema::P_BANCO(),
                 Sistema::P_RELATORIO_FINANCEIRO(),
                 Sistema::P_RELATORIO_MOVIMENTO(),
-                Sistema::P_MOVIMENTO()
+                Sistema::P_MOVIMENTO(),
+                Sistema::P_FECHAMENTO_CAIXA()
                     )), new RTC(6, array(
                 Sistema::P_LOTE(),
                 Sistema::P_SEPARACAO(),

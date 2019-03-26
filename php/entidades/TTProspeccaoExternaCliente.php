@@ -19,7 +19,7 @@ class TTProspeccaoExternaCliente extends TipoTarefa {
 
         $this->nome = "Prospeccao Externa de Cliente";
         $this->tempo_medio = 0.5;
-        $this->prioridade = 10;
+        $this->prioridade = 1;
         $this->cargos = array(
             Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO(new Empresa($id_empresa))
         );

@@ -1,3 +1,51 @@
+rtc.controller("crtFechamentoCaixa", function ($scope, baseService, fechamentoCaixaService, bancoService, movimentosFechamentoService) {
+
+    $scope.fechamentos = createAssinc(fechamentoCaixaService, 1, 5, 10);
+    assincFuncs(
+            $scope.fechamentos,
+            "fechamento_caixa",
+            ["id", "valor", "data", "banco.codigo", "banco.nome", "banco.saldo"]);
+    $scope.fechamentos.attList();
+
+    $scope.movimentos = createAssinc(movimentosFechamentoService, 1, 5, 10);
+    assincFuncs(
+            $scope.fechamentos,
+            "movimento"
+            ["id", "valor", "juros", "descontos", "data", "saldo_anterior", "operacao.nome", "historico.nome"]);
+
+    $scope.bancos = [];
+
+    $scope.banco = null;
+    $scope.fechamento = null;
+
+
+    $scope.setBanco = function (banco) {
+
+        $scope.banco = banco;
+
+        bancoService.getFechamento($scope.banco, function (f) {
+
+            $scope.fechamento = f.fechamento;
+
+        })
+
+        movimentosFechamentoService.banco = $scope.banco;
+
+    }
+
+    fechamentoCaixaService.getBancosFechar(function (e) {
+
+        $scope.bancos = e.bancos;
+
+        if ($scope.bancos.length > 0) {
+
+            $scope.setBanco($scope.bancos[0]);
+
+        }
+
+    })
+
+})
 rtc.controller("crtRelacaoCliente", function ($scope, relacaoClienteService, baseService) {
 
 
@@ -31,7 +79,7 @@ rtc.controller("crtRelacaoCliente", function ($scope, relacaoClienteService, bas
     }
 
     $scope.mergeContato = function (c) {
-        
+
         c.descricao = formatTextArea(c.descricao);
         c.relacao = $scope.relacaoCliente;
 
@@ -61,15 +109,12 @@ rtc.controller("crtRelacaoCliente", function ($scope, relacaoClienteService, bas
         $scope.relacaoCliente = r;
 
         relacaoClienteService.getContatos(r, function (c) {
-            
+
             $scope.contatos = c.contatos;
 
         })
 
     }
-
-
-
 
 })
 rtc.controller("crtCobranca", function ($scope, $timeout, tarefaService) {
@@ -144,6 +189,7 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
         var dif = $scope.observacao_tarefa.porcentagem - c;
         $scope.observacao_tarefa.porcentagem = dif;
 
+
         tarefaService.addObservacao($scope.tarefa, $scope.observacao_tarefa, function (f) {
 
             if (f.sucesso) {
@@ -154,6 +200,14 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
 
                     $scope.tarefas = createList(t.tarefas, 1, 7, "titulo");
                     $scope.tarefa_principal = t.tarefas[0];
+
+                })
+                
+                $scope.tarefas.observacoes[$scope.tarefas.observacoes.length] = $scope.observacao_tarefa;
+
+                observacaoTarefaService.getObservacaoTarefa(function (o) {
+
+                    $scope.observacao_tarefa = o.observacao_tarefa;
 
                 })
 
@@ -189,7 +243,11 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
     $scope.setTarefa = function (tarefa) {
 
         $scope.tarefa = tarefa;
+        observacaoTarefaService.getObservacaoTarefa(function (o) {
 
+            $scope.observacao_tarefa = o.observacao_tarefa;
+
+        })
     }
 
     tipoTarefaService.getTiposTarefaUsuario(function (t) {
@@ -204,7 +262,7 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
 
     tarefaService.getTarefasAtivas(function (t) {
 
-        $scope.tarefas = createList(t.tarefas, 1, 7, "titulo");
+        $scope.tarefas = createList(t.tarefas, 1, 7, "descricao");
         $scope.tarefa_principal = t.tarefas[0];
 
     })
@@ -299,7 +357,7 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
 
                 tarefaService.getTarefasAtivas(function (t) {
 
-                    $scope.tarefas = createList(t.tarefas, 1, 5, "titulo");
+                    $scope.tarefas = createList(t.tarefas, 1, 5, "descricao");
                     $scope.tarefa_principal = t.tarefas[0];
 
                 })
@@ -332,7 +390,7 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
 
                     tarefaService.getTarefasAtivas(function (t) {
 
-                        $scope.tarefas = createList(t.tarefas, 1, 5, "titulo");
+                        $scope.tarefas = createList(t.tarefas, 1, 5, "descricao");
 
                     })
 

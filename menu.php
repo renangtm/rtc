@@ -230,7 +230,7 @@ $possiveis[0] = $rtc;
                                             <div class="notification-list-user-block">
                                                 <i style="display:inline" class="fas fa-clock"></i>&nbsp<h4 style="display:inline">{{cobranca.titulo}}</h4>
                                                 <br>
-                                                {{cobranca.tipo_tarefa.nome}}
+                                                {{cobranca.descricao}}
                                                 <br>
                                                 Prazo: <strong>{{cobranca.calculado_momento_conclusao | data}}</strong>
                                                 <div class="notification-date">{{cobranca.porcentagem_conclusao}} % concluida</div>
@@ -362,6 +362,11 @@ $possiveis[0] = $rtc;
                             <a class="nav-link" href="expediente.php" ><button class="btn btn-warning" onmousedown="tutorial('Expediente', 'Aqui voce cadastra o expediente, e faltas de seus colaboradores')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-clock mr-2"></i>Expediente</a>
                         </li>
                     <?php } ?>    
+                    <?php if ($usuario->temPermissao(Sistema::P_FECHAMENTO_CAIXA()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="fechamento_caixa.php"><button class="btn btn-warning" onmousedown="tutorial('Fechamento caixa', 'Aqui e onde voce faz os fechamentos do caixa')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-money-bill-alt"></i>Fechamento de caixa</a>
+                        </li>
+                    <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_FORNECEDOR()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="fornecedores.php" ><button class="btn btn-warning" onmousedown="tutorial('Fornecedores', 'Aqui voc� faz o cadastro de seus fornecedores, altera��o, exclus�o, habilita��o e desabilita��o')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-industry"></i>Fornecedores</a>
@@ -429,7 +434,6 @@ $possiveis[0] = $rtc;
                             <a class="nav-link" href="visualizar-pedidos-compra.php"><button class="btn btn-warning" onmousedown="tutorial('Pedido de compra', 'Aqui � onde ficam seus pedidos de compra, com o seu fornecedor, tamb�m � enviado um email de confirma��o de pedido ap�s a conclus�o do mesmo, o pedido gera interfer�ncia no estoque e � a partir dele que a entrada de NFe vai acontecer')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks"></i>Pedidos de Compra</a>
                         </li>
                     <?php } ?>
-                    
                     <?php if ($usuario->temPermissao(Sistema::P_PEDIDO_SAIDA()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="visualizar-pedidos-venda.php"><button class="btn btn-warning" onmousedown="tutorial('Pedido de Venda', 'Aqui � onde voc� cria os pedidos de venda para os seus clientes, j� levando em considera��o suas promo��es e fazendo as movimenta��es de estoque conforme necess�rio')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks"></i>Pedidos de Venda</a>

@@ -657,7 +657,7 @@ class Empresa {
 
         $bancos = array();
 
-        $sql = "SELECT id,codigo_contimatic,nome,saldo,conta,codigo,agencia FROM banco WHERE id_empresa=$this->id AND excluido=false ";
+        $sql = "SELECT id,codigo_contimatic,nome,saldo,conta,codigo,agencia,fechamento FROM banco WHERE id_empresa=$this->id AND excluido=false ";
 
         if ($filtro != "") {
             $sql .= "AND $filtro ";
@@ -671,7 +671,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $cod_ctm, $nome, $saldo, $conta, $codigo, $agencia);
+        $ps->bind_result($id, $cod_ctm, $nome, $saldo, $conta, $codigo, $agencia, $fechamento);
 
         while ($ps->fetch()) {
 
@@ -683,6 +683,7 @@ class Empresa {
             $banco->saldo = $saldo;
             $banco->conta = $conta;
             $banco->codigo = $codigo;
+            $banco->fechamento = $fechamento == 1;
             $banco->agencia = $agencia;
 
             $banco->empresa = $this;
@@ -1339,7 +1340,7 @@ class Empresa {
             $end->bairro = $end_cli_bairro;
             $end->cep = new CEP($end_cli_cep);
             $end->numero = $end_cli_numero;
-            $end->rua = $end_cli_numero;
+            $end->rua = $end_cli_rua;
 
             $end->cidade = new Cidade();
             $end->cidade->id = $cid_cli_id;
@@ -2206,7 +2207,7 @@ class Empresa {
                 $end->bairro = $end_cli_bairro;
                 $end->cep = new CEP($end_cli_cep);
                 $end->numero = $end_cli_numero;
-                $end->rua = $end_cli_numero;
+                $end->rua = $end_cli_rua;
 
                 $end->cidade = new Cidade();
                 $end->cidade->id = $cid_cli_id;
@@ -2623,7 +2624,7 @@ class Empresa {
                 $end->bairro = $end_cli_bairro;
                 $end->cep = new CEP($end_cli_cep);
                 $end->numero = $end_cli_numero;
-                $end->rua = $end_cli_numero;
+                $end->rua = $end_cli_rua;
 
                 $end->cidade = new Cidade();
                 $end->cidade->id = $cid_cli_id;
@@ -2966,6 +2967,7 @@ class Empresa {
         }
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
+        
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
@@ -3234,7 +3236,7 @@ class Empresa {
 
     public function getCountPedidosEntrada($con, $filtro = "") {
 
-        $sql = "SELECT COUNT(*) FROM pedido_entrada WHERE id_empresa=$this->id AND excluido=false ";
+        $sql = "SELECT COUNT(*) FROM pedido_entrada INNER JOIN fornecedor ON fornecedor.id=pedido_entrada.id_fornecedor WHERE pedido_entrada.id_empresa=$this->id AND pedido_entrada.excluido=false ";
 
         if ($filtro != "") {
 
@@ -4488,7 +4490,7 @@ class Empresa {
             $end->bairro = $end_cli_bairro;
             $end->cep = new CEP($end_cli_cep);
             $end->numero = $end_cli_numero;
-            $end->rua = $end_cli_numero;
+            $end->rua = $end_cli_rua;
 
             $end->cidade = new Cidade();
             $end->cidade->id = $cid_cli_id;
@@ -4562,7 +4564,7 @@ class Empresa {
         return 0;
     }
 
-    public function getCountFechamento($con, $filtro) {
+    public function getCountFechamento($con, $filtro="") {
 
         $sql = "SELECT "
                 . "COUNT(*) "
@@ -4624,7 +4626,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $valor, $data, $id_banco, $nome_banco, $saldo_banco, $conta_banco, $agencia_banco, $codigo_contimatic_banco);
+        $ps->bind_result($id, $valor, $data, $id_banco, $nome_banco, $saldo_banco, $conta_banco,$codigo_banco, $agencia_banco, $codigo_contimatic_banco);
 
         while ($ps->fetch()) {
 
@@ -4638,6 +4640,7 @@ class Empresa {
             $b->nome = $nome_banco;
             $b->saldo = $saldo_banco;
             $b->conta = $conta_banco;
+            $b->codigo = $codigo_banco;
             $b->agencia = $agencia_banco;
             $b->codigo_contimatic = $codigo_contimatic_banco;
             $b->empresa = $this;

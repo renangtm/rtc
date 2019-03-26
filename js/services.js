@@ -1,6 +1,31 @@
 var debuger = function (l) {
     alert(paraJson(l));
 }
+rtc.service('fechamentoCaixaService', function ($http, $q) {
+    this.getBancosFechar = function (fn) {
+        baseService($http, $q, {
+            query: "$r->bancos=$empresa->getBancos($c,0,1000,'banco.fechamento=true')",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountFechamento($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x1, x2, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x1: x1, x2: x2, ordem: ordem, filtro: filtro},
+            query: "$r->elementos=$empresa->getFechamentosCaixa($c,$o->x1,$o->x2,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('observacaoTarefaService', function ($http, $q) {
     this.getObservacaoTarefa = function (fn) {
         baseService($http, $q, {
@@ -613,7 +638,35 @@ rtc.service('vencimentoService', function ($http, $q) {
         });
     }
 })
+rtc.service('movimentosFechamentoService', function ($http, $q) {
+    var este = this;
+    this.banco = null;
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro,banco:este.banco},
+            query: "$r->qtd=$o->banco->getCountMovimentosFechamento($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem,banco:este.banco},
+            query: "$r->elementos=$o->banco->getMovimentosFechamento($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('bancoService', function ($http, $q) {
+    this.getFechamento = function (banco,fn) {
+        baseService($http, $q, {
+            o:banco,
+            query: "$r->fechamento=$o->getFechamento($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getBanco = function (fn) {
         baseService($http, $q, {
             query: "$r->banco=new Banco();$r->banco->empresa=$empresa",
@@ -742,6 +795,7 @@ rtc.service('pedidoEntradaService', function ($http, $q) {
         });
     }
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
+       
         baseService($http, $q, {
             o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
             query: "$r->elementos=$empresa->getPedidosEntrada($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
