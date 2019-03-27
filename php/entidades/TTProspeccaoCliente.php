@@ -156,17 +156,6 @@ class TTProspeccaoDeCliente extends TipoTarefa {
             $ps->close();
         }
         
-        if(isset($dados['telefone'])){
-            
-            $ps = $
-            
-            $telefones = explode(';',$dados['telefone']);
-            foreach($telefones as $k2=>$v2){
-                $ps = $con->getConexao()->prepare("UPDATE email SET endereco='".$dados['email']."' WHERE tipo_entidade='CLI' AND id_entidade=$tarefa->id_entidade_relacionada");
-                $ps->execute();
-                $ps->close();
-            }
-        }
         
         $tarefa_ = new Tarefa();
         $tarefa_->tipo_tarefa = Sistema::TT_RECEPCAO_CLIENTE($this->id_empresa);
