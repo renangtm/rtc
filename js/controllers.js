@@ -7,11 +7,11 @@ rtc.controller("crtFechamentoCaixa", function ($scope, baseService, fechamentoCa
             ["id", "valor", "data", "banco.codigo", "banco.nome", "banco.saldo"]);
     $scope.fechamentos.attList();
    
-    $scope.movimentos = createAssinc(movimentosFechamentoService, 1, 5, 10);
+    $scope.movimentos = createAssinc(movimentosFechamentoService, 1, 12, 15);
     assincFuncs(
             $scope.movimentos,
-            "movimento"
-            ["id", "valor", "juros", "descontos", "data", "saldo_anterior", "operacao.nome", "historico.nome"]);
+            "movimento",
+            ["data","id", "valor", "juros", "descontos", "saldo_anterior", "operacao.nome", "historico.nome"]);
 
     $scope.bancos = [];
 
@@ -30,7 +30,8 @@ rtc.controller("crtFechamentoCaixa", function ($scope, baseService, fechamentoCa
         })
 
         movimentosFechamentoService.banco = $scope.banco;
-
+        $scope.movimentos.attList();
+        
     }
 
     fechamentoCaixaService.getBancosFechar(function (e) {
@@ -44,6 +45,26 @@ rtc.controller("crtFechamentoCaixa", function ($scope, baseService, fechamentoCa
         }
 
     })
+    
+    $scope.mergeFechamento = function(){
+        
+        baseService.merge($scope.fechamento,function(s){
+            
+            if(s.sucesso){
+                
+                msg.alerta("Banco "+$scope.banco.nome+", fechado com sucesso até a data atual, o sistema ira atualizar a pagina automaticamente.");
+                document.location.reload();
+                
+            }else{
+                
+                msg.erro('Houve um problema ao efetuar a operacao, tente novamente mais tarde');
+                
+            }
+            
+            
+        })
+        
+    }
 
 })
 rtc.controller("crtRelacaoCliente", function ($scope, relacaoClienteService, baseService) {
@@ -158,6 +179,8 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
 
     $scope.usuario = null;
 
+    $scope.obs_padrao = "";
+
     $scope.empresarial = false;
     $scope.tarefa_novo = null;
     $scope.tarefa = null;
@@ -171,7 +194,8 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
         observacaoTarefaService.getObservacaoTarefa(function (o) {
 
             $scope.observacao_tarefa = o.observacao_tarefa;
-
+            $scope.observacao_tarefa.observacao = $scope.observacao_padrao;
+            
         })
 
     }
@@ -203,7 +227,7 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
 
                 })
                 
-                $scope.tarefas.observacoes[$scope.tarefas.observacoes.length] = $scope.observacao_tarefa;
+                $scope.tarefa.observacoes[$scope.tarefa.observacoes.length] = $scope.observacao_tarefa;
 
                 observacaoTarefaService.getObservacaoTarefa(function (o) {
 
@@ -246,6 +270,14 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
         observacaoTarefaService.getObservacaoTarefa(function (o) {
 
             $scope.observacao_tarefa = o.observacao_tarefa;
+            
+            tipoTarefaService.getObservacaoPadrao($scope.tarefa,function(t){
+                
+                $scope.observacao_padrao = t.observacao.split("<br>").join("\n");
+                
+                $scope.observacao_tarefa.observacao = $scope.observacao_padrao;
+                
+            })
 
         })
     }
@@ -4118,7 +4150,7 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
 
                 var p = $scope.pedido.produtos[i];
 
-                if (p.validade_minima > produto.validade_minima) {
+                if (p.validade_minima > produto.validade_minima && p.produto.id === produto.produto.id) {
 
                     remove($scope.pedido.produtos, p);
                     i--;

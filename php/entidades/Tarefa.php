@@ -99,6 +99,8 @@ class Tarefa {
         $ps->execute();
         $ps->close();
         
+        $this->observacoes[] = $observacao;
+        
         if($this->porcentagem_conclusao >= 100){
 
             $this->tipo_tarefa->aoFinalizar($this,$usuario);

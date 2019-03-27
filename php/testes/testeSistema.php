@@ -91,11 +91,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
          */
 
         //echo Utilidades::toJson($produtos);
-        
-        $e = new Empresa(1733,$con);
-        $pc = $e->getPedidosEntrada($con, 0, 10,'','pedido_entrada.id DESC');
-        
-        echo Utilidades::toJson($pc);
+
         
     }
 

@@ -12,6 +12,21 @@
  * @author Renan
  */
 class Banco {
+    
+    private static function normalizarDia($ms) {
+
+        date_default_timezone_set("America/Sao_Paulo");
+        
+        $d = explode(':', date('H:i:s', $ms / 1000));
+
+        $nm = $ms;
+
+        $nm -= intval($d[0]) * 60 * 60 * 1000;
+        $nm -= intval($d[1]) * 60 * 1000;
+        $nm -= intval($d[2]) * 1000;
+
+        return $nm;
+    }
 
     public $id;
     public $codigo;
@@ -35,12 +50,12 @@ class Banco {
         
     }
     
-    public function getValorFechamento($con){
+    public function getFechamento($con){
         
         $anterior = 0;
-        $data_anterior = '1970-01-01';
+        $data_anterior = 0;
         
-        $ps = $con->getConexao()->prepare("SELECT valor,data FROM fechamento_caixa WHERE id_banco=$this->id ORDER BY data DESC");
+        $ps = $con->getConexao()->prepare("SELECT valor,UNIX_TIMESTAMP(data)*1000 FROM fechamento_caixa WHERE id_banco=$this->id ORDER BY data DESC");
         $ps->execute();
         $ps->bind_result($valor,$data);
         if($ps->fetch()){
@@ -52,7 +67,7 @@ class Banco {
         
         $ps = $con->getConexao()->prepare("SELECT SUM((CASE WHEN operacao.debito THEN -1 ELSE 1 END)*(movimento.valor-movimento.descontos+movimento.juros)) FROM movimento "
                 . "INNER JOIN operacao ON movimento.id_operacao=operacao.id "
-                . "WHERE movimento.id_banco=$this->id AND movimento.data>$data_anterior");
+                . "WHERE movimento.id_banco=$this->id AND movimento.data>FROM_UNIXTIME($data_anterior/1000)");
         $ps->execute();
         $ps->bind_result($valor);
         
@@ -66,6 +81,7 @@ class Banco {
         $fechamento->valor = $anterior;
         $fechamento->data = round(microtime(true)*1000);
         $fechamento->banco = $this;
+        $fechamento->data_anterior = $data_anterior;
         
         return $fechamento;
         
@@ -99,14 +115,14 @@ class Banco {
 
     public function getMovimentosFechamento($con,$x1,$x2,$filtro2="",$ordem=""){
         
-        $filtro = "";
+        $filtro = "banco.id=$this->id";
         
         $ps = $con->getConexao()->prepare("SELECT MAX(data) FROM fechamento_caixa WHERE id_banco=$this->id");
         $ps->execute();
         $ps->bind_result($dt);
         if($ps->fetch()){
             if($dt !== null){
-                $filtro .= "movimento.data>$dt";
+                $filtro .= " AND movimento.data>$dt";
             }
         }
         $ps->close();

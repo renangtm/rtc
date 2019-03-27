@@ -331,6 +331,14 @@ rtc.service('ausenciaService', function ($http, $q) {
 rtc.service('tipoTarefaService', function ($http, $q) {
     var este = this;
     this.empresa = null;
+    this.getObservacaoPadrao = function (tarefa,fn) {
+        baseService($http, $q, {
+            o:tarefa,
+            query: "$r->observacao=$o->tipo_tarefa->getObservacaoPadrao($o)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getTiposTarefaUsuario = function (fn) {
         baseService($http, $q, {
             query: "$r->tipos_tarefa=Sistema::getTiposTarefaUsuario($c,$usuario)",
@@ -642,6 +650,7 @@ rtc.service('movimentosFechamentoService', function ($http, $q) {
     var este = this;
     this.banco = null;
     this.getCount = function (filtro, fn) {
+        if(este.banco === null)return;
         baseService($http, $q, {
             o: {filtro: filtro,banco:este.banco},
             query: "$r->qtd=$o->banco->getCountMovimentosFechamento($c,$o->filtro)",
@@ -650,6 +659,7 @@ rtc.service('movimentosFechamentoService', function ($http, $q) {
         });
     }
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        if(este.banco === null)return;
         baseService($http, $q, {
             o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem,banco:este.banco},
             query: "$r->elementos=$o->banco->getMovimentosFechamento($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
@@ -1884,7 +1894,7 @@ rtc.service('loginService', function ($http, $q) {
     this.recuperar = function (email, fn) {
         baseService($http, $q, {
             o: {email: email},
-            query: "$u=Sistema::getUsuario(\"email_usu.endereco='\".$o->email.\"'\");if($u==null)throw new Exception('');$s=Sistema::getEmailSistema();$s->enviarEmail($u->email,'Recuperacao de Senha','Segue seus acessos: <hr> Login:'.$u->login.' <br> Senha: '.$u->senha)",
+            query: "$u=Sistema::getUsuario(\"email_usu.endereco='\".$o->email.\"'\");if($u==null)throw new Exception('');$s=Sistema::getEmailSistema();Sistema::gerarSenha($u);$s->enviarEmail($u->email,'Recuperacao de Senha','Segue seus acessos: <hr> Login:'.$u->login.' <br> Senha: '.$u->senha)",
             sucesso: fn,
             falha: fn
         });

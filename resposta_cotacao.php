@@ -140,9 +140,9 @@ $id_empresa = $_GET['empresa'];
                                         <td colspan="3">{{prod.produto.nome}}</td>
                                         <td>{{prod.produto.unidade}} / {{prod.produto.quantidade_unidade}}</td>
                                         <td ng-if="!cotacao.tratar_em_litros" class="text-center" width="100px">{{prod.quantidade}}</td>
-                                        <td ng-if="!cotacao.tratar_em_litros" class="text-center"><input type="number" ng-keyup="attValor(prod)" class="form-control" ng-model="prod.valor"></td>
+                                        <td ng-if="!cotacao.tratar_em_litros" class="text-center"><input type=text ng-keyup="attValor(prod)" class="form-control" ng-model="prod.valor"></td>
                                         <td ng-if="cotacao.tratar_em_litros">{{prod.quantidade * prod.produto.quantidade_unidade}}</td>
-                                        <td ng-if="cotacao.tratar_em_litros"class="text-center"><input type="number" ng-keyup="attValorUnitario(prod)" class="form-control" ng-model="prod.valor_unitario"></td>
+                                        <td ng-if="cotacao.tratar_em_litros"class="text-center"><input type=text ng-keyup="attValorUnitario(prod)" class="form-control" ng-model="prod.valor_unitario"></td>
                                         <td >
                                             <div class="product-btn">
                                                 <a href="#" class="btn btn-outline-light btndel" ng-click="removerProduto(prod)"><i class="fas fa-trash-alt"></i></a>

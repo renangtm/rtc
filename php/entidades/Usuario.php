@@ -424,6 +424,10 @@ class Usuario {
                         break;
                     }
                 }
+                
+                if($t->tipo_tarefa===null){
+                    continue;
+                }
 
                 $t->prioridade = $prioridade;
 
@@ -436,7 +440,7 @@ class Usuario {
                     $intervalos[] = array($k[0] + 0, $k[1] + 0);
                 }
                 $t->intervalos_execucao = $intervalos;
-
+                
                 $tarefas[$id] = $t;
             }
 

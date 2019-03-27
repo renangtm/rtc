@@ -283,7 +283,7 @@
                                             Descricao:
                                         </td>
                                         <td>
-                                            <textarea style="width: 100%" rows="5" ng-model="tarefa.descricao" class="form-control" placeholder="Descricao da tarefa">
+                                            <textarea style="width: 100%" rows="10" ng-model="tarefa.descricao" class="form-control" placeholder="Descricao da tarefa">
                                                 
                                             </textarea>
                                         </td>
@@ -396,7 +396,7 @@
                                             Descricao:
                                         </td>
                                         <td>
-                                            <textarea style="width: 100%" rows="5" ng-model="tarefa.descricao" class="form-control" placeholder="Descricao da tarefa">
+                                            <textarea style="width: 100%" rows="10" ng-model="tarefa.descricao" class="form-control" placeholder="Descricao da tarefa">
                                                 
                                             </textarea>
                                         </td>
@@ -503,7 +503,7 @@
                                     <hr>
                                     Porcentagem: <input style="width:30%;text-align:center" type="number" class="form-control" ng-model="observacao_tarefa.porcentagem"></input>
                                     <hr>
-                                    <textarea placeholder="Observacao" ng-model="observacao_tarefa.observacao" class="form-control" style="width:100%" rows="5">
+                                    <textarea placeholder="Observacao" ng-model="observacao_tarefa.observacao" class="form-control" style="width:100%" rows="10">
                                     
                                     </textarea>
                                     <hr>
