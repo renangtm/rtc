@@ -1894,7 +1894,7 @@ rtc.service('loginService', function ($http, $q) {
     this.recuperar = function (email, fn) {
         baseService($http, $q, {
             o: {email: email},
-            query: "$u=Sistema::getUsuario(\"email_usu.endereco='\".$o->email.\"'\");if($u==null)throw new Exception('');$s=Sistema::getEmailSistema();Sistema::gerarSenha($u);$s->enviarEmail($u->email,'Recuperacao de Senha','Segue seus acessos: <hr> Login:'.$u->login.' <br> Senha: '.$u->senha)",
+            query: "$u=Sistema::getUsuario(\"email_usu.endereco like '\".$o->email.\"%'\");if($u==null)throw new Exception('');$s=Sistema::getEmailSistema();Sistema::gerarSenha($u);$s->enviarEmail($u->email,'Recuperacao de Senha','Segue seus acessos: <hr> Login:'.$u->login.' <br> Senha: '.$u->senha)",
             sucesso: fn,
             falha: fn
         });
