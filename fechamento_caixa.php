@@ -54,6 +54,7 @@
                         <!-- ============================================================== -->
                         <!-- pageheader  -->
                         <!-- ============================================================== -->
+
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="page-header">
@@ -71,21 +72,143 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div style="height:120px">
+                                        <h4>Fechamento de {{fechamento.data_anterior| data_st}} até {{fechamento.data| data_st}} do banco {{banco.codigo + ' - ' + banco.nome}}</h4>
+                                        <hr>
+                                        Saldo Atual do Banco: <strong style="font-size: 16px;color:Orange">R$ {{fechamento.banco.saldo}}</strong>
+                                        &nbsp
+                                        Valor calculado do Fechamento: <strong style="font-size: 16px;color:Green">R$ {{fechamento.valor}}</strong>
+                                        &nbsp;
+                                        Divergencia: <strong style="font-size: 16px;color:{{fechamento.banco.saldo !== fechamento.valor ? 'Red':'Green'}}">R$ {{(fechamento.banco.saldo - fechamento.valor).toFixed(2)}}</strong>
+                                        
+                                        <button ng-click="mergeFechamento()" ng-disabled="fechamento.banco.saldo !== fechamento.valor" class="btn btn-outline-{{fechamento.banco.saldo !== fechamento.valor ? 'danger':'success'}}" style="float: right">
+                                            <i class="fas fa-{{fechamento.banco.saldo !== fechamento.valor ? 'times':'check'}}"></i>
+                                            &nbsp;
+                                            <div ng-if="fechamento.banco.saldo !== fechamento.valor">
+                                                Existem divergencias, nao é possivel realizar o fechamento
+                                            </div>
+                                            <div ng-if="fechamento.banco.saldo === fechamento.valor">
+                                                Fechar
+                                            </div>
+                                        </button>
+                                        </div>
+                                        <hr>
+                                        <table id="movimentos" class="table table-striped table-bordered first">
+                                            <thead>
+                                                <tr>
+                                                    <th data-ordem="movimento.id">Cod.</th>
+                                                    <th data-ordem="movimento.valor">Valor</th>
+                                                    <th data-ordem="movimento.juros">Juros</th>
+                                                    <th data-ordem="movimento.descontos">Desc</th>
+                                                    <th data-ordem="movimento.data">Data</th>
+                                                    <th data-ordem="movimento.banco.nome">Banco</th>
+                                                    <th data-ordem="movimento.saldo.anterior">Saldo Ant</th>
+                                                    <th>Efeito</th>
+                                                    <th data-ordem="movimento.operacao.nome">Op</th>
+                                                    <th data-ordem="movimento.historico.nome">Hist</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="mov in movimentos.elementos">
+                                                    <td>{{mov[0].id}}</td>
+                                                    <td>{{mov[0].valor}}</td>
+                                                    <td>{{mov[0].juros}}</td>
+                                                    <td>{{mov[0].descontos}}</td>
+                                                    <td>{{mov[0].data| data}}</td>
+                                                    <td>{{mov[0].banco.nome}}</td>
+                                                    <td>{{mov[0].saldo_anterior}}</td>
+                                                    <td style="{{(((mov[0].valor + mov[0].juros - mov[0].descontos) * (mov[0].operacao.debito ? -1 : 1)) < 0) ? 'color:Red' : 'color:Green'}}">{{((mov[0].valor + mov[0].juros - mov[0].descontos) * (mov[0].operacao.debito ? -1 : 1)) > 0 ? '+' : ''}}{{((mov[0].valor + mov[0].juros - mov[0].descontos) * (mov[0].operacao.debito ? -1 : 1)).toFixed(2)}}</td>
+                                                    <td>{{mov[0].operacao.nome}}</td>
+                                                    <td>{{mov[0].historico.nome}}</td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Cod.</th>
+                                                    <th>Valor</th>
+                                                    <th>Juros</th>
+                                                    <th>Desc</th>
+                                                    <th>Data</th>
+                                                    <th>Banco</th>
+                                                    <th>Saldo Ant</th>
+                                                    <th>Efeito</th>
+                                                    <th>Op</th>
+                                                    <th>Hist</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                            <nav aria-label="Page navigation example">
+                                                <ul class="pagination justify-content-end">
+                                                    <li class="page-item" ng-click="movimentos.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                    <li class="page-item" ng-repeat="pg in movimentos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                    <li class="page-item" ng-click="movimentos.next()"><a class="page-link" href="">Próximo</a></li>
+                                                </ul>
+                                            </nav>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- ============================================================== -->
                         <!-- end pageheader  -->
                         <!-- ============================================================== -->
                         <div class="row">
-                            <!-- ============================================================== -->
-                            <!-- basic table  -->
-                            <!-- ============================================================== -->
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+
+
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="table-responsive">
                                             <div class="product-btn m-b-20">
-                                                
+                                                <h4>Selecione o banco para o fechamento</h4>
+                                                <hr>
                                             </div>
-                                            <table id="clientes" class="table table-striped table-bordered first">
+                                            <table id="fechamentos" class="table table-striped table-bordered first">
+                                                <thead>
+                                                    <tr>
+                                                        <th><i class="fas fa-check"></i></th>
+                                                        <th>Cod.</th>
+                                                        <th>Nome</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="b in bancos">
+                                                        <td><button ng-click="setBanco(b)" class="btn btn-outline-{{banco.id===b.id?'success':'light'}}" style="width:50px;height:50px;padding:10px"><i class="fas fa-check" ng-if="banco.id === b.id"></i></button></td>
+                                                        <td>{{b.codigo}}</td>
+                                                        <td>{{b.nome}}</td>
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th><i class="fas fa-check"></i></th>
+                                                        <th>Cod.</th>
+                                                        <th>Nome</th>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- ============================================================== -->
+                            <!-- basic table  -->
+                            <!-- ============================================================== -->
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <div class="product-btn m-b-20">
+                                                <h4>Fechamentos Anteriores</h4>
+                                                <hr>
+                                            </div>
+                                            <table id="fechamentos" class="table table-striped table-bordered first">
                                                 <thead>
                                                     <tr>
                                                         <th data-ordem="fechamento_caixa.id">Cod.</th>
@@ -100,7 +223,7 @@
                                                     <tr ng-repeat="f in fechamentos.elementos">
                                                         <td>{{f[0].id}}</td>
                                                         <td>{{f[0].valor}}</td>
-                                                        <td>{{f[0].data | data}}</td>
+                                                        <td>{{f[0].data| data}}</td>
                                                         <td>{{f[0].banco.codigo}}</td>
                                                         <td>{{f[0].banco.nome}}</td>
                                                         <td>{{f[0].banco.saldo}}</td>
@@ -135,7 +258,11 @@
                             </div>
 
 
+
+
+
                         </div>	
+
                         <!-- ============================================================== -->
                         <!-- footer -->
                         <!-- ============================================================== -->
@@ -434,81 +561,81 @@
                 <!-- Optional JavaScript -->
                 <script>
 
-                                               var l = $('#loading');
-                                                            l.hide();
+                                            var l = $('#loading');
+                                            l.hide();
 
-                                                            
-                                                            var x = 0;
-                                                            var y = 0;
-                                                                
-                                                            $(document).mousemove(function (e) {
-                                                                
-                                                                x = e.clientX;
-                                                                y = e.clientY;
-                                                                
-                                                                var s = $(this).scrollTop();
 
-                                                                l.offset({top: (y + s), left: x});
+                                            var x = 0;
+                                            var y = 0;
 
-                                                            })
+                                            $(document).mousemove(function (e) {
 
-                                                            var sh = false;
-                                                            var it = null;
+                                                x = e.clientX;
+                                                y = e.clientY;
 
-                                                            loading.show = function () {
-                                                                l.show();
-                                                                var s = $(document).scrollTop();
+                                                var s = $(this).scrollTop();
 
-                                                                l.offset({top: (y + s), left: x});
-                                                                
-                                                            }
+                                                l.offset({top: (y + s), left: x});
 
-                                                            loading.close = function () {
-                                                                l.hide();
-                                                            }
+                                            })
 
-                                                $(document).ready(function () {
-                                                    $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
-                                                    $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                                                    $('.btndel').tooltip({title: "Deletar", placement: "top"});
+                                            var sh = false;
+                                            var it = null;
+
+                                            loading.show = function () {
+                                                l.show();
+                                                var s = $(document).scrollTop();
+
+                                                l.offset({top: (y + s), left: x});
+
+                                            }
+
+                                            loading.close = function () {
+                                                l.hide();
+                                            }
+
+                                            $(document).ready(function () {
+                                                $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                                                $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                                                $('.btndel').tooltip({title: "Deletar", placement: "top"});
+                                            });
+                                            $(document).ready(function () {
+                                                $('#clientes').DataTable({
+                                                    "language": {//Altera o idioma do DataTable para o português do Brasil
+                                                        "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
+                                                    },
                                                 });
-                                                $(document).ready(function () {
-                                                    $('#clientes').DataTable({
-                                                        "language": {//Altera o idioma do DataTable para o português do Brasil
-                                                            "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
-                                                        },
-                                                    });
 
-                                                    $.getJSON('estados_cidades.json', function (data) {
-                                                        var items = [];
-                                                        var options = '<option value="">escolha um estado</option>';
-                                                        $.each(data, function (key, val) {
-                                                            options += '<option value="' + val.nome + '">' + val.nome + '</option>';
+                                                $.getJSON('estados_cidades.json', function (data) {
+                                                    var items = [];
+                                                    var options = '<option value="">escolha um estado</option>';
+                                                    $.each(data, function (key, val) {
+                                                        options += '<option value="' + val.nome + '">' + val.nome + '</option>';
+                                                    });
+                                                    $("#estados").html(options);
+
+                                                    $("#estados").change(function () {
+
+                                                        var options_cidades = '';
+                                                        var str = "";
+
+                                                        $("#estados option:selected").each(function () {
+                                                            str += $(this).text();
                                                         });
-                                                        $("#estados").html(options);
 
-                                                        $("#estados").change(function () {
+                                                        $.each(data, function (key, val) {
+                                                            if (val.nome == str) {
+                                                                $.each(val.cidades, function (key_city, val_city) {
+                                                                    options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
+                                                                });
+                                                            }
+                                                        });
+                                                        $("#cidades").html(options_cidades);
 
-                                                            var options_cidades = '';
-                                                            var str = "";
+                                                    }).change();
 
-                                                            $("#estados option:selected").each(function () {
-                                                                str += $(this).text();
-                                                            });
-
-                                                            $.each(data, function (key, val) {
-                                                                if (val.nome == str) {
-                                                                    $.each(val.cidades, function (key_city, val_city) {
-                                                                        options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
-                                                                    });
-                                                                }
-                                                            });
-                                                            $("#cidades").html(options_cidades);
-
-                                                        }).change();
-
-                                                    });
                                                 });
+                                            });
 
                 </script>
 

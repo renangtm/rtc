@@ -642,6 +642,7 @@ rtc.service('movimentosFechamentoService', function ($http, $q) {
     var este = this;
     this.banco = null;
     this.getCount = function (filtro, fn) {
+        if(este.banco === null)return;
         baseService($http, $q, {
             o: {filtro: filtro,banco:este.banco},
             query: "$r->qtd=$o->banco->getCountMovimentosFechamento($c,$o->filtro)",
@@ -650,6 +651,7 @@ rtc.service('movimentosFechamentoService', function ($http, $q) {
         });
     }
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        if(este.banco === null)return;
         baseService($http, $q, {
             o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem,banco:este.banco},
             query: "$r->elementos=$o->banco->getMovimentosFechamento($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
