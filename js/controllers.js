@@ -6125,7 +6125,7 @@ rtc.controller("crtClientes", function ($scope, clienteService, sistemaService, 
     }
 
 })
-rtc.controller("crtProdutos", function ($scope, culturaService, sistemaService, uploadService, pragaService, produtoService, baseService, categoriaProdutoService, receituarioService) {
+rtc.controller("crtProdutos", function ($scope,ativoService, culturaService, sistemaService, uploadService, pragaService, produtoService, baseService, categoriaProdutoService, receituarioService) {
 
     $scope.produtos = createAssinc(produtoService, 1, 3, 10);
     $scope.produtos.attList();
@@ -6139,6 +6139,9 @@ rtc.controller("crtProdutos", function ($scope, culturaService, sistemaService, 
 
     $scope.receituario_novo = {};
     $scope.receituario = {};
+    
+    
+    $scope.ativos = [];
 
     $scope.categorias = [];
 
@@ -6152,6 +6155,13 @@ rtc.controller("crtProdutos", function ($scope, culturaService, sistemaService, 
 
         $scope.logisticas = rr.logisticas;
 
+    })
+    
+    ativoService.getAtivos(function(a){
+        
+       
+        $scope.ativos = a.ativos;
+        
     })
 
     $("#uploaderImagemProduto").change(function () {

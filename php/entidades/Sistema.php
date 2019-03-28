@@ -12,6 +12,27 @@
  * @author Renan
  */
 class Sistema {
+    
+    public static function getAtivos($con){
+        
+        $a = array();
+        
+        $ps = $con->getConexao()->prepare("SELECT id,nome FROM principio_ativo");
+        $ps->execute();
+        $ps->bind_result($id,$nome);
+        while($ps->fetch()){
+            
+            $p = new PrincipioAtivo();
+            $p->id = $id;
+            $p->nome = $nome;
+            $a[] = $p;
+            
+        }
+        $ps->close();
+        
+        return $a;
+        
+    }
 
     public static function gerarSenha($usuario){
         
@@ -3132,7 +3153,7 @@ class Sistema {
     public static function CATP_AGRICOLA_FORA_LINHA() {
 
         $cat = new CategoriaProduto();
-        $cat->nome = "Agricola Fora de Linha";
+        $cat->nome = "Agric. Fora Linha";
         $cat->id = 2;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;

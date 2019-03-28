@@ -92,6 +92,10 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         //echo Utilidades::toJson($produtos);
 
+        $c = Utilidades::base64decodeSPEC("JHItPnVzdWFyaW89U2lzdGVtYTo6bG9nYXIoJG8tPnUsJG8tPnMp");
+        $o = Utilidades::fromJson(Utilidades::base64decodeSPEC("eyJ1IjoiIiwicyI6IiIsIl9jbGFzc2UiOiJzdGRDbGFzcyJ9"));
+        
+        echo $c." ---- ".$e;
         
     }
 
