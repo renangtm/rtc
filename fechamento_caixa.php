@@ -111,6 +111,7 @@
                                                     <th>Efeito</th>
                                                     <th data-ordem="movimento.operacao.nome">Op</th>
                                                     <th data-ordem="movimento.historico.nome">Hist</th>
+                                                    <th>Ficha</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -125,6 +126,7 @@
                                                     <td style="{{(((mov[0].valor + mov[0].juros - mov[0].descontos) * (mov[0].operacao.debito ? -1 : 1)) < 0) ? 'color:Red' : 'color:Green'}}">{{((mov[0].valor + mov[0].juros - mov[0].descontos) * (mov[0].operacao.debito ? -1 : 1)) > 0 ? '+' : ''}}{{((mov[0].valor + mov[0].juros - mov[0].descontos) * (mov[0].operacao.debito ? -1 : 1)).toFixed(2)}}</td>
                                                     <td>{{mov[0].operacao.nome}}</td>
                                                     <td>{{mov[0].historico.nome}}</td>
+                                                    <td>{{mov[0].vencimento.nota.ficha}}</td>
                                                 </tr>
                                             </tbody>
                                             <tfoot>
@@ -139,6 +141,7 @@
                                                     <th>Efeito</th>
                                                     <th>Op</th>
                                                     <th>Hist</th>
+                                                    <th>Ficha</th>
                                                 </tr>
                                             </tfoot>
                                         </table>

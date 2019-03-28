@@ -13,6 +13,24 @@
  */
 class Sistema {
 
+    public static function gerarSenha($usuario){
+        
+        $k = "";
+        
+       $ns = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,s,c,e,d,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,0,1,2,3,4,5,6,7,8,9";
+       $ns = explode(',', $ns); 
+       
+       for($i=0;$i<10;$i++){
+           
+           $k .= $ns[intval(rand(0, count($ns)-1))];
+           
+       }
+       
+       $usuario->senha = $k;
+       $usuario->merge(new ConnectionFactory());
+       
+    }
+    
     public static function getTrabalhosCronometrados() {
 
         $trabalhos = array();
@@ -2931,11 +2949,166 @@ class Sistema {
 
         return $sts;
     }
+    
+    
+     public static function CATP_INFORMATICA() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Informatica";
+        $cat->id = 23;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
+    
+     public static function CATP_ACESSORIOS() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Acessorios";
+        $cat->id = 22;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
+    
+    public static function CATP_PECAS_PULVERIZADAS() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Pecas Pulverizadas";
+        $cat->id = 21;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
+    
+    public static function CATP_AGRICOLA_ANUNCIANTE() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Agricola Anunciante";
+        $cat->id = 21;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
+    
+    public static function CATP_AGRICOLA_CONSIGNADO() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Agricola Consignado";
+        $cat->id = 20;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
+    
+    public static function CATP_VETERINARIA() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Veterinaria";
+        $cat->id = 19;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
+    
+    public static function CATP_MATERIAL_DE_INFORMATICA() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Material Informatica";
+        $cat->id = 18;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
+    
+    public static function CATP_MATERIAL_ESCRITORIO() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Material de escritorio";
+        $cat->id = 17;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
+    
+    public static function CATP_IMPOSTOS_E_TAXAS() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Impostos e Taxas";
+        $cat->id = 16;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
+    
+    public static function CATP_IMOBILIZADO() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Imobilizado";
+        $cat->id = 15;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
+    
+    public static function CATP_FINANCEIRO() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Financeiro";
+        $cat->id = 14;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
+    
+    public static function CATP_FERRAMENTAS() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Ferramentas";
+        $cat->id = 12;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
+    
+    public static function CATP_AGRIC_EMB_FORA_LINHA() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Agricola Embalagem Fora Linha";
+        $cat->id = 13;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
+    
+    public static function CATP_CONSUMO() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Consumo";
+        $cat->id = 12;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = true;
+        return $cat;
+    }
 
     public static function CATP_AGRICOLA() {
 
         $cat = new CategoriaProduto();
-        $cat->nome = "Agricola";
+        $cat->nome = "Agricola Lista de Preco";
         $cat->id = 1164;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
@@ -2977,6 +3150,7 @@ class Sistema {
         $cat->loja = false;
         return $cat;
     }
+    
 
     public static function CATP_ABSTRATO() {
 
@@ -3001,10 +3175,44 @@ class Sistema {
             $ret[] = Sistema::CATP_AGRICOLA();
             $ret[] = Sistema::CATP_AGRICOLA_FORA_LINHA();
             $ret[] = Sistema::CATP_AGRICOLA_IMPORTADO();
+            $ret[] = Sistema::CATP_AGRIC_EMB_FORA_LINHA();
+            $ret[] = Sistema::CATP_AGRICOLA_CONSIGNADO();
+            $ret[] = Sistema::CATP_AGRICOLA_ANUNCIANTE();
+            $ret[] = Sistema::CATP_ACESSORIOS();
+            $ret[] = Sistema::CATP_CONSUMO();
+            $ret[] = Sistema::CATP_FINANCEIRO();
+            $ret[] = Sistema::CATP_FERRAMENTAS();
+            $ret[] = Sistema::CATP_IMPOSTOS_E_TAXAS();
+            $ret[] = Sistema::CATP_IMOBILIZADO();
+            $ret[] = Sistema::CATP_MATERIAL_ESCRITORIO();
+            $ret[] = Sistema::CATP_MATERIAL_DE_INFORMATICA();
+            $ret[] = Sistema::CATP_PECAS_PULVERIZADAS();
+            $ret[] = Sistema::CATP_VETERINARIA();
+            $ret[] = Sistema::CATP_INFORMATICA();
+            
+            
+            
+            
         } else {
+            
             $ret[] = Sistema::CATP_AGRICOLA();
             $ret[] = Sistema::CATP_AGRICOLA_FORA_LINHA();
             $ret[] = Sistema::CATP_AGRICOLA_IMPORTADO();
+            $ret[] = Sistema::CATP_AGRIC_EMB_FORA_LINHA();
+            $ret[] = Sistema::CATP_AGRICOLA_CONSIGNADO();
+            $ret[] = Sistema::CATP_AGRICOLA_ANUNCIANTE();
+            $ret[] = Sistema::CATP_ACESSORIOS();
+            $ret[] = Sistema::CATP_CONSUMO();
+            $ret[] = Sistema::CATP_FINANCEIRO();
+            $ret[] = Sistema::CATP_FERRAMENTAS();
+            $ret[] = Sistema::CATP_IMPOSTOS_E_TAXAS();
+            $ret[] = Sistema::CATP_IMOBILIZADO();
+            $ret[] = Sistema::CATP_MATERIAL_ESCRITORIO();
+            $ret[] = Sistema::CATP_MATERIAL_DE_INFORMATICA();
+            $ret[] = Sistema::CATP_PECAS_PULVERIZADAS();
+            $ret[] = Sistema::CATP_VETERINARIA();
+            $ret[] = Sistema::CATP_INFORMATICA();
+            
         }
         if ($id < 0) {
             return $ret;

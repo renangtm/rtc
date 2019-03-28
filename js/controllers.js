@@ -179,6 +179,8 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
 
     $scope.usuario = null;
 
+    $scope.obs_padrao = "";
+
     $scope.empresarial = false;
     $scope.tarefa_novo = null;
     $scope.tarefa = null;
@@ -192,7 +194,8 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
         observacaoTarefaService.getObservacaoTarefa(function (o) {
 
             $scope.observacao_tarefa = o.observacao_tarefa;
-
+            $scope.observacao_tarefa.observacao = $scope.observacao_padrao;
+            
         })
 
     }
@@ -267,6 +270,14 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
         observacaoTarefaService.getObservacaoTarefa(function (o) {
 
             $scope.observacao_tarefa = o.observacao_tarefa;
+            
+            tipoTarefaService.getObservacaoPadrao($scope.tarefa,function(t){
+                
+                $scope.observacao_padrao = t.observacao.split("<br>").join("\n");
+                
+                $scope.observacao_tarefa.observacao = $scope.observacao_padrao;
+                
+            })
 
         })
     }
@@ -4139,7 +4150,7 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
 
                 var p = $scope.pedido.produtos[i];
 
-                if (p.validade_minima > produto.validade_minima) {
+                if (p.validade_minima > produto.validade_minima && p.produto.id === produto.produto.id) {
 
                     remove($scope.pedido.produtos, p);
                     i--;

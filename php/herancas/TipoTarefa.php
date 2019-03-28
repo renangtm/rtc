@@ -20,7 +20,8 @@ class TipoTarefa {
     public $cargos;
     public $empresa;
     public $excluido;
-
+    public $observacao_padrao;
+    
     function __construct($id = 0, $id_empresa = 0) {
 
         //pode ter ate 100 tarefas fixas
@@ -35,7 +36,15 @@ class TipoTarefa {
         $this->prioridade = 1;
         $this->cargos = array();
         $this->empresa = null;
+        $this->observacao_padrao = "";
         $this->excluido = false;
+        
+    }
+    
+    public function getObservacaoPadrao($tarefa){
+        
+        return "";
+        
     }
     
     public function aoAtribuir($id_usuario,$tarefa) {
