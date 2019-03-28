@@ -12,6 +12,48 @@
  * @author Renan
  */
 class Sistema {
+    
+    public static function getFabricantes($con){
+        
+        $a = array();
+        
+        $ps = $con->getConexao()->prepare("SELECT id,nome FROM fabricante");
+        $ps->execute();
+        $ps->bind_result($id,$nome);
+        while($ps->fetch()){
+            
+            $p = new Fabricante();
+            $p->id = $id;
+            $p->nome = $nome;
+            $a[] = $p;
+            
+        }
+        $ps->close();
+        
+        return $a;
+        
+    }
+    
+    public static function getAtivos($con){
+        
+        $a = array();
+        
+        $ps = $con->getConexao()->prepare("SELECT id,nome FROM principio_ativo");
+        $ps->execute();
+        $ps->bind_result($id,$nome);
+        while($ps->fetch()){
+            
+            $p = new PrincipioAtivo();
+            $p->id = $id;
+            $p->nome = $nome;
+            $a[] = $p;
+            
+        }
+        $ps->close();
+        
+        return $a;
+        
+    }
 
     public static function gerarSenha($usuario){
         

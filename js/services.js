@@ -1882,6 +1882,25 @@ rtc.service('acessoService', function ($http, $q) {
         });
     }
 })
+rtc.service('ativoService', function ($http, $q) {
+    this.getAtivos = function (fn) {
+        baseService($http, $q, {
+            query: "$r->ativos=Sistema::getAtivos($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+
+rtc.service('fabricanteService', function ($http, $q) {
+    this.getFabricantes = function (fn) {
+        baseService($http, $q, {
+            query: "$r->fabricantes=Sistema::getFabricantes($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('loginService', function ($http, $q) {
     this.login = function (usuario, senha, fn) {
         baseService($http, $q, {
