@@ -33,8 +33,28 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
         if (true) {
 
             //retire para realmente executar o script
-            return;
+            //return;
         }
+        
+        $t = array();
+        $ps = $this->getConexao()->prepare("SELECT F_CODPROD,IFNULL(F_FABVEND,F_MARCA) FROM db_agrofauna.PRODUTO");
+        $ps->execute();
+        $ps->bind_result($id,$tipo);
+        while($ps->fetch()){
+            $t[$id]=$tipo;
+        }
+        $ps->close();
+        
+        foreach($t as $id=>$tipo){
+            
+            
+            $ps = $con->getConexao()->prepare("UPDATE produto SET fabricante='$tipo' WHERE id_universal=$id");
+            $ps->execute();
+            $ps->close();
+            
+        }
+        
+        return;
 
         $cidades = array();
 

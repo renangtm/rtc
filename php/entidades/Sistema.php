@@ -2958,18 +2958,18 @@ class Sistema {
         $cat->id = 23;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
-        $cat->loja = true;
+        $cat->loja = false;
         return $cat;
     }
     
      public static function CATP_ACESSORIOS() {
 
         $cat = new CategoriaProduto();
-        $cat->nome = "Acessorios";
+        $cat->nome = "Acessórios";
         $cat->id = 22;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
-        $cat->loja = true;
+        $cat->loja = false;
         return $cat;
     }
     
@@ -2980,18 +2980,18 @@ class Sistema {
         $cat->id = 21;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
-        $cat->loja = true;
+        $cat->loja = false;
         return $cat;
     }
     
     public static function CATP_AGRICOLA_ANUNCIANTE() {
 
         $cat = new CategoriaProduto();
-        $cat->nome = "Agricola Anunciante";
+        $cat->nome = "Agrícola Anunciante";
         $cat->id = 21;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
-        $cat->loja = true;
+        $cat->loja = false;
         return $cat;
     }
     
@@ -3002,40 +3002,40 @@ class Sistema {
         $cat->id = 20;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
-        $cat->loja = true;
+        $cat->loja = false;
         return $cat;
     }
     
     public static function CATP_VETERINARIA() {
 
         $cat = new CategoriaProduto();
-        $cat->nome = "Veterinaria";
+        $cat->nome = "Veterinária";
         $cat->id = 19;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
-        $cat->loja = true;
+        $cat->loja = false;
         return $cat;
     }
     
     public static function CATP_MATERIAL_DE_INFORMATICA() {
 
         $cat = new CategoriaProduto();
-        $cat->nome = "Material Informatica";
+        $cat->nome = "Material de informat";
         $cat->id = 18;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
-        $cat->loja = true;
+        $cat->loja = false;
         return $cat;
     }
     
     public static function CATP_MATERIAL_ESCRITORIO() {
 
         $cat = new CategoriaProduto();
-        $cat->nome = "Material de escritorio";
+        $cat->nome = "Material Escritório";
         $cat->id = 17;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
-        $cat->loja = true;
+        $cat->loja = false;
         return $cat;
     }
     
@@ -3046,18 +3046,18 @@ class Sistema {
         $cat->id = 16;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
-        $cat->loja = true;
+        $cat->loja = false;
         return $cat;
     }
     
     public static function CATP_IMOBILIZADO() {
 
         $cat = new CategoriaProduto();
-        $cat->nome = "Imobilizado";
+        $cat->nome = "Imobilizdo";
         $cat->id = 15;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
-        $cat->loja = true;
+        $cat->loja = false;
         return $cat;
     }
     
@@ -3068,7 +3068,7 @@ class Sistema {
         $cat->id = 14;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
-        $cat->loja = true;
+        $cat->loja = false;
         return $cat;
     }
     
@@ -3079,18 +3079,18 @@ class Sistema {
         $cat->id = 12;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
-        $cat->loja = true;
+        $cat->loja = false;
         return $cat;
     }
     
     public static function CATP_AGRIC_EMB_FORA_LINHA() {
 
         $cat = new CategoriaProduto();
-        $cat->nome = "Agricola Embalagem Fora Linha";
+        $cat->nome = "Agric. Emb. F.Linha";
         $cat->id = 13;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
-        $cat->loja = true;
+        $cat->loja = false;
         return $cat;
     }
     
@@ -3101,14 +3101,25 @@ class Sistema {
         $cat->id = 12;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
-        $cat->loja = true;
+        $cat->loja = false;
         return $cat;
     }
 
+    public static function CATP_ADUBOS_FOLIARES() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Adubos Foliares";
+        $cat->id = 116;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = false;
+        return $cat;
+    }
+    
     public static function CATP_AGRICOLA() {
 
         $cat = new CategoriaProduto();
-        $cat->nome = "Agricola Lista de Preco";
+        $cat->nome = "Agricola Lista Preco";
         $cat->id = 1164;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
@@ -3132,7 +3143,7 @@ class Sistema {
     public static function CATP_AGRICOLA_FORA_LINHA() {
 
         $cat = new CategoriaProduto();
-        $cat->nome = "Agricola Fora de Linha";
+        $cat->nome = "Agric. Fora Linha";
         $cat->id = 2;
         $cat->base_calculo = 40;
         $cat->parametros_agricolas = true;
@@ -3189,7 +3200,7 @@ class Sistema {
             $ret[] = Sistema::CATP_PECAS_PULVERIZADAS();
             $ret[] = Sistema::CATP_VETERINARIA();
             $ret[] = Sistema::CATP_INFORMATICA();
-            
+            $ret[] = Sistema::CATP_ADUBOS_FOLIARES();
             
             
             
@@ -3212,6 +3223,7 @@ class Sistema {
             $ret[] = Sistema::CATP_PECAS_PULVERIZADAS();
             $ret[] = Sistema::CATP_VETERINARIA();
             $ret[] = Sistema::CATP_INFORMATICA();
+            $ret[] = Sistema::CATP_ADUBOS_FOLIARES();
             
         }
         if ($id < 0) {

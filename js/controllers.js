@@ -6132,7 +6132,8 @@ rtc.controller("crtProdutos", function ($scope, culturaService, sistemaService, 
     assincFuncs(
             $scope.produtos,
             "produto",
-            ["codigo", "nome", "estoque", "disponivel", "transito", "valor_base", "ativo", "classe_risco"]);
+            ["codigo", "nome", "estoque", "disponivel", "transito", "valor_base", "ativo", "classe_risco"],
+            null,false);
 
     $scope.produto = {};
     $scope.produto_novo = {};
