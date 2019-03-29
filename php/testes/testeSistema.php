@@ -94,11 +94,9 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         $c = new ConnectionFactory();
         
-        $r = new stdClass();
+        $r = new Empresa(1733,$con);
         
-        eval('$r->logisticas=Sistema::getLogisticas($c,false);');
-     
-        echo Utilidades::toJson($r);
+        echo Utilidades::toJson($r->getClientes($con, 0,100));
         
     }
 

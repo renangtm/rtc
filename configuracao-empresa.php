@@ -241,6 +241,21 @@
                                                          
                                                 </div>
                                             </div>
+                                            <div class="form-group row">
+                                                <div class="col-md-3">
+
+                                                    Administracao Contrada:
+                                                   
+
+                                                </div>
+                                                <div class="col-md-3">
+                                                     <div ng-repeat="ad in adms">
+                                                         <input type="checkbox" ng-click="setAdm(ad)" ng-checked="ad===adm" id="{{(ad!==null)?'adm_'+ad.id:'sep'}}">
+                                                         &nbsp<label for="{{(ad!==null)?'adm_'+ad.id:'sep'}}">{{(ad!==null)?ad.nome:'Sem empresa de administracao'}}</label>
+                                                     </div>
+                                                         
+                                                </div>
+                                            </div>
                                             <?php if ($usuario->temPermissao(Sistema::P_NOTA()->m("A"))) { ?>
                                                 <hr>
                                                 <div class="form-group row">

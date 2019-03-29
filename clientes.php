@@ -455,6 +455,39 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <hr style="margin: 5px 0px;">
+                                    <div class="form-group row">
+
+                                        <div class="col-md-10">
+                                            Categorias
+                                            <hr>
+                                            <select ng-model="categoria_prospeccao" class="form-control">
+                                                <option ng-repeat="categoria in categorias_prospeccao" ng-value="categoria">{{categoria.nome}}</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            Adc
+                                            <hr>
+                                            <button class="btn btn-primary" ng-click="addCategoriaProspeccao()" type="button"><i class="fa fa-plus"></i></button>
+                                            <input id="uploaderDocumentoCliente" style="display: none" type="file" multiple>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row">
+                                        <table class="table table-striped table-bordered first">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nome</th>
+                                                    <th><i class="fa fa-times"></i></th>
+                                                </tr>
+                                            </thead>
+                                            <tr ng-repeat="cat in categorias_prospeccao_cliente">
+                                                <td>{{cat.nome}}</td>
+                                                <td class="product"><button type="button" class="btn remove-product" ng-click="removeCategoriaProspeccao(cat)"><i class="fa fa-times"></i></button></td>
+                                            </tr>
+                                        </table>
+                                    </div>
                                     <hr style="margin: 30px 0px;">
                                     <div class="form-group row">
 
@@ -485,6 +518,7 @@
                                             </tr>
                                         </table>
                                     </div>
+                                    
                                     <hr style="margin: 30px 0px;">
                                     <div class="form-group row">
 

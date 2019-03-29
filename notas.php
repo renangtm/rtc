@@ -80,6 +80,12 @@
                                         <div class="table-responsive">
                                             <div class="product-btn m-b-20">
                                                 <a href="#" class="btn btn-primary" data-title="AddCompra" ng-click="novoNota()" data-toggle="modal" data-target="#editCompra" ><i class="fas fa-plus-circle m-r-10"></i>Cadastrar Nota</a>
+                                                
+                                                
+                                                <?php if($usuario->temPermissao(Sistema::P_PRODUTO()->m("C"))){ ?>
+                                                
+                                                <?php } ?>
+                                                
                                             </div>
                                             <hr><br>
                                             <table id="pedidos" class="table table-striped table-bordered first">

@@ -331,9 +331,9 @@ rtc.service('ausenciaService', function ($http, $q) {
 rtc.service('tipoTarefaService', function ($http, $q) {
     var este = this;
     this.empresa = null;
-    this.getObservacaoPadrao = function (tarefa,fn) {
+    this.getObservacaoPadrao = function (tarefa, fn) {
         baseService($http, $q, {
-            o:tarefa,
+            o: tarefa,
             query: "$r->observacao=$o->tipo_tarefa->getObservacaoPadrao($o)",
             sucesso: fn,
             falha: fn
@@ -424,22 +424,6 @@ rtc.service('relacaoClienteService', function ($http, $q) {
             falha: fn
         });
 
-    }
-    this.getCategoriasProspeccao = function (cliente,fn) {
-        baseService($http, $q, {
-            o:cliente,
-            query: "$r->categorias=$o->getCategoriasProspeccao($c)",
-            sucesso: fn,
-            falha: fn
-        });
-    }
-    this.setCategoriasProspeccao = function (cliente,categorias,fn) {
-        baseService($http, $q, {
-            o:{cliente:cliente,categorias:categorias},
-            query: "$o->cliente->setCategoriasProspeccao($c,$o->categorias)",
-            sucesso: fn,
-            falha: fn
-        });
     }
     this.getContato = function (fn) {
         baseService($http, $q, {
@@ -666,18 +650,20 @@ rtc.service('movimentosFechamentoService', function ($http, $q) {
     var este = this;
     this.banco = null;
     this.getCount = function (filtro, fn) {
-        if(este.banco === null)return;
+        if (este.banco === null)
+            return;
         baseService($http, $q, {
-            o: {filtro: filtro,banco:este.banco},
+            o: {filtro: filtro, banco: este.banco},
             query: "$r->qtd=$o->banco->getCountMovimentosFechamento($c,$o->filtro)",
             sucesso: fn,
             falha: fn
         });
     }
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
-        if(este.banco === null)return;
+        if (este.banco === null)
+            return;
         baseService($http, $q, {
-            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem,banco:este.banco},
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem, banco: este.banco},
             query: "$r->elementos=$o->banco->getMovimentosFechamento($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
             sucesso: fn,
             falha: fn
@@ -685,9 +671,9 @@ rtc.service('movimentosFechamentoService', function ($http, $q) {
     }
 })
 rtc.service('bancoService', function ($http, $q) {
-    this.getFechamento = function (banco,fn) {
+    this.getFechamento = function (banco, fn) {
         baseService($http, $q, {
-            o:banco,
+            o: banco,
             query: "$r->fechamento=$o->getFechamento($c)",
             sucesso: fn,
             falha: fn
@@ -821,7 +807,7 @@ rtc.service('pedidoEntradaService', function ($http, $q) {
         });
     }
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
-       
+
         baseService($http, $q, {
             o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
             query: "$r->elementos=$empresa->getPedidosEntrada($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
@@ -1365,6 +1351,22 @@ rtc.service('clienteService', function ($http, $q) {
     this.getCliente = function (fn) {
         baseService($http, $q, {
             query: "$r->cliente=new Cliente();$r->cliente->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCategoriasProspeccao = function (cliente, fn) {
+        baseService($http, $q, {
+            o: cliente,
+            query: "$r->categorias=$o->getCategoriasProspeccao($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.setCategoriasProspeccao = function (cliente, categorias, fn) {
+        baseService($http, $q, {
+            o: {cliente: cliente, categorias: categorias},
+            query: "$o->cliente->setCategoriasProspeccao($c,$o->categorias)",
             sucesso: fn,
             falha: fn
         });
@@ -1999,6 +2001,13 @@ rtc.service('sistemaService', function ($http, $q) {
             falha: fn
         });
     }
+    this.getAdms = function (fn) {
+        baseService($http, $q, {
+            query: "$r->adms=Sistema::getAdms($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getPedidoEntradaSemelhante = function (xml, fn) {
         baseService($http, $q, {
             o: {xml: xml},
@@ -2073,6 +2082,22 @@ rtc.service('empresaService', function ($http, $q) {
         baseService($http, $q, {
             o: empresa,
             query: "$r->marketing=$o->getMarketing($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.setAdm = function (empresa, adm, fn) {
+        baseService($http, $q, {
+            o: {empresa: empresa, adm: adm},
+            query: "$o->empresa->setAdm($c,$o->adm)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getAdm = function (empresa, fn) {
+        baseService($http, $q, {
+            o: empresa,
+            query: "$r->adm=$o->getAdm($c)",
             sucesso: fn,
             falha: fn
         });

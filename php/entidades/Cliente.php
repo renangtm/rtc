@@ -60,14 +60,14 @@ class Cliente {
     
     public function setCategoriasProspeccao($con,$categorias){
         
-        $ps = $con->getConexao()->prepare("DELETE FROM categoria_prospeccao_cliente WHERE id_cliente=$this->id");
+        $ps = $con->getConexao()->prepare("DELETE FROM cliente_categoria_prospeccao WHERE id_cliente=$this->id");
         $ps->execute();
         $ps->close();
         
         
         foreach($categorias as $key=>$value){
             
-            $ps = $con->getConexao()->prepare("INSERT INTO categoria_prospeccao_cliente(id_categoria,id_cliente) VALUES($value->id,$this->id)");
+            $ps = $con->getConexao()->prepare("INSERT INTO cliente_categoria_prospeccao(id_categoria,id_cliente) VALUES($value->id,$this->id)");
             $ps->execute();
             $ps->close();
             
