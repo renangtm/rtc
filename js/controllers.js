@@ -368,6 +368,7 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
 
     tarefaService.getTarefasAtivas(function (t) {
        
+       
         $scope.tarefas = createList(t.tarefas, 1, 7, "descricao");
         $scope.tarefa_principal = t.tarefas[0];
 

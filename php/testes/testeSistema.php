@@ -92,19 +92,19 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         //echo Utilidades::toJson($produtos);
 
-        $c = $con;
-        $em = new Empresa(2072,$con);
-        $u = $em->getUsuarios($con, 0, 1,'usuario.id=4590');
-        $usuario = $u[0];
+        $r = new stdClass();
         
-        $r=new stdClass();
+        $c = $con;
+        $em = new Empresa(2071,$con);
+        $us = $em->getUsuarios($con, 0, 1, 'usuario.id=4604');
+        $usuario = $us[0];
         
         $a=$usuario->getAusencias($c,'ausencia.fim>CURRENT_TIMESTAMP');
         $e=$usuario->getExpedientes($c);
         $r->tarefas=$usuario->getTarefas($c,'tarefa.porcentagem_conclusao<100','tarefa.ordem DESC');
         $r->tarefas=IATarefas::aplicar($e,$a,$r->tarefas);
         
-        echo Utilidades::toJson($r->tarefas);
+        echo Utilidades::base64encodeSPEC(Utilidades::toJson($r->tarefas));
         
     }
 
