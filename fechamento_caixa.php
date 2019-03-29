@@ -96,6 +96,8 @@
                                                 Fechar
                                             </div>
                                         </button>
+                                        <hr>
+                                        <strong style="font-size:13px">OBS: clique duas vezes em cima do movimento para ver a nota</strong>
                                         </div>
                                         <hr>
                                         <table id="movimentos" class="table table-striped table-bordered first">
@@ -111,11 +113,22 @@
                                                     <th>Efeito</th>
                                                     <th data-ordem="movimento.operacao.nome">Op</th>
                                                     <th data-ordem="movimento.historico.nome">Hist</th>
-                                                    <th>Ficha</th>
+                                                    <th data-ordem="movimento.visto">Ficha</th>
+                                                    <th><i class="fas fa-eye"></i></th>
                                                 </tr>
                                             </thead>
+                                            <style>
+                                                .tt:hover{
+                                                    background-color:SteelBlue !important;
+                                                    color:#FFFFFF;
+                                                }
+                                                .tt:hold{
+                                                    background-color:DarkBlue !important;
+                                                    color:#FFFFFF;
+                                                }
+                                            </style>
                                             <tbody>
-                                                <tr ng-repeat="mov in movimentos.elementos">
+                                                <tr ng-dblclick="getNota(mov[0])" ng-repeat="mov in movimentos.elementos" style="{{mov[0].visto?'background-color:LightGreen;color:#111111':''}};cursor:pointer" class="tt">
                                                     <td>{{mov[0].id}}</td>
                                                     <td>{{mov[0].valor}}</td>
                                                     <td>{{mov[0].juros}}</td>
@@ -127,6 +140,7 @@
                                                     <td>{{mov[0].operacao.nome}}</td>
                                                     <td>{{mov[0].historico.nome}}</td>
                                                     <td>{{mov[0].vencimento.nota.ficha}}</td>
+                                                    <td><input type="checkbox" ng-model="mov[0].visto" ng-change="setVisto(mov[0])"></input></td>
                                                 </tr>
                                             </tbody>
                                             <tfoot>
@@ -142,6 +156,7 @@
                                                     <th>Op</th>
                                                     <th>Hist</th>
                                                     <th>Ficha</th>
+                                                    <th><i class="fas fa-eye"></i></th>
                                                 </tr>
                                             </tfoot>
                                         </table>
@@ -531,6 +546,255 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="modal fade in" id="nota" tabindex="-1" role="dialog" aria-labelledby="editCompra" aria-hidden="true" style="display: none;overflow-y:scroll">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Configure os dados de sua Nota ({{nota.numero}})</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="col-4 col-lg-4" style="padding-top: 5px;">
+                                        Tipo de Nota:
+                                        <div class="row">
+                                            <div class="col-md-6" style="text-align:center">
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="radio-inline" data-ng-value="true" data-ng-model="nota.saida" class="custom-control-input" ng-disabled="true"><span class="custom-control-label">Saida</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-6" style="text-align:center">
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="radio-inline" data-ng-value="false" data-ng-model="nota.saida" checked="" class="custom-control-input" ng-disabled="true"><span class="custom-control-label">Entrada</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-if='nota.saida'>
+                                        <label for="">Cliente</label>
+                                        <div class="form-row">
+                                            <div class="col-2">
+                                                <input type="text" ng-model="nota.cliente.codigo" class="form-control" placeholder="Cod." value="9" disabled>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="text" ng-model="nota.cliente.razao_social" class="form-control" placeholder="Nome do cliente" value="" disabled="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-if='!nota.saida'>
+                                        <label for="">Fornecedor</label>
+                                        <div class="form-row">
+                                            <div class="col-2">
+                                                <input type="text" ng-model="nota.fornecedor.codigo" class="form-control" placeholder="Cod." value="9" disabled>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="text" ng-model="nota.fornecedor.nome" class="form-control" placeholder="Nome do fornecedor" value="" disabled="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="form-group">
+                                        <label for="">Transportadora</label>
+                                        <div class="form-row">
+                                            <div class="col-2">
+                                                <input type="text" class="form-control" placeholder="Cod." ng-model="nota.transportadora.codigo" disabled>
+                                            </div>
+                                            <div class="col-5">
+                                                <input type="text" class="form-control" ng-model="nota.transportadora.razao_social" placeholder="Nome da Transportadora" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-9">
+                                            <div class="form-group">                                             
+                                                <div class="form-row" style="margin-bottom:5px">
+                                                    <div class="col-md-5">
+                                                        <label for="">Data e Hora de emissao</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <input type="text" class="form-control" ng-model="nota.data_emissao_texto"></input>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row" style="margin-bottom:5px">
+                                                    <div class="col-md-3">
+                                                        <label for="">Chave da nota</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <input type="text" class="form-control" ng-model="nota.chave"></input>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row" style="margin-bottom:5px">
+                                                    <div class="col-md-5">
+                                                        <label for="">Protocolo de autorizacao: </label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <input type="text" class="form-control" ng-model="nota.protocolo"></input>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row" style="margin-bottom:5px">
+                                                    <div class="col-md-5">
+                                                        <label for="">Numero: </label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <input type="number" class="form-control" ng-model="nota.numero"></input>
+                                                    </div>
+                                                </div>
+                                            </div>			
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="form-row">
+                                        <div class="col-9">
+                                            <div class="form-group">
+                                                <label for="">Observações</label>
+                                                <div class="form-row">
+                                                    <div class="col">
+                                                        <textarea class="form-control" rows="2" id="comment" ng-model="nota.observacao"></textarea>
+                                                    </div>
+                                                </div>
+
+                                            </div>			
+                                        </div>
+                                    </div>
+                                    <div class="form-row" style="height:50px">
+                                        <div class="col-4" style="position:relative">
+                                            <input class="custom-control-input" id="chk1" style="display: inline-block;position:absolute;top:0px;left:5px" type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="nota.emitida" ng-disabled="nota.ficha > 0">
+                                            <label class="custom-control-label" style="cursor:pointer;" for="chk1"><strong style="position:absolute;top:0px;left:27px">Nota emitida</strong></label>
+                                        </div>
+                                        <div class="col-4" style="position:relative" ng-if="nota.emitida">
+                                            <input class="custom-control-input" id="chkr" style="display: inline-block;position:absolute;top:0px;left:5px" type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="nota.cancelada">
+                                            <label class="custom-control-label" style="cursor:pointer;" for="chkr"><strong style="position:absolute;top:0px;left:27px">Nota cancelada</strong></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-row" ng-if="nota.emitida">
+                                        <button type="button" class="btn btn-success" style="margin-left:5px" ng-if="nota.xml !== ''" ng-download="{{nota.xml}}"><i class="fas fa-save"></i>&nbspBaixar XML</button>
+                                        <button type="button" class="btn btn-success" style="margin-left:5px" ng-if="nota.danfe !== ''" ng-download="{{nota.xml}}"><i class="fas fa-save"></i>&nbspBaixar DANFE</button>
+
+                                        <button class="btn btn-light" type="button" style="margin-left:5px" ng-if="nota.xml === ''" ng-click="uploadXML('uploaderXML')"><i class="fas fa-upload"></i>&nbspFazer upload do XML</button>
+                                        <button class="btn btn-light" type="button" style="margin-left:5px" ng-if="nota.danfe === ''" ng-click="uploadDANFE('uploaderDANFE')"><i class="fas fa-upload"></i>&nbspFazer upload da DANFE</button>
+
+                                        <input type="file" style="visibility:hidden" id="uploaderXML">
+                                        <input type="file" style="visibility:hidden" id="uploaderDANFE">
+                                    </div>
+                                    <hr>
+                                    <div class="form-group" style="position:relative;height:40px">
+                                        <input class="custom-control-input" id="chkq" style="display: inline-block;position:absolute;top:0px;left:5px" type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="nota.calcular_valores" ng-change="calcular()">
+                                        <label class="custom-control-label" style="cursor:pointer;" for="chkq"><strong style="position:absolute;top:0px;left:27px">Calcular impostos automaticamente</strong></label>
+                                    </div>
+                                    <hr>
+                                    <br>
+                                    <label for="">Produtos (tab para atualizar)</label>
+                                    <table id="" class="table table-striped" width="90%">
+                                        <thead>
+                                            <tr>
+                                                <th>Cod</th>
+                                                <th>Nome</th>
+                                                <th>Qtd.</th>
+                                                <th class="text-center">Vl Unit.</th>
+                                                <th class="text-center">Vl Tot.</th>
+                                                <th class="text-center">Bas. Calc.</th>
+                                                <th class="text-center">Icms</th>
+                                                <th class="text-center">Ipi</th>
+                                                <th class="text-center">Cfop</th>
+                                                <th class="text-center">Info.</th>
+                                                <th>Excluir</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="prod in nota.produtos">
+                                                <th>{{prod.produto.codigo}}</th>
+                                                <th>{{prod.produto.nome}}</th>
+                                                <th><input type="number" class="form-control" ng-model="prod.quantidade" ng-confirm="calcular()"></th>
+                                                <th><input type="number" class="form-control" ng-model="prod.valor_unitario" ng-confirm="calcular()"></th>
+                                                <th class="text-center">{{prod.valor_total}}</th>
+                                                <th class="text-center"><input type="number" step="0.001" class="form-control" ng-model="prod.base_calculo" ng-confirm="calcular()"></th>
+                                                <th class="text-center"><input type="number" step="0.001"  class="form-control" ng-model="prod.icms" ng-confirm="calcular()"></th>
+                                                <th class="text-center"><input type="number" step="0.001"  class="form-control" ng-model="prod.ipi" ng-confirm="calcular()"></th>
+                                                <th class="text-center"><input type="text" class="form-control" ng-model="prod.cfop" ng-confirm="calcular()"></th>
+                                                <th class="text-center"><input type="text" class="form-control" ng-model="prod.informacao_adicional"></th>
+                                                <th><button type="button" class="btn btn-light" ng-disabled="true"><i class="fas fa-trash"></i></button></th>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>
+                                                    
+                                                </td>
+
+                                            </tr>
+
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th colspan="7" style="text-align:right;">VALOR TOTAL</th>
+                                                <th colspan="3">R$ {{getTotalNota().toFixed(2)}}</th>
+                                            </tr>
+                                        </tfoot>		
+                                    </table>
+                                    <hr>
+                                    <div class="form-group">
+                                        <strong style="font-size:15px">Vencimentos:</strong>
+                                        <hr>
+                                        <div class="form-row">
+                                            <div class="form-inline col-12">
+                                                <table id="" class="table table-striped" width="90%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Cod</th>
+                                                            <th>Valor</th>
+                                                            <th>Data</th>
+                                                            <th>Movimento</th>
+                                                            <th>Excluir</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr style="{{venc.movimento==null?'color:Red':'color:Green'}}" ng-repeat="venc in nota.vencimentos">
+                                                            <td>{{venc.id}}</td>
+                                                            <td>{{venc.valor}} R$</td>
+                                                            <td><input type="text" class="form-control" ng-model="venc.data_texto"></td>
+                                                            <td>{{venc.movimento==null?'Sem movimento':'Baixado Movimento '+venc.movimento.id+', '+venc.movimento.banco.nome}}</td>
+                                                            <td>
+                                                                <div class="product-btn">
+                                                                    <button type="button" class="btn btn-light" ng-disabled="true"><i class="fas fa-trash"></i></button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tfoot>
+
+                                                    </tfoot>		
+                                                </table>
+
+                                            </div>    
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <hr>
+                                    <div class="form-group">
+                                        <div class="form-row">
+                                            <div class="form-inline col-5">
+                                                <div style="margin-right: 20px;">Forma de cobranca: <strong>{{nota.forma_pagamento.nome}}</strong></div>
+                                            </div>
+                                        </div>
+                                    </div>					
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- /.modal-content LOADING --> 
                 <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 

@@ -1,4 +1,4 @@
-rtc.controller("crtFechamentoCaixa", function ($scope, baseService, fechamentoCaixaService, bancoService, movimentosFechamentoService) {
+rtc.controller("crtFechamentoCaixa", function ($scope,movimentoService,notaService, baseService, fechamentoCaixaService, bancoService, movimentosFechamentoService) {
 
     $scope.fechamentos = createAssinc(fechamentoCaixaService, 1, 5, 10);
     assincFuncs(
@@ -11,13 +11,87 @@ rtc.controller("crtFechamentoCaixa", function ($scope, baseService, fechamentoCa
     assincFuncs(
             $scope.movimentos,
             "movimento",
-            ["data","id", "valor", "juros", "descontos", "saldo_anterior", "operacao.nome", "historico.nome"]);
+            ["data","id", "valor", "juros", "descontos", "saldo_anterior", "operacao.nome", "historico.nome","visto"]);
 
     $scope.bancos = [];
 
     $scope.banco = null;
     $scope.fechamento = null;
+    $scope.nota = null;
 
+    $scope.setVisto = function(mov){
+        
+        movimentoService.setVisto(mov,function(s){
+            if(s.sucesso){
+                msg.alerta("Vistado com sucesso");
+            }else{
+                msg.erro("Problema ao vistar");
+            }
+        });
+        
+    }
+    
+    $scope.getTotalNota = function () {
+
+        var total = 0;
+
+        for (var i = 0; i < $scope.nota.produtos.length; i++) {
+
+            var p = $scope.nota.produtos[i];
+
+            total += p.valor_total;
+
+        }
+
+        return total;
+
+    }
+    
+    $scope.getNota = function(mov){
+        
+        if(mov.vencimento === null){
+            msg.alerta("A nao foi encontrada nota");
+            return;
+        }
+        
+        if(mov.vencimento.nota === null){
+            msg.alerta("A nao foi encontrada nota");
+            return;
+        }
+        
+        $scope.setNota(mov.vencimento.nota);
+        
+    }
+    
+    $scope.setNota = function (nota) {
+
+        $scope.nota = nota;
+        $scope.nota.calcular_valores = false;
+
+        $scope.nota.data_emissao_texto = toTime($scope.nota.data_emissao);
+
+
+        notaService.getProdutos(nota, function (p) {
+
+            nota.produtos = p.produtos;
+
+            notaService.getVencimentos(nota, function (v) {
+
+                nota.vencimentos = v.vencimentos;
+
+                for (var i = 0; i < nota.vencimentos.length; i++) {
+
+                    nota.vencimentos[i].data_texto = toDate(nota.vencimentos[i].data);
+
+                }
+
+            })
+
+            $("#nota").modal('show');
+
+        })
+
+    }
 
     $scope.setBanco = function (banco) {
 
@@ -57,7 +131,7 @@ rtc.controller("crtFechamentoCaixa", function ($scope, baseService, fechamentoCa
                 
             }else{
                 
-                msg.erro('Houve um problema ao efetuar a operacao, tente novamente mais tarde');
+                msg.erro('Houve um problema ao efetuar a operacao: '.s.mensagem);
                 
             }
             
@@ -293,7 +367,7 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
     })
 
     tarefaService.getTarefasAtivas(function (t) {
-
+       
         $scope.tarefas = createList(t.tarefas, 1, 7, "descricao");
         $scope.tarefa_principal = t.tarefas[0];
 

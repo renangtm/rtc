@@ -96,7 +96,7 @@ class Banco {
         $ps->bind_result($dt);
         if($ps->fetch()){
             if($dt !== null){
-                $filtro .= "movimento.data>$dt";
+                $filtro .= "movimento.data>'$dt'";
             }
         }
         $ps->close();
@@ -122,7 +122,7 @@ class Banco {
         $ps->bind_result($dt);
         if($ps->fetch()){
             if($dt !== null){
-                $filtro .= " AND movimento.data>$dt";
+                $filtro .= " AND movimento.data>'$dt'";
             }
         }
         $ps->close();

@@ -24,6 +24,7 @@ class Movimento {
     public $historico;
     public $operacao;
     public $estorno;
+    public $visto;
 
     function __construct() {
 
@@ -36,13 +37,23 @@ class Movimento {
         $this->banco = null;
         $this->vencimento = null;
         $this->estorno = 0;
+        $this->visto = false;
+        
     }
+    
+    public function setVisto($con,$visto=true){
+        
+        $ps = $con->getConexao()->prepare("UPDATE movimento SET visto=".($visto?"true":"false").",data=data WHERE id=$this->id");
+        $ps->execute();
+        $ps->close();
+        
+    }   
 
     public function insert($con, $rp_insert = false) {
 
         if ($rp_insert) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO movimento(data,saldo_anterior,valor,id_vencimento,id_banco,juros,descontos,id_historico,id_operacao,estorno) VALUES(FROM_UNIXTIME($this->data/1000),$this->saldo_anterior,$this->valor," . $this->vencimento->id . "," . $this->banco->id . ",$this->juros,$this->descontos," . $this->historico->id . "," . $this->operacao->id . ",$this->estorno)");
+            $ps = $con->getConexao()->prepare("INSERT INTO movimento(data,saldo_anterior,valor,id_vencimento,id_banco,juros,descontos,id_historico,id_operacao,estorno,visto) VALUES(FROM_UNIXTIME($this->data/1000),$this->saldo_anterior,$this->valor," . $this->vencimento->id . "," . $this->banco->id . ",$this->juros,$this->descontos," . $this->historico->id . "," . $this->operacao->id . ",$this->estorno,".($this->visto?"true":"false").")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();

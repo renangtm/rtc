@@ -534,6 +534,14 @@ rtc.service('produtoClienteLogisticService', function ($http, $q) {
     }
 })
 rtc.service('movimentoService', function ($http, $q) {
+    this.setVisto = function (movimento,fn) {
+        baseService($http, $q, {
+            o:movimento,
+            query: "$o->setVisto($c,$o->visto);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getMovimento = function (fn) {
         baseService($http, $q, {
             query: "$r->movimento=new Movimento();",
