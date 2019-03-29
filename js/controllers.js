@@ -6132,14 +6132,15 @@ rtc.controller("crtClientes", function ($scope,categoriaProspeccaoService, clien
     }
 
 })
-rtc.controller("crtProdutos", function ($scope,ativoService, culturaService, sistemaService, uploadService, pragaService, produtoService, baseService, categoriaProdutoService, receituarioService) {
+rtc.controller("crtProdutos", function ($scope,fabricanteService,ativoService, culturaService, sistemaService, uploadService, pragaService, produtoService, baseService, categoriaProdutoService, receituarioService) {
 
     $scope.produtos = createAssinc(produtoService, 1, 3, 10);
     $scope.produtos.attList();
     assincFuncs(
             $scope.produtos,
             "produto",
-            ["codigo", "nome", "estoque", "disponivel", "transito", "valor_base", "ativo", "classe_risco"]);
+            ["codigo", "nome", "estoque", "disponivel", "transito", "valor_base", "ativo", "classe_risco"],
+            null,false);
 
     $scope.produto = {};
     $scope.produto_novo = {};
@@ -6157,17 +6158,24 @@ rtc.controller("crtProdutos", function ($scope,ativoService, culturaService, sis
     $scope.pragas = [];
 
     $scope.logisticas = [];
-
+    
+    $scope.fabricantes = [];
+    
     sistemaService.getLogisticas(function (rr) {
-
+        
         $scope.logisticas = rr.logisticas;
 
     })
     
     ativoService.getAtivos(function(a){
         
-       
         $scope.ativos = a.ativos;
+        
+    })
+    
+    fabricanteService.getFabricantes(function(f){
+        
+        $scope.fabricantes = f.fabricantes;
         
     })
 
@@ -6255,7 +6263,7 @@ rtc.controller("crtProdutos", function ($scope,ativoService, culturaService, sis
         });
 
     }
-
+   
     $scope.deleteReceituario = function (rec, produto) {
 
         baseService.delete(rec, function (r) {

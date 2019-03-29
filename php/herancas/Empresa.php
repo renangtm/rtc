@@ -4437,6 +4437,7 @@ class Empresa {
                 . "INNER JOIN estado estado_cliente ON estado_cliente.id=cidade_cliente.id_estado "
                 . "INNER JOIN categoria_cliente ON cliente.id_categoria=categoria_cliente.id "
                 . "INNER JOIN email email_cliente ON email_cliente.id_entidade=cliente.id AND email_cliente.tipo_entidade = 'CLI' "
+                . "INNER JOIN empresa ON empresa.id=cliente.id_empresa "
                 . "WHERE cliente.id_empresa=$this->id AND cliente.excluido=false ";
 
         if ($filtro != "") {
@@ -4541,7 +4542,9 @@ class Empresa {
 
     public function getCountClientes($con, $filtro = "") {
 
-        $sql = "SELECT COUNT(*) FROM cliente WHERE id_empresa=$this->id AND excluido=false ";
+        $sql = "SELECT COUNT(*) FROM cliente "
+                . "INNER JOIN empresa ON empresa.id=cliente.id_empresa"
+                . " WHERE id_empresa=$this->id AND excluido=false ";
 
         if ($filtro != "") {
 
