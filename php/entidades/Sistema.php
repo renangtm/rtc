@@ -13,6 +13,27 @@
  */
 class Sistema {
     
+    public static function getCategoriasProspeccao($con){
+        
+        $a = array();
+        
+        $ps = $con->getConexao()->prepare("SELECT id,nome FROM categoria_prospeccao");
+        $ps->execute();
+        $ps->bind_result($id,$nome);
+        while($ps->fetch()){
+            
+            $p = new CategoriaProspeccao();
+            $p->id = $id;
+            $p->nome = $nome;
+            $a[] = $p;
+            
+        }
+        $ps->close();
+        
+        return $a;
+        
+    }
+    
     public static function getAtivos($con){
         
         $a = array();

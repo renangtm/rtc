@@ -5898,7 +5898,7 @@ rtc.controller("crtTransportadoras", function ($scope, clienteService, transport
     }
 
 })
-rtc.controller("crtClientes", function ($scope, clienteService, sistemaService, empresaService, categoriaClienteService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
+rtc.controller("crtClientes", function ($scope,categoriaProspeccaoService, clienteService, sistemaService, empresaService, categoriaClienteService, categoriaDocumentoService, documentoService, cidadeService, baseService, telefoneService, uploadService) {
 
     $scope.clientes = createAssinc(clienteService, 1, 20, 10);
     $scope.clientes.attList();
@@ -5927,8 +5927,15 @@ rtc.controller("crtClientes", function ($scope, clienteService, sistemaService, 
     $scope.estados = [];
     $scope.cidades = [];
 
+    $scope.categorias_prospeccao = [];
 
     $scope.empresas_clientes = [];
+    
+    categoriaProspeccaoService.getCategorias(function(c){
+        
+        $scope.categorias_prospeccao = c.categorias;
+        
+    })
 
     empresaService.getEmpresasClientes(function (e) {
 

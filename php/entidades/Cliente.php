@@ -57,6 +57,45 @@ class Cliente {
         $this->codigo = 0;
         
     }
+    
+    public function setCategoriasProspeccao($con,$categorias){
+        
+        $ps = $con->getConexao()->prepare("DELETE FROM categoria_prospeccao_cliente WHERE id_cliente=$this->id");
+        $ps->execute();
+        $ps->close();
+        
+        
+        foreach($categorias as $key=>$value){
+            
+            $ps = $con->getConexao()->prepare("INSERT INTO categoria_prospeccao_cliente(id_categoria,id_cliente) VALUES($value->id,$this->id)");
+            $ps->execute();
+            $ps->close();
+            
+        }
+        
+    }
+    
+    public function getCategoriasProspeccao($con){
+        
+        $categorias = array();
+        $ps = $con->getConexao()->prepare("SELECT c.id,c.nome FROM categoria_prospeccao c INNER JOIN cliente_categoria_prospeccao cc ON c.id=cc.id_categoria AND cc.id_cliente=$this->id");
+        $ps->execute();
+        $ps->bind_result($id,$nome);
+        
+        while($ps->fetch()){
+            
+            $cat = new CategoriaProspeccao();
+            $cat->id = $id;
+            $cat->nome = $nome;
+            $categorias[] = $cat;
+            
+        }
+        
+        $ps->close();
+        
+        return $categorias;
+        
+    }
 
     public function merge($con) {
 

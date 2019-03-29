@@ -425,6 +425,22 @@ rtc.service('relacaoClienteService', function ($http, $q) {
         });
 
     }
+    this.getCategoriasProspeccao = function (cliente,fn) {
+        baseService($http, $q, {
+            o:cliente,
+            query: "$r->categorias=$o->getCategoriasProspeccao($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.setCategoriasProspeccao = function (cliente,categorias,fn) {
+        baseService($http, $q, {
+            o:{cliente:cliente,categorias:categorias},
+            query: "$o->cliente->setCategoriasProspeccao($c,$o->categorias)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getContato = function (fn) {
         baseService($http, $q, {
             query: "$r->contato=new Contato()",
@@ -1882,13 +1898,22 @@ rtc.service('acessoService', function ($http, $q) {
         });
     }
 })
+rtc.service('categoriaProspeccaoService', function ($http, $q) {
+    this.getCategorias = function (fn) {
+        baseService($http, $q, {
+            query: "$r->categorias=Sistema::getCategoriasProspeccao($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('ativoService', function ($http, $q) {
     this.getAtivos = function (fn) {
         baseService($http, $q, {
             query: "$r->ativos=Sistema::getAtivos($c)",
             sucesso: fn,
             falha: fn
-        }, null, true);
+        });
     }
 })
 rtc.service('loginService', function ($http, $q) {
