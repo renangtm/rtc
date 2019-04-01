@@ -27,6 +27,7 @@ class Tarefa {
     public $excluida;
     public $prioridade; // geralmente vai ser o mesmo do tipo da tarefa porem usuarios com permissoes elevadas poderao alterar.
     public $tipo_tarefa;
+    public $criada_por;
     public $calculado_previsao_util_conclusao; //calculado
     public $calculado_momento_conclusao; //calculado
     public $calculado_horas_uteis_dispendidas; //calculado
@@ -50,7 +51,8 @@ class Tarefa {
         $this->observacoes = array();
         $this->realocavel = false;
         $this->excluida = false;
-
+        $this->criada_por = 0;
+        
         $this->calculado_momento_conclusao = 0;
         $this->calculado_previsao_util_conclusao = 0;
         $this->calculado_horas_uteis_dispendidas = 0;
@@ -119,13 +121,13 @@ class Tarefa {
 
         if ($this->id === 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO tarefa(inicio_minimo,ordem,porcentagem_conclusao,tipo_entidade_relacionada,id_entidade_relacionada,titulo,descricao,intervalos_execucao,realocavel,excluida,prioridade,id_tipo_tarefa) VALUES(FROM_UNIXTIME($this->inicio_minimo/1000),$this->ordem,$this->porcentagem_conclusao,'$this->tipo_entidade_relacionada',$this->id_entidade_relacionada,'" . addslashes($this->titulo) . "','" . addslashes($this->descricao) . "','$intervalos'," . ($this->realocavel ? "true" : "false") . ",false,$this->prioridade," . $this->tipo_tarefa->id . ")");
+            $ps = $con->getConexao()->prepare("INSERT INTO tarefa(inicio_minimo,ordem,porcentagem_conclusao,tipo_entidade_relacionada,id_entidade_relacionada,titulo,descricao,intervalos_execucao,realocavel,excluida,prioridade,id_tipo_tarefa,criada_por) VALUES(FROM_UNIXTIME($this->inicio_minimo/1000),$this->ordem,$this->porcentagem_conclusao,'$this->tipo_entidade_relacionada',$this->id_entidade_relacionada,'" . addslashes($this->titulo) . "','" . addslashes($this->descricao) . "','$intervalos'," . ($this->realocavel ? "true" : "false") . ",false,$this->prioridade," . $this->tipo_tarefa->id . ",$this->criada_por)");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE tarefa SET inicio_minimo=FROM_UNIXTIME($this->inicio_minimo/1000),ordem=$this->ordem,porcentagem_conclusao=$this->porcentagem_conclusao,tipo_entidade_relacionada='$this->tipo_entidade_relacionada',id_entidade_relacionada=$this->id_entidade_relacionada,titulo='" . addslashes($this->titulo) . "',descricao='" . addslashes($this->descricao) . "',intervalos_execucao='$intervalos',realocavel=" . ($this->realocavel ? "true" : "false") . ",excluida=false,prioridade=$this->prioridade,id_tipo_tarefa=" . $this->tipo_tarefa->id . " WHERE id=$this->id");
+            $ps = $con->getConexao()->prepare("UPDATE tarefa SET inicio_minimo=FROM_UNIXTIME($this->inicio_minimo/1000),ordem=$this->ordem,porcentagem_conclusao=$this->porcentagem_conclusao,tipo_entidade_relacionada='$this->tipo_entidade_relacionada',id_entidade_relacionada=$this->id_entidade_relacionada,titulo='" . addslashes($this->titulo) . "',descricao='" . addslashes($this->descricao) . "',intervalos_execucao='$intervalos',realocavel=" . ($this->realocavel ? "true" : "false") . ",excluida=false,prioridade=$this->prioridade,id_tipo_tarefa=" . $this->tipo_tarefa->id . ",criada_por=$this->criada_por WHERE id=$this->id");
             $ps->execute();
             $ps->close();
         }

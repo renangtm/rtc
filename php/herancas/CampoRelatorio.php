@@ -21,7 +21,9 @@ class CampoRelatorio {
     public $possiveis;
     public $somente_filtro;
     public $null_on_group;
-    function __construct($nome = null, $titulo = null, $tipo = null, $sm=false, $null_on_group=false) {
+    public $porcentagem_coluna_pdf;
+    
+    function __construct($nome = null, $titulo = null, $tipo = null, $sm=false, $null_on_group=false,$porcentagem_coluna_pdf=10) {
 
         $this->nome = $nome;
         $this->titulo = $titulo;
@@ -31,6 +33,7 @@ class CampoRelatorio {
         $this->somente_filtro = $sm;
         $this->null_on_group = $null_on_group;
         $this->possiveis = array();
+        $this->porcentagem_coluna_pdf = $porcentagem_coluna_pdf;
         
     }
 

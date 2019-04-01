@@ -53,7 +53,7 @@ rtc.service('tarefaService', function ($http, $q) {
     }
     this.getTarefa = function (fn) {
         baseService($http, $q, {
-            query: "$r->tarefa=new Tarefa();",
+            query: "$r->tarefa=new Tarefa();$r->tarefa->criada_por=$usuario->id",
             sucesso: fn,
             falha: fn
         });
@@ -240,6 +240,14 @@ rtc.service('relatorioService', function ($http, $q) {
     this.getRelatorios = function (fn) {
         baseService($http, $q, {
             query: "$r->relatorios=Sistema::getRelatorios($empresa,$usuario)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getPdf = function (fn) {
+        baseService($http, $q, {
+            o:this.relatorio,
+            query: "$r->pdf=$o->getPdf($c,$empresa)",
             sucesso: fn,
             falha: fn
         });
@@ -534,6 +542,14 @@ rtc.service('produtoClienteLogisticService', function ($http, $q) {
     }
 })
 rtc.service('movimentoService', function ($http, $q) {
+    this.setVisto = function (movimento,fn) {
+        baseService($http, $q, {
+            o:movimento,
+            query: "$o->setVisto($c,$o->visto);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getMovimento = function (fn) {
         baseService($http, $q, {
             query: "$r->movimento=new Movimento();",

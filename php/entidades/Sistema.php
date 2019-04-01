@@ -12,6 +12,8 @@
  * @author Renan
  */
 class Sistema {
+    
+    public static $ENDERECO = "http://192.168.0.17/novo_rtc_web/";
 
     public static function getFabricantes($con) {
 
@@ -280,9 +282,13 @@ class Sistema {
     public static function P_FECHAMENTO_CAIXA() {
         return new Permissao(47, "Fechamento caixa");
     }
-    
+
     public static function P_FINANCEIRO_CLIENTE() {
         return new Permissao(48, "Financeiro cliente");
+    }
+
+    public static function P_VISTO_MOVIMENTO() {
+        return new Permissao(49, "Visto movimento");
     }
 
     public static function TT_COMPRA($id_empresa) {
@@ -1551,10 +1557,60 @@ class Sistema {
         return $produtos;
     }
 
+    public static function encodeAll($obj,$pilha = array()){
+        
+        foreach($pilha as $key=>$value){
+            if($value===$obj){
+                return $obj;
+            }
+        }
+        
+        
+        if($obj === null){
+            
+            return null;
+            
+        }
+        
+        if(is_string($obj)){
+            return utf8_encode($obj);
+        }else if(is_numeric($obj) || is_bool($obj)){
+            return $obj;
+        }
+        
+        if(is_array($obj)){
+            
+            
+            foreach($obj as $key=>$value){
+                
+                $obj[$key] = Sistema::encodeAll($value,$pilha);
+                
+            }
+            
+            return $obj;
+            
+        }else if(is_object($obj)){
+            
+            $pilha[] = $obj;
+            foreach($obj as $key=>$value){
+                
+                $obj->$key = Sistema::encodeAll($value,$pilha);
+                
+            }
+            unset($pilha[count($pilha)-1]);
+            return $obj;
+            
+        }
+        
+        return null;
+        
+    }
+    
     public static function getHtml($nom, $p = null) {
 
+        
         global $obj;
-        $obj = $p;
+        $obj = Sistema::encodeAll(Utilidades::copy($p));
 
         $servico = realpath('../../html_email');
         $servico .= "/$nom.php";
@@ -2785,7 +2841,7 @@ class Sistema {
 
     public static function getIcmsEstado($estado) {
 
-        $doze = array("MG", "RS", "SC", "RJ", "PB");
+        $doze = array("MG", "RS", "SC", "RJ","PR");
 
         if (in_array($estado->sigla, $doze)) {
 
@@ -2794,7 +2850,7 @@ class Sistema {
 
         return 7;
     }
-    
+
     public static function getAdms($con) {
 
         $mkts = array();
@@ -3024,7 +3080,8 @@ class Sistema {
                 Sistema::P_RELATORIO_FINANCEIRO(),
                 Sistema::P_RELATORIO_MOVIMENTO(),
                 Sistema::P_MOVIMENTO(),
-                Sistema::P_FECHAMENTO_CAIXA()
+                Sistema::P_FECHAMENTO_CAIXA(),
+                Sistema::P_VISTO_MOVIMENTO()
                     )), new RTC(6, array(
                 Sistema::P_LOTE(),
                 Sistema::P_SEPARACAO(),

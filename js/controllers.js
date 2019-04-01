@@ -1,4 +1,4 @@
-rtc.controller("crtFechamentoCaixa", function ($scope, baseService, fechamentoCaixaService, bancoService, movimentosFechamentoService) {
+rtc.controller("crtFechamentoCaixa", function ($scope,movimentoService,notaService, baseService, fechamentoCaixaService, bancoService, movimentosFechamentoService) {
 
     $scope.fechamentos = createAssinc(fechamentoCaixaService, 1, 5, 10);
     assincFuncs(
@@ -11,13 +11,87 @@ rtc.controller("crtFechamentoCaixa", function ($scope, baseService, fechamentoCa
     assincFuncs(
             $scope.movimentos,
             "movimento",
-            ["data", "id", "valor", "juros", "descontos", "saldo_anterior", "operacao.nome", "historico.nome"]);
+            ["data","id", "valor", "juros", "descontos", "saldo_anterior", "operacao.nome", "historico.nome","visto"]);
 
     $scope.bancos = [];
 
     $scope.banco = null;
     $scope.fechamento = null;
+    $scope.nota = null;
 
+    $scope.setVisto = function(mov){
+        
+        movimentoService.setVisto(mov,function(s){
+            if(s.sucesso){
+                
+            }else{
+                msg.erro("Problema ao vistar");
+            }
+        });
+        
+    }
+    
+    $scope.getTotalNota = function () {
+
+        var total = 0;
+
+        for (var i = 0; i < $scope.nota.produtos.length; i++) {
+
+            var p = $scope.nota.produtos[i];
+
+            total += p.valor_total;
+
+        }
+
+        return total;
+
+    }
+    
+    $scope.getNota = function(mov){
+        
+        if(mov.vencimento === null){
+            msg.alerta("A nao foi encontrada nota");
+            return;
+        }
+        
+        if(mov.vencimento.nota === null){
+            msg.alerta("A nao foi encontrada nota");
+            return;
+        }
+        
+        $scope.setNota(mov.vencimento.nota);
+        
+    }
+    
+    $scope.setNota = function (nota) {
+
+        $scope.nota = nota;
+        $scope.nota.calcular_valores = false;
+
+        $scope.nota.data_emissao_texto = toTime($scope.nota.data_emissao);
+
+
+        notaService.getProdutos(nota, function (p) {
+
+            nota.produtos = p.produtos;
+
+            notaService.getVencimentos(nota, function (v) {
+
+                nota.vencimentos = v.vencimentos;
+
+                for (var i = 0; i < nota.vencimentos.length; i++) {
+
+                    nota.vencimentos[i].data_texto = toDate(nota.vencimentos[i].data);
+
+                }
+
+            })
+
+            $("#nota").modal('show');
+
+        })
+
+    }
 
     $scope.setBanco = function (banco) {
 
@@ -54,11 +128,11 @@ rtc.controller("crtFechamentoCaixa", function ($scope, baseService, fechamentoCa
 
                 msg.alerta("Banco " + $scope.banco.nome + ", fechado com sucesso até a data atual, o sistema ira atualizar a pagina automaticamente.");
                 document.location.reload();
-
-            } else {
-
-                msg.erro('Houve um problema ao efetuar a operacao, tente novamente mais tarde');
-
+                
+            }else{
+                
+                msg.erro('Houve um problema ao efetuar a operacao: '.s.mensagem);
+                
             }
 
 
@@ -293,7 +367,8 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
     })
 
     tarefaService.getTarefasAtivas(function (t) {
-
+       
+       
         $scope.tarefas = createList(t.tarefas, 1, 7, "descricao");
         $scope.tarefa_principal = t.tarefas[0];
 
@@ -686,7 +761,7 @@ rtc.controller("crtAtividade", function ($scope, $timeout, $interval, atividadeS
 rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, uploadService, empresaService, baseService) {
 
     $scope.banners = createAssinc(bannerService, 1, 5, 10);
-
+    
     assincFuncs(
             $scope.banners,
             "banner",
@@ -871,7 +946,8 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
 
     $scope.relatorios = [];
     $scope.gerado = null;
-
+    $scope.carregando = false;
+    
     $scope.modos = ["Igual a", "Maior que", "Menor que"];
     $scope.mn = [0, 1, 2];
 
@@ -909,19 +985,32 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
     }
     $scope.xsd = "";
     $scope.gerarXsd = function () {
-
-        relatorioService.relatorio = $scope.relatorio;
+        $scope.carregando = true;
+        $scope.prepararRelatorio();
         relatorioService.getXsd(function (x) {
 
             $scope.xsd = projeto + "/php/uploads/" + x.arquivo;
             $("#mdlXsd").modal('show');
-
+            $scope.carregando = false;
         });
 
     }
+    $scope.pdf = "";
+    $scope.gerarPdf = function () {
+        $scope.carregando = true;
+        $scope.prepararRelatorio();
+        relatorioService.getPdf(function (x) {
 
-    $scope.gerarRelatorio = function () {
+            $scope.pdf = x.pdf;
+            $("#mdlPdf").modal('show');
+            $scope.carregando = false;
+        });
 
+    }
+    
+    
+    $scope.prepararRelatorio = function(){
+        
         var order = "";
         var order_fields = [];
         for (var i = 0; i < $scope.relatorio.campos.length; i++) {
@@ -1007,10 +1096,19 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
 
 
         relatorioService.relatorio = $scope.relatorio;
+        
+    }
+
+    $scope.gerarRelatorio = function () {
+        $scope.carregando = true;
+        $scope.prepararRelatorio();
 
         $scope.gerado = createAssinc(relatorioService, 1, 20, 1000);
+        $scope.gerado.posload = function(els){
+            $scope.carregando = false;
+        }
         $scope.gerado.attList();
-
+        
         $("#mdlRelatorio").modal("show");
 
     }

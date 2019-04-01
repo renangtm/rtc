@@ -150,7 +150,15 @@
                                                                     ?>
                                                                     <tr id="produto">
                                                                         <td data-tipo="nome" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo $value->produto->nome; ?></td>
-                                                                        <td align="center" data-tipo="validade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo date('d/m/y', $value->validade_minima/1000); ?></td>
+                                                                        <td align="center" data-tipo="validade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php 
+                                                                        
+                                                                            if($value->validade_minima === 1000){
+                                                                                echo "------";
+                                                                            }else{
+                                                                                echo date('d/m/y', $value->validade_minima/1000);
+                                                                            }
+                                                                        
+                                                                        ?></td>
                                                                         <td align="center" data-tipo="quantidade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo $value->quantidade; ?></td>
                                                                         <td align="center" data-tipo="valor" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo ($value->valor_base); ?></td>
                                                                         <td align="center" data-tipo="quantidade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo $value->frete; ?></td>
@@ -169,7 +177,7 @@
                                                                     
                                                                 }
                                                                 
-                                                                $alicota = round($valor_icms * 100 / $base_calculo, 0);
+                                                                $alicota = floor($valor_icms * 100 / $base_calculo);
                                                                 
                                                                 ?> 
                                                                 <tfoot style=""> 

@@ -92,11 +92,11 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         //echo Utilidades::toJson($produtos);
 
-        $c = new ConnectionFactory();
+        $r = new RelatorioFinanceiro(new Empresa(1735,$con));
         
-        $r = new Empresa(1733,$con);
+        $cam = $r->getPdf($con, new Empresa(1735,$con));
         
-        echo Utilidades::toJson($r->getClientes($con, 0,100));
+        echo $cam;
         
     }
 

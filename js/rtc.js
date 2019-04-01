@@ -996,13 +996,15 @@ function baseService(http, q, obj, get, cancel, noloading) {
         document.write("c=" + encode64SPEC(obj.query) + ((typeof obj["o"] !== 'undefined') ? ("&o=" + encode64SPEC(paraJson(obj.o))) : "") + "<hr>");
 
     }
-
+    
     http({
         url: 'php/controler/crt.php',
         method: ((get == null) ? "POST" : "GET"),
         data: "c=" + encode64SPEC(obj.query) + ((typeof obj["o"] !== 'undefined') ? ("&o=" + encode64SPEC(paraJson(obj.o))) : ""),
         timeout: p.promise,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (exx) {
+        
+        
 
         var m = 0;
         for (var i = 0; i < ids.length; i++) {
@@ -1025,6 +1027,8 @@ function baseService(http, q, obj, get, cancel, noloading) {
                 }
                 break;
             }
+            
+                
             obj.sucesso(paraObjeto(decode64SPEC(d)));
         }
 

@@ -96,7 +96,7 @@ class Banco {
         $ps->bind_result($dt);
         if($ps->fetch()){
             if($dt !== null){
-                $filtro .= "movimento.data>$dt";
+                $filtro .= "movimento.data>'$dt'";
             }
         }
         $ps->close();
@@ -122,7 +122,7 @@ class Banco {
         $ps->bind_result($dt);
         if($ps->fetch()){
             if($dt !== null){
-                $filtro .= " AND movimento.data>$dt";
+                $filtro .= " AND movimento.data>'$dt'";
             }
         }
         $ps->close();
@@ -153,7 +153,7 @@ class Banco {
     public function merge($con) {
 
         if ($this->id == 0) {
-
+            
             $ps = $con->getConexao()->prepare("INSERT INTO banco(nome,conta,saldo,excluido,id_empresa,codigo,agencia,fechamento) VALUES('$this->nome','$this->conta',$this->saldo,false," . $this->empresa->id . ",$this->codigo,'" . addslashes($this->agencia) . "',".($this->fechamento?"true":"false").")");
             $ps->execute();
             $this->id = $ps->insert_id;

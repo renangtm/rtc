@@ -97,8 +97,9 @@ echo $relatorio;
                                         <div>
                                             <div class="product-btn m-b-20">
                                                 <div style="width:100%;text-align:right">
-                                                    <button class="btn btn-primary" ng-click="gerarXsd()"><i class="fas fa-table"></i>&nbspGerar Excel</button>
-                                                    <button class="btn btn-primary" ng-click="gerarRelatorio()"><i class="fas fa-check"></i>&nbspGerar Relatorio</button>
+                                                    <button class="btn btn-primary" ng-click="gerarPdf()" ng-disabled="carregando"><i class="fas fa-paperclip"></i>&nbspGerar Pdf</button>
+                                                    <button class="btn btn-primary" ng-click="gerarXsd()" ng-disabled="carregando"><i class="fas fa-table"></i>&nbspGerar Excel</button>
+                                                    <button class="btn btn-primary" ng-click="gerarRelatorio()" ng-disabled="carregando"><i class="fas fa-check"></i>&nbspGerar Relatorio</button>
                                                 </div>
                                                 <hr>
                                                 <div style="display:inline-block;width:50%;margin-bottom:30px" ng-repeat="campo in relatorio.campos">
@@ -220,6 +221,23 @@ echo $relatorio;
                                         <div class="modal-body">
                                             
                                             <a download="{{relatorio._classe}}.xls" href="{{xsd}}"><i class="fas fa-upload"></i>&nbsp Baixar Excel</a>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="modal fade" style="overflow-y:scroll" id="mdlPdf" tabindex="-1" role="dialog" aria-labelledby="mdlFilhos" aria-hidden="true">
+                                <div class="modal-dialog modal-sm">
+                                    <div class="modal-content" >
+                                        <div class="modal-header">
+                                            <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-table fa-3x"></i>&nbsp;&nbsp;&nbsp;Gerado com sucesso !</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            
+                                            <a download="{{relatorio._classe}}.pdf" href="{{pdf}}"><i class="fas fa-upload"></i>&nbsp Baixar Pdf</a>
 
                                         </div>
 

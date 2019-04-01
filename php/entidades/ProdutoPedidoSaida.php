@@ -360,8 +360,11 @@ class ProdutoPedidoSaida {
                     $base = ($cat->base_calculo / 100) * ($this->produto->categoria->icms / 100);
                 }
 
-
-                $this->icms = round(($this->valor_base + $this->juros) * $base, 2);
+                $base = (1-$base);
+                $icms = round(($this->valor_base + $this->juros)/$base, 2);
+                $icms = $icms-$this->valor_base-$this->juros;
+                
+                $this->icms = $icms;
             }
         }
 

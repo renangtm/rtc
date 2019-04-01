@@ -26,6 +26,104 @@ class Relatorio {
         $this->campos = array();
         $this->order = "";
     }
+    
+    public function getObservacoes($empresa){
+        
+        return "";
+        
+    }
+
+    public function getPdf($con, $empresa) {
+
+        $id = round(microtime(true) * 1000);
+
+        $logo = $empresa->getLogo($con);
+
+        $bytes = Utilidades::base64decode($logo->logo);
+
+        $aux = strlen($bytes);
+        for ($i = 0; $i < $aux; $i += 1024) {
+            $buffer = substr($bytes, 0, 1024);
+            Sistema::mergeArquivo("bytes_logo_$id.txt", $buffer, false);
+            $bytes = substr($bytes, 1024);
+        }
+
+        $logo = Sistema::$ENDERECO . "php/uploads/bytes_logo_$id.txt";
+
+        $qtd = $this->getCount($con);
+
+        if ($qtd === 0) {
+
+            throw new Exception("Nao contem registros");
+        }
+
+        $mov = $this->getItens($con, 0, $qtd);
+
+        $json = new stdClass();
+
+        $json->logo = $logo;
+        $json->titulo_relatorio = $this->nome;
+        $json->nome_empresa = $empresa->nome;
+
+
+        $campos = array();
+
+        foreach ($this->campos as $key => $value) {
+            
+            if (!$value->agrupado || $value->somente_filtro)
+                continue;
+            
+            $campo = new stdClass();
+            $campo->porcentagem = $value->porcentagem_coluna_pdf;
+            $campo->titulo = $value->titulo;
+            $campo->valor = $value->nome;
+
+            $campos[] = $campo;
+        }
+
+
+        $json->campos = $campos;
+
+        $valores = array();
+
+
+        foreach ($mov as $key => $value) {
+
+            $linha = new stdClass();
+            $i = 0;
+            foreach ($this->campos as $key2 => $campo) {
+                if (!$campo->agrupado || $campo->somente_filtro)
+                    continue;
+                $n = $campo->nome;
+                $linha->$n = $value->valores_campos[$i];
+                $i++;
+            }
+
+            $valores[] = $linha;
+        }
+
+        $json->elementos = $valores;
+
+        $retorno = str_replace("\\","/",realpath("../uploads")) . "/relatorio_$id.pdf";
+
+        $json->arquivo_retorno = $retorno;
+        
+        $json->observacoes = $this->getObservacoes($empresa);
+
+        $comando = Utilidades::toJson($json);
+
+        $arquivo = "comando_$id.json";
+
+        Sistema::mergeArquivo($arquivo, $comando, false);
+
+        $comando = Sistema::$ENDERECO . "php/uploads/$arquivo";
+        try{
+            Sistema::getMicroServicoJava('GeradorRelatorio', $comando);
+        }catch(Exception $ex){
+            
+        }
+        return Sistema::$ENDERECO . "php/uploads/relatorio_$id.pdf";
+    }
 
     public function getXsd($con) {
 

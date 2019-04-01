@@ -149,7 +149,11 @@ class Utilidades {
         }
 
         if (!is_object($obj)) {
-
+            
+            if(is_string($obj)){
+                return utf8_decode($obj);
+            }
+            
             return $obj;
         }
 
@@ -169,7 +173,10 @@ class Utilidades {
             if ($atributo == "_classe")
                 continue;
 
-            if (is_numeric($valor) || is_string($valor) || is_bool($valor)) {
+            if(is_string($valor)){
+             
+                $real->$atributo = utf8_decode($valor);
+            }else if (is_numeric($valor)|| is_bool($valor)) {
 
                 $real->$atributo = $valor;
             } else if (is_array($valor)) {
