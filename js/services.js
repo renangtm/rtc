@@ -695,6 +695,14 @@ rtc.service('bancoService', function ($http, $q) {
             falha: fn
         });
     }
+    this.getRelatorioFechamento = function (banco, fn) {
+        baseService($http, $q, {
+            o: banco,
+            query: "$r->relatorio=$o->getRelatorioMovimentosFechamento($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getBanco = function (fn) {
         baseService($http, $q, {
             query: "$r->banco=new Banco();$r->banco->empresa=$empresa",

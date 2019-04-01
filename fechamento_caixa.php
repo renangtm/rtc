@@ -78,26 +78,26 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <div style="height:120px">
-                                        <h4>Fechamento de {{fechamento.data_anterior| data_st}} até {{fechamento.data| data_st}} do banco {{banco.codigo + ' - ' + banco.nome}}</h4>
-                                        <hr>
-                                        Saldo Atual do Banco: <strong style="font-size: 16px;color:Orange">R$ {{fechamento.banco.saldo}}</strong>
-                                        &nbsp
-                                        Valor calculado do Fechamento: <strong style="font-size: 16px;color:Green">R$ {{fechamento.valor}}</strong>
-                                        &nbsp;
-                                        Divergencia: <strong style="font-size: 16px;color:{{fechamento.banco.saldo !== fechamento.valor ? 'Red':'Green'}}">R$ {{(fechamento.banco.saldo - fechamento.valor).toFixed(2)}}</strong>
-                                        
-                                        <button ng-click="mergeFechamento()" ng-disabled="fechamento.banco.saldo !== fechamento.valor" class="btn btn-outline-{{fechamento.banco.saldo !== fechamento.valor ? 'danger':'success'}}" style="float: right">
-                                            <i class="fas fa-{{fechamento.banco.saldo !== fechamento.valor ? 'times':'check'}}"></i>
+                                            <h4>Fechamento de {{fechamento.data_anterior| data_st}} até {{fechamento.data| data_st}} do banco {{banco.codigo + ' - ' + banco.nome}}</h4>
+                                            <hr>
+                                            Saldo Atual do Banco: <strong style="font-size: 16px;color:Orange">R$ {{fechamento.banco.saldo}}</strong>
+                                            &nbsp
+                                            Valor calculado do Fechamento: <strong style="font-size: 16px;color:Green">R$ {{fechamento.valor}}</strong>
                                             &nbsp;
-                                            <div ng-if="fechamento.banco.saldo !== fechamento.valor">
-                                                Existem divergencias, nao é possivel realizar o fechamento
-                                            </div>
-                                            <div ng-if="fechamento.banco.saldo === fechamento.valor">
-                                                Fechar
-                                            </div>
-                                        </button>
-                                        <hr>
-                                        <strong style="font-size:13px">OBS: clique duas vezes em cima do movimento para ver a nota</strong>
+                                            Divergencia: <strong style="font-size: 16px;color:{{fechamento.banco.saldo !== fechamento.valor ? 'Red':'Green'}}">R$ {{(fechamento.banco.saldo - fechamento.valor).toFixed(2)}}</strong>
+                                            <button style="float:right;margin-left:20px" class="btn btn-primary" ng-click="gerarRelatorio()" ng-disabled="carregando"><i class="fas fa-paperclip"></i>&nbspGerar relatorio</button>
+                                            <button ng-click="mergeFechamento()" ng-disabled="fechamento.banco.saldo !== fechamento.valor" class="btn btn-outline-{{fechamento.banco.saldo !== fechamento.valor ? 'danger':'success'}}" style="float: right">
+                                                <i class="fas fa-{{fechamento.banco.saldo !== fechamento.valor ? 'times':'check'}}"></i>
+                                                &nbsp;
+                                                <div ng-if="fechamento.banco.saldo !== fechamento.valor">
+                                                    Existem divergencias, nao é possivel realizar o fechamento
+                                                </div>
+                                                <div ng-if="fechamento.banco.saldo === fechamento.valor">
+                                                    Fechar
+                                                </div>
+                                            </button>
+                                            <hr>
+                                            <strong style="font-size:13px">OBS: clique duas vezes em cima do movimento para ver a nota</strong>
                                         </div>
                                         <hr>
                                         <table id="movimentos" class="table table-striped table-bordered first">
@@ -115,7 +115,7 @@
                                                     <th data-ordem="movimento.historico.nome">Hist</th>
                                                     <th data-ordem="movimento.visto">Ficha</th>
                                                     <?php if ($usuario->temPermissao(Sistema::P_VISTO_MOVIMENTO()->m("C"))) { ?>
-                                                    <th><i class="fas fa-eye"></i></th>
+                                                        <th><i class="fas fa-eye"></i></th>
                                                     <?php } ?>
                                                 </tr>
                                             </thead>
@@ -143,7 +143,7 @@
                                                     <td>{{mov[0].historico.nome}}</td>
                                                     <td>{{mov[0].vencimento.nota.ficha}}</td>
                                                     <?php if ($usuario->temPermissao(Sistema::P_VISTO_MOVIMENTO()->m("C"))) { ?>
-                                                    <td><input type="checkbox" ng-model="mov[0].visto" ng-change="setVisto(mov[0])"></input></td>
+                                                        <td><input type="checkbox" ng-model="mov[0].visto" ng-change="setVisto(mov[0])"></input></td>
                                                     <?php } ?>
                                                 </tr>
                                             </tbody>
@@ -161,7 +161,7 @@
                                                     <th>Hist</th>
                                                     <th>Ficha</th>
                                                     <?php if ($usuario->temPermissao(Sistema::P_VISTO_MOVIMENTO()->m("C"))) { ?>
-                                                    <th><i class="fas fa-eye"></i></th>
+                                                        <th><i class="fas fa-eye"></i></th>
                                                     <?php } ?>
                                                 </tr>
                                             </tfoot>
@@ -552,7 +552,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="modal fade in" id="nota" tabindex="-1" role="dialog" aria-labelledby="editCompra" aria-hidden="true" style="display: none;overflow-y:scroll">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
@@ -735,7 +735,7 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td>
-                                                    
+
                                                 </td>
 
                                             </tr>
@@ -800,7 +800,24 @@
                         </div>
                     </div>
                 </div>
-                
+
+                <div class="modal fade" style="overflow-y:scroll" id="mdlRelatorio" tabindex="-1" role="dialog" aria-labelledby="mdlFilhos" aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content" >
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-table fa-3x"></i>&nbsp;&nbsp;&nbsp;Gerado com sucesso !</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+
+                                <a download="relatorioFechamento.pdf" href="{{relatorio}}"><i class="fas fa-upload"></i>&nbsp Baixar relatorio</a>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
                 <!-- /.modal-content LOADING --> 
                 <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
@@ -834,81 +851,81 @@
                 <!-- Optional JavaScript -->
                 <script>
 
-                                            var l = $('#loading');
-                                            l.hide();
+                                                        var l = $('#loading');
+                                                        l.hide();
 
 
-                                            var x = 0;
-                                            var y = 0;
+                                                        var x = 0;
+                                                        var y = 0;
 
-                                            $(document).mousemove(function (e) {
+                                                        $(document).mousemove(function (e) {
 
-                                                x = e.clientX;
-                                                y = e.clientY;
+                                                            x = e.clientX;
+                                                            y = e.clientY;
 
-                                                var s = $(this).scrollTop();
+                                                            var s = $(this).scrollTop();
 
-                                                l.offset({top: (y + s), left: x});
+                                                            l.offset({top: (y + s), left: x});
 
-                                            })
+                                                        })
 
-                                            var sh = false;
-                                            var it = null;
+                                                        var sh = false;
+                                                        var it = null;
 
-                                            loading.show = function () {
-                                                l.show();
-                                                var s = $(document).scrollTop();
+                                                        loading.show = function () {
+                                                            l.show();
+                                                            var s = $(document).scrollTop();
 
-                                                l.offset({top: (y + s), left: x});
+                                                            l.offset({top: (y + s), left: x});
 
-                                            }
+                                                        }
 
-                                            loading.close = function () {
-                                                l.hide();
-                                            }
+                                                        loading.close = function () {
+                                                            l.hide();
+                                                        }
 
-                                            $(document).ready(function () {
-                                                $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
-                                                $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                                                $('.btndel').tooltip({title: "Deletar", placement: "top"});
-                                            });
-                                            $(document).ready(function () {
-                                                $('#clientes').DataTable({
-                                                    "language": {//Altera o idioma do DataTable para o português do Brasil
-                                                        "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
-                                                    },
-                                                });
-
-                                                $.getJSON('estados_cidades.json', function (data) {
-                                                    var items = [];
-                                                    var options = '<option value="">escolha um estado</option>';
-                                                    $.each(data, function (key, val) {
-                                                        options += '<option value="' + val.nome + '">' + val.nome + '</option>';
-                                                    });
-                                                    $("#estados").html(options);
-
-                                                    $("#estados").change(function () {
-
-                                                        var options_cidades = '';
-                                                        var str = "";
-
-                                                        $("#estados option:selected").each(function () {
-                                                            str += $(this).text();
+                                                        $(document).ready(function () {
+                                                            $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                                                            $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                                                            $('.btndel').tooltip({title: "Deletar", placement: "top"});
                                                         });
+                                                        $(document).ready(function () {
+                                                            $('#clientes').DataTable({
+                                                                "language": {//Altera o idioma do DataTable para o português do Brasil
+                                                                    "url": "https://cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
+                                                                },
+                                                            });
 
-                                                        $.each(data, function (key, val) {
-                                                            if (val.nome == str) {
-                                                                $.each(val.cidades, function (key_city, val_city) {
-                                                                    options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
+                                                            $.getJSON('estados_cidades.json', function (data) {
+                                                                var items = [];
+                                                                var options = '<option value="">escolha um estado</option>';
+                                                                $.each(data, function (key, val) {
+                                                                    options += '<option value="' + val.nome + '">' + val.nome + '</option>';
                                                                 });
-                                                            }
+                                                                $("#estados").html(options);
+
+                                                                $("#estados").change(function () {
+
+                                                                    var options_cidades = '';
+                                                                    var str = "";
+
+                                                                    $("#estados option:selected").each(function () {
+                                                                        str += $(this).text();
+                                                                    });
+
+                                                                    $.each(data, function (key, val) {
+                                                                        if (val.nome == str) {
+                                                                            $.each(val.cidades, function (key_city, val_city) {
+                                                                                options_cidades += '<option value="' + val_city + '">' + val_city + '</option>';
+                                                                            });
+                                                                        }
+                                                                    });
+                                                                    $("#cidades").html(options_cidades);
+
+                                                                }).change();
+
+                                                            });
                                                         });
-                                                        $("#cidades").html(options_cidades);
-
-                                                    }).change();
-
-                                                });
-                                            });
 
                 </script>
 

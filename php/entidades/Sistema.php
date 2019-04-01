@@ -14,6 +14,96 @@
 class Sistema {
     
     public static $ENDERECO = "http://192.168.0.17/novo_rtc_web/";
+    
+    /*
+     * porcentagem
+     * titulo
+     * valores
+     */
+    public static function gerarRelatorio($con, $empresa,$titulo,$obs,$camps,$valors) {
+
+        $id = round(microtime(true) * 1000);
+
+        $logo = $empresa->getLogo($con);
+
+        $bytes = Utilidades::base64decode($logo->logo);
+
+        $aux = strlen($bytes);
+        for ($i = 0; $i < $aux; $i += 1024) {
+            $buffer = substr($bytes, 0, 1024);
+            Sistema::mergeArquivo("bytes_logo_$id.txt", $buffer, false);
+            $bytes = substr($bytes, 1024);
+        }
+
+        $logo = Sistema::$ENDERECO . "php/uploads/bytes_logo_$id.txt";
+
+        $qtd = count($valors);
+
+        if ($qtd === 0) {
+
+            throw new Exception("Nao contem registros");
+        }
+
+
+        $json = new stdClass();
+
+        $json->logo = $logo;
+        $json->titulo_relatorio = $titulo;
+        $json->nome_empresa = $empresa->nome;
+
+        $campos = array();
+
+        foreach ($camps as $key => $value) {
+            
+            $campo = new stdClass();
+            $campo->porcentagem = $value[2];
+            $campo->titulo = $value[1];
+            $campo->valor = $value[0];
+
+            $campos[] = $campo;
+        }
+
+
+        $json->campos = $campos;
+
+        $valores = array();
+
+
+        foreach ($valors as $key => $value) {
+
+            $linha = new stdClass();
+            $i = 0;
+            foreach ($camps as $key2 => $campo) {
+                $n = $campo[0];
+                $linha->$n = $value[$key2];
+                $i++;
+            }
+
+            $valores[] = $linha;
+        }
+
+        $json->elementos = $valores;
+
+        $retorno = str_replace("\\","/",realpath("../uploads")) . "/relatorio_$id.pdf";
+
+        $json->arquivo_retorno = $retorno;
+        
+        $json->observacoes = $obs;
+
+        $comando = Utilidades::toJson($json);
+
+        $arquivo = "comando_$id.json";
+
+        Sistema::mergeArquivo($arquivo, $comando, false);
+
+        $comando = Sistema::$ENDERECO . "php/uploads/$arquivo";
+        try{
+            Sistema::getMicroServicoJava('GeradorRelatorio', $comando);
+        }catch(Exception $ex){
+            
+        }
+        return Sistema::$ENDERECO . "php/uploads/relatorio_$id.pdf";
+    }
 
     public static function getFabricantes($con) {
 

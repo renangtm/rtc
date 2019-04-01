@@ -17,6 +17,7 @@ class FechamentoCaixa{
     public $valor;
     public $banco;
     public $data;
+    public $valor_anterior;
 
     function __construct() {
 

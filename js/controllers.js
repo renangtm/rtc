@@ -18,6 +18,21 @@ rtc.controller("crtFechamentoCaixa", function ($scope,movimentoService,notaServi
     $scope.banco = null;
     $scope.fechamento = null;
     $scope.nota = null;
+    
+    $scope.carregando = false;
+    $scope.relatorio = "";
+    $scope.gerarRelatorio = function(){
+        
+       $scope.carregando = true;
+       bancoService.getRelatorioFechamento($scope.banco,function(r){
+           
+           $scope.relatorio = r.relatorio;
+           $scope.carregando = false;
+           $("#mdlRelatorio").modal("show");
+           
+       })
+        
+    }
 
     $scope.setVisto = function(mov){
         

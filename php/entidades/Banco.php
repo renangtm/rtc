@@ -50,6 +50,60 @@ class Banco {
         
     }
     
+    public function getRelatorioMovimentosFechamento($con){
+        
+        $obs = "Fechamento de ";
+        
+        $fechamento = $this->getFechamento($con);
+        
+        $obs .= date("d/m/Y",doubleval($fechamento->data_anterior."")/1000)." ate ".date("d/m/Y",doubleval($fechamento->data."")/1000).", valor de ".round($fechamento->valor,2).", saldo atual ".round($this->saldo,2).", Fechamento anterior: ".round($fechamento->valor_anterior,2);
+        
+        $qtd = $this->getCountMovimentosFechamento($con);
+        $movimentos = $this->getMovimentosFechamento($con, 0, $qtd);
+        
+        
+        $campos = array(
+            array("tipo","Tipo",10),
+            array("cliente","Cliente",20),
+            array("fornecedor","Fornecedor",20),
+            array("operacao","Op.",15),
+            array("valor","Valor",13),
+            array("juros","Juros",5),
+            array("desconto","Desc",5),
+            array("nota","Nota",6),
+            array("ficha","Ficha",6));
+        
+        $valores = array();
+        
+        foreach($movimentos as $key=>$value){
+            
+            $l = array();
+            
+            if($value->operacao->debito){
+                $l[] = "Deb";
+                $l[] = "------";
+                $l[] = utf8_decode($value->vencimento->nota->fornecedor->nome);
+            }else{
+                $l[] = "Cred";
+                $l[] = utf8_decode($value->vencimento->nota->cliente->razao_social);
+                $l[] = "------";
+            }
+            
+            $l[] = utf8_decode($value->operacao->nome);
+            $l[] = $value->valor."";
+            $l[] = $value->juros."";
+            $l[] = $value->descontos."";
+            $l[] = $value->vencimento->nota->numero;
+            $l[] = $value->vencimento->nota->ficha;
+            
+            $valores[] = $l;
+            
+        }
+        
+        return Sistema::gerarRelatorio($con, $this->empresa, "Fechamento do banco $this->nome", $obs, $campos, $valores);
+        
+    }
+    
     public function getFechamento($con){
         
         $anterior = 0;
@@ -63,7 +117,7 @@ class Banco {
             $data_anterior = $data;
         }
         $ps->close();
-        
+        $real_anterior = $anterior;
         
         $ps = $con->getConexao()->prepare("SELECT SUM((CASE WHEN operacao.debito THEN -1 ELSE 1 END)*(movimento.valor-movimento.descontos+movimento.juros)) FROM movimento "
                 . "INNER JOIN operacao ON movimento.id_operacao=operacao.id "
@@ -82,6 +136,7 @@ class Banco {
         $fechamento->data = round(microtime(true)*1000);
         $fechamento->banco = $this;
         $fechamento->data_anterior = $data_anterior;
+        $fechamento->valor_anterior = $real_anterior;
         
         return $fechamento;
         
