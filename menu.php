@@ -421,7 +421,7 @@ $possiveis[0] = $rtc;
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_TAREFAS()->m("C"))) { ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="tarefas.php" ><button class="btn btn-warning" onmousedown="tutorial('Tarefas', 'Aqui e onde voce ve suas tarefas e cria novas tarefas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks mr-2"></i>Tarefas</a>
+                        <a class="nav-link" href="tarefas.php" ><button class="btn btn-warning" onmousedown="tutorial('Atividades', 'Aqui e onde voce ve suas atividades e cria novas atividades')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks mr-2"></i>Atividades</a>
                     </li>
                     <?php } ?>    
                     <?php if ($usuario->temPermissao(Sistema::P_TRANSPORTADORA()->m("C"))) { ?>

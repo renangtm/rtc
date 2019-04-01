@@ -4828,7 +4828,7 @@ class Empresa {
             $end->bairro = $end_usu_bairro;
             $end->cep = new CEP($end_usu_cep);
             $end->numero = $end_usu_numero;
-            $end->rua = $end_usu_numero;
+            $end->rua = $end_usu_rua;
 
             $end->cidade = new Cidade();
             $end->cidade->id = $cid_usu_id;

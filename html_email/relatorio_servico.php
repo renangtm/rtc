@@ -127,7 +127,7 @@
                                                                 $i++;
                                                                 ?>
                                                                 <tr style="background-color:#f0f0f0;">
-                                                                    <td style="text-align: left;margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);padding:10px;" ><?php echo $i; ?># <?php echo $tarefa->titulo; ?></td>
+                                                                    <td style="text-align: left;margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);padding:10px;" ><?php echo $i; ?># <?php echo $tarefa->titulo; ?> | <?php echo $tarefa->assinatura_solicitante; ?></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td style="padding:10px;">

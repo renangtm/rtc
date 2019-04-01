@@ -82,7 +82,7 @@
                             .tarefa{
                                 display: inline-block;
                                 text-align: center;
-                                height:310px;
+                                height:400px;
                                 border:1px dashed;
                                 width:calc(33% - 20px) !important;
                                 margin-left:20px !important;
@@ -92,7 +92,7 @@
                             .tarefa_principal{
                                 display: inline-block;
                                 text-align: center;
-                                height:310px;
+                                height:340px;
                                 border:1px dashed;
                                 width:calc(70% - 20px) !important;
                                 margin-left:20px !important;
@@ -182,6 +182,14 @@
                                                         </td>
                                                         <td colspan="3">
                                                             <h4 style="margin-top:12px">{{t[0].tipo_tarefa.nome}} - ({{t[0].tipo_tarefa.tempo_medio * 60}}m em media) </h4>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Criada por:
+                                                        </td>
+                                                        <td colspan="3">
+                                                            <h4 style="margin-top:12px">{{t[0].assinatura_solicitante}} </h4>
                                                         </td>
                                                     </tr>
                                                 </table>          
@@ -433,7 +441,7 @@
                                         <tr>
                                             <th data-ordem="usuario.id">Cod.</th>
                                             <th data-ordem="usuario.nome">Nome</th>
-                                            <th>AÃ§Ã£o</th>
+                                            <th>Ação</th>
                                         </tr>
                                     </thead>
                                     <tbody>

@@ -13,7 +13,7 @@
  */
 class Sistema {
     
-    public static $ENDERECO = "http://192.168.0.17/novo_rtc_web/";
+    public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
     
     /*
      * porcentagem

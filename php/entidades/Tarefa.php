@@ -28,6 +28,7 @@ class Tarefa {
     public $prioridade; // geralmente vai ser o mesmo do tipo da tarefa porem usuarios com permissoes elevadas poderao alterar.
     public $tipo_tarefa;
     public $criada_por;
+    public $assinatura_solicitante;
     public $calculado_previsao_util_conclusao; //calculado
     public $calculado_momento_conclusao; //calculado
     public $calculado_horas_uteis_dispendidas; //calculado
@@ -40,6 +41,7 @@ class Tarefa {
         $this->id = 0;
         $this->prioridade = 1;
         $this->tipo_tarefa = null;
+        $this->assinatura_solicitante = "";
         $this->inicio_minimo = round(microtime(true) * 1000);
         $this->ordem = 0;
         $this->porcentagem_conclusao = 0;

@@ -64,12 +64,12 @@ class Banco {
         
         $campos = array(
             array("tipo","Tipo",10),
-            array("cliente","Cliente",20),
-            array("fornecedor","Fornecedor",20),
+            array("cf","Cliente/Fornecedor",30),
             array("operacao","Op.",15),
             array("valor","Valor",13),
             array("juros","Juros",5),
             array("desconto","Desc",5),
+            array("saldo","Saldo",10),
             array("nota","Nota",6),
             array("ficha","Ficha",6));
         
@@ -81,18 +81,17 @@ class Banco {
             
             if($value->operacao->debito){
                 $l[] = "Deb";
-                $l[] = "------";
                 $l[] = utf8_decode($value->vencimento->nota->fornecedor->nome);
             }else{
                 $l[] = "Cred";
                 $l[] = utf8_decode($value->vencimento->nota->cliente->razao_social);
-                $l[] = "------";
             }
             
             $l[] = utf8_decode($value->operacao->nome);
             $l[] = $value->valor."";
             $l[] = $value->juros."";
             $l[] = $value->descontos."";
+            $l[] = $value->saldo_anterior."";
             $l[] = $value->vencimento->nota->numero;
             $l[] = $value->vencimento->nota->ficha;
             
