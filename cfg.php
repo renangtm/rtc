@@ -73,7 +73,12 @@
                         <!-- ============================================================== -->
                         <!-- end pageheader  -->
                         <!-- ============================================================== -->
-
+                        <?php if ($empresa->tipo_empresa === 5) { ?>
+                            <select style="width:200px" class="form-control" ng-model="empresa_atual" ng-change="trocaEmpresa()">
+                                <option ng-repeat="e in empresas_clientes" ng-value="e">{{e.nome}}</option>
+                            </select>
+                            <hr>
+                        <?php } ?>
                         <style>
                             .selecionavel{
                                 cursor:pointer;
@@ -89,12 +94,12 @@
                             }
 
                         </style>
-                        
-                            <div class="row">
-                                <!-- ============================================================== -->
-                                <!-- basic table  -->
-                                <!-- ============================================================== -->
-                                <?php if ($usuario->temPermissao(Sistema::P_CONTROLADOR_TAREFAS()->m('A'))) { ?>
+
+                        <div class="row">
+                            <!-- ============================================================== -->
+                            <!-- basic table  -->
+                            <!-- ============================================================== -->
+                            <?php if ($usuario->temPermissao(Sistema::P_CONTROLADOR_TAREFAS()->m('A'))) { ?>
                                 <div class="col-md-5">
                                     <div class="card">
                                         <div class="card-body row">
@@ -269,7 +274,7 @@
                                                             <td>{{t[0].nome}}</td>
                                                             <td>{{t[0].tempo_medio}}h ({{(t[0].tempo_medio * 60)}} min)</td>
                                                             <td>{{t[0].prioridade}}</td>
-                                                            <td><button ng-disabled="t[0].id<0" class="btn btn-danger" ng-click="deleteTipoTarefa(t[0])"><i class="fas fa-trash"></i></button></td>
+                                                            <td><button ng-disabled="t[0].id < 0" class="btn btn-danger" ng-click="deleteTipoTarefa(t[0])"><i class="fas fa-trash"></i></button></td>
                                                         </tr>
                                                     </tbody>
                                                     <tfoot>
@@ -296,151 +301,151 @@
                                         </div>
                                     </div>    
                                 </div>
-                                 <?php } ?>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                    <div class="card">
-                                        <div class="card-body row">
-                                            <div class="table-responsive col-md-7" id="dvUsuarios">
-                                                <div class="product-btn m-b-20">
-                                                    <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ng-click="novoUsuario()"><i class="fas fa-plus-circle m-r-10"></i>Adicionar Colaborador</a>
-                                                </div>
-                                                <table id="clientes" class="table table-striped table-bordered first">
-                                                    <thead>
-                                                        <tr>
-                                                            <th data-ordem="usuario.id">Cod.</th>
-                                                            <th data-ordem="usuario.nome">Nome</th>
-                                                            <th data-ordem="usuario.email_usu.endereco">Email</th>
-                                                            <th width="150px">Acao</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr id="tr_{{usuari[0].id}}" class="{{usuari[0].id===usuario.id?'selecionado':'selecionavel'}}" ng-click="setUsuario(usuari[0])" ng-repeat-start="usuari in usuarios.elementos">
-                                                            <td>{{usuari[0].id}}</td>
-                                                            <td>{{usuari[0].nome}}</td>
-                                                            <td><email entidade="Usu&aacute;rio" atributo="usuari[0].email" senha="true" alterar="false"></email></td>
-                                                    <th style="{{usuari[0].id===usuario.id?'border-right:2px solid #5F5F5F':''}}">
-                                                        <div class="product-btn">
-                                                            <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setUsuario(usuari[0])" data-target="#demo{{usuari[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
-                                                            <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setUsuario(usuari[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
-                                                            <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setUsuario(usuari[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
-                                                        </div>
-                                                    </th>
-                                                    </tr>
-                                                    <tr ng-repeat-end>
-                                                        <td colspan="6" class="hiddenRow">
-                                                            <div class="accordian-body collapse" id="demo{{usuari[0].id}}">
-                                                                <div class="row mx-auto m-b-30">	
-                                                                    <div class="col">
-                                                                        <table class="table-bordered w-100">
-                                                                            <tr>
-                                                                                <td>Login:</td>
-                                                                                <td>{{usuari[0].login}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Senha:</td>
-                                                                                <td><?php
-                                                                                    $str = "?>{{usuari[0].senha}}<?php";
-                                                                                    echo md5($str);
-                                                                                    ?></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>CPF:</td>
-                                                                                <td>{{usuari[0].cpf.valor}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>RG:</td>
-                                                                                <td>{{usuari[0].rg.valor}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Telefone:</td>
-                                                                                <td>{{usuari[0].telefones}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Endereco:</td>
-                                                                                <td>{{usuari[0].endereco.rua}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Numero:</td>
-                                                                                <td>{{usuari[0].endereco.numero}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Bairro</td>
-                                                                                <td>{{usuari[0].endereco.bairro}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Cidade</td>
-                                                                                <td>{{usuari[0].endereco.cidade.nome}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Estado</td>
-                                                                                <td>{{usuari[0].endereco.cidade.estado.sigla}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>CEP</td>
-                                                                                <td>{{usuari[0].endereco.cep.valor}}</td>
-                                                                            </tr>
-                                                                        </table>
-                                                                    </div>																
-                                                                </div>	
-                                                            </div> 
-                                                        </td>
-                                                    </tr>
-                                                    </tbody>
-                                                    <tfoot>
-                                                        <tr>
-                                                            <th>Cod.</th>
-                                                            <th>Nome</th>
-                                                            <th>Email</th>
-                                                            <th>Acao</th>
-                                                        </tr>
-                                                    </tfoot>
-                                                </table>
-
-                                                <!-- paginacao  -->
-                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                    <nav aria-label="Page navigation example">
-                                                        <ul class="pagination justify-content-end">
-                                                            <li class="page-item" ng-click="usuarios.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                            <li class="page-item" ng-repeat="pg in usuarios.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                            <li class="page-item" ng-click="usuarios.next()"><a class="page-link" href="">Proximo</a></li>
-                                                        </ul>
-                                                    </nav>
-                                                </div>
-
+                            <?php } ?>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="card">
+                                    <div class="card-body row">
+                                        <div class="table-responsive col-md-7" id="dvUsuarios">
+                                            <div class="product-btn m-b-20">
+                                                <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ng-click="novoUsuario()"><i class="fas fa-plus-circle m-r-10"></i>Adicionar Colaborador</a>
                                             </div>
-                                            <div class="col-md-5" id="dvPermissoes" style="margin-top:{{marginTop}}px;border:2px solid #5F5F5F;padding:10px;margin-left:0px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-top-left-radius: 2px; border-bottom-left-radius: 10px">
-                                                Permiss&otilde;es do usu&aacute;rio: <strong>{{usuario.id}} - {{usuario.nome}}</strong>
-                                                <hr>
-                                                <button class="btn btn-outline-light" ng-click="mergeUsuario()"><i class="fas fa-check"></i>&nbspConfirmar alteracoes</button>
-                                                <hr>
-                                                <table id="clientes" class="table table-striped table-bordered first">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Nome</th>
-                                                            <th>Alt</th>
-                                                            <th>Inc</th>
-                                                            <th>Del</th>
-                                                            <th>Cons</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr ng-repeat="p in usuario.permissoes">
-                                                            <td>{{p.nome}}</td>
-                                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.alt"></td>
-                                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.in"></td>
-                                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.del"></td>
-                                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.cons"></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                            <table id="clientes" class="table table-striped table-bordered first">
+                                                <thead>
+                                                    <tr>
+                                                        <th data-ordem="usuario.id">Cod.</th>
+                                                        <th data-ordem="usuario.nome">Nome</th>
+                                                        <th data-ordem="usuario.email_usu.endereco">Email</th>
+                                                        <th width="150px">Acao</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr id="tr_{{usuari[0].id}}" class="{{usuari[0].id===usuario.id?'selecionado':'selecionavel'}}" ng-click="setUsuario(usuari[0])" ng-repeat-start="usuari in usuarios.elementos">
+                                                        <td>{{usuari[0].id}}</td>
+                                                        <td>{{usuari[0].nome}}</td>
+                                                        <td><email entidade="Usu&aacute;rio" atributo="usuari[0].email" senha="true" alterar="false"></email></td>
+                                                <th style="{{usuari[0].id===usuario.id?'border-right:2px solid #5F5F5F':''}}">
+                                                    <div class="product-btn">
+                                                        <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setUsuario(usuari[0])" data-target="#demo{{usuari[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
+                                                        <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setUsuario(usuari[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
+                                                        <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setUsuario(usuari[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
+                                                    </div>
+                                                </th>
+                                                </tr>
+                                                <tr ng-repeat-end>
+                                                    <td colspan="6" class="hiddenRow">
+                                                        <div class="accordian-body collapse" id="demo{{usuari[0].id}}">
+                                                            <div class="row mx-auto m-b-30">	
+                                                                <div class="col">
+                                                                    <table class="table-bordered w-100">
+                                                                        <tr>
+                                                                            <td>Login:</td>
+                                                                            <td>{{usuari[0].login}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Senha:</td>
+                                                                            <td><?php
+                                                                                $str = "?>{{usuari[0].senha}}<?php";
+                                                                                echo md5($str);
+                                                                                ?></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>CPF:</td>
+                                                                            <td>{{usuari[0].cpf.valor}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>RG:</td>
+                                                                            <td>{{usuari[0].rg.valor}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Telefone:</td>
+                                                                            <td>{{usuari[0].telefones}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Endereco:</td>
+                                                                            <td>{{usuari[0].endereco.rua}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Numero:</td>
+                                                                            <td>{{usuari[0].endereco.numero}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Bairro</td>
+                                                                            <td>{{usuari[0].endereco.bairro}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Cidade</td>
+                                                                            <td>{{usuari[0].endereco.cidade.nome}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Estado</td>
+                                                                            <td>{{usuari[0].endereco.cidade.estado.sigla}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>CEP</td>
+                                                                            <td>{{usuari[0].endereco.cep.valor}}</td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </div>																
+                                                            </div>	
+                                                        </div> 
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th>Cod.</th>
+                                                        <th>Nome</th>
+                                                        <th>Email</th>
+                                                        <th>Acao</th>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+
+                                            <!-- paginacao  -->
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                                <nav aria-label="Page navigation example">
+                                                    <ul class="pagination justify-content-end">
+                                                        <li class="page-item" ng-click="usuarios.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                        <li class="page-item" ng-repeat="pg in usuarios.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                                        <li class="page-item" ng-click="usuarios.next()"><a class="page-link" href="">Proximo</a></li>
+                                                    </ul>
+                                                </nav>
                                             </div>
+
+                                        </div>
+                                        <div class="col-md-5" id="dvPermissoes" style="margin-top:{{marginTop}}px;border:2px solid #5F5F5F;padding:10px;margin-left:0px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-top-left-radius: 2px; border-bottom-left-radius: 10px">
+                                            Permiss&otilde;es do usu&aacute;rio: <strong>{{usuario.id}} - {{usuario.nome}}</strong>
+                                            <hr>
+                                            <button class="btn btn-outline-light" ng-click="mergeUsuario()"><i class="fas fa-check"></i>&nbspConfirmar alteracoes</button>
+                                            <hr>
+                                            <table id="clientes" class="table table-striped table-bordered first">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Nome</th>
+                                                        <th>Alt</th>
+                                                        <th>Inc</th>
+                                                        <th>Del</th>
+                                                        <th>Cons</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="p in usuario.permissoes">
+                                                        <td>{{p.nome}}</td>
+                                                        <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.alt"></td>
+                                                        <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.in"></td>
+                                                        <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.del"></td>
+                                                        <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.cons"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
 
-                            </div>	
-                       
+                        </div>	
+
                         <!-- ============================================================== -->
                         <!-- footer -->
                         <!-- ============================================================== -->

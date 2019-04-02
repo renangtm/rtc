@@ -1,4 +1,4 @@
-rtc.controller("crtFechamentoCaixa", function ($scope,movimentoService,notaService, baseService, fechamentoCaixaService, bancoService, movimentosFechamentoService) {
+rtc.controller("crtFechamentoCaixa", function ($scope, movimentoService, notaService, baseService, fechamentoCaixaService, bancoService, movimentosFechamentoService) {
 
     $scope.fechamentos = createAssinc(fechamentoCaixaService, 1, 5, 10);
     assincFuncs(
@@ -11,41 +11,41 @@ rtc.controller("crtFechamentoCaixa", function ($scope,movimentoService,notaServi
     assincFuncs(
             $scope.movimentos,
             "movimento",
-            ["data","id", "valor", "juros", "descontos", "saldo_anterior", "operacao.nome", "historico.nome","visto"]);
+            ["data", "id", "valor", "juros", "descontos", "saldo_anterior", "operacao.nome", "historico.nome", "visto"]);
 
     $scope.bancos = [];
 
     $scope.banco = null;
     $scope.fechamento = null;
     $scope.nota = null;
-    
+
     $scope.carregando = false;
     $scope.relatorio = "";
-    $scope.gerarRelatorio = function(){
-        
-       $scope.carregando = true;
-       bancoService.getRelatorioFechamento($scope.banco,function(r){
-           
-           $scope.relatorio = r.relatorio;
-           $scope.carregando = false;
-           $("#mdlRelatorio").modal("show");
-           
-       })
-        
+    $scope.gerarRelatorio = function () {
+
+        $scope.carregando = true;
+        bancoService.getRelatorioFechamento($scope.banco, function (r) {
+
+            $scope.relatorio = r.relatorio;
+            $scope.carregando = false;
+            $("#mdlRelatorio").modal("show");
+
+        })
+
     }
 
-    $scope.setVisto = function(mov){
-        
-        movimentoService.setVisto(mov,function(s){
-            if(s.sucesso){
-                
-            }else{
+    $scope.setVisto = function (mov) {
+
+        movimentoService.setVisto(mov, function (s) {
+            if (s.sucesso) {
+
+            } else {
                 msg.erro("Problema ao vistar");
             }
         });
-        
+
     }
-    
+
     $scope.getTotalNota = function () {
 
         var total = 0;
@@ -61,23 +61,23 @@ rtc.controller("crtFechamentoCaixa", function ($scope,movimentoService,notaServi
         return total;
 
     }
-    
-    $scope.getNota = function(mov){
-        
-        if(mov.vencimento === null){
+
+    $scope.getNota = function (mov) {
+
+        if (mov.vencimento === null) {
             msg.alerta("A nao foi encontrada nota");
             return;
         }
-        
-        if(mov.vencimento.nota === null){
+
+        if (mov.vencimento.nota === null) {
             msg.alerta("A nao foi encontrada nota");
             return;
         }
-        
+
         $scope.setNota(mov.vencimento.nota);
-        
+
     }
-    
+
     $scope.setNota = function (nota) {
 
         $scope.nota = nota;
@@ -143,11 +143,11 @@ rtc.controller("crtFechamentoCaixa", function ($scope,movimentoService,notaServi
 
                 msg.alerta("Banco " + $scope.banco.nome + ", fechado com sucesso até a data atual, o sistema ira atualizar a pagina automaticamente.");
                 document.location.reload();
-                
-            }else{
-                
+
+            } else {
+
                 msg.erro('Houve um problema ao efetuar a operacao: '.s.mensagem);
-                
+
             }
 
 
@@ -382,8 +382,8 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
     })
 
     tarefaService.getTarefasAtivas(function (t) {
-       
-       
+
+
         $scope.tarefas = createList(t.tarefas, 1, 7, "descricao");
         $scope.tarefa_principal = t.tarefas[0];
 
@@ -776,7 +776,7 @@ rtc.controller("crtAtividade", function ($scope, $timeout, $interval, atividadeS
 rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, uploadService, empresaService, baseService) {
 
     $scope.banners = createAssinc(bannerService, 1, 5, 10);
-    
+
     assincFuncs(
             $scope.banners,
             "banner",
@@ -962,7 +962,7 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
     $scope.relatorios = [];
     $scope.gerado = null;
     $scope.carregando = false;
-    
+
     $scope.modos = ["Igual a", "Maior que", "Menor que"];
     $scope.mn = [0, 1, 2];
 
@@ -1022,10 +1022,10 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
         });
 
     }
-    
-    
-    $scope.prepararRelatorio = function(){
-        
+
+
+    $scope.prepararRelatorio = function () {
+
         var order = "";
         var order_fields = [];
         for (var i = 0; i < $scope.relatorio.campos.length; i++) {
@@ -1111,7 +1111,7 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
 
 
         relatorioService.relatorio = $scope.relatorio;
-        
+
     }
 
     $scope.gerarRelatorio = function () {
@@ -1119,11 +1119,11 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
         $scope.prepararRelatorio();
 
         $scope.gerado = createAssinc(relatorioService, 1, 20, 1000);
-        $scope.gerado.posload = function(els){
+        $scope.gerado.posload = function (els) {
             $scope.carregando = false;
         }
         $scope.gerado.attList();
-        
+
         $("#mdlRelatorio").modal("show");
 
     }
@@ -1189,6 +1189,31 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
 
 })
 rtc.controller("crtEmpresaConfig", function ($scope, empresaService, sistemaService, cidadeService, baseService, uploadService) {
+
+    $scope.empresa_atual = null;
+    $scope.empresas_clientes = [];
+    empresaService.getEmpresasClientes(function (e) {
+        $scope.empresas_clientes = e.clientes;
+        empresaService.getEmpresa(function (e) {
+            var a = null;
+            for (var i = 0; i < $scope.empresas_clientes.length; i++) {
+                if ($scope.empresas_clientes[i].id === e.empresa.id) {
+                    a = $scope.empresas_clientes[i];
+                    break;
+                }
+            }
+            if (a === null) {
+                a = e.empresa;
+                $scope.empresas_clientes[$scope.empresas_clientes.length] = a;
+            }
+            $scope.empresa_atual = a;
+        })
+    })
+    $scope.trocaEmpresa = function () {
+
+        $scope.setEmpresa($scope.empresa_atual);
+
+    }
 
     $scope.empresa = null;
     $scope.filiais = [];
@@ -1263,13 +1288,12 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, sistemaServ
 
     }
 
-    empresaService.getEmpresa(function (r) {
+    $scope.setEmpresa = function (e) {
 
-
-        $scope.empresa = r.empresa;
+        $scope.empresa = e;
 
         $scope.filiais = [];
-        $scope.filiais[$scope.filiais.length] = r.empresa;
+        $scope.filiais[$scope.filiais.length] = e;
 
         empresaService.getFiliais(function (rr) {
 
@@ -1330,6 +1354,13 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, sistemaServ
                 }
             }
         })
+
+
+    }
+
+    empresaService.getEmpresa(function (r) {
+
+        $scope.setEmpresa(r.empresa);
 
     })
 
@@ -2073,7 +2104,37 @@ rtc.controller("crtOrganograma", function ($scope, usuarioService) {
 })
 
 
-rtc.controller("crtUsuarios", function ($scope, $timeout, usuarioService, permissaoService, cidadeService, baseService, telefoneService, cargoService, tipoTarefaService) {
+rtc.controller("crtUsuarios", function ($scope, $timeout, empresaService, usuarioService, permissaoService, cidadeService, baseService, telefoneService, cargoService, tipoTarefaService) {
+
+    $scope.empresa_atual = null;
+    $scope.empresas_clientes = [];
+    empresaService.getEmpresasClientes(function (e) {
+        $scope.empresas_clientes = e.clientes;
+        empresaService.getEmpresa(function (e) {
+            var a = null;
+            for (var i = 0; i < $scope.empresas_clientes.length; i++) {
+                if ($scope.empresas_clientes[i].id === e.empresa.id) {
+                    a = $scope.empresas_clientes[i];
+                    break;
+                }
+            }
+            if (a === null) {
+                a = e.empresa;
+                $scope.empresas_clientes[$scope.empresas_clientes.length] = a;
+            }
+            $scope.empresa_atual = a;
+        })
+    })
+    $scope.trocaEmpresa = function () {
+        usuarioService.filtro_base = "usuario.id>=0";
+        usuarioService.empresa = $scope.empresa_atual;
+        permissaoService.empresa = $scope.empresa_atual;
+        cargoService.empresa = $scope.empresa_atual;
+        tipoTarefaService.empresa = $scope.empresa_atual;
+        $scope.init();
+        $scope.usuarios.attList();
+    }
+
 
     $scope.usuarios = createAssinc(usuarioService, 1, 3, 10);
     $scope.usuarios.posload = function (e) {
@@ -2100,55 +2161,75 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, usuarioService, permis
 
     $scope.tipos_tarefa = [];
 
-    tipoTarefaService.getTipoTarefa(function (t) {
+    $scope.init = function () {
 
-        $scope.tipo_tarefa_novo = t.tipo_tarefa;
+        tipoTarefaService.getTipoTarefa(function (t) {
 
-    })
-
-
-    var attTiposTarefa = function () {
-        tipoTarefaService.getTiposTarefa(function (t) {
-
-            if ($scope.tipo_tarefa === null) {
-                if (t.tipos_tarefa.length > 0) {
-                    $scope.setTipoTarefa(t.tipos_tarefa[0]);
-                } else {
-                    $scope.tipo_tarefa = {};
-                }
-            }
-
-            $scope.tipos_tarefa = createList(t.tipos_tarefa, 1, 5, "nome");
+            $scope.tipo_tarefa_novo = t.tipo_tarefa;
 
         })
+
+        var attTiposTarefa = function () {
+            tipoTarefaService.getTiposTarefa(function (t) {
+
+                if ($scope.tipo_tarefa === null) {
+                    if (t.tipos_tarefa.length > 0) {
+                        $scope.setTipoTarefa(t.tipos_tarefa[0]);
+                    } else {
+                        $scope.tipo_tarefa = {};
+                    }
+                }
+
+                $scope.tipos_tarefa = createList(t.tipos_tarefa, 1, 5, "nome");
+
+            })
+        }
+
+        attTiposTarefa();
+
+        cargoService.getCargo(function (c) {
+
+            $scope.cargo = c.cargo;
+            $scope.cargo_novo = angular.copy(c.cargo);
+
+        })
+
+        var attCargos = function () {
+            cargoService.getCargos(function (c) {
+                $scope.cargos = c.cargos;
+                $scope.lstCargos = createList(angular.copy(c.cargos), 1, 5, "nome");
+                if ($scope.usuario !== null) {
+                    $scope.setUsuario($scope.usuario);
+                }
+            })
+        }
+
+        attCargos();
+
+        permissaoService.getPermissoes(function (p) {
+            $scope.permissoes = p.permissoes;
+        })
+
+        usuarioService.getUsuario(function (p) {
+            $scope.usuario_novo = p.usuario;
+        })
+        telefoneService.getTelefone(function (p) {
+            $scope.telefone_novo = p.telefone;
+            $scope.telefone = angular.copy($scope.telefone_novo);
+        })
+
     }
 
-    attTiposTarefa();
+    $scope.init();
+
+
+
 
     $scope.cargos = [];
     $scope.lstCargos = {};
 
     $scope.cargo = {};
     $scope.cargo_novo = {};
-
-    cargoService.getCargo(function (c) {
-
-        $scope.cargo = c.cargo;
-        $scope.cargo_novo = angular.copy(c.cargo);
-
-    })
-
-    var attCargos = function () {
-        cargoService.getCargos(function (c) {
-            $scope.cargos = c.cargos;
-            $scope.lstCargos = createList(angular.copy(c.cargos), 1, 5, "nome");
-            if ($scope.usuario !== null) {
-                $scope.setUsuario($scope.usuario);
-            }
-        })
-    }
-
-    attCargos();
 
     $scope.email = {};
 
@@ -2162,9 +2243,7 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, usuarioService, permis
     $scope.estados = [];
     $scope.cidades = [];
 
-    permissaoService.getPermissoes(function (p) {
-        $scope.permissoes = p.permissoes;
-    })
+
 
     $scope.cargo_tipo_tarefa = [];
 
@@ -2205,13 +2284,7 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, usuarioService, permis
 
     }
 
-    usuarioService.getUsuario(function (p) {
-        $scope.usuario_novo = p.usuario;
-    })
-    telefoneService.getTelefone(function (p) {
-        $scope.telefone_novo = p.telefone;
-        $scope.telefone = angular.copy($scope.telefone_novo);
-    })
+
 
 
 
@@ -3058,7 +3131,33 @@ rtc.controller("crtNotas", function ($scope, notaService, empresaService, baseSe
     }
 
 })
-rtc.controller("crtBancos", function ($scope, bancoService, baseService) {
+rtc.controller("crtBancos", function ($scope, bancoService, empresaService, baseService) {
+
+
+    $scope.empresa_atual = null;
+    $scope.empresas_clientes = [];
+    empresaService.getEmpresasClientes(function (e) {
+        $scope.empresas_clientes = e.clientes;
+        empresaService.getEmpresa(function (e) {
+            var a = null;
+            for (var i = 0; i < $scope.empresas_clientes.length; i++) {
+                if ($scope.empresas_clientes[i].id === e.empresa.id) {
+                    a = $scope.empresas_clientes[i];
+                    break;
+                }
+            }
+            if (a === null) {
+                a = e.empresa;
+                $scope.empresas_clientes[$scope.empresas_clientes.length] = a;
+            }
+            $scope.empresa_atual = a;
+        })
+    })
+    $scope.trocaEmpresa = function () {
+        bancoService.empresa = $scope.empresa_atual;
+        $scope.bancos.attList();
+        $scope.init();
+    }
 
     $scope.bancos = createAssinc(bancoService, 1, 3, 10);
     $scope.bancos.attList();
@@ -3073,12 +3172,17 @@ rtc.controller("crtBancos", function ($scope, bancoService, baseService) {
 
     $scope.data_atual = new Date().getTime();
 
-    bancoService.getBanco(function (p) {
+    $scope.init = function () {
 
-        $scope.banco_novo = p.banco;
+        bancoService.getBanco(function (p) {
 
-    })
+            $scope.banco_novo = p.banco;
 
+        })
+
+    }
+
+    $scope.init();
 
     $scope.novoBanco = function () {
 

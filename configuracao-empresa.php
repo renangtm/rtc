@@ -84,7 +84,12 @@
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="card">
                                     <div class="card-body">
-
+                                        <?php if ($empresa->tipo_empresa === 5) { ?>
+                                            <select style="width:200px" class="form-control" ng-model="empresa_atual" ng-change="trocaEmpresa()">
+                                                <option ng-repeat="e in empresas_clientes" ng-value="e">{{e.nome}}</option>
+                                            </select>
+                                            <hr>
+                                        <?php } ?>
                                         <form id="add-form" ng-submit="mergeEmpresa()" parsley-validate>
                                             <div class="form-group row">
                                                 <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Razao Social</label>
@@ -229,31 +234,31 @@
                                                 <div class="col-md-3">
 
                                                     Marketing Contrada:
-                                                   
+
 
                                                 </div>
                                                 <div class="col-md-3">
 
-                                                     <div ng-repeat="mkt in marketings">
-                                                         <input type="checkbox" ng-click="setMarketing(mkt)" ng-checked="mkt===marketing" id="{{(mkt!==null)?'mkt_'+mkt.id:'sep'}}">
-                                                         &nbsp<label for="{{(mkt!==null)?'mkt_'+mkt.id:'sep'}}">{{(mkt!==null)?mkt.nome:'Sem empresa de mkt'}}</label>
-                                                     </div>
-                                                         
+                                                    <div ng-repeat="mkt in marketings">
+                                                        <input type="checkbox" ng-click="setMarketing(mkt)" ng-checked="mkt === marketing" id="{{(mkt!==null)?'mkt_'+mkt.id:'sep'}}">
+                                                        &nbsp<label for="{{(mkt!==null)?'mkt_'+mkt.id:'sep'}}">{{(mkt!==null)?mkt.nome:'Sem empresa de mkt'}}</label>
+                                                    </div>
+
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col-md-3">
 
                                                     Administracao Contrada:
-                                                   
+
 
                                                 </div>
                                                 <div class="col-md-3">
-                                                     <div ng-repeat="ad in adms">
-                                                         <input type="checkbox" ng-click="setAdm(ad)" ng-checked="ad===adm" id="{{(ad!==null)?'adm_'+ad.id:'sep'}}">
-                                                         &nbsp<label for="{{(ad!==null)?'adm_'+ad.id:'sep'}}">{{(ad!==null)?ad.nome:'Sem empresa de administracao'}}</label>
-                                                     </div>
-                                                         
+                                                    <div ng-repeat="ad in adms">
+                                                        <input type="checkbox" ng-click="setAdm(ad)" ng-checked="ad === adm" id="{{(ad!==null)?'adm_'+ad.id:'sep'}}">
+                                                        &nbsp<label for="{{(ad!==null)?'adm_'+ad.id:'sep'}}">{{(ad!==null)?ad.nome:'Sem empresa de administracao'}}</label>
+                                                    </div>
+
                                                 </div>
                                             </div>
                                             <?php if ($usuario->temPermissao(Sistema::P_NOTA()->m("A"))) { ?>
