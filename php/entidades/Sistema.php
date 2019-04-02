@@ -12,15 +12,16 @@
  * @author Renan
  */
 class Sistema {
-    
+
     public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
-    
+
     /*
      * porcentagem
      * titulo
      * valores
      */
-    public static function gerarRelatorio($con, $empresa,$titulo,$obs,$camps,$valors) {
+
+    public static function gerarRelatorio($con, $empresa, $titulo, $obs, $camps, $valors) {
 
         $id = round(microtime(true) * 1000);
 
@@ -54,7 +55,7 @@ class Sistema {
         $campos = array();
 
         foreach ($camps as $key => $value) {
-            
+
             $campo = new stdClass();
             $campo->porcentagem = $value[2];
             $campo->titulo = $value[1];
@@ -84,10 +85,10 @@ class Sistema {
 
         $json->elementos = $valores;
 
-        $retorno = str_replace("\\","/",realpath("../uploads")) . "/relatorio_$id.pdf";
+        $retorno = str_replace("\\", "/", realpath("../uploads")) . "/relatorio_$id.pdf";
 
         $json->arquivo_retorno = $retorno;
-        
+
         $json->observacoes = $obs;
 
         $comando = Utilidades::toJson($json);
@@ -97,9 +98,9 @@ class Sistema {
         Sistema::mergeArquivo($arquivo, $comando, false);
 
         $comando = Sistema::$ENDERECO . "php/uploads/$arquivo";
-        try{
+        try {
             Sistema::getMicroServicoJava('GeradorRelatorio', $comando);
-        }catch(Exception $ex){
+        } catch (Exception $ex) {
             
         }
         return Sistema::$ENDERECO . "php/uploads/relatorio_$id.pdf";
@@ -381,6 +382,10 @@ class Sistema {
         return new Permissao(49, "Visto movimento");
     }
 
+    public static function P_ACOMPANHA_TAREFAS() {
+        return new Permissao(50, "Acompanhar atividades");
+    }
+
     public static function TT_COMPRA($id_empresa) {
 
         return new TTCompra($id_empresa);
@@ -641,7 +646,7 @@ class Sistema {
                 . "observacao.observacao,"
                 . "tarefa.id_usuario "
                 . "FROM tarefa LEFT JOIN (SELECT * FROM observacao WHERE observacao.excluida = false) observacao ON tarefa.id=observacao.id_tarefa "
-                . "WHERE tarefa.excluida=false AND tarefa.id_usuario IN $in";
+                . "WHERE tarefa.excluida=false AND tarefa.id_usuario IN $in AND tarefa.porcentagem_conclusao<100";
 
         $tmp = array();
         $ps = $con->getConexao()->prepare($sql);
@@ -1647,58 +1652,52 @@ class Sistema {
         return $produtos;
     }
 
-    public static function encodeAll($obj,$pilha = array()){
-        
-        foreach($pilha as $key=>$value){
-            if($value===$obj){
+    public static function encodeAll($obj, $pilha = array()) {
+
+        foreach ($pilha as $key => $value) {
+            if ($value === $obj) {
                 return $obj;
             }
         }
-        
-        
-        if($obj === null){
-            
+
+
+        if ($obj === null) {
+
             return null;
-            
         }
-        
-        if(is_string($obj)){
+
+        if (is_string($obj)) {
             return utf8_encode($obj);
-        }else if(is_numeric($obj) || is_bool($obj)){
+        } else if (is_numeric($obj) || is_bool($obj)) {
             return $obj;
         }
-        
-        if(is_array($obj)){
-            
-            
-            foreach($obj as $key=>$value){
-                
-                $obj[$key] = Sistema::encodeAll($value,$pilha);
-                
+
+        if (is_array($obj)) {
+
+
+            foreach ($obj as $key => $value) {
+
+                $obj[$key] = Sistema::encodeAll($value, $pilha);
             }
-            
+
             return $obj;
-            
-        }else if(is_object($obj)){
-            
+        } else if (is_object($obj)) {
+
             $pilha[] = $obj;
-            foreach($obj as $key=>$value){
-                
-                $obj->$key = Sistema::encodeAll($value,$pilha);
-                
+            foreach ($obj as $key => $value) {
+
+                $obj->$key = Sistema::encodeAll($value, $pilha);
             }
-            unset($pilha[count($pilha)-1]);
+            unset($pilha[count($pilha) - 1]);
             return $obj;
-            
         }
-        
+
         return null;
-        
     }
-    
+
     public static function getHtml($nom, $p = null) {
 
-        
+
         global $obj;
         $obj = Sistema::encodeAll(Utilidades::copy($p));
 
@@ -2931,7 +2930,7 @@ class Sistema {
 
     public static function getIcmsEstado($estado) {
 
-        $doze = array("MG", "RS", "SC", "RJ","PR");
+        $doze = array("MG", "RS", "SC", "RJ", "PR");
 
         if (in_array($estado->sigla, $doze)) {
 
@@ -3180,7 +3179,8 @@ class Sistema {
                 Sistema::P_ORGANOGRAMA(),
                 Sistema::P_ORGANOGRAMA_TOTAL(),
                 Sistema::P_EXPEDIENTE(),
-                Sistema::P_TAREFAS()
+                Sistema::P_TAREFAS(),
+                Sistema::P_ACOMPANHA_TAREFAS()
                     )), new RTC(7, array(
                 Sistema::P_GERENCIADOR()
         )));

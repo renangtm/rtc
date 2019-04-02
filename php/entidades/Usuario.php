@@ -353,7 +353,7 @@ class Usuario {
         $ps->execute();
         $ps->bind_result($pontos_mes);
         if ($ps->fetch()) {
-            if($pontos_mes !== null){
+            if ($pontos_mes !== null) {
                 $auc->pontos_mes = $pontos_mes;
             }
         }
@@ -363,17 +363,109 @@ class Usuario {
 
         return $auc;
     }
-    
-    public function getCountTarefas($con,$filtro=""){
-        
-        
-        
-        
-    }
-    
-    public function getTarefasSolicitadas($con,$x1,$x2, $filtro = "", $ordem = "") {
 
-        $tipos_tarefa = array();
+    public function getTarefasSolicitadas($con) {
+
+        $cm = new CacheManager(3600000);
+        
+        $cache = $cm->getCache("tarefas_solicitadas_$this->id", false, true);
+
+        if ($cache === null) {
+            $cache = new stdClass();
+
+            $cache->usuarios = "($this->id";
+            $cache->arr_usuarios = array();
+            $filiais = $this->empresa->getFiliais($con);
+            foreach ($filiais as $key => $value) {
+                if ($value->id !== $this->empresa->id) {
+                    $u = $value->getUsuarios($con, 0, 1, "usuario.cpf='" . $this->cpf->valor . "'");
+                    if (count($u) === 1) {
+                        $org = new Organograma($value);
+                        $inf = $org->getInferiores($con, $u[0]);
+                        foreach ($inf as $key2 => $value2) {
+                            $cache->usuarios .= ",$value2->id_usuario";
+                            $cache->arr_usuarios[] = $value2->id_usuario;
+                        }
+                    }
+                }
+            }
+            $cache->usuarios .= ")";
+
+            $cache->arr_associados = array();
+            $cache->associados = "($this->id";
+            $cache->tipos_tarefa = array();
+
+            $ps = $con->getConexao()->prepare("SELECT empresa.id,usuario.id,empresa.tipo_empresa FROM tarefa "
+                    . "INNER JOIN usuario ON usuario.id=tarefa.id_usuario "
+                    . "INNER JOIN empresa ON empresa.id=usuario.id_empresa "
+                    . "WHERE tarefa.id_usuario IN $cache->usuarios OR tarefa.criada_por=$this->id");
+            $ps->execute();
+            $ps->bind_result($id_empresa, $id_usuario, $tipo_empresa);
+            while ($ps->fetch()) {
+                $cache->tipos_tarefa[$id_empresa] = $tipo_empresa;
+                $cache->associados .= ",$id_usuario";
+                $cache->arr_associados[] = $id_usuario;
+            }
+            $ps->close();
+            $cache->associados .= ")";
+
+            foreach ($cache->tipos_tarefa as $key => $value) {
+                $cache->tipos_tarefa[$key] = Sistema::getEmpresa($value);
+                $cache->tipos_tarefa[$key]->id = $key;
+                $cache->tipos_tarefa[$key] = $cache->tipos_tarefa[$key]->getTiposTarefa($con);
+            }
+
+            //--------------------------------------------------------------------
+
+
+
+            $cache->expedientes = array();
+            $cache->ausencias = array();
+
+            $ps = $con->getConexao()->prepare("SELECT id,UNIX_TIMESTAMP(inicio)*1000,UNIX_TIMESTAMP(fim)*1000,id_usuario FROM ausencia WHERE id_usuario IN $cache->associados AND fim>CURRENT_TIMESTAMP");
+            $ps->execute();
+            $ps->bind_result($id, $inicio, $fim, $id_usuario);
+            while ($ps->fetch()) {
+
+                $a = new Ausencia();
+                $a->id = $id;
+                $a->inicio = $inicio;
+                $a->fim = $fim;
+
+                if (!isset($cache->usencias[$id_usuario])) {
+                    $cache->ausencias[$id_usuario] = array();
+                }
+
+                $cache->ausencias[$id_usuario][] = $a;
+            }
+            $ps->close();
+
+
+            $ps = $con->getConexao()->prepare("SELECT id,inicio,fim,dia_semana,id_usuario FROM expediente WHERE id_usuario IN $cache->associados");
+            $ps->execute();
+            $ps->bind_result($id, $inicio, $fim, $dia_semana, $id_usuario);
+
+            while ($ps->fetch()) {
+                $e = new Expediente();
+                $e->id = $id;
+                $e->inicio = $inicio;
+                $e->fim = $fim;
+                $e->dia_semana = $dia_semana;
+
+                if (!isset($cache->expedientes[$id_usuario])) {
+                    $cache->expedientes[$id_usuario] = array();
+                }
+
+                $cache->expedientes[$id_usuario][] = $e;
+            }
+            $ps->close();
+            $cm->setCache("tarefas_solicitadas_$this->id", $cache, false, true);
+            
+        }
+        //---------------------------------------
+
+
+        $tarefas = array();
 
         $sql = "SELECT "
                 . "tarefa.id,"
@@ -390,40 +482,31 @@ class Usuario {
                 . "tarefa.prioridade,"
                 . "observacao.id,"
                 . "observacao.porcentagem,"
-                . "UNIX_TIMESTAMP(observacao.momento)*1000, "
+                . "UNIX_TIMESTAMP(observacao.momento), "
                 . "observacao.observacao,"
-                . "u.id,"
-                . "u.nome "
+                . "usuario.id,"
+                . "usuario.nome,"
+                . "empresa.id,"
+                . "empresa.nome,"
+                . "CASE WHEN u2.id IS NULL THEN 'CFG' ELSE CONCAT(u2.id,CONCAT('-',u2.nome)) END,"
+                . "tarefa.criada_por "
                 . "FROM tarefa "
                 . "LEFT JOIN (SELECT * FROM observacao WHERE observacao.excluida = false) observacao ON tarefa.id=observacao.id_tarefa "
-                . "INNER JOIN usuario u ON u.id=tarefa.id_usuario "
-                . "WHERE tarefa.excluida=false AND tarefa.criada_por=$this->id";
+                . "INNER JOIN usuario ON usuario.id=tarefa.id_usuario "
+                . "INNER JOIN empresa ON empresa.id=usuario.id_empresa "
+                . "LEFT JOIN usuario u2 ON tarefa.criada_por=u2.id "
+                . "WHERE tarefa.excluida=false AND (tarefa.id_usuario IN $cache->usuarios OR tarefa.criada_por=$this->id) AND tarefa.porcentagem_conclusao<100";
 
-        if ($filtro !== "") {
-
-            $sql .= " AND $filtro";
-        }
-
-        if ($ordem !== "") {
-
-            $sql .= " ORDER BY $ordem";
-        }
-        
-        $sql .= " LIMIT $x1, ".($x2-$x1);
-
-        
-        
-        $tarefas = array();
+        $tmp = array();
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $inicio_minimo, $ordem, $porcentagem_conclusao, $tipo_entidade_relacionada, $id_entidade_relacionada, $titulo, $descricao, $intervalos_execucao, $realocavel, $id_tipo_tarefa, $prioridade, $id_observacao, $porcentagem_observacao, $momento_observacao, $observacao,$id_usu,$nome_usu);
+        $ps->bind_result($id, $inicio_minimo, $ordem, $porcentagem_conclusao, $tipo_entidade_relacionada, $id_entidade_relacionada, $titulo, $descricao, $intervalos_execucao, $realocavel, $id_tipo_tarefa, $prioridade, $id_observacao, $porcentagem_observacao, $momento_observacao, $observacao, $id_usuario, $nome_usuario, $id_empresa, $nome_empresa, $criada_por, $id_criador);
         while ($ps->fetch()) {
 
-            if (!isset($tarefas[$id])) {
+            if (!isset($tmp[$id])) {
 
                 $t = new Tarefa();
                 $t->id = $id;
-                $t->assinatura_solicitante = $this->id."-".$this->nome;
                 $t->inicio_minimo = $inicio_minimo;
                 $t->ordem = $ordem;
                 $t->porcentagem_conclusao = $porcentagem_conclusao;
@@ -433,17 +516,20 @@ class Usuario {
                 $t->descricao = $descricao;
                 $t->intervalos_execucao = $intervalos_execucao;
                 $t->realocavel = $realocavel == 1;
-                $t->usuario = $id_usu."-".$nome_usu;
-                
-                foreach ($tipos_tarefa as $key => $tipo) {
+                $t->id_usuario = $id_usuario;
+                $t->nome_usuario = $nome_usuario;
+                $t->id_empresa = $id_empresa;
+                $t->nome_empresa = $nome_empresa;
+                $t->usuario = $id_usuario . "-" . $nome_usuario;
+                $t->empresa = $id_empresa . "-" . $nome_empresa;
+                $t->assinatura_solicitante = $criada_por;
+                $t->criada_por = $id_criador;
+
+                foreach ($cache->tipos_tarefa[$id_empresa] as $key => $tipo) {
                     if ($tipo->id === $id_tipo_tarefa) {
                         $t->tipo_tarefa = $tipo;
                         break;
                     }
-                }
-                
-                if($t->tipo_tarefa===null){
-                    continue;
                 }
 
                 $t->prioridade = $prioridade;
@@ -454,14 +540,20 @@ class Usuario {
                     if ($intervalo === "")
                         continue;
                     $k = explode('@', $intervalo);
-                    $intervalos[] = array($k[0] + 0, $k[1] + 0);
+                    $intervalos[] = array(doubleval($k[0]), doubleval($k[1]));
                 }
                 $t->intervalos_execucao = $intervalos;
-                
-                $tarefas[$id] = $t;
+
+                $tmp[$id] = $t;
+
+                if (!isset($tarefas[$id_usuario])) {
+                    $tarefas[$id_usuario] = array();
+                }
+
+                $tarefas[$id_usuario][] = $t;
             }
 
-            $t = $tarefas[$id];
+            $t = $tmp[$id];
 
             if ($id_observacao !== null) {
 
@@ -475,11 +567,46 @@ class Usuario {
             }
         }
 
+        $ps->close();
+
+        //--------------------------------------
+
+        foreach ($cache->arr_associados as $key => $usuario) {
+
+            $a = array();
+            $e = array();
+            $t = array();
+
+            if (isset($cache->ausencias[$usuario])) {
+                $a = $cache->ausencias[$usuario];
+            }
+
+            if (isset($cache->expedientes[$usuario])) {
+                $e = $cache->expedientes[$usuario];
+            }
+
+            if (isset($tarefas[$usuario])) {
+                $t = Utilidades::copy($tarefas[$usuario]);
+            }
+
+            $tarefas[$usuario] = IATarefas::aplicar($e, $a, $t);
+        }
+
         $retorno = array();
 
         foreach ($tarefas as $key => $value) {
-
-            $retorno[] = $value;
+            foreach ($value as $key2 => $tarefa) {
+                if ($tarefa->criada_por === $this->id) {
+                    $retorno[] = $tarefa;
+                } else {
+                    foreach ($cache->arr_usuarios as $key3 => $value2) {
+                        if ($value2 === $tarefa->id_usuario) {
+                            $retorno[] = new TarefaReduzida($tarefa);
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         return $retorno;
@@ -525,7 +652,7 @@ class Usuario {
         $tarefas = array();
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $inicio_minimo, $ordem, $porcentagem_conclusao, $tipo_entidade_relacionada, $id_entidade_relacionada, $titulo, $descricao, $intervalos_execucao, $realocavel, $id_tipo_tarefa, $prioridade, $id_observacao, $porcentagem_observacao, $momento_observacao, $observacao,$ass);
+        $ps->bind_result($id, $inicio_minimo, $ordem, $porcentagem_conclusao, $tipo_entidade_relacionada, $id_entidade_relacionada, $titulo, $descricao, $intervalos_execucao, $realocavel, $id_tipo_tarefa, $prioridade, $id_observacao, $porcentagem_observacao, $momento_observacao, $observacao, $ass);
         while ($ps->fetch()) {
 
             if (!isset($tarefas[$id])) {
@@ -549,8 +676,8 @@ class Usuario {
                         break;
                     }
                 }
-                
-                if($t->tipo_tarefa===null){
+
+                if ($t->tipo_tarefa === null) {
                     continue;
                 }
 
@@ -565,7 +692,7 @@ class Usuario {
                     $intervalos[] = array($k[0] + 0, $k[1] + 0);
                 }
                 $t->intervalos_execucao = $intervalos;
-                
+
                 $tarefas[$id] = $t;
             }
 
@@ -711,8 +838,8 @@ class Usuario {
             throw new Exception("Ja existe um usuario com os mesmos dados $id");
         }
         $ps->close();
-        
-        
+
+
 
         if ($this->id == 0) {
             $ps = $con->getConexao()->prepare("INSERT INTO usuario(login,senha,nome,cpf,excluido,id_empresa,rg) VALUES('" . addslashes($this->login) . "','" . addslashes($this->senha) . "','" . addslashes($this->nome) . "','" . $this->cpf->valor . "',false," . $this->empresa->id . ",'" . addslashes($this->rg->valor) . "')");
@@ -795,23 +922,22 @@ class Usuario {
             $ps->execute();
             $ps->close();
         }
-        
+
         $filiais = $this->empresa->getFiliais($con);
-        
-        foreach($filiais as $key=>$value){
-            
-            $q = $value->getCountUsuarios($con,"usuario.cpf='".$this->cpf->valor."'");
-            if($q === 0){
+
+        foreach ($filiais as $key => $value) {
+
+            $q = $value->getCountUsuarios($con, "usuario.cpf='" . $this->cpf->valor . "'");
+            if ($q === 0) {
                 $c = Utilidades::copyId0($this);
                 $c->endereco = Utilidades::copyId0($this->endereco);
                 $c->email = Utilidades::copyId0($c->email);
                 $c->telefones = Utilidades::copyId0($c->telefones);
-                $c->empresa=$value;
+                $c->empresa = $value;
                 $c->cargo = Empresa::CF_SEM_CARGO($c->empresa);
                 $c->merge($con);
             }
         }
-        
     }
 
     public function temPermissao($p) {

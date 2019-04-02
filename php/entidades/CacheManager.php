@@ -26,7 +26,7 @@ class CacheManager {
         }
     }
 
-    public function getCache($nome, $json = true) {
+    public function getCache($nome, $json = true, $serial = false) {
 
         $agora = round(microtime(true) * 1000);
 
@@ -63,18 +63,22 @@ class CacheManager {
 
         if ($json) {
             $obj = Utilidades::fromJson($conteudo);
+        } else if ($serial) {
+            $obj = unserialize(Utilidades::base64decode($conteudo));
         } else {
             $obj = $conteudo;
         }
         return $obj;
     }
 
-    public function setCache($nome, $valor, $json = true) {
+    public function setCache($nome, $valor, $json = true, $serial = false) {
 
         $str = $valor;
 
         if ($json) {
             $str = Utilidades::toJson($valor);
+        } else if ($serial) {
+            $str = Utilidades::base64encode(serialize($valor));
         }
 
         $agora = round(microtime(true) * 1000);

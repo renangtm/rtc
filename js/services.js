@@ -520,7 +520,13 @@ rtc.service('usuarioService', function ($http, $q) {
             falha: fn
         });
     }
-
+    this.getTarefasSolicitadas = function (fn) {
+        baseService($http, $q, {
+            query: "$r->tarefas=$usuario->getTarefasSolicitadas($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getUsuario = function (fn) {
         baseService($http, $q, {
             query: "$r->usuario=new Usuario();$r->usuario->empresa=$empresa",
