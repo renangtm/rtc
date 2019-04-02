@@ -312,6 +312,11 @@ $possiveis[0] = $rtc;
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         <?php echo $empresa->nome; ?>
                     </li>
+                    <?php if ($usuario->temPermissao(Sistema::P_ACOMPANHA_TAREFAS()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="acompanhar_atividades.php" ><button class="btn btn-warning" onmousedown="tutorial('Acompanhar atividades', 'Aqui voce consegue acompanhar as atividades de seus subordinados')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-check"></i>Acompanhar atividades</a>
+                        </li>
+                    <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_BANNERS()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="banners.php" ><button class="btn btn-warning" onmousedown="tutorial('Banners', 'Aqui voc� consegue confeccionar banners din�micos para entrar no RTC da sua empresa e serem enviados por email, esses banners tem que estar em formato HTML, e talvez precise de um profissional de marketing para criar esse HTML para voc�, mas depois que � criado o pr�prio sistema faz adapta��es nele para servir para qualquer situa��o')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-image"></i>Banners</a>

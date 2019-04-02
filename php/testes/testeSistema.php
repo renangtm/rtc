@@ -93,10 +93,14 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         //echo Utilidades::toJson($produtos);
         
         $empresa = new Empresa(1733);
-        $banco = $empresa->getBancos($con, 0, 1,"banco.id=26");
-        $banco = $banco[0];
+        $usuario = $empresa->getUsuarios($con, 0, 1,'usuario.id=4042');
+        $usuario = $usuario[0];
         
-        echo $banco->getRelatorioMovimentosFechamento($con);
+        $tarefas = $usuario->getTarefasSolicitadas($con);
+        
+        $k = Utilidades::toJson($tarefas);
+        
+        echo strlen($k);
         
     }
 

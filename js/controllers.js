@@ -1,3 +1,42 @@
+rtc.controller("crtAcompanharAtividades", function ($scope, usuarioService) {
+
+    $scope.tarefas = [];
+    $scope.carregando = true;
+    
+    usuarioService.getTarefasSolicitadas(function(tt){
+     
+        var usuarios = [];
+        var grupos = [];
+        
+        lbl:
+        for(var i=0;i<tt.tarefas.length;i++){
+            var t = tt.tarefas[i];
+            for(var j=0;j<usuarios.length;j++){
+                if(usuarios[j] === t.id_usuario){
+                    grupos[j][grupos[j].length] = t;
+                    continue lbl;
+                }
+            }
+            usuarios[usuarios.length] = t.id_usuario;
+            grupos[grupos.length] = [t];
+        }
+        for(var i=0;i<grupos.length;i++){
+            grupos[i] = {
+                id_usuario:grupos[i][0].id_usuario,
+                nome_usuario:grupos[i][0].nome_usuario,
+                id_empresa:grupos[i][0].id_empresa,
+                nome_empresa:grupos[i][0].nome_empresa,
+                lista:createList(grupos[i], 1, 7, "titulo")
+            };
+        }
+        
+        $scope.tarefas = createList(grupos, 1, 7, "nome_usuario");
+        $scope.carregando = false;
+       
+        
+    })
+
+})
 rtc.controller("crtFechamentoCaixa", function ($scope,movimentoService,notaService, baseService, fechamentoCaixaService, bancoService, movimentosFechamentoService) {
 
     $scope.fechamentos = createAssinc(fechamentoCaixaService, 1, 5, 10);
@@ -2954,13 +2993,13 @@ rtc.controller("crtNotas", function ($scope, notaService, empresaService, baseSe
         $scope.empresa = emp;
 
         $scope.nota_novo.empresa = emp;
-        notaService.empresa = emp;
+        //notaService.empresa = emp;
         $scope.notas.attList();
 
-        produtoService.empresa = emp;
-        transportadoraService.empresa = emp;
-        clienteService.empresa = emp;
-        fornecedorService.empresa = emp;
+        //produtoService.empresa = emp;
+        //transportadoraService.empresa = emp;
+        //clienteService.empresa = emp;
+        //fornecedorService.empresa = emp;
 
     }
 
