@@ -503,7 +503,7 @@ class Pedido {
         
     }
     
-    public function merge($con) {
+    public function merge($con,$recursao=false) {
 
         $prods = $this->getProdutos($con);
                
@@ -526,6 +526,22 @@ class Pedido {
                 }
             }
         }
+        
+        
+        $status_anterior = $this->status;
+        
+        $ps = $con->getConexao()->prepare("SELECT id_status FROM pedido WHERE id=$this->id");
+        $ps->execute();
+        $ps->bind_result($id_status);
+        if($ps->fetch()){
+            $status = Sistema::getStatusPedidoSaida();
+            foreach($status as $key=>$value){
+                if($value->id === $id_status){
+                    $status_anterior = $value;
+                }
+            }
+        }
+        $ps->close();
         
         $inicial = $this->id === 0;
         
@@ -577,7 +593,7 @@ class Pedido {
                 $value2->merge($con);
                 $np[] = $value2;
             } catch (Exception $ex) {
-                $value2->delete($con);
+                $this->status = $status_anterior;
                 $erro = $ex->getMessage() . ", produto cod: " . $value2->produto->id . ", estoque: " . $value2->produto->estoque . ", disponivel: " . $value2->produto->disponivel . ", quantidade: " . $value2->quantidade;
             }
         }
@@ -615,7 +631,9 @@ class Pedido {
         }
 
         if ($erro !== null) {
-
+            if(!$recursao){
+                $this->merge($con,true);
+            }
             throw new Exception($erro);
         }
     }
