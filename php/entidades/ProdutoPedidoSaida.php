@@ -295,8 +295,8 @@ class ProdutoPedidoSaida {
     }
 
     public function atualizarCustos() {
-      
-       if ($id === 0) {
+       
+       if ($this->id === 0) {
            
             $campanha = null;
             $valor_oferta = 0;
@@ -312,7 +312,7 @@ class ProdutoPedidoSaida {
                     break;
                 }
             }
-
+           
             if ($campanha !== null) {
                 if ($campanha->parcelas > 0 && $campanha->prazo >= 0) {
                     if ($this->pedido->prazo > $campanha->prazo) {

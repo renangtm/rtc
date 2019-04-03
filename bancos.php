@@ -84,6 +84,12 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="table-responsive">
+                                            <?php if ($empresa->tipo_empresa === 5) { ?>
+                                                <select style="width:200px" class="form-control" ng-model="empresa_atual" ng-change="trocaEmpresa()">
+                                                    <option ng-repeat="e in empresas_clientes" ng-value="e">{{e.nome}}</option>
+                                                </select>
+                                                <hr>
+                                            <?php } ?>
                                             <div class="product-btn m-b-20">
                                                 <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ng-click="novoBanco()"><i class="fas fa-plus-circle m-r-10"></i>Adicionar Banco</a>
                                             </div>
@@ -190,7 +196,7 @@
                             <div class="modal-body">
                                 <form id="add-form" ng-submit="mergeBanco()" parsley-validate>
                                     <div class="form-group row">
-                                        
+
                                         <div class="col-9 col-lg-10">
                                             <input type="checkbox" ng-model="banco.fechamento" id="fechamento">
                                             <label for="fechamento" class="col-3 col-lg-2 col-form-label text-left">Tem fechamento</label>

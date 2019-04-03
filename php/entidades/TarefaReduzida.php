@@ -37,12 +37,15 @@ class TarefaReduzida {
 
     public function __construct($tarefa) {
 
+
         $this->id = $tarefa->id;
         $this->inicio_minimo = $tarefa->inicio_minimo;
         $this->porcentagem_conclusao = $tarefa->porcentagem_conclusao;
         $this->titulo = $tarefa->titulo . "...";
 
         $this->descricao_resumida = substr($tarefa->descricao, 0, 50) . "...";
+
+
         $this->descricao = $tarefa->descricao;
 
         $this->intervalos_execucao = $tarefa->intervalos_execucao;

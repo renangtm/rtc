@@ -1341,6 +1341,15 @@ class Sistema {
 
             foreach ($value as $key2 => $produto) {
 
+                $unidade = $produto->quantidade_unidade;
+                if($unidade===0){
+                    $unidade = 1;
+                }
+                $k = $unidade-($produto->quantidade_comprada%$unidade);
+                if($k < $unidade){
+                    $produto->quantidade_comprada = min($produto->disponivel,$produto->quantidade_comprada+$k);
+                }
+                
                 if (!$produto->sistema_lotes) {
 
                     $p = new ProdutoPedidoSaida();
