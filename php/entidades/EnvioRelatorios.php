@@ -58,6 +58,7 @@ class EnvioRelatorios {
 
             foreach ($usuarios as $key2 => $usuario) {
 
+                
                 $tarefas = $usuario->getTarefas($con, '(tarefa.porcentagem_conclusao < 100 OR (DATE(observacao.momento)=DATE('.$data.') AND MONTH(observacao.momento)=MONTH('.$data.') AND YEAR(observacao.momento)=YEAR('.$data.')))', '');
 
                 if (count($tarefas) === 0) {

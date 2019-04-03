@@ -549,20 +549,19 @@ class Usuario {
                 if (!isset($tarefas[$id_usuario])) {
                     $tarefas[$id_usuario] = array();
                 }
-
                 $tarefas[$id_usuario][] = $t;
             }
 
             $t = $tmp[$id];
 
             if ($id_observacao !== null) {
-
+                
                 $obs = new ObservacaoTarefa();
                 $obs->id = $id_observacao;
                 $obs->momento = $momento_observacao;
                 $obs->porcentagem = $porcentagem_observacao;
                 $obs->observacao = $observacao;
-
+                
                 $t->observacoes[] = $obs;
             }
         }

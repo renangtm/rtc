@@ -51,31 +51,42 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
         foreach ($pedido->produtos as $key => $value) {
             $valor += $value->quantidade * ($value->valor_base + $value->ipi + $value->frete + $value->juros + $value->icms);
         }
-        $agora = round(microtime(true) * 1000);
-        $momento = $agora + ($pedido->prazo + 1) * 24 * 60 * 60 * 1000;
 
-        if ($bairro === "") {
-            $bairro = "sem bairro";
+        $ret = "";
+        $valor = round($valor / max(1, $pedido->parcelas), 2);
+
+
+        for ($i = 0; $i < max(1, $pedido->parcelas); $i++) {
+
+            $fat = $pedido->prazo / max(1, $pedido->parcelas);
+
+            $agora = round(microtime(true) * 1000);
+            $momento = $agora + ($fat * ($i+1) + 1) * 24 * 60 * 60 * 1000;
+
+            if ($bairro === "") {
+                $bairro = "sem bairro";
+            }
+
+            if ($nome === "") {
+                $nome = "sem nome";
+            }
+
+            if ($logadouro === "") {
+                $logadouro = "sem rua";
+            }
+
+
+            $in = "itau;tipo:em;bairro:$bairro;cep:$cep;cidade:$cidade;estado:$estado;inscricao:$inscricao;logadouro:$logadouro;nome:$nome;documento:$documento;valor:$valor;vencimento:$momento";
+
+            $out = Sistema::getMicroServicoJava('ServidorBoletosRTC', $in);
+
+            $objeto = json_decode($out);
+
+            $lk = $objeto->link;
+
+            $ret .= "<br><a target='_blank' style='margin-left:10px' href='$lk'><i class='fas fa-download'></i>&nbsp Abrir boleto $i</a>";
         }
-
-        if ($nome === "") {
-            $nome = "sem nome";
-        }
-
-        if ($logadouro === "") {
-            $logadouro = "sem rua";
-        }
-
-
-        $in = "itau;tipo:em;bairro:$bairro;cep:$cep;cidade:$cidade;estado:$estado;inscricao:$inscricao;logadouro:$logadouro;nome:$nome;documento:$documento;valor:$valor;vencimento:$momento";
-
-        $out = Sistema::getMicroServicoJava('ServidorBoletosRTC', $in);
-
-        $objeto = json_decode($out);
-
-        $lk = $objeto->link;
-
-        return "<a target='_blank' style='margin-left:10px' href='$lk'><i class='fas fa-download'></i>&nbsp Abrir boleto</a>";
+        return $ret;
     }
 
     public function habilitada($pedido) {

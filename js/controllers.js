@@ -1502,7 +1502,12 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
         {id: 0, prazo: 0, parcelas: 1, nome: "Antecipado"},
         {id: 1, prazo: 30, parcelas: 1, nome: null},
         {id: 2, prazo: 60, parcelas: 1, nome: null},
-        {id: 3, prazo: 90, parcelas: 1, nome: null}
+        {id: 3, prazo: 90, parcelas: 1, nome: null},
+        {id: 4, prazo: 30, parcelas: 2, nome: null},
+        {id: 5, prazo: 60, parcelas: 2, nome: null},
+        {id: 6, prazo: 90, parcelas: 2, nome: null},
+        {id: 7, prazo: 60, parcelas: 3, nome: null},
+        {id: 8, prazo: 90, parcelas: 3, nome: null},
     ];
 
     carrinhoService.getCarrinho(function (c) {

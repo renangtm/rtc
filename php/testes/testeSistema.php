@@ -92,15 +92,8 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         //echo Utilidades::toJson($produtos);
         
-        $empresa = new Empresa(1733);
-        $usuario = $empresa->getUsuarios($con, 0, 1,'usuario.id=4042');
-        $usuario = $usuario[0];
-        
-        $tarefas = $usuario->getTarefasSolicitadas($con);
-        
-        $k = Utilidades::toJson($tarefas);
-        
-        echo strlen($k);
+        $r = new EnvioRelatorios();
+        $r->executar($con);
         
     }
 
