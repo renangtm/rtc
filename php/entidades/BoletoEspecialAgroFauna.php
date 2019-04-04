@@ -86,6 +86,9 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
 
             $ret .= "<br><a target='_blank' style='margin-left:10px' href='$lk'><i class='fas fa-download'></i>&nbsp Abrir boleto $i</a>";
         }
+        
+        $ret.="<hr><img src=''></img>";
+        
         return $ret;
     }
 

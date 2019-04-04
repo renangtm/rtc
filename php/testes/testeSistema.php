@@ -18,6 +18,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
     public function testSimple() {
 
         $con = new ConnectionFactory();
+        
         /*
           $estados = Sistema::getEstados($con);
 
@@ -92,8 +93,117 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         //echo Utilidades::toJson($produtos);
         
-        $r = new EnvioRelatorios();
-        $r->executar($con);
+        
+        $vencimentos = array();
+
+        $ps = $con->getConexao()->prepare("SELECT vencimento.id,nota.id,vencimento.valor FROM vencimento INNER JOIN nota ON nota.id=vencimento.id_nota WHERE nota.excluida=false");
+        $ps->execute();
+        $ps->bind_result($id, $ficha,$valor);
+        while ($ps->fetch()) {
+
+            if (!isset($vencimentos[$ficha])) {
+                $vencimentos[$ficha] = array();
+            }
+
+            $vencimentos[$ficha][$id] = $valor;
+        }
+        
+        $sqls = array();
+        
+        $ps = $con->getConexao()->prepare("SELECT movimento.id,movimento.valor,vencimento.id_nota,movimento.id_vencimento "
+                . "FROM movimento INNER JOIN vencimento ON vencimento.id=movimento.id_vencimento INNER JOIN nota ON nota.id=vencimento.id_nota "
+                . "WHERE nota.excluida=false AND nota.cancelada=false");
+        $ps->execute();
+        $ps->bind_result($id,$valor,$nota,$vencimento);
+        while($ps->fetch()){
+            
+            if(isset($vencimentos[$nota])){
+                
+                $vs = array();
+                $i = 0;
+                
+                $n = $vencimentos[$nota];
+                foreach($n as $idv=>$value){
+                    if($idv===$vencimento){
+                        $vs[] = $idv;
+                    }else if(count($vs)>0){
+                        $vs[] = $idv;
+                    }
+                }
+               
+                
+                while($valor>0 && $i<count($vs)){
+                    $n[$vs[$i]] -= $valor;
+                    if($n[$vs[$i]]<0){
+                        $valor = $n[$vs[$i]]*-1;
+                        $n[$vs[$i]] = 0;
+                    }else{
+                        $valor = 0;
+                    }
+                    $i++;
+                }
+                $i--;
+                
+                if($valor>0){
+                    $sqls[] = "DELETE movimento WHERE id=$id";
+                }else if($i>0){
+                    $sqls[] = "UPDATE movimento SET data=data,id_vencimento=".$vs[$i]." WHERE id=$id";
+                    $sqls[] = "UPDATE vencimento SET data=data,id_movimento=$id WHERE id=".$vs[$i];
+                }
+                
+            }
+            
+        }
+        $ps->close();
+        
+        echo Utilidades::toJson($sqls);
+        
+        return;
+        
+        $empresa = Sistema::getEmpresa(0);
+        $empresa->id = 1733;
+        $filiais = $empresa->getFiliais($con);
+        $filiais[] = $empresa;
+        $permissoes = array();
+        $qtd = array();
+        
+        foreach($filiais as $key=>$value){
+            $u = $value->getUsuarios($con,0,1000);
+            foreach($u as $k2=>$usuario){
+              $q = 0;  
+              foreach($usuario->permissoes as $key3=>$p){
+                  if($p->in)$q++;
+                  if($p->del)$q++;
+                  if($p->alt)$q++;
+                  if($p->cons)$q++;
+              }
+              $c = $usuario->cargo->nome;
+              if(!isset($permissoes[$c])){
+                  $permissoes[$c] = $usuario;
+                  $qtd[$c] = $q;
+              }else{
+              if($qtd[$c]<$q){
+                      $permissoes[$c] = $usuario;
+                      $qtd[$c] = $q;
+                  }
+              }
+            }
+        }
+        
+        foreach($filiais as $key=>$value){
+            $u = $value->getUsuarios($con,0,1000);
+            foreach($u as $k2=>$usuario){
+                if(!isset($permissoes[$usuario->cargo->nome])){
+                    echo "opa:".$usuario->cargo->nome."|";
+                    continue;
+                }
+                $base = $permissoes[$usuario->cargo->nome];
+                if($base->id===$usuario->id)continue;
+                $usuario->permissoes = $base->permissoes;
+                echo $usuario->id."--".$usuario->nome."|||";
+                $usuario->merge($con);
+            }
+        }
         
     }
 

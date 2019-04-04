@@ -3616,10 +3616,11 @@ class Sistema {
                 . "INNER JOIN empresa ON usuario.id_empresa=empresa.id "
                 . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
                 . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
-                . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
+                . "LEFT JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
                 . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
                 . "INNER JOIN estado ON cidade.id_estado = estado.id "
                 . "WHERE " . $filtro;
+        
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();

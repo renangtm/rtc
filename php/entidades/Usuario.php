@@ -921,22 +921,6 @@ class Usuario {
             $ps->execute();
             $ps->close();
         }
-
-        $filiais = $this->empresa->getFiliais($con);
-
-        foreach ($filiais as $key => $value) {
-
-            $q = $value->getCountUsuarios($con, "usuario.cpf='" . $this->cpf->valor . "'");
-            if ($q === 0) {
-                $c = Utilidades::copyId0($this);
-                $c->endereco = Utilidades::copyId0($this->endereco);
-                $c->email = Utilidades::copyId0($c->email);
-                $c->telefones = Utilidades::copyId0($c->telefones);
-                $c->empresa = $value;
-                $c->cargo = Empresa::CF_SEM_CARGO($c->empresa);
-                $c->merge($con);
-            }
-        }
     }
 
     public function temPermissao($p) {
