@@ -1346,7 +1346,7 @@ class Sistema {
                     $unidade = 1;
                 }
                 $k = $unidade-($produto->quantidade_comprada%$unidade);
-                if($k < $unidade){
+                if($k >0){
                     $produto->quantidade_comprada = min($produto->disponivel,$produto->quantidade_comprada+$k);
                 }
                 
