@@ -63,29 +63,29 @@ class TTProspeccaoDeCliente extends TipoTarefa {
         $ps->bind_result($codigo,$nome,$pessoa_fisica,$cnpj,$cpf,$sigla_estado,$nome_cidade,$rua,$bairro,$cep,$numero,$numtel,$endem);
         while($ps->fetch()){
             
-            $this->observacao_padrao = "@CONFERENCIA_CADASTRO_CLIENTE<br>";
-            $this->observacao_padrao .= "@Codigo: $codigo<br>";
-            $this->observacao_padrao .= "@Nome: $nome<br>";
+            $this->observacao_padrao = "#CONFERENCIA_CADASTRO_CLIENTE<br>";
+            $this->observacao_padrao .= "#Codigo: $codigo<br>";
+            $this->observacao_padrao .= "#Nome: $nome<br>";
             if($pessoa_fisica){
                 $cpf = new CPF($cpf);
-                $this->observacao_padrao .= "@CPF: ".$cpf->valor."<br>";
+                $this->observacao_padrao .= "#CPF: ".$cpf->valor."<br>";
             }else{
                 $cnpj = new CNPJ($cnpj);
-                $this->observacao_padrao .= "@CNPJ: ".$cnpj->valor."<br>";
+                $this->observacao_padrao .= "#CNPJ: ".$cnpj->valor."<br>";
             }
-            $this->observacao_padrao .= "@Estado: ".$sigla_estado."<br>";
-            $this->observacao_padrao .= "@Cidade: ".$nome_cidade."<br>";
-            $this->observacao_padrao .= "@Rua: ".$rua."<br>";
-            $this->observacao_padrao .= "@Bairro: ".$bairro."<br>";
+            $this->observacao_padrao .= "#Estado: ".$sigla_estado."<br>";
+            $this->observacao_padrao .= "#Cidade: ".$nome_cidade."<br>";
+            $this->observacao_padrao .= "#Rua: ".$rua."<br>";
+            $this->observacao_padrao .= "#Bairro: ".$bairro."<br>";
             $cep = new CEP($cep);
-            $this->observacao_padrao .= "@Cep: ".$cep->valor."<br>";
-            $this->observacao_padrao .= "@Numero: ".$numero."<br>";
-            $this->observacao_padrao .= "@Email: ".$endem."<br>";
+            $this->observacao_padrao .= "#Cep: ".$cep->valor."<br>";
+            $this->observacao_padrao .= "#Numero: ".$numero."<br>";
+            $this->observacao_padrao .= "#Email: ".$endem."<br>";
             
             $telefones .= "$numtel;";
         }
-        $this->observacao_padrao .= "@Telefones: $telefones <br>";
-        $this->observacao_padrao .= "@Observacao: --------";
+        $this->observacao_padrao .= "#Telefones: $telefones <br>";
+        $this->observacao_padrao .= "#Observacao: --------";
         
         return $this->observacao_padrao;
         
@@ -112,7 +112,7 @@ class TTProspeccaoDeCliente extends TipoTarefa {
         
         foreach($tarefa->observacoes as $key=>$value){
             $o = str_replace(array("<br>"), array(""), $value->observacao);
-            $o = explode("@", $o);
+            $o = explode("#", $o);
             foreach($o as $k=>$d){
                 $val = explode(":", $d,2);
                 if(count($val)<2){

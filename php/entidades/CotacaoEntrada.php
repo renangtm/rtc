@@ -360,6 +360,14 @@ class CotacaoEntrada {
         $ped = new PedidoEntrada();
         $ped->fornecedor = $this->fornecedor;
         $ped->usuario = $this->usuario;
+        
+        if($transportadora === null){
+            
+            $t = $this->empresa->getTransportadoras($con,0,1);
+            $transportadora = $t[0];
+            
+        }
+        
         $ped->transportadora = $transportadora;
         $ped->frete = $frete;
         $ped->empresa = $this->empresa;
@@ -367,6 +375,12 @@ class CotacaoEntrada {
         $p = array();
         
         foreach($this->produtos as $key=>$value){
+            
+            if(isset($value->passar_pedido)){
+                if(!$value->passar_pedido){
+                    continue;
+                }
+            }
             
             $prod = new ProdutoPedidoEntrada();
             $prod->quantidade = $value->quantidade;

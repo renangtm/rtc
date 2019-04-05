@@ -3325,10 +3325,10 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tr
 
     }
 
-
+    $scope.transp = null;
 
     $scope.formarPedido = function (transportadora) {
-
+        
         cotacaoEntradaService.formarPedido($scope.cotacao, transportadora, $scope.frete, function (f) {
 
             if (f.sucesso) {
@@ -3475,11 +3475,9 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tr
             valorTotal += (p.valor_base) * p.quantidade;
             pesoTotal += p.produto.peso_bruto * p.quantidade;
         }
-
         tabelaService.getFretes(null, {cidade: $scope.cotacao.fornecedor.endereco.cidade, valor: valorTotal, peso: pesoTotal}, function (f) {
 
             $scope.fretes = f.fretes;
-
         })
 
     }

@@ -116,6 +116,30 @@ class RoboVirtual {
 
                     Sistema::novaTarefaEmpresa($con, $tarefa, $virtual);
                 }
+                
+                $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_SUPORTE($virtual)->id) * 5, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL) AND cliente.suporte_imediato=true");
+
+                foreach ($clientes as $key3 => $cliente) {
+
+                    $tarefa = new Tarefa();
+                    $tarefa->tipo_tarefa = Sistema::TT_SUPORTE_CLIENTE($virtual->id);
+                    $tarefa->prioridade = $tarefa->tipo_tarefa->prioridade;
+                    $tarefa->descricao = "Cliente: $cliente->razao_social, Codigo: $cliente->codigo,"
+                            . " Rua: " . $cliente->endereco->rua . ", Bairro: " . $cliente->endereco->bairro . ","
+                            . " Estado: " . $cliente->endereco->cidade->estado->sigla . ","
+                            . " Cidade: " . $cliente->endereco->cidade->nome . ","
+                            . " Numero: " . $cliente->endereco->numero . ", Telefone(s): ";
+                    $tarefa->titulo = "Suporte de Cliente $cliente->razao_social";
+                    $tarefa->tipo_entidade_relacionada = "CLI";
+                    $tarefa->id_entidade_relacionada = $cliente->id;
+
+                    Sistema::novaTarefaEmpresa($con, $tarefa, $virtual);
+                    
+                    $ps = $con->getConexao()->prepare("UPDATE cliente SET suporte_imediato=false WHERE id=$cliente->id");
+                    $ps->execute();
+                    $ps->close();
+                    
+                }
 
                 for ($i = 0; $i < self::$NUMERO_PROSPECCOES_EXTERNAS; $i++) {
 

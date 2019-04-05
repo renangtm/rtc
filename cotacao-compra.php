@@ -227,7 +227,8 @@
                                                 <th>Valor</th>
                                                 <th>Qtd Un.</th>
                                                 <th>Valor da unidade</th>
-                                                <th>Ação</th>
+                                                <th>Acao</th>
+                                                <th>VP</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -244,7 +245,9 @@
                                                         <a href="#" class="btn btn-outline-light btndel" ng-click="removerProduto(prod)"><i class="fas fa-trash-alt"></i></a>
                                                     </div>
                                                 </td>
-
+                                                <td>
+                                                    <input type="checkbox" ng-model="prod.passar_pedido"></input>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td></td>
@@ -259,7 +262,7 @@
                                                         <a href="#" class="btn btn-outline-light btnaddprod" ng-click="produtos.attList()" data-title="addproduto" data-toggle="modal" data-target="#produtos"><i class="fas fa-plus-circle"></i></a>
                                                     </div>
                                                 </td>
-
+                                                <td></td>
                                             </tr>
 
                                         </tbody>
@@ -277,7 +280,7 @@
                                                 <a href="#" class="btn btn-primary" data-title="calcFrete" data-toggle="modal" ng-click="getFretes()" data-target="#calcFrete" ng-if="calculoPronto()">Simular Frete</a>
                                             </div>
                                             <div class="form-inline col-3" style="margin-left: 40px;">
-                                                <a href="#" class="btn btn-primary" data-title="calcFrete" ng-if="podeFormarPedido()">Formar Pedido</a>
+                                                <a href="#" class="btn btn-primary" data-title="calcFrete" ng-click="formarPedido(transp)" ng-if="podeFormarPedido()">Formar Pedido</a>
                                             </div>
                                         </div>
                                     </div>
