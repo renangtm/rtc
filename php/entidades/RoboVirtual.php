@@ -13,7 +13,7 @@
  */
 class RoboVirtual {
 
-    private static $NUMERO_PROSPECCOES_EXTERNAS = 3;
+    private static $NUMERO_PROSPECCOES_EXTERNAS = 0;
     public $dia;
     public $mes;
     public $ano;
@@ -70,7 +70,7 @@ class RoboVirtual {
 
                 $empresa = new Empresa($empresa, $con);
 
-                $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO($virtual)->id) * 10, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL) AND cliente.prospectar_ignorar_pular=0 AND cliente.pessoa_fisica=false AND cliente.cnpj <> '00.000.000/0000-00'");
+                $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO($virtual)->id) * 50, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL) AND cliente.prospectar_ignorar_pular=0 AND cliente.pessoa_fisica=false AND cliente.cnpj <> '00.000.000/0000-00'");
 
                 foreach ($clientes as $key3 => $cliente) {
 
@@ -79,6 +79,10 @@ class RoboVirtual {
                     }
 
                     if ($cliente->telefones[0]->numero === "0000-0000") {
+                        continue;
+                    }
+                    
+                    if($cliente->cnpj->valor==='00.000.000/0000-00'){
                         continue;
                     }
 
@@ -102,7 +106,7 @@ class RoboVirtual {
                     Sistema::novaTarefaEmpresa($con, $tarefa, $virtual);
                 }
 
-                $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_RECEPCAO($virtual)->id) * 5, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL) AND cliente.prospectar_ignorar_pular=2");
+                $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_RECEPCAO($virtual)->id) * 50, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL) AND cliente.prospectar_ignorar_pular=2");
 
                 foreach ($clientes as $key3 => $cliente) {
 

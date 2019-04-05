@@ -12,6 +12,19 @@
  * @author Renan
  */
 class Utilidades {
+    
+    public static function normalizarDia($ms) {
+
+        $d = explode(':', date('H:i:s', $ms / 1000));
+
+        $nm = $ms;
+
+        $nm -= intval($d[0]) * 60 * 60 * 1000;
+        $nm -= intval($d[1]) * 60 * 1000;
+        $nm -= intval($d[2]) * 1000;
+
+        return $nm;
+    }
 
     public static function getAttr($obj, $atributo) {
 
@@ -1726,6 +1739,7 @@ class Utilidades {
 
         return $res;
     }
+    
 
     public static function base64decodeSPEC($val) {
 

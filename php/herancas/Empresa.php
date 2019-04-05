@@ -2084,7 +2084,7 @@ class Empresa {
         $sql = "SELECT "
                 . "movimento.id,"
                 . "UNIX_TIMESTAMP(movimento.data)*1000,"
-                . "movimento.saldo_anterior,"
+                . "ROUND(movimento.saldo_anterior,2),"
                 . "movimento.valor,"
                 . "movimento.juros,"
                 . "movimento.descontos,"

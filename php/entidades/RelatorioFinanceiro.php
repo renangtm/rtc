@@ -14,10 +14,47 @@
 class RelatorioFinanceiro extends Relatorio {
 
     public function getObservacoes($empresa) {
-
+        
+        $con = new ConnectionFactory();
+        
+        $cnpjs = array($empresa->cnpj->valor);
+        
+        $f = $empresa->getFiliais($con);
+        
+        foreach($f as $key=>$value){
+            $cnpjs[] = $value->cnpj->valor;
+        }
+        
+        $f = "('000'";
+        
+        foreach($cnpjs as $key=>$value){
+            $f .= ",'".$value."'";
+        }
+        
+        $f .= ")";
+        
+        
+        $con = new ConnectionFactory();
+        
+        $valor = 0;
+        
+        $sql = "SELECT SUM(k.valor) FROM (SELECT ((CASE WHEN nota.saida THEN 1 ELSE -1 END)*GREATEST(ROUND((vencimento.valor-(SUM(IFNULL(movimento.valor,0)))),2),0)) as 'valor' FROM nota INNER JOIN vencimento ON vencimento.id_nota = nota.id LEFT JOIN cliente ON cliente.id=nota.id_cliente LEFT JOIN fornecedor ON fornecedor.id=nota.id_fornecedor LEFT JOIN movimento ON movimento.id_vencimento=vencimento.id WHERE nota.id_empresa=$empresa->id AND nota.cancelada=false AND nota.saida=false AND nota.excluida=false ";
+        
+        $sql .= "AND vencimento.data>=FROM_UNIXTIME(".$this->campos[1]->inicio."/1000) AND vencimento.data<=FROM_UNIXTIME(".$this->campos[1]->fim."/1000) AND (CASE WHEN nota.saida THEN cliente.cnpj NOT IN $f ELSE fornecedor.cnpj NOT IN $f END) ";
+        
+        $sql .= " GROUP BY vencimento.id) k";
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($val);
+        if($ps->fetch()){
+            $valor = $val;
+        }        
+        $ps->close();
+        
         return "Relatorio de contas a pagar e receber da empresa '$empresa->nome' de " .
                 date("d/m/Y", doubleval($this->campos[1]->inicio . "") / 1000) .
-                " ate " . date("d/m/Y", doubleval($this->campos[1]->fim . "") / 1000);
+                " ate " . date("d/m/Y", doubleval($this->campos[1]->fim . "") / 1000).
+                ",Pagar: R$ $valor";
         
     }
 
@@ -27,21 +64,34 @@ class RelatorioFinanceiro extends Relatorio {
 
             return;
         }
+        
+        $con = new ConnectionFactory();
+        
+        $cnpjs = array($empresa->cnpj->valor);
+        
+        $f = $empresa->getFiliais($con);
+        
+        foreach($f as $key=>$value){
+            $cnpjs[] = $value->cnpj->valor;
+        }
+        
+        $f = "('000'";
+        
+        foreach($cnpjs as $key=>$value){
+            $f .= ",'".$value."'";
+        }
+        
+        $f .= ")";
+        
+        parent::__construct("SELECT (CASE WHEN nota.saida THEN CONCAT(CONCAT(nota.id_cliente,' - '),cliente.razao_social) ELSE '---------' END) as 'cliente',(CASE WHEN nota.saida THEN '----------' ELSE CONCAT(CONCAT(nota.id_fornecedor,' - '),fornecedor.nome) END) as 'fornecedor',((CASE WHEN nota.saida THEN 1 ELSE -1 END)*GREATEST(ROUND((vencimento.valor-(SUM(IFNULL(movimento.valor,0)))),2),0)) as 'valor',UNIX_TIMESTAMP(vencimento.data)*1000 as 'vencimento', nota.ficha as 'ficha', vencimento.data as 'data', MONTH(vencimento.data) as 'mes', YEAR(vencimento.data) as 'ano', DAY(vencimento.data) as 'dia', nota.numero as 'numero_nota' FROM nota INNER JOIN vencimento ON vencimento.id_nota = nota.id LEFT JOIN cliente ON cliente.id=nota.id_cliente LEFT JOIN fornecedor ON fornecedor.id=nota.id_fornecedor LEFT JOIN movimento ON movimento.id_vencimento=vencimento.id WHERE nota.id_empresa=$empresa->id AND nota.saida=false AND nota.cancelada=false AND nota.excluida=false AND (CASE WHEN nota.saida THEN cliente.cnpj NOT IN $f ELSE fornecedor.cnpj NOT IN $f END) GROUP BY vencimento.id", 0);
 
-        parent::__construct("SELECT (CASE WHEN nota.saida THEN 'S' ELSE 'E' END) as 'tipo', (CASE WHEN nota.saida THEN CONCAT(CONCAT(nota.id_cliente,' - '),cliente.razao_social) ELSE '---------' END) as 'cliente',(CASE WHEN nota.saida THEN '----------' ELSE CONCAT(CONCAT(nota.id_fornecedor,' - '),fornecedor.nome) END) as 'fornecedor',((CASE WHEN nota.saida THEN 1 ELSE -1 END)*ROUND((vencimento.valor-(SUM(IFNULL(movimento.valor,0)))),2)) as 'valor',UNIX_TIMESTAMP(vencimento.data)*1000 as 'vencimento', nota.ficha as 'ficha', vencimento.data as 'data', MONTH(vencimento.data) as 'mes', YEAR(vencimento.data) as 'ano', DAY(vencimento.data) as 'dia', nota.numero as 'numero_nota' FROM nota INNER JOIN vencimento ON vencimento.id_nota = nota.id LEFT JOIN cliente ON cliente.id=nota.id_cliente LEFT JOIN fornecedor ON fornecedor.id=nota.id_fornecedor LEFT JOIN movimento ON movimento.id_vencimento=vencimento.id WHERE nota.id_empresa=$empresa->id AND nota.cancelada=false AND nota.excluida=false GROUP BY vencimento.id", 0);
-
-        $this->nome = "Contas Pagar/Receber";
-
-        $saida_entrada = new CampoRelatorio('tipo', 'Tipo de Movimento', 'T');
-        $saida_entrada->possiveis = array("S", "E");
-        $saida_entrada->filtro = "k.tipo='Saida'";
-        $saida_entrada->porcentagem_coluna_pdf = 6;
+        $this->nome = "Contas Pagar";
 
         $cliente = new CampoRelatorio('cliente', 'Cliente', 'T');
-        $cliente->porcentagem_coluna_pdf = 25;
+        $cliente->porcentagem_coluna_pdf = 28;
 
         $fornecedor = new CampoRelatorio('fornecedor', 'Fornecedor', 'T');
-        $fornecedor->porcentagem_coluna_pdf = 25;
+        $fornecedor->porcentagem_coluna_pdf = 28;
 
         $valor = new CampoRelatorio('valor', 'Valor da Pendencia', 'N');
         $valor->agrupado = true;
@@ -69,7 +119,6 @@ class RelatorioFinanceiro extends Relatorio {
         $nota->porcentagem_coluna_pdf = 10;
 
         $this->campos = array(
-            $saida_entrada,
             $data,
             $cliente,
             $fornecedor,

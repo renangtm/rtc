@@ -596,6 +596,14 @@ rtc.service('movimentoService', function ($http, $q) {
             falha: fn
         });
     }
+    this.corretorSaldo = function (movimento,fn) {
+        baseService($http, $q, {
+            o:movimento,
+            query: "$o->corrigirSaldo($c);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getMovimento = function (fn) {
         baseService($http, $q, {
             query: "$r->movimento=new Movimento();",

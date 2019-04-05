@@ -73,6 +73,15 @@ rtc.controller("crtFechamentoCaixa", function ($scope,movimentoService,notaServi
 
     }
 
+    $scope.podeFechar = function(f){
+        
+        if(Math.abs(f.banco.saldo-f.valor)<0.1){
+            return true;
+        }
+        return false;
+        
+    }
+
     $scope.setVisto = function (mov) {
 
         movimentoService.setVisto(mov, function (s) {
@@ -1154,6 +1163,7 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
     }
 
     $scope.gerarRelatorio = function () {
+        
         $scope.carregando = true;
         $scope.prepararRelatorio();
 
@@ -1162,6 +1172,7 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
             $scope.carregando = false;
         }
         $scope.gerado.attList();
+        
 
         $("#mdlRelatorio").modal("show");
 
@@ -2683,6 +2694,16 @@ rtc.controller("crtMovimentos", function ($scope, movimentoService, sistemaServi
 
     }
 
+    $scope.corretorSaldo = function(m){
+        
+        movimentoService.corretorSaldo(m,function(v){
+            
+            msg.alerta("Saldo corrigido a partir desse movimento");
+            $scope.movimentos.attList();
+            
+        })
+        
+    }
 
     $scope.novoMovimento = function () {
 

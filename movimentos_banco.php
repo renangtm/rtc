@@ -98,7 +98,7 @@
                                                         <th>Efeito</th>
                                                         <th data-ordem="movimento.operacao.nome">Op</th>
                                                         <th data-ordem="movimento.historico.nome">Hist</th>
-                                                        <th width="150px">Ação</th>
+                                                        <th width="150px">Acao</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -118,6 +118,7 @@
                                                                 <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setMovimento(mov[0])" data-toggle="modal" data-target="#add"><i class="fas fa-info"></i></a>
                                                                 <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setMovimento(mov[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
                                                                 <a href="#" ng-if="!mov[0].operacao.debito" class="btn btn-outline-danger btnedit" data-title="Edit" ng-click="criarEstorno(mov[0])" data-toggle="modal" data-target="#add"><i class="fas fa-arrow-alt-circle-right"></i></a>
+                                                                <a href="#" class="btn btn-outline-primary btndel" data-title="Corrigir" ng-click="corretorSaldo(mov[0])"><i class="fas fa-random"></i></a>
                                                             </div>
                                                         </th>
                                                     </tr>
@@ -134,7 +135,7 @@
                                                         <th>Efeito</th>
                                                         <th>Op</th>
                                                         <th>Hist</th>
-                                                        <th width="150px">Ação</th>
+                                                        <th width="150px">Acao</th>
                                                     </tr>
                                                 </tfoot>
                                             </table>

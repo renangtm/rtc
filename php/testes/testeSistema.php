@@ -93,6 +93,49 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         //echo Utilidades::toJson($produtos);
         
+        $t = new RoboVirtual();
+        $t->executar($con);
+        
+        return;
+        
+        $e = new Empresa(1734);
+        $m = $e->getMovimentos($con, 0, 1,"movimento.id=136020");
+        $m = $m[0];
+        
+        $m->corrigirSaldo($con);
+        
+        return;
+        
+        $empresa = 1734;
+        $itv = array(27157);
+        
+        foreach($itv as $key=>$value){
+            
+            $ps = $con->getConexao()->prepare("SELECT transportadora.cnpj,nota.id_empresa "
+                    . "FROM nota "
+                    . "INNER JOIN transportadora ON transportadora.id=nota.id_transportadora "
+                    . "WHERE nota.ficha=$value AND nota.id_empresa=$empresa");
+            $ps->execute();
+            $ps->bind_result($cnpj,$id_empresa);
+            $ps->fetch();
+            $ps->close();
+            
+            $ps = $con->getConexao()->prepare("SELECT id FROM fornecedor WHERE cnpj='$cnpj' AND id_empresa=$id_empresa");
+            $ps->execute();
+            $ps->bind_result($id);
+            if(!$ps->fetch()){
+                echo "KKK";
+                continue;
+            }
+            $ps->close();
+            
+            $ps=$con->getConexao()->prepare("UPDATE nota SET data_emissao=data_emissao, id_cliente=0,id_fornecedor=$id,saida=false WHERE ficha=$value AND id_empresa=$empresa");
+            $ps->execute();
+            $ps->close();
+            
+        }
+        
+        return;
         
         $vencimentos = array();
 

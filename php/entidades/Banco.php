@@ -59,17 +59,17 @@ class Banco {
         $obs .= date("d/m/Y",doubleval($fechamento->data_anterior."")/1000)." ate ".date("d/m/Y",doubleval($fechamento->data."")/1000).", valor de ".round($fechamento->valor,2).", saldo atual ".round($this->saldo,2).", Fechamento anterior: ".round($fechamento->valor_anterior,2);
         
         $qtd = $this->getCountMovimentosFechamento($con);
-        $movimentos = $this->getMovimentosFechamento($con, 0, $qtd);
+        $movimentos = $this->getMovimentosFechamento($con, 0, $qtd,"","movimento.data ASC");
         
         
         $campos = array(
-            array("tipo","Tipo",10),
+            array("tipo","Tipo",5),
             array("cf","Cliente/Fornecedor",30),
             array("operacao","Op.",15),
             array("valor","Valor",13),
             array("juros","Juros",5),
             array("desconto","Desc",5),
-            array("saldo","Saldo",10),
+            array("saldo","Saldo Anterior",15),
             array("nota","Nota",6),
             array("ficha","Ficha",6));
         
@@ -108,19 +108,20 @@ class Banco {
         $anterior = 0;
         $data_anterior = 0;
         
-        $ps = $con->getConexao()->prepare("SELECT valor,UNIX_TIMESTAMP(data)*1000 FROM fechamento_caixa WHERE id_banco=$this->id ORDER BY data DESC");
+        $ps = $con->getConexao()->prepare("SELECT ROUND(valor,2),UNIX_TIMESTAMP(data)*1000 FROM fechamento_caixa WHERE id_banco=$this->id ORDER BY data DESC");
         $ps->execute();
         $ps->bind_result($valor,$data);
         if($ps->fetch()){
             $anterior = $valor;
-            $data_anterior = $data;
+            $data_anterior = Utilidades::normalizarDia($data);
+            $data_anterior += 24*60*60*1000;
         }
         $ps->close();
         $real_anterior = $anterior;
         
         $ps = $con->getConexao()->prepare("SELECT SUM((CASE WHEN operacao.debito THEN -1 ELSE 1 END)*(movimento.valor-movimento.descontos+movimento.juros)) FROM movimento "
                 . "INNER JOIN operacao ON movimento.id_operacao=operacao.id "
-                . "WHERE movimento.id_banco=$this->id AND movimento.data>FROM_UNIXTIME($data_anterior/1000)");
+                . "WHERE movimento.id_banco=$this->id AND movimento.data>=FROM_UNIXTIME($data_anterior/1000)");
         $ps->execute();
         $ps->bind_result($valor);
         
@@ -141,16 +142,19 @@ class Banco {
         
     }
     
+    
+    
     public function getCountMovimentosFechamento($con,$filtro2=""){
         
         $filtro = "";
         
-        $ps = $con->getConexao()->prepare("SELECT MAX(data) FROM fechamento_caixa WHERE id_banco=$this->id");
+        $ps = $con->getConexao()->prepare("SELECT UNIX_TIMESTAMP(MAX(data))*1000 FROM fechamento_caixa WHERE id_banco=$this->id");
         $ps->execute();
         $ps->bind_result($dt);
         if($ps->fetch()){
             if($dt !== null){
-                $filtro .= "movimento.data>'$dt'";
+                $dt = Utilidades::normalizarDia($dt) + (24*60*60*1000);
+                $filtro .= "movimento.data>=FROM_UNIXTIME($dt/1000) AND movimento.id_banco=$this->id";
             }
         }
         $ps->close();
@@ -171,12 +175,13 @@ class Banco {
         
         $filtro = "banco.id=$this->id";
         
-        $ps = $con->getConexao()->prepare("SELECT MAX(data) FROM fechamento_caixa WHERE id_banco=$this->id");
+        $ps = $con->getConexao()->prepare("SELECT UNIX_TIMESTAMP(MAX(data))*1000 FROM fechamento_caixa WHERE id_banco=$this->id");
         $ps->execute();
         $ps->bind_result($dt);
         if($ps->fetch()){
             if($dt !== null){
-                $filtro .= " AND movimento.data>'$dt'";
+                $dt = Utilidades::normalizarDia($dt)+(24*60*60*1000);
+                $filtro .= " AND movimento.data>=FROM_UNIXTIME($dt/1000)";
             }
         }
         $ps->close();

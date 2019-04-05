@@ -17,7 +17,7 @@ class CNPJ {
 
     function __construct($str = "") {
 
-        $this->valor = str_replace(array(".", "-", "/"), array("", "", ""), $str);
+        $this->valor = str_replace(array(".", "-", "/"," "), array("", "", "",""), $str);
 
 
         if (strlen($this->valor) != 14) {

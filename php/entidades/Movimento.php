@@ -41,6 +41,36 @@ class Movimento {
         
     }
     
+    public function corrigirSaldo($con){
+        
+        $saldo = $this->saldo_anterior;
+        $movimentos = array();
+        $ps = $con->getConexao()->prepare("SELECT movimento.id,movimento.valor*(CASE WHEN operacao.debito THEN -1 ELSE 1 END) FROM movimento"
+                . " INNER JOIN operacao ON operacao.id=movimento.id_operacao"
+                . " WHERE id_banco=".$this->banco->id." AND data>=FROM_UNIXTIME($this->data/1000)"
+                . " ORDER BY movimento.data ASC");
+        $ps->execute();
+        $ps->bind_result($id,$valor);
+        while($ps->fetch()){
+            $movimentos[] = array($id,$valor);
+        }
+        $ps->close();
+        
+        foreach($movimentos as $key=>$value){
+            $saldo += $value[1];
+            if($key+1<count($movimentos)){
+                $ps = $con->getConexao()->prepare("UPDATE movimento SET data=data,saldo_anterior=$saldo WHERE id=".$movimentos[$key+1][0]);
+                $ps->execute();
+                $ps->close();
+            }else{
+                $ps = $con->getConexao()->prepare("UPDATE banco SET saldo=$saldo WHERE id=".$this->banco->id);
+                $ps->execute();
+                $ps->close();
+            }
+        }
+        
+    }
+    
     public function setVisto($con,$visto=true){
         
         $ps = $con->getConexao()->prepare("UPDATE movimento SET visto=".($visto?"true":"false").",data=data WHERE id=$this->id");

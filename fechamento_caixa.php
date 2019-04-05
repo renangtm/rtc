@@ -86,13 +86,13 @@
                                             &nbsp;
                                             Divergencia: <strong style="font-size: 16px;color:{{fechamento.banco.saldo !== fechamento.valor ? 'Red':'Green'}}">R$ {{(fechamento.banco.saldo - fechamento.valor).toFixed(2)}}</strong>
                                             <button style="float:right;margin-left:20px" class="btn btn-primary" ng-click="gerarRelatorio()" ng-disabled="carregando"><i class="fas fa-paperclip"></i>&nbspGerar relatorio</button>
-                                            <button ng-click="mergeFechamento()" ng-disabled="fechamento.banco.saldo !== fechamento.valor" class="btn btn-outline-{{fechamento.banco.saldo !== fechamento.valor ? 'danger':'success'}}" style="float: right">
-                                                <i class="fas fa-{{fechamento.banco.saldo !== fechamento.valor ? 'times':'check'}}"></i>
+                                            <button ng-click="mergeFechamento()" ng-disabled="!podeFechar(fechamento)" class="btn btn-outline-{{!podeFechar(fechamento) ? 'danger':'success'}}" style="float: right">
+                                                <i class="fas fa-{{!podeFechar(fechamento) ? 'times':'check'}}"></i>
                                                 &nbsp;
-                                                <div ng-if="fechamento.banco.saldo !== fechamento.valor">
-                                                    Existem divergencias, nao é possivel realizar o fechamento
+                                                <div ng-if="!podeFechar(fechamento)">
+                                                    Existem divergencias, nao e possivel realizar o fechamento
                                                 </div>
-                                                <div ng-if="fechamento.banco.saldo === fechamento.valor">
+                                                <div ng-if="podeFechar(fechamento)">
                                                     Fechar
                                                 </div>
                                             </button>

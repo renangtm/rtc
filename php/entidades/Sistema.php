@@ -13,7 +13,7 @@
  */
 class Sistema {
 
-    public static $ENDERECO = "http://192.168.0.17/novo_rtc_web/";
+    public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
 
     /*
      * porcentagem
@@ -384,6 +384,10 @@ class Sistema {
 
     public static function P_ACOMPANHA_TAREFAS() {
         return new Permissao(50, "Acompanhar atividades");
+    }
+
+    public static function P_RELATORIO_FINANCEIRO_RECEBER() {
+        return new Permissao(51, "RelatorioFinanceiroReceber");
     }
 
     public static function TT_COMPRA($id_empresa) {
@@ -920,6 +924,7 @@ class Sistema {
     public static function getRelatorios($empresa, $usuario) {
 
         $relatorios[] = new RelatorioFinanceiro($empresa);
+        $relatorios[] = new RelatorioFinanceiroReceber($empresa);
         $relatorios[] = new RelatorioMovimento($empresa);
         $relatorios[] = new RelatorioExportaLancamento($empresa);
         $relatorios[] = new RelatorioProdutoLogistica($empresa);
@@ -1342,14 +1347,14 @@ class Sistema {
             foreach ($value as $key2 => $produto) {
 
                 $unidade = $produto->quantidade_unidade;
-                if($unidade===0){
+                if ($unidade === 0) {
                     $unidade = 1;
                 }
-                $k = $unidade-($produto->quantidade_comprada%$unidade);
-                if($k < $unidade){
-                    $produto->quantidade_comprada = min($produto->disponivel,$produto->quantidade_comprada+$k);
+                $k = $unidade - ($produto->quantidade_comprada % $unidade);
+                if ($k < $unidade) {
+                    $produto->quantidade_comprada = min($produto->disponivel, $produto->quantidade_comprada + $k);
                 }
-                
+
                 if (!$produto->sistema_lotes) {
 
                     $p = new ProdutoPedidoSaida();
@@ -3179,7 +3184,8 @@ class Sistema {
                 Sistema::P_RELATORIO_MOVIMENTO(),
                 Sistema::P_MOVIMENTO(),
                 Sistema::P_FECHAMENTO_CAIXA(),
-                Sistema::P_VISTO_MOVIMENTO()
+                Sistema::P_VISTO_MOVIMENTO(),
+                Sistema::P_RELATORIO_FINANCEIRO_RECEBER()
                     )), new RTC(6, array(
                 Sistema::P_LOTE(),
                 Sistema::P_SEPARACAO(),
@@ -3620,7 +3626,7 @@ class Sistema {
                 . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
                 . "INNER JOIN estado ON cidade.id_estado = estado.id "
                 . "WHERE " . $filtro;
-        
+
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
