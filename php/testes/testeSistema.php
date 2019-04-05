@@ -18,7 +18,8 @@ class testeSistema extends PHPUnit_Framework_TestCase {
     public function testSimple() {
 
         $con = new ConnectionFactory();
-        
+
+
         /*
           $estados = Sistema::getEstados($con);
 
@@ -141,7 +142,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         $ps = $con->getConexao()->prepare("SELECT vencimento.id,nota.id,vencimento.valor FROM vencimento INNER JOIN nota ON nota.id=vencimento.id_nota WHERE nota.excluida=false");
         $ps->execute();
-        $ps->bind_result($id, $ficha,$valor);
+        $ps->bind_result($id, $ficha, $valor);
         while ($ps->fetch()) {
 
             if (!isset($vencimentos[$ficha])) {
@@ -150,104 +151,132 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
             $vencimentos[$ficha][$id] = $valor;
         }
-        
+
+        $ps->close();
+
+
         $sqls = array();
-        
+        $tb = array();
+
         $ps = $con->getConexao()->prepare("SELECT movimento.id,movimento.valor,vencimento.id_nota,movimento.id_vencimento "
                 . "FROM movimento INNER JOIN vencimento ON vencimento.id=movimento.id_vencimento INNER JOIN nota ON nota.id=vencimento.id_nota "
                 . "WHERE nota.excluida=false AND nota.cancelada=false");
         $ps->execute();
-        $ps->bind_result($id,$valor,$nota,$vencimento);
-        while($ps->fetch()){
-            
-            if(isset($vencimentos[$nota])){
-                
+        $ps->bind_result($id, $val, $nota, $vencimento);
+        while ($ps->fetch()) {
+
+            $vvv = $val;
+
+            if (isset($vencimentos[$nota])) {
+
                 $vs = array();
                 $i = 0;
-                
-                $n = $vencimentos[$nota];
-                foreach($n as $idv=>$value){
-                    if($idv===$vencimento){
-                        $vs[] = $idv;
-                    }else if(count($vs)>0){
-                        $vs[] = $idv;
-                    }
+
+                foreach ($vencimentos[$nota] as $idv => $value) {
+                    $vs[] = $idv;
                 }
-               
-                
-                while($valor>0 && $i<count($vs)){
-                    $n[$vs[$i]] -= $valor;
-                    if($n[$vs[$i]]<0){
-                        $valor = $n[$vs[$i]]*-1;
-                        $n[$vs[$i]] = 0;
-                    }else{
-                        $valor = 0;
+
+                $j = 0;
+
+                $prx = -1;
+                $dif = -1;
+
+                foreach ($vencimentos[$nota] as $idv => $value) {
+                    if ($value >= $vvv && !isset($tb[$idv])) {
+                        if ($prx === -1) {
+                            $prx = $j;
+                            $dif = $value - $vvv;
+                        } else if ($dif > ($value - $vvv)) {
+                            $prx = $j;
+                            $dif = $value - $vvv;
+                        }
+                    }
+                    $j++;
+                }
+
+                if ($prx >= 0) {
+                    $i = $prx;
+                }
+
+                $a = false;
+                $primeiro = $i;
+                while ($vvv > 0 && $i < count($vs)) {
+                    if (!isset($tb[$vs[$i]]) && !$a) {
+                        $primeiro = $i;
+                        $a = true;
+                        $tb[$vs[$i]] = true;
+                    }
+                    $vencimentos[$nota][$vs[$i]] -= $vvv;
+                    if ($vencimentos[$nota][$vs[$i]] < 0) {
+                        $vvv = $vencimentos[$nota][$vs[$i]] * -1;
+                        $vencimentos[$nota][$vs[$i]] = 0;
+                    } else {
+                        $vvv = 0;
                     }
                     $i++;
                 }
                 $i--;
-                
-                if($valor>0){
-                    $sqls[] = "DELETE movimento WHERE id=$id";
-                }else if($i>0){
-                    $sqls[] = "UPDATE movimento SET data=data,id_vencimento=".$vs[$i]." WHERE id=$id";
-                    $sqls[] = "UPDATE vencimento SET data=data,id_movimento=$id WHERE id=".$vs[$i];
+            if ($vencimento !== $vs[$primeiro]) {
+                    $sqls[] = "UPDATE movimento SET data=data,id_vencimento=" . $vs[$primeiro] . " WHERE id=$id";
+                    $sqls[] = "UPDATE vencimento SET data=data,id_movimento=$id WHERE id=" . $vs[$primeiro];
                 }
-                
             }
-            
         }
         $ps->close();
-        
+
         echo Utilidades::toJson($sqls);
-        
+
         return;
-        
+
         $empresa = Sistema::getEmpresa(0);
         $empresa->id = 1733;
         $filiais = $empresa->getFiliais($con);
         $filiais[] = $empresa;
         $permissoes = array();
         $qtd = array();
-        
-        foreach($filiais as $key=>$value){
-            $u = $value->getUsuarios($con,0,1000);
-            foreach($u as $k2=>$usuario){
-              $q = 0;  
-              foreach($usuario->permissoes as $key3=>$p){
-                  if($p->in)$q++;
-                  if($p->del)$q++;
-                  if($p->alt)$q++;
-                  if($p->cons)$q++;
-              }
-              $c = $usuario->cargo->nome;
-              if(!isset($permissoes[$c])){
-                  $permissoes[$c] = $usuario;
-                  $qtd[$c] = $q;
-              }else{
-              if($qtd[$c]<$q){
-                      $permissoes[$c] = $usuario;
-                      $qtd[$c] = $q;
-                  }
-              }
+
+        foreach ($filiais as $key => $value) {
+            $u = $value->getUsuarios($con, 0, 1000);
+            foreach ($u as $k2 => $usuario) {
+                $q = 0;
+                foreach ($usuario->permissoes as $key3 => $p) {
+                    if ($p->in)
+                        $q++;
+                    if ($p->del)
+                        $q++;
+                    if ($p->alt)
+                        $q++;
+                    if ($p->cons)
+                        $q++;
+                }
+                $c = $usuario->cargo->nome;
+                if (!isset($permissoes[$c])) {
+                    $permissoes[$c] = $usuario;
+                    $qtd[$c] = $q;
+                } else {
+                    if ($qtd[$c] < $q) {
+                        $permissoes[$c] = $usuario;
+                        $qtd[$c] = $q;
+                    }
+                }
             }
         }
-        
-        foreach($filiais as $key=>$value){
-            $u = $value->getUsuarios($con,0,1000);
-            foreach($u as $k2=>$usuario){
-                if(!isset($permissoes[$usuario->cargo->nome])){
-                    echo "opa:".$usuario->cargo->nome."|";
+
+        foreach ($filiais as $key => $value) {
+            $u = $value->getUsuarios($con, 0, 1000);
+            foreach ($u as $k2 => $usuario) {
+                if (!isset($permissoes[$usuario->cargo->nome])) {
+                    echo "opa:" . $usuario->cargo->nome . "|";
                     continue;
                 }
                 $base = $permissoes[$usuario->cargo->nome];
-                if($base->id===$usuario->id)continue;
+                if ($base->id === $usuario->id)
+                    continue;
                 $usuario->permissoes = $base->permissoes;
-                echo $usuario->id."--".$usuario->nome."|||";
+                echo $usuario->id . "--" . $usuario->nome . "|||";
                 $usuario->merge($con);
             }
         }
-        
     }
 
     public static function uniord($u) {

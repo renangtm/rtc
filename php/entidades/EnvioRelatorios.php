@@ -93,6 +93,7 @@ class EnvioRelatorios {
                 foreach ($superiores as $key => $value) {
                     $emails .= ",$value->id_usuario";
                 }
+                $emails .= ",$usuario->id";
                 $emails .= ")";
 
                 $ps = $con->getConexao()->prepare("SELECT id,endereco,senha FROM email WHERE excluido=false AND tipo_entidade='USU' AND id_entidade IN $emails");
@@ -107,7 +108,7 @@ class EnvioRelatorios {
                     $emails[] = $e;
                 }
                 $ps->close();
-
+                
                 foreach ($emails as $key3 => $value3) {
 
                     try {
