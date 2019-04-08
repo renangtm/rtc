@@ -20,7 +20,7 @@ class TTCompra extends TipoTarefa {
         $this->nome = "Compra";
         $this->tempo_medio = 0.2;
         $this->prioridade = 1;
-        
+        $this->carregarDados();
     }
 
     public function aoFinalizar() {

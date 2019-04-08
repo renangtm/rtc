@@ -36,6 +36,7 @@ class Nota {
     public $cancelada;
     public $protocolo;
     public $validar;
+    public $baixa_total;
 
     function __construct() {
 
@@ -57,6 +58,8 @@ class Nota {
         $this->numero = 0;
         $this->ficha = 0;
         $this->cancelada = false;
+        $this->baixa_total = 0;
+        
     }
 
     public function igualaVencimento() {
@@ -560,13 +563,13 @@ class Nota {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO nota(saida,chave,id_cliente,id_fornecedor,observacao,id_empresa,data_emissao,excluida,influenciar_estoque,id_transportadora,id_forma_pagamento,frete_destinatario_remetente,emitida,numero,ficha,cancelada,danfe,xml,protocolo) VALUES(" . ($this->saida ? "true" : "false") . ",'$this->chave'," . ($this->cliente != null ? $this->cliente->id : 0) . "," . ($this->fornecedor != null ? $this->fornecedor->id : 0) . ",'$this->observacao'," . $this->empresa->id . ",FROM_UNIXTIME($this->data_emissao/1000),false," . ($this->interferir_estoque ? "true" : "false") . "," . $this->transportadora->id . "," . $this->forma_pagamento->id . "," . ($this->frete_destinatario_remetente ? "true" : "false") . "," . ($this->emitida ? "true" : "false") . ",$this->numero,$this->ficha," . ($this->cancelada ? "true" : "false") . ",'$this->danfe','$this->xml','$this->protocolo')");
+            $ps = $con->getConexao()->prepare("INSERT INTO nota(saida,chave,id_cliente,id_fornecedor,observacao,id_empresa,data_emissao,excluida,influenciar_estoque,id_transportadora,id_forma_pagamento,frete_destinatario_remetente,emitida,numero,ficha,cancelada,danfe,xml,protocolo,baixa_total) VALUES(" . ($this->saida ? "true" : "false") . ",'$this->chave'," . ($this->cliente != null ? $this->cliente->id : 0) . "," . ($this->fornecedor != null ? $this->fornecedor->id : 0) . ",'$this->observacao'," . $this->empresa->id . ",FROM_UNIXTIME($this->data_emissao/1000),false," . ($this->interferir_estoque ? "true" : "false") . "," . $this->transportadora->id . "," . $this->forma_pagamento->id . "," . ($this->frete_destinatario_remetente ? "true" : "false") . "," . ($this->emitida ? "true" : "false") . ",$this->numero,$this->ficha," . ($this->cancelada ? "true" : "false") . ",'$this->danfe','$this->xml','$this->protocolo',$this->baixa_total)");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE nota SET saida=" . ($this->saida ? "true" : "false") . ",chave='$this->chave',id_cliente=" . ($this->cliente != null ? $this->cliente->id : 0) . ",id_fornecedor=" . ($this->fornecedor != null ? $this->fornecedor->id : 0) . ",observacao='$this->observacao',id_empresa=" . $this->empresa->id . ",data_emissao=FROM_UNIXTIME($this->data_emissao/1000),excluida=false,influenciar_estoque=" . ($this->interferir_estoque ? "true" : "false") . ", id_transportadora=" . $this->transportadora->id . ", id_forma_pagamento=" . $this->forma_pagamento->id . ",frete_destinatario_remetente=" . ($this->interferir_estoque ? "true" : "false") . ", emitida=" . ($this->emitida ? "true" : "false") . ",numero=$this->numero,ficha=$this->ficha,cancelada=" . ($this->cancelada ? "true" : "false") . ",danfe='$this->danfe',xml='$this->xml',protocolo='$this->protocolo' WHERE id=$this->id");
+            $ps = $con->getConexao()->prepare("UPDATE nota SET saida=" . ($this->saida ? "true" : "false") . ",chave='$this->chave',id_cliente=" . ($this->cliente != null ? $this->cliente->id : 0) . ",id_fornecedor=" . ($this->fornecedor != null ? $this->fornecedor->id : 0) . ",observacao='$this->observacao',id_empresa=" . $this->empresa->id . ",data_emissao=FROM_UNIXTIME($this->data_emissao/1000),excluida=false,influenciar_estoque=" . ($this->interferir_estoque ? "true" : "false") . ", id_transportadora=" . $this->transportadora->id . ", id_forma_pagamento=" . $this->forma_pagamento->id . ",frete_destinatario_remetente=" . ($this->interferir_estoque ? "true" : "false") . ", emitida=" . ($this->emitida ? "true" : "false") . ",numero=$this->numero,ficha=$this->ficha,cancelada=" . ($this->cancelada ? "true" : "false") . ",danfe='$this->danfe',xml='$this->xml',protocolo='$this->protocolo',baixa_total=$this->baixa_total WHERE id=$this->id");
             $ps->execute();
             $ps->close();
         }
@@ -656,9 +659,9 @@ class Nota {
 
         $vencimentos = array();
 
-        $ps = $con->getConexao()->prepare("SELECT vencimento.id,vencimento.valor,UNIX_TIMESTAMP(vencimento.data)*1000,movimento.id,UNIX_TIMESTAMP(movimento.data)*1000,movimento.saldo_anterior,movimento.valor,movimento.juros,movimento.descontos,movimento.estorno,historico.id,historico.nome,operacao.id,operacao.nome,operacao.debito,banco.id,banco.nome,banco.conta,banco.saldo,banco.codigo FROM vencimento LEFT JOIN movimento ON movimento.id=vencimento.id_movimento LEFT JOIN banco ON movimento.id_banco=banco.id LEFT JOIN operacao ON operacao.id=movimento.id_operacao LEFT JOIN historico ON historico.id=movimento.id_historico WHERE id_nota=$this->id");
+        $ps = $con->getConexao()->prepare("SELECT vencimento.id,vencimento.valor,UNIX_TIMESTAMP(vencimento.data)*1000,movimento.id,UNIX_TIMESTAMP(movimento.data)*1000,movimento.saldo_anterior,movimento.valor,movimento.juros,movimento.descontos,movimento.estorno,historico.id,historico.nome,operacao.id,operacao.nome,operacao.debito,banco.id,banco.nome,banco.conta,banco.saldo,banco.codigo,movimento.baixa_total FROM vencimento LEFT JOIN movimento ON movimento.id=vencimento.id_movimento LEFT JOIN banco ON movimento.id_banco=banco.id LEFT JOIN operacao ON operacao.id=movimento.id_operacao LEFT JOIN historico ON historico.id=movimento.id_historico WHERE id_nota=$this->id ORDER BY vencimento.data ASC");
         $ps->execute();
-        $ps->bind_result($id, $valor, $data, $id_mov, $data_mov, $sal_mov, $val_mov, $mov_jur, $mov_desc, $mov_estorno, $hist_id, $hist_nom, $op_id, $op_nom, $op_deb, $ban_id, $ban_nom, $ban_cont, $ban_sal, $ban_cod);
+        $ps->bind_result($id, $valor, $data, $id_mov, $data_mov, $sal_mov, $val_mov, $mov_jur, $mov_desc, $mov_estorno, $hist_id, $hist_nom, $op_id, $op_nom, $op_deb, $ban_id, $ban_nom, $ban_cont, $ban_sal, $ban_cod,$baixa_total);
 
         while ($ps->fetch()) {
 
@@ -680,6 +683,7 @@ class Nota {
                 $m->estorno = $mov_estorno;
                 $m->descontos = $mov_desc;
                 $m->vencimento = $v;
+                $m->baixa_total = $baixa_total;
 
                 $h = new Historico();
                 $h->id = $hist_id;

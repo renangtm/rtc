@@ -18,7 +18,69 @@ class testeSistema extends PHPUnit_Framework_TestCase {
     public function testSimple() {
 
         $con = new ConnectionFactory();
+        
+        $e = new Empresa(2071,$con);
+        
+        $usuarios = $e->getUsuarios($con, 0, 1,"usuario.id=4599");
+        $usuario = $usuarios[0];
+        
+        $tarefa = $usuario->getTarefas($con,"tarefa.id=3352"); 
+        $tarefa = $tarefa[0];
+        
+        $tarefa->tipo_tarefa->aoFinalizar($tarefa,$usuario);
+        
+        
+        return;
 
+        for ($i = 0; $i < 7; $i++) {
+
+            $notas = $e->getNotas($con, $i * 2000, ($i + 1) * 2000);
+
+            foreach ($notas as $key => $value) {
+                $vencimentos = array();
+                $total = 0;
+                $ps = $con->getConexao()->prepare("SELECT id,valor FROM vencimento WHERE id_nota=$value->id");
+                $ps->execute();
+                $ps->bind_result($id, $valor);
+                while ($ps->fetch()) {
+                    $vencimentos[$id] = array($valor, 0);
+                    $total += $valor;
+                }
+                $ps->close();
+
+                $movimentos = array();
+
+                $ps = $con->getConexao()->prepare("SELECT movimento.id,movimento.valor,movimento.id_vencimento FROM movimento "
+                        . "INNER JOIN vencimento ON movimento.id_vencimento=vencimento.id "
+                        . "INNER JOIN nota ON nota.id=vencimento.id_nota "
+                        . "WHERE nota.id=$value->id");
+                $ps->execute();
+                $ps->bind_result($id, $valor, $venc);
+                $mv = 0;
+                while ($ps->fetch()) {
+                    if (!isset($movimentos[$venc])) {
+                        $movimentos[$venc] = array();
+                    }
+                    $movimentos[$venc][] = array($id, $valor);
+                    $vencimentos[$venc][1] = min($vencimentos[$venc][1] + $valor, $vencimentos[$venc][0]);
+                    $mv += $valor;
+                }
+
+                $total_relatorio = 0;
+
+                foreach ($vencimentos as $key => $val) {
+                    $total_relatorio += $val[1];
+                }
+
+                if ($total_relatorio < $total && $mv >= $total) {
+
+                    echo $total_relatorio . "-" . $mv . " @  $value->ficha-$value->numero |||||| ";
+                }
+            }
+
+            $notas = null;
+        }
+        return;
 
         /*
           $estados = Sistema::getEstados($con);
@@ -93,51 +155,57 @@ class testeSistema extends PHPUnit_Framework_TestCase {
          */
 
         //echo Utilidades::toJson($produtos);
-        
-        $t = new RoboVirtual();
-        $t->executar($con);
-        
+
+        foreach ($movimentos as $key => $mov) {
+
+            $vencimentos = $mov->vencimento->valor;
+            $mai = $mov->valor / $vencimento->valor;
+
+            if ($mai > 1.5) {
+                echo "$mov->id,---";
+            }
+        }
+
         return;
-        
+
         $e = new Empresa(1734);
-        $m = $e->getMovimentos($con, 0, 1,"movimento.id=136020");
+        $m = $e->getMovimentos($con, 0, 1, "movimento.id=136020");
         $m = $m[0];
-        
+
         $m->corrigirSaldo($con);
-        
+
         return;
-        
+
         $empresa = 1734;
         $itv = array(27157);
-        
-        foreach($itv as $key=>$value){
-            
+
+        foreach ($itv as $key => $value) {
+
             $ps = $con->getConexao()->prepare("SELECT transportadora.cnpj,nota.id_empresa "
                     . "FROM nota "
                     . "INNER JOIN transportadora ON transportadora.id=nota.id_transportadora "
                     . "WHERE nota.ficha=$value AND nota.id_empresa=$empresa");
             $ps->execute();
-            $ps->bind_result($cnpj,$id_empresa);
+            $ps->bind_result($cnpj, $id_empresa);
             $ps->fetch();
             $ps->close();
-            
+
             $ps = $con->getConexao()->prepare("SELECT id FROM fornecedor WHERE cnpj='$cnpj' AND id_empresa=$id_empresa");
             $ps->execute();
             $ps->bind_result($id);
-            if(!$ps->fetch()){
+            if (!$ps->fetch()) {
                 echo "KKK";
                 continue;
             }
             $ps->close();
-            
-            $ps=$con->getConexao()->prepare("UPDATE nota SET data_emissao=data_emissao, id_cliente=0,id_fornecedor=$id,saida=false WHERE ficha=$value AND id_empresa=$empresa");
+
+            $ps = $con->getConexao()->prepare("UPDATE nota SET data_emissao=data_emissao, id_cliente=0,id_fornecedor=$id,saida=false WHERE ficha=$value AND id_empresa=$empresa");
             $ps->execute();
             $ps->close();
-            
         }
-        
+
         return;
-        
+
         $vencimentos = array();
 
         $ps = $con->getConexao()->prepare("SELECT vencimento.id,nota.id,vencimento.valor FROM vencimento INNER JOIN nota ON nota.id=vencimento.id_nota WHERE nota.excluida=false");
@@ -216,7 +284,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
                     $i++;
                 }
                 $i--;
-            if ($vencimento !== $vs[$primeiro]) {
+                if ($vencimento !== $vs[$primeiro]) {
                     $sqls[] = "UPDATE movimento SET data=data,id_vencimento=" . $vs[$primeiro] . " WHERE id=$id";
                     $sqls[] = "UPDATE vencimento SET data=data,id_movimento=$id WHERE id=" . $vs[$primeiro];
                 }

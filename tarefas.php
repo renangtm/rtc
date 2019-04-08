@@ -441,7 +441,7 @@
                                         <tr>
                                             <th data-ordem="usuario.id">Cod.</th>
                                             <th data-ordem="usuario.nome">Nome</th>
-                                            <th>Ação</th>
+                                            <th>Aï¿½ï¿½o</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -498,8 +498,7 @@
                                         <td style="width:20%">
                                             Descricao:
                                         </td>
-                                        <td style="text-align: center">
-                                            {{tarefa.descricao}}
+                                        <td style="text-align: center" ng-bind-html="toHTML(tarefa.descricao)">
                                         </td>
                                     </tr>
                                 </table>
@@ -529,7 +528,7 @@
                                     <hr>
                                     Data: <strong>{{obs.momento| data}}</strong>
                                     <hr>
-                                    Descricao: <strong>{{obs.observacao}}</strong>
+                                    Descricao: <strong ng-bind-html="toHTML(obs.observacao)">{{obs.observacao}}</strong>
                                 </div>
                             </div>
                             <div class="modal-footer">

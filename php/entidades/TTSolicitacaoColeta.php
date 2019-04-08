@@ -20,7 +20,7 @@ class TTSolicitacaoColeta extends TipoTarefa {
         $this->nome = "Solicitacao Coleta";
         $this->tempo_medio = 0.2;
         $this->prioridade = 2;
-        
+        $this->carregarDados();
     }
 
     public function aoFinalizar() {

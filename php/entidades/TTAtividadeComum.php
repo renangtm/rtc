@@ -22,6 +22,7 @@ class TTAtividadeComum extends TipoTarefa {
         $this->prioridade = 1;
         $this->cargos = array(
         );
+        $this->carregarDados();
     }
 
     public function aoFinalizar() {

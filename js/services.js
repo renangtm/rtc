@@ -1510,6 +1510,14 @@ rtc.service('clienteService', function ($http, $q) {
             falha: fn
         });
     }
+    this.getClienteEspecifico = function (id_empresa,id_cliente, fn) {
+        baseService($http, $q, {
+            o: {id_empresa:id_empresa,id_cliente:id_cliente},
+            query: "$emp=new Empresa($o->id_empresa);$r->cliente=$emp->getClientes($c,0,1,'cliente.id='.$o->id_cliente,'');$r->cliente=$r->cliente[0];",
+            sucesso: fn,
+            falha: fn
+        });
+    }
 })
 rtc.service('telefoneService', function ($http, $q) {
     this.getTelefone = function (fn) {
@@ -2058,6 +2066,14 @@ rtc.service('sistemaService', function ($http, $q) {
         baseService($http, $q, {
             o: pedido,
             query: "Sistema::finalizarCompraParceiros($c,$o,$empresa);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.setLimiteCredito = function (valor,id_cliente,id_empresa,id_pedido, fn) {
+        baseService($http, $q, {
+            o: {valor:valor,id_cliente:id_cliente,id_empresa:id_empresa,id_pedido:id_pedido},
+            query: "Sistema::setLimiteCredito($o->valor,$o->id_cliente,$o->id_empresa,$usuario,$o->id_pedido);",
             sucesso: fn,
             falha: fn
         });

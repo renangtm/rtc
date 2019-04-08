@@ -113,7 +113,7 @@
                                                         <td>{{cliente[0].pessoa_fisica?'------':cliente[0].cnpj.valor}}</td>
                                                         <td>{{cliente[0].pessoa_fisica?cliente[0].cpf.valor:'------'}}</td>
                                                         <td>{{cliente[0].limite_credito}}</td>
-                                                        <td style="{{(cliente[0].inicio_limite > data_atual|| cliente[0].termino_limite<data_atual)?'background-color:#71748d;color:#FFFFFF':'' }}">{{cliente[0].termino_limite| data}}<button class="btn btn-default" style="float:right" ng-if="cliente[0].inicio_limite > data_atual || cliente[0].termino_limite < data_atual"><i class="fa fa-address-card"></i></button></td>
+                                                        <td style="{{(cliente[0].inicio_limite > data_atual|| cliente[0].termino_limite<data_atual)?'background-color:#71748d;color:#FFFFFF':'' }}">{{cliente[0].termino_limite| data}}<button class="btn btn-default" style="float:right" ng-if="cliente[0].inicio_limite > data_atual || cliente[0].termino_limite < data_atual" ng-click="analisaCredito(cliente[0])" ><i class="fa fa-address-card"></i></button></td>
                                                         <?php if ($usuario->temPermissao(Sistema::P_EMPRESA_CLIENTE()->m("C"))) { ?>
                                                         <td>{{cliente[0].empresa.nome}}</td>
                                                         <?php } ?>

@@ -23,6 +23,7 @@ class TTProspeccaoExternaCliente extends TipoTarefa {
         $this->cargos = array(
             Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO(new Empresa($id_empresa))
         );
+        $this->carregarDados();
     }
 
     public function aoAtribuir($id_usuario,$tarefa) {

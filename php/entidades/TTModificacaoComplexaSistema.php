@@ -23,6 +23,7 @@ class TTModificacaoComplexaSistema extends TipoTarefa {
         $this->cargos = array(
             Tecnologia::CF_DESENVOLVEDOR_SENIOR(new Empresa($id_empresa)),
         );
+        $this->carregarDados();
     }
 
     public function aoFinalizar() {

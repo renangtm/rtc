@@ -23,6 +23,7 @@ class TTAtendimentoPosVenda extends TipoTarefa {
         $this->cargos = array(
             Virtual::CF_ASSISTENTE_VIRTUAL_POSVENDA(new Empresa($id_empresa))
         );
+        $this->carregarDados();
     }
 
     public function aoFinalizar() {

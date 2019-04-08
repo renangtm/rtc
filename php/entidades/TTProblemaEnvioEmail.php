@@ -24,6 +24,7 @@ class TTProblemaEnvioEmail extends TipoTarefa {
             Tecnologia::CF_ANALISTA_INFRA_PLENO(new Empresa($id_empresa)),
             Tecnologia::CF_ANALISTA_INFRA_SENIOR(new Empresa($id_empresa))
         );
+        $this->carregarDados();
     }
 
     public function aoFinalizar() {

@@ -24,6 +24,7 @@ class TTModificacaoSistema extends TipoTarefa {
             Tecnologia::CF_DESENVOLVEDOR_PLENO(new Empresa($id_empresa)),
             Tecnologia::CF_DESENVOLVEDOR_SENIOR(new Empresa($id_empresa)),
         );
+        $this->carregarDados();
     }
 
     public function aoFinalizar() {

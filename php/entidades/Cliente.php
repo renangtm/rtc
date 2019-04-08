@@ -44,77 +44,105 @@ class Cliente {
         $this->endereco = new Endereco();
         $this->empresa = null;
         $this->categoria = null;
-        $this->pessoa_fisica=false;
+        $this->pessoa_fisica = false;
         $this->telefones = array();
         $this->excluido = false;
         $this->suframado = false;
         $this->limite_credito = 0;
         $this->codigo_contimatic = 0;
-        
+
         $this->inicio_limite = round(microtime(true) * 1000);
         $this->termino_limite = round(microtime(true) * 1000);
-        
+
         $this->codigo = 0;
-        
     }
-    
-    public function setCategoriasProspeccao($con,$categorias){
-        
+
+    public function getLimiteCredito() {
+
+        $agora = round(microtime(true) * 1000);
+
+        if ($this->inicio_limite <= $agora && $this->termino_limite >= $agora) {
+
+            return $this->limite_credito;
+        }
+
+        return -1;
+    }
+
+    public function getDividas($con) {
+
+        $valor = 0;
+
+        $ps = $con->getConexao()->prepare("SELECT SUM(vencimento.valor-IFNULL(movimento.valor,0)) "
+                . "FROM nota "
+                . "INNER JOIN vencimento ON vencimento.id_nota=nota.id "
+                . "LEFT JOIN movimento ON movimento.id_vencimento=vencimento.id "
+                . "WHERE nota.cancelada=false "
+                . "AND nota.excluida=false "
+                . "AND nota.saida=true "
+                . "AND nota.id_cliente=$this->id");
+        $ps->execute();
+        $ps->bind_result($divida);
+        while ($ps->fetch()) {
+
+            $valor += $divida;
+        }
+        $ps->close();
+
+        return $divida;
+    }
+
+    public function setCategoriasProspeccao($con, $categorias) {
+
         $ps = $con->getConexao()->prepare("DELETE FROM cliente_categoria_prospeccao WHERE id_cliente=$this->id");
         $ps->execute();
         $ps->close();
-        
-        
-        foreach($categorias as $key=>$value){
-            
+
+
+        foreach ($categorias as $key => $value) {
+
             $ps = $con->getConexao()->prepare("INSERT INTO cliente_categoria_prospeccao(id_categoria,id_cliente) VALUES($value->id,$this->id)");
             $ps->execute();
             $ps->close();
-            
         }
-        
     }
-    
-    public function getCategoriasProspeccao($con){
-        
+
+    public function getCategoriasProspeccao($con) {
+
         $categorias = array();
         $ps = $con->getConexao()->prepare("SELECT c.id,c.nome FROM categoria_prospeccao c INNER JOIN cliente_categoria_prospeccao cc ON c.id=cc.id_categoria AND cc.id_cliente=$this->id");
         $ps->execute();
-        $ps->bind_result($id,$nome);
-        
-        while($ps->fetch()){
-            
+        $ps->bind_result($id, $nome);
+
+        while ($ps->fetch()) {
+
             $cat = new CategoriaProspeccao();
             $cat->id = $id;
             $cat->nome = $nome;
             $categorias[] = $cat;
-            
         }
-        
+
         $ps->close();
-        
+
         return $categorias;
-        
     }
 
     public function merge($con) {
 
         $this->categoria->merge($con);
-        
-        if($this->codigo === 0){
-            
-            $ps = $con->getConexao()->prepare("SELECT IFNULL(MAX(codigo)+1,0) FROM cliente WHERE id_empresa=".$this->empresa->id);
+
+        if ($this->codigo === 0) {
+
+            $ps = $con->getConexao()->prepare("SELECT IFNULL(MAX(codigo)+1,0) FROM cliente WHERE id_empresa=" . $this->empresa->id);
             $ps->execute();
             $ps->bind_result($idn);
-            
-            if($ps->fetch()){
-                
+
+            if ($ps->fetch()) {
+
                 $this->codigo = $idn;
-                
             }
-            
+
             $ps->close();
-            
         }
 
         if ($this->id == 0) {
@@ -128,13 +156,12 @@ class Cliente {
             $ps->execute();
             $ps->close();
         }
-        
-        if($this->codigo_contimatic > 0){
-            
+
+        if ($this->codigo_contimatic > 0) {
+
             $ps = $con->getConexao()->prepare("UPDATE cliente SET codigo_contimatic=$this->codigo_contimatic WHERE id=$this->id");
             $ps->execute();
             $ps->close();
-            
         }
 
         $this->endereco->merge($con);
@@ -176,13 +203,11 @@ class Cliente {
         foreach ($this->telefones as $key => $value) {
 
             $value->merge($con);
-            
+
             $ps = $con->getConexao()->prepare("UPDATE telefone SET tipo_entidade='CLI', id_entidade=$this->id WHERE id=" . $value->id);
             $ps->execute();
             $ps->close();
-
         }
-        
     }
 
     public function setDocumentos($docs, $con) {

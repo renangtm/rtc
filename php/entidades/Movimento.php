@@ -25,7 +25,8 @@ class Movimento {
     public $operacao;
     public $estorno;
     public $visto;
-
+    public $baixa_total;
+    
     function __construct() {
 
         $this->id = 0;
@@ -38,6 +39,7 @@ class Movimento {
         $this->vencimento = null;
         $this->estorno = 0;
         $this->visto = false;
+        $this->baixa_total = 0;
         
     }
     

@@ -30,7 +30,6 @@ class Pedido {
     public $produtos;
     public $forma_pagamento;
     public $logistica;
-    
 
     function __construct() {
 
@@ -256,7 +255,7 @@ class Pedido {
                 . " WHERE produto_pedido_saida.id_pedido=$this->id");
 
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro,$cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc,$sistema_lote,$nota_usuario, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lote, $nota_usuario, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
@@ -435,7 +434,7 @@ class Pedido {
         $nota->observacao = "Nota referente a pedido $this->id";
         $nota->frete_destinatario_remetente = !$this->frete_incluso;
         $nota->transportadora = $this->transportadora;
-        
+
         $total = $this->getTotal();
 
         $vencimentos = array();
@@ -481,7 +480,6 @@ class Pedido {
             $pn->valor_total = $pn->valor_unitario * $pn->quantidade;
 
             $produtos_nota[] = $pn;
-            
         }
 
         $nota->produtos = $produtos_nota;
@@ -489,28 +487,27 @@ class Pedido {
         return $nota;
     }
 
-    public function gerarCobranca(){
-        
+    public function gerarCobranca() {
+
         $retorno = $this->forma_pagamento->aoFinalizarPedido($this);
-        $log = Logger::gerarLog($this, "Cobranca via ".$this->forma_pagamento->nome.", gerada $retorno");
-        try{
-            $this->empresa->email->enviarEmail($this->empresa->email->filtro(Email::$FINANCEIRO),"Cobranca de pagamento",$log->toHtml());
-            $this->empresa->email->enviarEmail($this->cliente->email->filtro(Email::$FINANCEIRO),"Cobranca de pagamento",$log->toHtml());
-        }catch(Exception $ex){
+        $log = Logger::gerarLog($this, "Cobranca via " . $this->forma_pagamento->nome . ", gerada $retorno");
+        try {
+            $this->empresa->email->enviarEmail($this->empresa->email->filtro(Email::$FINANCEIRO), "Cobranca de pagamento", $log->toHtml());
+            $this->empresa->email->enviarEmail($this->cliente->email->filtro(Email::$FINANCEIRO), "Cobranca de pagamento", $log->toHtml());
+        } catch (Exception $ex) {
             
         }
         return $retorno;
-        
     }
-    
-    public function merge($con,$recursao=false) {
+
+    public function merge($con, $recursao = false) {
 
         $prods = $this->getProdutos($con);
-               
-        if ($this->produtos === null) {            
+
+        if ($this->produtos === null) {
             $this->produtos = $prods;
         }
-        
+
         foreach ($this->produtos as $key => $value) {
             if ($this->logistica === null) {
                 if ($value->produto->logistica !== null) {
@@ -526,38 +523,124 @@ class Pedido {
                 }
             }
         }
-        
-        
+
+
         $status_anterior = $this->status;
-        
+
         $ps = $con->getConexao()->prepare("SELECT id_status FROM pedido WHERE id=$this->id");
         $ps->execute();
         $ps->bind_result($id_status);
-        if($ps->fetch()){
+        if ($ps->fetch()) {
             $status = Sistema::getStatusPedidoSaida();
-            foreach($status as $key=>$value){
-                if($value->id === $id_status){
+            foreach ($status as $key => $value) {
+                if ($value->id === $id_status) {
                     $status_anterior = $value;
                 }
             }
         }
         $ps->close();
-        
+
         $inicial = $this->id === 0;
-        
+
         if ($this->id == 0) {
-            
+
             $ps = $con->getConexao()->prepare("INSERT INTO pedido(id_cliente,id_transportadora,frete,observacoes,frete_inclusao,id_empresa,data,excluido,id_usuario,id_nota,prazo,parcelas,id_status,id_forma_pagamento,id_logistica) VALUES(" . $this->cliente->id . "," . $this->transportadora->id . ",$this->frete,'$this->observacoes'," . ($this->frete_incluso ? "true" : "false") . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data/1000),false," . $this->usuario->id . ",$this->id_nota,$this->prazo,$this->parcelas," . $this->status->id . "," . $this->forma_pagamento->id . "," . ($this->logistica != null ? $this->logistica->id : 0) . ")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
-            
+
             $atividade = new Atividade($this->usuario);
-            $atividade->descricao = "Pedido fechado ".$this->getTotal();
+            $atividade->descricao = "Pedido fechado " . $this->getTotal();
             $atividade->pontos = $this->getTotal();
             $atividade->tipo = Atividade::$PEDIDO;
             $atividade->merge($con);
-            
+
+            //INICIANDO LIMITE CREDITO
+            $empresa = $this->empresa->getAdm($con);
+            if ($empresa === null) {
+                $empresa = $this->empresa;
+            }
+
+            $passar_direto = false;
+            $analisar_credito = false;
+            $divida = 0;
+            if ($this->prazo < 3) {
+                $passar_direto = true;
+            } else {
+                $limite = $this->cliente->getLimiteCredito();
+                if ($limite < 0) {
+                    $analisar_credito = true;
+                } else {
+                    $divida = $this->cliente->getDividas($con);
+                    if (($divida + $this->getTotal()) > $limite) {
+                        $ps = $con->getConexao()->prepare("UPDATE pedido SET data=data, excluido=true WHERE id=$this->id");
+                        $ps->execute();
+                        $ps->close();
+                        throw new Exception("O pedido nao pode ser realizado devido limite de credito excedido");
+                    } else {
+                        $passar_direto = true;
+                    }
+                }
+            }
+            if ($analisar_credito) {
+                $t = new Tarefa();
+                $t->tipo_tarefa = Sistema::TT_ANALISE_CREDITO($empresa->id);
+                $t->titulo = "Analise de credito do pedido $this->id, cliente " . $this->cliente->razao_social;
+                $t->descricao = "Razao Social: " . $this->cliente->razao_social . " <br>"
+                        . "CNPJ: " . $this->cliente->cnpj->valor . " <br>"
+                        . "Estado: " . $this->cliente->endereco->cidade->estado->sigla . " <br>"
+                        . "Cidade: " . $this->cliente->endereco->cidade->nome . " <br>"
+                        . "Email: " . str_replace(array(";"), array("<br>"), $this->cliente->email->endereco) . " <br>"
+                        . "Divida: R$ " . round($divida, 2) . " <br>"
+                        . "Telefones: ";
+                foreach ($this->cliente->telefones as $key => $value) {
+                    $t->descricao .= "$value->numero<br>";
+                }
+
+                $t->descricao .= "<a style='font-size:20px;text-decoration:underline;color:SteelBlue' href='analise_credito.php?cliente=" . $this->cliente->id . "&pedido=$this->id&empresa=" . $this->empresa->id . "'>ANALISAR CREDITO</a>";
+
+                $t->tipo_entidade_relacionada = "PED_" . $this->empresa->id;
+                $t->id_entidade_relacionada = $this->id;
+                Sistema::novaTarefaEmpresa($con, $t, $empresa);
+            } else if ($passar_direto) {
+                if ($this->prazo < 3) {
+                    $t = new Tarefa();
+                    $t->tipo_tarefa = Sistema::TT_CONFIRMACAO_PAGAMENTO($empresa->id);
+                    $t->titulo = "Confirmacao de pagamento do pedido $this->id, cliente " . $this->cliente->razao_social;
+                    $t->descricao = "Razao Social: " . $this->cliente->razao_social . " <br>"
+                            . "CNPJ: " . $this->cliente->cnpj->valor . " <br>"
+                            . "Estado: " . $this->cliente->endereco->cidade->estado->sigla . " <br>"
+                            . "Cidade: " . $this->cliente->endereco->cidade->nome . " <br>"
+                            . "Email: " . str_replace(array(";"), array("<br>"), $this->cliente->email->endereco) . " <br>"
+                            . "Valor do Pedido: R$" . round($this->getTotal(), 2) . " <br> "
+                            . "Telefones: ";
+                    foreach ($this->cliente->telefones as $key => $value) {
+                        $t->descricao .= "$value->numero<br>";
+                    }
+                    $t->tipo_entidade_relacionada = "PED_" . $this->empresa->id;
+                    $t->id_entidade_relacionada = $this->id;
+                    Sistema::novaTarefaEmpresa($con, $t, $empresa);
+                } else {
+                    $id_empresa = intval($pt[1]);
+                    $empresa = new Empresa($id_empresa, $con);
+                    $pedido = $empresa->getPedidos($con, 0, 1, "pedido.id=$tarefa->id_entidade_relacionada");
+                    $pedido = $pedido[0];
+
+                    $emp = $pedido->empresa;
+                    if ($pedido->logistica !== null) {
+                        $emp = $pedido->logistica;
+                    }
+
+                    $t = new Tarefa();
+                    $t->tipo_tarefa = Sistema::TT_SEPARACAO($empresa->id);
+                    $t->titulo = "Separacao do pedido $pedido->id";
+                    $t->descricao .= "<a style='font-size:20px;text-decoration:underline;color:SteelBlue' href='separacao.php?pedido=$this->id&empresa=" . $this->empresa->id . "'>SEPARAR PEDIDO</a>";
+
+                    $t->tipo_entidade_relacionada = "PED_" . $pedido->empresa->id;
+                    $t->id_entidade_relacionada = $pedido->id;
+                    Sistema::novaTarefaEmpresa($con, $t, $empresa);
+                }
+            }
         } else {
 
             $ps = $con->getConexao()->prepare("UPDATE pedido SET id_cliente=" . $this->cliente->id . ",id_transportadora=" . $this->transportadora->id . ",frete=$this->frete,observacoes='$this->observacoes',frete_inclusao=" . ($this->frete_incluso ? "true" : "false") . ",id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data/1000),excluido=false,id_usuario=" . $this->usuario->id . ",id_nota=$this->id_nota,prazo=$this->prazo,parcelas=$this->parcelas,id_status=" . $this->status->id . ",id_forma_pagamento=" . $this->forma_pagamento->id . ", id_logistica=" . ($this->logistica != null ? $this->logistica->id : 0) . " WHERE id=$this->id");
@@ -566,10 +649,10 @@ class Pedido {
         }
 
         $erro = null;
-        
-        
+
+
         foreach ($prods as $key => $value) {
-            
+
             foreach ($this->produtos as $key2 => $value2) {
 
                 if ($value->id == $value2->id) {
@@ -579,7 +662,7 @@ class Pedido {
             }
 
             try {
-                
+
                 $value->delete($con);
             } catch (Exception $ex) {
 
@@ -598,12 +681,10 @@ class Pedido {
             }
         }
         $this->produtos = $np;
-        
-        Logger::gerarLog($this, $this->status->nome);
 
-        
+        Logger::gerarLog($this, $this->status->nome);
         $this->status->enviarEmails($this);
-        
+
         if ($this->status->nota && $this->id_nota == 0) {
 
             $nota = $this->gerarNotaPadrao();
@@ -626,13 +707,12 @@ class Pedido {
                 $nota_logistica_empresa->cliente = $getter->getClienteViaEmpresa($con, $this->empresa);
 
                 $nota_logistica_empresa->merge($con);
-                
             }
         }
 
         if ($erro !== null) {
-            if(!$recursao){
-                $this->merge($con,true);
+            if (!$recursao) {
+                $this->merge($con, true);
             }
             throw new Exception($erro);
         }
@@ -649,6 +729,11 @@ class Pedido {
         $this->produtos = $this->getProdutos($con);
 
         $erro = null;
+
+        $ps = $con->getConexao()->prepare("UPDATE tarefa SET inicio_minimo=inicio_minimo,excluida=true "
+                . "WHERE tipo_entidade_relacionada='PED_" . $this->empresa->id . "' AND id_entidade_relacionada=$this->id AND porcentagem_conclusao<100");
+        $ps->execute();
+        $ps->close();
 
         foreach ($this->produtos as $key => $value) {
 

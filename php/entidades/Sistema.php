@@ -13,7 +13,7 @@
  */
 class Sistema {
 
-    public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
+    public static $ENDERECO = "http://192.168.0.17/novo_rtc_web/";
 
     /*
      * porcentagem
@@ -490,6 +490,35 @@ class Sistema {
         return new TTRastreio($id_empresa);
     }
 
+    public static function setLimiteCredito($limite, $id_cliente, $id_empresa, $usuario, $id_pedido = 0) {
+
+        $con = new ConnectionFactory();
+
+        $empresa = new Empresa($id_empresa, $con);
+        $cliente = $empresa->getClientes($con, 0, 1, "cliente.id=$id_cliente");
+        $cliente = $cliente[0];
+        $cliente->inicio_limite = round(microtime(true) * 1000);
+        $cliente->termino_limite = $cliente->inicio_limite + (6 * 30 * 24 * 60 * 60 * 1000); //6 meses de limite de credito
+        $cliente->limite_credito = $limite;
+        $cliente->merge($con);
+
+        $tipo_tarefa = Sistema::TT_ANALISE_CREDITO($usuario->empresa->id);
+        $tarefas = $usuario->getTarefas($con, "tarefa.id_tipo_tarefa=$tipo_tarefa->id AND"
+                . " ((tarefa.tipo_entidade_relacionada='PED_$id_empresa' AND tarefa.id_entidade_relacionada=$id_pedido) "
+                . "OR (tarefa.tipo_entidade_relacionada='CLI' AND tarefa.id_entidade_relacionada=$id_cliente))");
+
+        foreach ($tarefas as $key => $value) {
+
+            $porcentagem = 100 - $value->porcentagem_conclusao;
+
+            $obs = new ObservacaoTarefa();
+            $obs->porcentagem = $porcentagem;
+            $obs->observacao = "Limite de credito analisado com sucesso, valor de R$ " . round($limite, 2) . ", pelo usuario $usuario->nome";
+
+            $value->addObservacao($con, $usuario, $obs);
+        }
+    }
+
     public static function aoCadastrarCliente($usuario, $cliente) {
 
         $con = new ConnectionFactory();
@@ -558,12 +587,17 @@ class Sistema {
         $tarefa->realocavel = true;
 
         $cargos = "(";
-
+        $pelo_menos_um = false;
         foreach ($tarefa->tipo_tarefa->cargos as $key => $value) {
+            $pelo_menos_um = true;
             if ($cargos !== "(") {
                 $cargos .= ",";
             }
             $cargos .= "$value->id";
+        }
+
+        if (!$pelo_menos_um) {
+            return;
         }
 
         $cargos .= ")";
@@ -841,9 +875,6 @@ class Sistema {
 
                 if ($value->id === $value2->id) {
 
-                    $value->tempo_medio = $value2->tempo_medio;
-                    $value->prioridade = $value2->prioridade;
-                    $value->cargos = $value2->cargos;
                     $value->empresa = $value2->empresa;
 
                     $tarefas[$key2] = $value;
@@ -1711,18 +1742,19 @@ class Sistema {
 
     public static function getHtml($nom, $p = null) {
 
-
+        
         global $obj;
         $obj = Sistema::encodeAll(Utilidades::copy($p));
 
         $servico = realpath('../../html_email');
         $servico .= "/$nom.php";
-
+        
         ob_start();
         include($servico);
         $html = ob_get_clean();
-
+       
         return utf8_decode($html);
+        
     }
 
     public static function finalizarNotas($con, $notas) {

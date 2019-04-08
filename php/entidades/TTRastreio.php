@@ -20,7 +20,7 @@ class TTRastreio extends TipoTarefa {
         $this->nome = "Rastreio";
         $this->tempo_medio = 0.2;
         $this->prioridade = 2;
-        
+        $this->carregarDados();
     }
 
     public function aoFinalizar() {

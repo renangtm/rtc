@@ -21,7 +21,7 @@ class TipoTarefa {
     public $empresa;
     public $excluido;
     public $observacao_padrao;
-    
+
     function __construct($id = 0, $id_empresa = 0) {
 
         //pode ter ate 100 tarefas fixas
@@ -38,20 +38,80 @@ class TipoTarefa {
         $this->empresa = null;
         $this->observacao_padrao = "";
         $this->excluido = false;
-        
     }
-    
-    public function getObservacaoPadrao($tarefa){
-        
+
+    protected function carregarDados() {
+
+        $ses = new SessionManager();
+
+        $obj = null;
+
+        if (($obj = $ses->get("tipo_tarefa_" . $this->id)) !== null) {
+
+            if (isset($obj->prioridade)) {
+                $this->prioridade = $obj->prioridade;
+            }
+            if (isset($obj->tempo_medio)) {
+                $this->tempo_medio = $obj->tempo_medio;
+            }
+            if (isset($obj->cargos)) {
+                foreach ($obj->cargos as $key => $value) {
+                    $this->cargos[] = $value;
+                }
+            }
+        } else {
+
+            $obj = new stdClass();
+
+            $con = new ConnectionFactory();
+            $ps = $con->getConexao()->prepare("SELECT tempo_medio,prioridade FROM tipo_tarefa WHERE id=" . $this->id);
+            $ps->execute();
+            $ps->bind_result($tempo_medio, $prioridade);
+            if ($ps->fetch()) {
+                $obj->tempo_medio = $tempo_medio;
+                $obj->prioridade = $prioridade;
+            }
+            $ps->close();
+
+            $obj->cargos = array();
+            $ps = $con->getConexao()->prepare("SELECT c.id,c.nome FROM tipo_tarefa_cargo tt INNER JOIN cargo c ON c.id=tt.id_cargo "
+                    . "WHERE tt.id_tipo_tarefa=$this->id AND c.id>0");
+            $ps->execute();
+            $ps->bind_result($id, $nome);
+            while ($ps->fetch()) {
+                $c = new Cargo();
+                $c->empresa = $this->empresa;
+                $c->id = $id;
+                $c->nome = $nome;
+                $obj->cargos[] = $c;
+            }
+            $ps->close();
+            if (isset($obj->prioridade)) {
+                $this->prioridade = $obj->prioridade;
+            }
+            if (isset($obj->tempo_medio)) {
+                $this->tempo_medio = $obj->tempo_medio;
+            }
+            if (isset($obj->cargos)) {
+                foreach ($obj->cargos as $key => $value) {
+                    $this->cargos[] = $value;
+                }
+            }
+
+            $ses->set("tipo_tarefa_" . $this->id, $obj);
+        }
+    }
+
+    public function getObservacaoPadrao($tarefa) {
+
         return "";
-        
     }
-    
-    public function aoAtribuir($id_usuario,$tarefa) {
+
+    public function aoAtribuir($id_usuario, $tarefa) {
         
     }
 
-    public function aoFinalizar($tarefa,$usuario) {
+    public function aoFinalizar($tarefa, $usuario) {
         
     }
 
@@ -93,6 +153,9 @@ class TipoTarefa {
             $ps->execute();
             $ps->close();
         }
+
+        $ses = new SessionManager();
+        $ses->deset("tipo_tarefa_$this->id");
     }
 
     public function delete($con) {

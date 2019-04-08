@@ -1,18 +1,399 @@
+rtc.controller("crtAnaliseCredito", function ($scope, clienteService, sistemaService) {
+
+    $scope.cliente = null;
+    $scope.faturamento_anual = 0;
+    $scope.meses_faturamento = {};
+    $scope.ativo = 0;
+    $scope.circulante = 0;
+    $scope.passivo = 0;
+    $scope.m = 0;
+    $scope.exigivelLongoPrazo = 0;
+    $scope.endividamentoGeral = 0;
+    $scope.composicaoEndividamento = 0;
+    $scope.ac = 0;
+    $scope.ae = 0;
+    $scope.ag = 0;
+    $scope.aj = 0;
+    $scope.al = 0;
+    $scope.indiceCoberturaJuros = 0;
+    $scope.retornoSobreVendas = 0;
+    $scope.margemBruta = 0;
+    $scope.cartaFianca = 0;
+    $scope.impostoRenda = 0;
+    $scope.estoqueConsignado = 0;
+    $scope.hipoteca = 0;
+    $scope.epo = false;
+    $scope.rde = false;
+    $scope.fb = false;
+    $scope.pco = false;
+    $scope.rco = false;
+    $scope.ccs = false;
+    $scope.her = false;
+    $scope.tempoRamoAtual = 0;
+    $scope.pee = false;
+    $scope.ane = false;
+    $scope.toc = false;
+    $scope.cpr = false;
+    $scope.pch = false;
+    $scope.rai = false;
+    $scope.trs = false;
+    $scope.scoreR = 0;
+    $scope.leR = false;
+    $scope.mediaFaturamentoR = 0;
+    $scope.cfR = false;
+    $scope.cfQR = 0;
+    $scope.slR = false;
+    $scope.limiteMensal = 0;
+    $scope.clienteDesdeR = 0;
+    $scope.liR = false;
+    $scope.liQR = 0;
+    $scope.limiteMensalR2 = 0;
+    $scope.sllR = false;
+    $scope.resultado = 0;
+
+    clienteService.getClienteEspecifico(rtc.id_empresa, rtc.id_cliente, function (cli) {
+
+        $scope.cliente = cli.cliente;
+
+    })
+
+    $scope.podeFinalizar = function () {
+
+        return !isNaN($scope.resultado);
+
+    }
+
+    $scope.finalizarAnalise = function () {
+
+        msg.confirma("Tem certeza que deseja finalizar com limite de R$ " + $scope.resultado + ", para o cliente " + $scope.cliente.razao_social, function () {
+
+            sistemaService.setLimiteCredito($scope.resultado, rtc.id_cliente, rtc.id_empresa, rtc.id_pedido, function (r) {
+
+                if (r.sucesso) {
+
+                    msg.alerta("Limite analisado com sucesso. " + (rtc.id_pedido > 0 ? 'Redirecionando novamente a tela de tarefas' : ''));
+
+                    window.location = "tarefas.php";
+
+                } else {
+
+                    msg.erro("Ocorreu um problema.");
+
+                }
+
+            })
+
+        });
+
+    }
+
+    var calcular = function () {
+
+        var limite = 0;
+
+        var porcentagens = [10, 20, 25, 30, 35];
+
+        var data = new Date();
+
+        var porcentagem = porcentagens[1];
+
+
+        $scope.faturamento_anual = 0;
+
+        for (a in $scope.meses_faturamento) {
+            $scope.faturamento_anual += $scope.meses_faturamento[a];
+        }
+
+        var media_faturamento = $scope.faturamento_anual;
+
+
+        var fat_perc = media_faturamento * porcentagem / 100;
+
+
+        var perc_bal = fat_perc * 0.1;
+
+        var endividamento_geral = ($scope.m + $scope.exigivelLongoPrazo) / $scope.ativo;
+
+
+
+        if (!isNaN(endividamento_geral)) {
+            $scope.endividamentoGeral = (endividamento_geral * 100).toFixed(2) + " | " + ((1 - endividamento_geral) * 0.4 * perc_bal).toFixed(2);
+        } else {
+            $scope.endividamentoGeeral = 0;
+        }
+
+        endividamento_geral = (1 - endividamento_geral);
+
+        if (isNaN(endividamento_geral)) {
+            endividamento_geral = 0;
+        }
+
+
+
+        limite += perc_bal * 0.4 * endividamento_geral;
+
+        var composicao_endividamento = $scope.m / ($scope.m + $scope.exigivelLongoPrazo);
+
+        $scope.composicaoEndividamento = (composicao_endividamento * 100).toFixed(2) + " | " + ((1 - composicao_endividamento) * perc_bal * 0.2).toFixed(2);
+
+        composicao_endividamento = 1 - composicao_endividamento;
+
+        if (isNaN(composicao_endividamento)) {
+            composicao_endividamento = 0;
+        }
+
+        limite += perc_bal * 0.2 * composicao_endividamento;
+
+
+        var retorno_sobre_vendas = $scope.al / $scope.ac;
+
+        if (isNaN(retorno_sobre_vendas)) {
+            retorno_sobre_vendas = 0;
+        }
+
+        $scope.retornoSobreVendas = (retorno_sobre_vendas * 100).toFixed(2);
+
+        limite += perc_bal * 0.2 * retorno_sobre_vendas;
+
+        var indice_cobertura_juros = $scope.aj / $scope.ag;
+
+        if (isNaN(indice_cobertura_juros)) {
+            indice_cobertura_juros = 0;
+        }
+
+        $scope.indiceCoberturaJuros = (indice_cobertura_juros * 100).toFixed(2);
+
+        limite += perc_bal * 0.1 * indice_cobertura_juros;
+
+        var margem_bruta = $scope.ae / $scope.ac;
+
+        if (isNaN(margem_bruta)) {
+            margem_bruta = 0;
+        }
+
+        $scope.margemBruta = (margem_bruta * 100).toFixed(2);
+
+        limite += perc_bal * 0.3 * margem_bruta;
+
+
+        var fat_in = $scope.impostoRenda / media_faturamento;
+        fat_in--;
+        if (isNaN(fat_in))
+            fat_in = 0;
+
+        var perc_fin = 1 + parseInt(fat_in);
+
+        var cons_in = $scope.estoqueConsignado / media_faturamento;
+        cons_in--;
+        if (isNaN(cons_in))
+            cons_in = 0;
+
+        perc_fin += parseInt(cons_in);
+
+        var hip = $scope.hipoteca / media_faturamento;
+        hip--;
+        if (isNaN(hip))
+            hip = 0;
+
+        perc_fin += parseInt(hip);
+
+        var porc_fin = porcentagens[Math.min(porcentagens.length - 1, 1 + perc_fin)];
+
+        var diff = Math.max(porc_fin - porcentagem, 0);
+
+        limite += media_faturamento * diff / 100;
+
+        var estf = media_faturamento * 0.03;
+
+        if ($scope.eop) {
+            limite += estf * 0.4;
+        }
+
+        if ($scope.rde) {
+            limite += estf * 0.4;
+        }
+
+        if ($scope.fb) {
+            limite += estf * 0.2;
+        }
+
+        estf = media_faturamento * 0.02;
+
+        if ($scope.pco) {
+            limite += estf * 0.2;
+        }
+
+        if ($scope.rco) {
+            limite += estf * 0.2;
+        }
+
+
+        if ($scope.ccs) {
+            limite += estf * 0.1;
+        }
+
+        if ($scope.her) {
+            limite += estf * 0.1;
+        }
+
+        estf = media_faturamento * 0.03;
+
+        var tra = $scope.tempoRamoAtual;
+
+        if (tra > 5) {
+            limite += estf * 0.5;
+        } else if (tra > 2) {
+            limite += estf * 0.3;
+        }
+
+        if ($scope.pee) {
+            limite += estf * 0.2;
+        }
+
+        if ($scope.ane) {
+            limite += estf * 0.1;
+        }
+
+        if ($scope.toc) {
+            limite += estf * 0.1;
+        }
+
+        estf = media_faturamento * 0.02;
+
+        if ($scope.cpr) {
+            limite += estf * 0.2;
+        }
+
+        if ($scope.pch) {
+            limite += estf * 0.4;
+        }
+
+        if ($scope.rai) {
+            limite += estf * 0.4;
+        }
+
+        if ($scope.trs) {
+            limite += estf * 0.1;
+        }
+
+        var limite_final = limite;
+
+
+
+        //===============================================
+
+
+
+        $scope.mediaFaturamentoR = (media_faturamento).toFixed(2);
+
+        var limite_solicitado = limite_final * 0.1;
+        limite_final *= 0.8;
+
+        var score = $scope.scoreR;
+        if (isNaN(score))
+            score = 0;
+
+        limite_solicitado *= score / 900;
+
+        if ($scope.leR) {
+            limite_solicitado *= 0.95;
+        }
+
+        if ($scope.cfR) {
+
+            var rf = $scope.cfQR;
+            if (isNaN(rf))
+                rf = 0;
+
+            rf /= 12;
+            rf /= 10;
+
+            limite_solicitado = (limite_solicitado + rf) / 2;
+            limite_solicitado = Math.max(0, limite_solicitado);
+
+        }
+
+        $scope.limiteMensal = (limite_solicitado + limite_final).toFixed(2);
+
+        var solicitacaoLimite = $scope.slR;
+
+        if (solicitacaoLimite == 0) {
+
+            limite_solicitado *= 0.9;
+
+        }
+
+
+
+        var dif = Math.abs($scope.clienteDesdeR - (data.getYear() + 1900));
+        if (!isNaN(dif)) {
+            if (dif > 10) {
+                limite_solicitado *= 1.03;
+            } else if (dif > 5) {
+                limite_solicitado *= 1.01;
+            }
+        }
+
+        if ($scope.liR) {
+            limite_solicitado *= 1.03;
+        }
+
+
+        $scope.limiteMensalR2 = (limite_solicitado + limite_final).toFixed(2);
+
+        if ($scope.sllR) {
+            limite_solicitado *= 1.04;
+        }
+
+        limite_final += limite_solicitado;
+
+        limite_final += $scope.cartaFianca;
+
+
+        if (limite_final > fat_perc) {
+
+            limite_final = fat_perc;
+
+        }
+
+        limite_final += $scope.hipoteca;
+
+        //===============================================
+
+        var fd = limite_final * 100 / media_faturamento;
+
+        var class_cli = 0;
+
+        for (; porcentagens[class_cli] < fd && class_cli < porcentagens.length; class_cli++)
+            ;
+
+        $scope.resultado = limite_final.toFixed(2);
+
+
+    }
+
+    $scope.$watch(function (newValue, oldValue) {
+
+        calcular();
+
+    });
+
+})
 rtc.controller("crtAcompanharAtividades", function ($scope, usuarioService) {
 
     $scope.tarefas = [];
     $scope.carregando = true;
-    
-    usuarioService.getTarefasSolicitadas(function(tt){
-     
+
+    usuarioService.getTarefasSolicitadas(function (tt) {
+
         var usuarios = [];
         var grupos = [];
-        
+
         lbl:
-        for(var i=0;i<tt.tarefas.length;i++){
+                for (var i = 0; i < tt.tarefas.length; i++) {
             var t = tt.tarefas[i];
-            for(var j=0;j<usuarios.length;j++){
-                if(usuarios[j] === t.id_usuario){
+            for (var j = 0; j < usuarios.length; j++) {
+                if (usuarios[j] === t.id_usuario) {
                     grupos[j][grupos[j].length] = t;
                     continue lbl;
                 }
@@ -20,24 +401,24 @@ rtc.controller("crtAcompanharAtividades", function ($scope, usuarioService) {
             usuarios[usuarios.length] = t.id_usuario;
             grupos[grupos.length] = [t];
         }
-        for(var i=0;i<grupos.length;i++){
+        for (var i = 0; i < grupos.length; i++) {
             grupos[i] = {
-                id_usuario:grupos[i][0].id_usuario,
-                nome_usuario:grupos[i][0].nome_usuario,
-                id_empresa:grupos[i][0].id_empresa,
-                nome_empresa:grupos[i][0].nome_empresa,
-                lista:createList(grupos[i], 1, 7, "titulo")
+                id_usuario: grupos[i][0].id_usuario,
+                nome_usuario: grupos[i][0].nome_usuario,
+                id_empresa: grupos[i][0].id_empresa,
+                nome_empresa: grupos[i][0].nome_empresa,
+                lista: createList(grupos[i], 1, 7, "titulo")
             };
         }
-        
+
         $scope.tarefas = createList(grupos, 1, 7, "nome_usuario");
         $scope.carregando = false;
-       
-        
+
+
     })
 
 })
-rtc.controller("crtFechamentoCaixa", function ($scope,movimentoService,notaService, baseService, fechamentoCaixaService, bancoService, movimentosFechamentoService) {
+rtc.controller("crtFechamentoCaixa", function ($scope, movimentoService, notaService, baseService, fechamentoCaixaService, bancoService, movimentosFechamentoService) {
 
     $scope.fechamentos = createAssinc(fechamentoCaixaService, 1, 5, 10);
     assincFuncs(
@@ -73,13 +454,13 @@ rtc.controller("crtFechamentoCaixa", function ($scope,movimentoService,notaServi
 
     }
 
-    $scope.podeFechar = function(f){
-        
-        if(Math.abs(f.banco.saldo-f.valor)<0.1){
+    $scope.podeFechar = function (f) {
+
+        if (Math.abs(f.banco.saldo - f.valor) < 0.1) {
             return true;
         }
         return false;
-        
+
     }
 
     $scope.setVisto = function (mov) {
@@ -299,7 +680,7 @@ rtc.controller("crtCobranca", function ($scope, $timeout, tarefaService) {
     }, 10000);
 
 })
-rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaService, usuarioService, tipoTarefaService, empresaService) {
+rtc.controller("crtTarefas", function ($scope, $sce, tarefaService, observacaoTarefaService, usuarioService, tipoTarefaService, empresaService) {
 
     $scope.tarefas = {};
 
@@ -325,6 +706,13 @@ rtc.controller("crtTarefas", function ($scope, tarefaService, observacaoTarefaSe
     $scope.tarefa_principal = null;
 
     $scope.observacao_tarefa = {};
+
+
+    $scope.toHTML = function (h) {
+
+        return $sce.trustAsHtml(h);
+
+    }
 
     $scope.novaObservacaoTarefa = function () {
 
@@ -1163,7 +1551,7 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
     }
 
     $scope.gerarRelatorio = function () {
-        
+
         $scope.carregando = true;
         $scope.prepararRelatorio();
 
@@ -1172,7 +1560,7 @@ rtc.controller("crtRelatorio", function ($scope, relatorioService) {
             $scope.carregando = false;
         }
         $scope.gerado.attList();
-        
+
 
         $("#mdlRelatorio").modal("show");
 
@@ -2694,15 +3082,15 @@ rtc.controller("crtMovimentos", function ($scope, movimentoService, sistemaServi
 
     }
 
-    $scope.corretorSaldo = function(m){
-        
-        movimentoService.corretorSaldo(m,function(v){
-            
+    $scope.corretorSaldo = function (m) {
+
+        movimentoService.corretorSaldo(m, function (v) {
+
             msg.alerta("Saldo corrigido a partir desse movimento");
             $scope.movimentos.attList();
-            
+
         })
-        
+
     }
 
     $scope.novoMovimento = function () {
@@ -3349,7 +3737,7 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tr
     $scope.transp = null;
 
     $scope.formarPedido = function (transportadora) {
-        
+
         cotacaoEntradaService.formarPedido($scope.cotacao, transportadora, $scope.frete, function (f) {
 
             if (f.sucesso) {
@@ -6287,6 +6675,12 @@ rtc.controller("crtClientes", function ($scope, categoriaProspeccaoService, clie
         $scope.empresas_clientes = e.clientes;
 
     })
+    
+    $scope.analisaCredito = function(c){
+        
+        window.location = "analise_credito.php?empresa="+c.empresa.id+"&cliente="+c.id;
+        
+    }
 
     $scope.removeCategoriaProspeccao = function (cat) {
 

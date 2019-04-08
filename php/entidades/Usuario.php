@@ -495,7 +495,7 @@ class Usuario {
                 . "INNER JOIN usuario ON usuario.id=tarefa.id_usuario "
                 . "INNER JOIN empresa ON empresa.id=usuario.id_empresa "
                 . "LEFT JOIN usuario u2 ON tarefa.criada_por=u2.id "
-                . "WHERE tarefa.excluida=false AND (tarefa.id_usuario IN $cache->usuarios OR tarefa.criada_por=$this->id) AND tarefa.porcentagem_conclusao<100";
+                . "WHERE tarefa.excluida=false AND (tarefa.id_usuario IN $cache->usuarios OR tarefa.criada_por=$this->id) AND tarefa.porcentagem_conclusao<100 ORDER BY tarefa.id DESC";
 
         $tmp = array();
         $ps = $con->getConexao()->prepare($sql);

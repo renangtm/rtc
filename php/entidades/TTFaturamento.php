@@ -20,7 +20,7 @@ class TTFaturamento extends TipoTarefa {
         $this->nome = "Faturamento";
         $this->tempo_medio = 0.2;
         $this->prioridade = 2;
-        
+        $this->carregarDados();
     }
 
     public function aoFinalizar() {
