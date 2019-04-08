@@ -999,6 +999,14 @@ rtc.service('acompanharPedidoService', function ($http, $q) {
 })
 
 rtc.service('pedidoService', function ($http, $q) {
+    this.getPedidoEspecifico = function (id_empresa,id_pedido,fn) {
+        baseService($http, $q, {
+            o:{id_empresa:id_empresa,id_pedido:id_pedido},
+            query: "$e=new Empresa($o->id_empresa,$c);$r->pedido=$e->getPedidos($c,0,1,'pedido.id='.$o->id_pedido);$r->pedido=$r->pedido[0];$r->pedido->produtos=$r->pedido->getProdutos($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getPedido = function (fn) {
         baseService($http, $q, {
             query: "$r->pedido=new Pedido();$r->pedido->usuario=$usuario;$r->pedido->empresa=$empresa",
@@ -2066,6 +2074,30 @@ rtc.service('sistemaService', function ($http, $q) {
         baseService($http, $q, {
             o: pedido,
             query: "Sistema::finalizarCompraParceiros($c,$o,$empresa);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.finalizarSeparacao = function (pedido, fn) {
+        baseService($http, $q, {
+            o: {pedido:pedido},
+            query: "Sistema::finalizarSeparacao($c,$o->pedido,$usuario);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.gerarRelatorioSeparacao = function (pedido,itens, fn) {
+        baseService($http, $q, {
+            o: {pedido:pedido,itens:itens},
+            query: "$r->relatorio=Sistema::relatorioSeparacao($c,$empresa,$o->itens,$o->pedido);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.popularEnderecamento = function (itens, fn) {
+        baseService($http, $q, {
+            o: itens,
+            query: "$r->itens=Sistema::popularEnderecamento($c,$o);",
             sucesso: fn,
             falha: fn
         });

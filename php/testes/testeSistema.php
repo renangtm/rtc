@@ -19,16 +19,18 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         $con = new ConnectionFactory();
         
-        $e = new Empresa(2071,$con);
+        $empresa = new Empresa(1733,$con);
+        $tipos_tarefa = $empresa->getTiposTarefa($con);
         
-        $usuarios = $e->getUsuarios($con, 0, 1,"usuario.id=4599");
-        $usuario = $usuarios[0];
+        $tarefa = null;
+        foreach($tipos_tarefa as $key=>$value){
+            $value->empresa = null;
+            if($value->nome==="Faturamento"){
+                $tarefa=$value;
+            }
+        }
         
-        $tarefa = $usuario->getTarefas($con,"tarefa.id=3352"); 
-        $tarefa = $tarefa[0];
-        
-        $tarefa->tipo_tarefa->aoFinalizar($tarefa,$usuario);
-        
+        echo Utilidades::toJson($tarefa);
         
         return;
 

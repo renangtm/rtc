@@ -20,6 +20,9 @@ class TTFaturamento extends TipoTarefa {
         $this->nome = "Faturamento";
         $this->tempo_medio = 0.2;
         $this->prioridade = 2;
+        $this->cargos = array(
+            Empresa::CF_FATURISTA($id_empresa)
+        );
         $this->carregarDados();
     }
 

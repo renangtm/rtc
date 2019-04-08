@@ -602,6 +602,12 @@ class Pedido {
                 $t->tipo_entidade_relacionada = "PED_" . $this->empresa->id;
                 $t->id_entidade_relacionada = $this->id;
                 Sistema::novaTarefaEmpresa($con, $t, $empresa);
+
+                $this->status = Sistema::STATUS_LIMITE_CREDITO();
+
+                $ps = $con->getConexao()->prepare("UPDATE pedido SET data=data, id_status=" . $this->status->id . " WHERE id = $this->id");
+                $ps->execute();
+                $ps->close();
             } else if ($passar_direto) {
                 if ($this->prazo < 3) {
                     $t = new Tarefa();
@@ -620,6 +626,12 @@ class Pedido {
                     $t->tipo_entidade_relacionada = "PED_" . $this->empresa->id;
                     $t->id_entidade_relacionada = $this->id;
                     Sistema::novaTarefaEmpresa($con, $t, $empresa);
+
+                    $this->status = Sistema::STATUS_CONFIRMACAO_PAGAMENTO();
+
+                    $ps = $con->getConexao()->prepare("UPDATE pedido SET data=data, id_status=" . $this->status->id . " WHERE id = $this->id");
+                    $ps->execute();
+                    $ps->close();
                 } else {
                     $id_empresa = intval($pt[1]);
                     $empresa = new Empresa($id_empresa, $con);
@@ -632,13 +644,19 @@ class Pedido {
                     }
 
                     $t = new Tarefa();
-                    $t->tipo_tarefa = Sistema::TT_SEPARACAO($empresa->id);
+                    $t->tipo_tarefa = Sistema::TT_SEPARACAO($emp->id);
                     $t->titulo = "Separacao do pedido $pedido->id";
                     $t->descricao .= "<a style='font-size:20px;text-decoration:underline;color:SteelBlue' href='separacao.php?pedido=$this->id&empresa=" . $this->empresa->id . "'>SEPARAR PEDIDO</a>";
 
                     $t->tipo_entidade_relacionada = "PED_" . $pedido->empresa->id;
                     $t->id_entidade_relacionada = $pedido->id;
                     Sistema::novaTarefaEmpresa($con, $t, $empresa);
+
+                    $this->status = Sistema::STATUS_SEPARACAO();
+
+                    $ps = $con->getConexao()->prepare("UPDATE pedido SET data=data, id_status=" . $this->status->id . " WHERE id = $this->id");
+                    $ps->execute();
+                    $ps->close();
                 }
             }
         } else {

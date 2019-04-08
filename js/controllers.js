@@ -1,3 +1,137 @@
+rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) {
+
+
+    var formatar = function (valor, digitos) {
+        while (valor.length < digitos) {
+            valor = "0" + valor;
+        }
+        return valor;
+    }
+
+    var descrever = function (retirada) {
+
+        var k = retirada.length - 2;
+
+        if (k === 0) {
+            return "PALET INTEIRO";
+        } else if (k === 1) {
+            return "CAIXA";
+        } else if (k === 2) {
+            return "UNIDADE DA CAIXA"
+        }
+
+        return "SUB UNIDADE DA CAIXA";
+
+    }
+
+    $scope.pedido = null;
+    $scope.codigo = "";
+    $scope.itens = [];
+
+    $scope.relatorio_separacao = "";
+
+    $scope.gerarRelatorio = function () {
+
+        sistemaService.gerarRelatorioSeparacao($scope.pedido, $scope.itens, function (r) {
+            
+            if(r.sucesso){
+                
+                $scope.relatorio_separacao = r.relatorio;
+                
+            }else{
+                
+                msg.alerta(r.mensagem);
+                
+            }
+        })
+
+    }
+
+    pedidoService.getPedidoEspecifico(rtc.id_empresa, rtc.id_pedido, function (pedido) {
+
+        $scope.pedido = pedido.pedido;
+
+        $scope.itens = [];
+        for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+            var p = $scope.pedido.produtos[i];
+            for (var j = 0; j < p.retiradas.length; j++) {
+                var r = p.retiradas[j];
+                var codigo = formatar(r[0], 7);
+                for (var k = 2; k < r.length; k++) {
+                    codigo += formatar(r[k] + "", 4);
+                }
+                var item = {
+                    id_produto: p.produto.id,
+                    id_pedido_produto: p.id,
+                    id_lote: r[0],
+                    nome_produto: p.produto.nome,
+                    quantidade: r[1],
+                    codigo: codigo,
+                    descricao: descrever(r),
+                    codigo_bipado: ""
+                }
+                $scope.itens[$scope.itens.length] = item;
+            }
+        }
+
+        sistemaService.popularEnderecamento($scope.itens, function (i) {
+
+            $scope.itens = i.itens;
+
+        })
+
+    })
+
+
+    $scope.bipe = function () {
+
+        for(var i=0;i<$scope.itens.length;i++){
+            if($scope.itens[i].codigo === $scope.codigo){
+                $scope.itens[i].codigo_bipado = $scope.codigo;
+                break;
+            }
+        }
+        $scope.codigo = "";
+
+    }
+
+    $scope.podeFinalizar = function () {
+
+        var a = true;
+        
+        for(var i=0;i<$scope.itens.length;i++){
+            if($scope.itens[i].codigo_bipado === ""){
+                a=false;
+                break;
+            }
+        }
+
+        return a;
+
+    }
+
+    $scope.finalizarSeparacao = function () {
+         
+        sistemaService.finalizarSeparacao($scope.pedido,function(r){
+            
+            if(r.sucesso){
+                
+                msg.alerta("Finalizada com sucesso. Redirecionando a tela de tarefas");
+                window.location="tarefas.php";
+                
+            }else{
+                
+                msg.erro("Ocorreu um problema ao finalizar a separação");
+                
+            }
+            
+        })
+    
+    }
+
+
+})
+
 rtc.controller("crtAnaliseCredito", function ($scope, clienteService, sistemaService) {
 
     $scope.cliente = null;
@@ -6675,11 +6809,11 @@ rtc.controller("crtClientes", function ($scope, categoriaProspeccaoService, clie
         $scope.empresas_clientes = e.clientes;
 
     })
-    
-    $scope.analisaCredito = function(c){
-        
-        window.location = "analise_credito.php?empresa="+c.empresa.id+"&cliente="+c.id;
-        
+
+    $scope.analisaCredito = function (c) {
+
+        window.location = "analise_credito.php?empresa=" + c.empresa.id + "&cliente=" + c.id;
+
     }
 
     $scope.removeCategoriaProspeccao = function (cat) {
