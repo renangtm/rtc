@@ -13,13 +13,46 @@
  */
 class Sistema {
 
-    public static $ENDERECO = "http://192.168.0.17/novo_rtc_web/";
+    public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
 
     /*
      * porcentagem
      * titulo
      * valores
      */
+
+    public static function finalizarSeparacao($con, $pedido, $usuario) {
+
+        $log = Logger::gerarLog($pedido, "Separacao do pedido $pedido->id, finalizada, por '$usuario->id-$usuario->nome'");
+        $html = Sistema::getHtml('log', $log);
+        $pedido->empresa->email->enviarEmail($pedido->cliente->email->filtro(Email::$COMPRAS), "Separacao de pedido", $html);
+
+        $tarefa = $usuario->getTarefas($con, "tarefa.tipo_entidade_relacionada='PED_" . $pedido->empresa->id . "' AND tarefa.id_entidade_relacionada=$pedido->id");
+        foreach ($tarefa as $key => $value) {
+            $obs = new ObservacaoTarefa();
+            $obs->porcentagem = 100 - $value->porcentagem_conclusao;
+            $obs->observacao = "Pedido separado";
+            $value->addObservacao($con, $usuario, $obs);
+        }
+    }
+
+    public static function relatorioSeparacao($con, $empresa, $itens, $pedido) {
+
+        return Sistema::gerarRelatorio(
+                        $con, $empresa, "Relatorio de separacao pedido $pedido->id", "Cliente:" . $pedido->cliente->razao_social .
+                        ", Pedido: $pedido->id, Transp.: " .
+                        $pedido->transportadora->razao_social, array(
+                    array('id_produto', 'ID Produto', 5),
+                    array('nome_produto', 'Nome Produto', 25),
+                    array('id_lote', 'ID Lote', 5),
+                    array('quantidade', 'Qtd', 10),
+                    array('codigo', 'Cod.', 15),
+                    array('descricao', 'Descricao', 22),
+                    array('numero', 'Numero', 6),
+                    array('rua', 'Rua', 6),
+                    array('altura', 'Altura', 6)
+                        ), $itens);
+    }
 
     public static function gerarRelatorio($con, $empresa, $titulo, $obs, $camps, $valors) {
 
@@ -76,7 +109,12 @@ class Sistema {
             $i = 0;
             foreach ($camps as $key2 => $campo) {
                 $n = $campo[0];
-                $linha->$n = $value[$key2];
+                if (is_array($value)) {
+                    $linha->$n = $value[$key2];
+                } else {
+                    $k = $campo[0];
+                    $linha->$n = $value->$k;
+                }
                 $i++;
             }
 
@@ -104,6 +142,36 @@ class Sistema {
             
         }
         return Sistema::$ENDERECO . "php/uploads/relatorio_$id.pdf";
+    }
+
+    public static function popularEnderecamento($con, $itens) {
+
+        $lotes = "(0";
+
+        foreach ($itens as $key => $value) {
+            $lotes .= ",$value->id_lote";
+        }
+
+        $lotes .= ")";
+
+        $dados = array();
+
+        $ps = $con->getConexao()->prepare("SELECT id,numero,rua,altura FROM lote WHERE id IN $lotes");
+        $ps->execute();
+        $ps->bind_result($id, $numero, $rua, $altura);
+        while ($ps->fetch()) {
+            $dados[$id] = array($numero, $rua, $altura);
+        }
+        $ps->close();
+
+        foreach ($itens as $key => $value) {
+            $d = $dados[$value->id_lote];
+            $value->numero = $d[0];
+            $value->rua = $d[1];
+            $value->altura = $d[2];
+        }
+
+        return $itens;
     }
 
     public static function getFabricantes($con) {
@@ -200,6 +268,55 @@ class Sistema {
         $trabalhos[] = $attdias;
 
         return $trabalhos;
+    }
+
+    public static function getStatusExcluidoPedidoSaida() {
+
+        return new StatusPedidoSaida(30, "Excluido", false, false, false, true);
+    }
+
+    public static function STATUS_CONFIRMACAO_PEDIDO() {
+        return new StatusPedidoSaida(1, "Confirmacao de pedido", false, true, Email::$COMPRAS, Email::$VENDAS, true, true, false, false);
+    }
+
+    public static function STATUS_LIMITE_CREDITO() {
+        return new StatusPedidoSaida(2, "Limite de credito", false, true, Email::$COMPRAS, Email::$FINANCEIRO, true, true, false, false);
+    }
+
+    public static function STATUS_CONFIRMACAO_PAGAMENTO() {
+        return new StatusPedidoSaida(4, "Confirmacao de pagamento", false, true, Email::$FINANCEIRO, Email::$FINANCEIRO, false, true, false, false);
+    }
+
+    public static function STATUS_SEPARACAO() {
+        return new StatusPedidoSaida(5, "Separacao", false, true, Email::$COMPRAS, Email::$LOGISTICA, false, false, false, false);
+    }
+
+    public static function STATUS_FATURAMENTO() {
+        return new StatusPedidoSaida(6, "Faturamento", true, true, Email::$COMPRAS, Email::$LOGISTICA, false, false, false, true);
+    }
+
+    public static function STATUS_COLETA() {
+        return new StatusPedidoSaida(7, "Coleta", true, true, Email::$COMPRAS, Email::$LOGISTICA, false, false, false, true);
+    }
+
+    public static function STATUS_RASTREIO() {
+        return new StatusPedidoSaida(8, "Rastreio", true, true, Email::$COMPRAS, Email::$LOGISTICA, false, false, false, true);
+    }
+
+    public static function STATUS_FINALIZADO() {
+        return new StatusPedidoSaida(9, "Finalizado", true, true, Email::$COMPRAS, Email::$LOGISTICA, false, false, true, true);
+    }
+
+    public static function STATUS_CANCELADO() {
+        return new StatusPedidoSaida(10, "Cancelado", false, false, Email::$COMPRAS, Email::$VENDAS, true, false, true, false);
+    }
+
+    public static function STATUS_ORCAMENTO() {
+        return new StatusPedidoSaida(11, "Orcamento", false, false, Email::$COMPRAS, Email::$VENDAS, true, true, false, false);
+    }
+
+    public static function STATUS_EXCLUIDO() {
+        return new StatusPedidoSaida(30, "Excluido", false, false, Email::$COMPRAS, Email::$VENDAS, false, false, true, false);
     }
 
     public static function P_PEDIDO_ENTRADA() {
@@ -1742,19 +1859,18 @@ class Sistema {
 
     public static function getHtml($nom, $p = null) {
 
-        
+
         global $obj;
         $obj = Sistema::encodeAll(Utilidades::copy($p));
 
         $servico = realpath('../../html_email');
         $servico .= "/$nom.php";
-        
+
         ob_start();
         include($servico);
         $html = ob_get_clean();
-       
+
         return utf8_decode($html);
-        
     }
 
     public static function finalizarNotas($con, $notas) {
@@ -2584,7 +2700,7 @@ class Sistema {
 
     public static function mergeArquivo($nome, $conteudo, $b64 = true) {
 
-        $handle = fopen('../uploads/' . $nome, 'a');
+        $handle = fopen('uploads/' . $nome, 'a');//trocar devolta ../
         $c = $conteudo;
         if ($b64) {
             $c = Utilidades::base64decode($c);
@@ -3255,27 +3371,21 @@ class Sistema {
         return $perms;
     }
 
-    public static function getStatusExcluidoPedidoSaida() {
-
-        return new StatusPedidoSaida(30, "Excluido", false, false, false, true);
-    }
-
     public static function getStatusPedidoSaida() {
 
         $status = array();
 
-        $status[] = new StatusPedidoSaida(1, "Confirmacao de pedido", false, true, Email::$COMPRAS, Email::$VENDAS, true, true, false, false);
-        $status[] = new StatusPedidoSaida(2, "Limite de credito", false, true, Email::$COMPRAS, Email::$FINANCEIRO, true, true, false, false);
-        $status[] = new StatusPedidoSaida(3, "Autorizacao de pedido", false, Email::$COMPRAS, Email::$DIRETORIA, false, true, true, false, false);
-        $status[] = new StatusPedidoSaida(4, "Confirmacao de pagamento", false, Email::$FINANCEIRO, Email::$FINANCEIRO, false, true, true, false, false);
-        $status[] = new StatusPedidoSaida(5, "Separacao", false, Email::$COMPRAS, Email::$LOGISTICA, false, false, false, false, false);
-        $status[] = new StatusPedidoSaida(6, "Faturamento", true, Email::$COMPRAS, Email::$LOGISTICA, false, false, false, false, true);
-        $status[] = new StatusPedidoSaida(7, "Coleta", true, Email::$COMPRAS, Email::$LOGISTICA, true, false, false, false, true);
-        $status[] = new StatusPedidoSaida(8, "Rastreio", true, Email::$COMPRAS, Email::$LOGISTICA, false, false, false, false, true);
-        $status[] = new StatusPedidoSaida(9, "Finalizado", true, Email::$COMPRAS, Email::$LOGISTICA, false, false, false, true, true);
-        $status[] = new StatusPedidoSaida(10, "Cancelado", false, Email::$COMPRAS, Email::$VENDAS, true, false, false, true, false);
-        $status[] = new StatusPedidoSaida(11, "Orcamento", false, Email::$COMPRAS, Email::$VENDAS, true, true, true, false, false);
-        $status[] = new StatusPedidoSaida(30, "Excluido", false, Email::$COMPRAS, Email::$VENDAS, true, false, false, true, false);
+        $status[] = Sistema::STATUS_CONFIRMACAO_PEDIDO();
+        $status[] = Sistema::STATUS_LIMITE_CREDITO();
+        $status[] = Sistema::STATUS_CONFIRMACAO_PAGAMENTO();
+        $status[] = Sistema::STATUS_SEPARACAO();
+        $status[] = Sistema::STATUS_FATURAMENTO();
+        $status[] = Sistema::STATUS_COLETA();
+        $status[] = Sistema::STATUS_RASTREIO();
+        $status[] = Sistema::STATUS_FINALIZADO();
+        $status[] = Sistema::STATUS_CANCELADO();
+        $status[] = Sistema::STATUS_ORCAMENTO();
+        $status[] = Sistema::STATUS_EXCLUIDO();
 
 
         return $status;

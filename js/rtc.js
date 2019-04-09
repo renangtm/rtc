@@ -1,4 +1,4 @@
-var projeto = "http://192.168.0.17/novo_rtc_web";
+var projeto = "http://192.168.18.121:888/novo_rtc_web";
 
 function mtlCharAt(str, idx) {
     str += '';
@@ -996,6 +996,7 @@ function baseService(http, q, obj, get, cancel, noloading) {
         document.write("c=" + encode64SPEC(obj.query) + ((typeof obj["o"] !== 'undefined') ? ("&o=" + encode64SPEC(paraJson(obj.o))) : "") + "<hr>");
 
     }
+    
     
     http({
         url: 'php/controler/crt.php',

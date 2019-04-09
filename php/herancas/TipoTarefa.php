@@ -34,7 +34,6 @@ class TipoTarefa {
         $this->nome = "";
         $this->tempo_medio = 1;
         $this->prioridade = 1;
-        $this->cargos = array();
         $this->empresa = null;
         $this->observacao_padrao = "";
         $this->excluido = false;

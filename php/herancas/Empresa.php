@@ -60,6 +60,10 @@ class Empresa {
     public static function CF_SEPARADOR($emp) {
         return new CargoFixo(11, "Separador", $emp);
     }
+    
+    public static function CF_FATURISTA($emp) {
+        return new CargoFixo(12, "Faturista", $emp);
+    }
 
     public $id;
     public $nome;
@@ -108,7 +112,8 @@ class Empresa {
             Empresa::CF_COORDENADOR_LOGISTICA($this),
             Empresa::CF_SUPERVISOR_LOGISTICA($this),
             Empresa::CF_FINANCEIRO($this),
-            Empresa::CF_SEPARADOR($this)
+            Empresa::CF_SEPARADOR($this),
+            Empresa::CF_FATURISTA($this)
         );
         $this->tarefas_fixas = array(
             "TT_ATIVIDADE_COMUM",

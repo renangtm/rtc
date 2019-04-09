@@ -44,6 +44,8 @@ class TTAnaliseCredito extends TipoTarefa {
                     if (($divida + $pedido->getTotal()) < $limite) {
                         $passou = true;
                     } else {
+                        $pedido->status = Sistema::STATUS_CANCELADO();
+                        $pedido->merge($con);
                         $lo = Logger::gerarLog($pedido, "Pedido cancelado devido a limite de credito, limite: R$ " . round($limite, 2) . ", divida: R$ " . round($divida, 2) . ", valor do pedido: R$ " . round($pedido->getTotal(), 2));
                         $html = $lo->toHtml();
                         $empresa->email->enviarEmail($pedido->cliente->email->filtro(Email::$COMPRAS), "Cancelamento de pedido", $html);
@@ -52,26 +54,24 @@ class TTAnaliseCredito extends TipoTarefa {
                     }
                 }
                 if ($passou) {
-                    $empresa = $pedido->empresa;
-                    if (($adm = $pedido->empresa->getAdm($con)) !== null) {
-                        $empresa = $adm;
+
+                    $emp = $pedido->empresa;
+                    if ($pedido->logistica !== null) {
+                        $emp = $pedido->logistica;
                     }
+
                     $t = new Tarefa();
-                    $t->tipo_tarefa = Sistema::TT_CONFIRMACAO_PAGAMENTO($empresa->id);
-                    $t->titulo = "Confirmacao de pagamento do pedido $pedido->id, cliente " . $pedido->cliente->razao_social;
-                    $t->descricao = "Razao Social: " . $pedido->cliente->razao_social . " <br>"
-                            . "CNPJ: " . $pedido->cliente->cnpj->valor . " <br>"
-                            . "Estado: " . $pedido->cliente->endereco->cidade->estado->sigla . " <br>"
-                            . "Cidade: " . $pedido->cliente->endereco->cidade->nome . " <br>"
-                            . "Email: " . str_replace(array(";"), array("<br>"), $pedido->cliente->email->endereco) . " <br>"
-                            . "Valor do pedido: R$ " . round($pedido->getTotal(), 2) . " <br>"
-                            . "Telefones: ";
-                    foreach ($pedido->cliente->telefones as $key => $value) {
-                        $t->descricao .= "$value->numero<br>";
-                    }
+                    $t->tipo_tarefa = Sistema::TT_SEPARACAO($emp->id);
+                    $t->titulo = "Separacao do pedido $pedido->id";
+                    $t->descricao .= "<a style='font-size:20px;text-decoration:underline;color:SteelBlue' href='separacao.php?pedido=$pedido->id&empresa=" . $pedido->empresa->id . "'>SEPARAR PEDIDO</a>";
+
                     $t->tipo_entidade_relacionada = "PED_" . $pedido->empresa->id;
                     $t->id_entidade_relacionada = $pedido->id;
-                    Sistema::novaTarefaEmpresa($con, $t, $empresa);
+                    Sistema::novaTarefaEmpresa($con, $t, $emp);
+
+                    $pedido->status = Sistema::STATUS_SEPARACAO();
+                    $pedido->merge($con);
+
                 }
             }
         }

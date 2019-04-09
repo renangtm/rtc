@@ -13,6 +13,10 @@
  */
 class Nota {
 
+    public static $NORMAL = 1;
+    public static $COMPLEMENTAR = 2;
+    public static $AJUSTE = 3;
+    public static $DEVOLUCAO = 4;
     public $id;
     public $transportadora;
     public $fornecedor;
@@ -35,6 +39,8 @@ class Nota {
     public $ficha;
     public $cancelada;
     public $protocolo;
+    PUBLIC $finalidade;
+    public $chave_devolucao;
     public $validar;
     public $baixa_total;
 
@@ -59,7 +65,7 @@ class Nota {
         $this->ficha = 0;
         $this->cancelada = false;
         $this->baixa_total = 0;
-        
+        $this->finalidade = Nota::$NORMAL;
     }
 
     public function igualaVencimento() {
@@ -116,32 +122,31 @@ class Nota {
 
     public function calcularImpostosAutomaticamente() {
 
-        
+
         $est = ($this->saida) ? $this->cliente->endereco->cidade->estado : $this->fornecedor->endereco->cidade->estado;
 
         $suf = false;
-        
-        if($this->saida){
-            if($this->cliente->suframado){
+
+        if ($this->saida) {
+            if ($this->cliente->suframado) {
                 $suf = true;
             }
         }
-        
+
         foreach ($this->produtos as $key => $value) {
-            
+
             $cat = $value->produto->categoria;
             $value->base_calculo = ($cat->base_calculo / 100) * $value->valor_unitario;
-            if($est->sigla !== $this->empresa->endereco->cidade->estado->sigla && !$suf){
+            if ($est->sigla !== $this->empresa->endereco->cidade->estado->sigla && !$suf) {
                 if ($cat->icms_normal) {
                     $icm = Sistema::getIcmsEstado($est);
                     $value->icms = $value->base_calculo * ($icm / 100);
                 } else {
                     $value->icms = $value->base_calculo * ($cat->icms / 100);
                 }
-            }else{
+            } else {
                 $value->icms = 0;
             }
-            
         }
     }
 
@@ -347,7 +352,7 @@ class Nota {
                 . " WHERE produto_nota.id_nota=$this->id");
 
         $ps->execute();
-        $ps->bind_result($id, $info_adic, $quantidade, $valor_unitario, $valor_total, $base_calculo, $cfop, $icms, $ipi, $influencia_estoque, $id_pro,$cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc,$sistema_lotes,$nota_usuario, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $info_adic, $quantidade, $valor_unitario, $valor_total, $base_calculo, $cfop, $icms, $ipi, $influencia_estoque, $id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
@@ -358,7 +363,7 @@ class Nota {
             $p->logistica = $id_log;
             $p->id = $id_pro;
             $p->codigo = $cod_pro;
-            $p->sistema_lotes = $sistema_lotes==1;
+            $p->sistema_lotes = $sistema_lotes == 1;
             $p->nota_usuario = $nota_usuario;
             $p->nome = $nome;
             $p->classe_risco = $classe_risco;
@@ -482,11 +487,162 @@ class Nota {
 
     public function emitir($con) {
 
+        if (!$this->saida) {
+
+            throw new Exception("Nao e possivel emitir nota de entrada.");
+        }
+
+        if ($this->produtos === null) {
+            $this->produtos = $this->getProdutos($con);
+        }
+        
+        if (count($this->produtos) > 0) {
+            
+            $base = $this->empresa->getParametrosEmissao($con)->getComandoBase($con);
+            $base->acao = "EMITIR";
+            $base->pedido = $this->id;
+            $base->operacao = ($this->saida ? 'Saida de mercadoria' : 'Entrada de mercadoria');
+            $base->cfop = $this->produtos[0]->cfop;
+            $base->saida_entrada = $this->saida;
+            $base->finalidade = $this->finalidade;
+            $base->chave_devolucao = $this->chave_devolucao;
+            $base->consumidor = $this->cliente->pessoa_fisica ? 1 : 0;
+            $base->frete = 0;
+            $base->frete_cif_fob = $this->frete_destinatario_remetente;
+            $base->suframado = $this->cliente->suframado;
+
+            $volumes = 0;
+
+            foreach ($this->produtos as $key => $value) {
+
+                $volumes += ceil($value->quantidade / $value->produto->grade->gr[0]);
+            }
+
+            $base->volumes = $volumes;
+            $base->informacoes_adcionais = $this->observacao;
+
+            if ($this->finalidade === Nota::$COMPLEMENTAR || $this->finalidade === Nota::$DEVOLUCAO) {
+                $base->chave_devolucao = $this->chave_devolucao;
+            }
+
+            $dest = new stdClass();
+            $dest->id = $this->cliente->id;
+            $dest->estado = $this->cliente->endereco->cidade->estado->sigla;
+            $dest->cnpj = str_replace(array("-", ".", "/"), array("", "", ""), $this->cliente->cnpj->valor);
+            $dest->nome = $this->cliente->razao_social;
+            $dest->bairro = $this->cliente->endereco->bairro;
+            $dest->logadouro = $this->cliente->endereco->rua;
+            $dest->numero = $this->cliente->endereco->numero;
+            $dest->municipio = $this->cliente->endereco->cidade->nome;
+            $dest->cep = str_replace(array("-", ".", "/"), array("", "", ""), $this->cliente->endereco->cep->valor);
+            $dest->pais = "Brasil";
+            $dest->telefone = new Telefone("11111111");
+
+            if (count($this->cliente->telefones) > 0) {
+                $dest->telefone = $this->cliente->telefones[0]->numero;
+            }
+
+            $dest->ie = str_replace(array("-", ".", "/"), array("", "", ""), $this->cliente->inscricao_estadual);
+            $dest->email = "rtc@rtc.com.br";
+
+            if ($this->cliente->suframado) {
+                $dest->inscricao_suframa = $this->cliente->inscricao_suframa;
+            }
+
+            $base->destinatario = $dest;
+
+            $trans = new stdClass();
+            $trans->id = $this->transportadora->id;
+            $trans->cnpj = str_replace(array("-", ".", "/"), array("", "", ""), $this->transportadora->cnpj->valor);
+            $trans->nome = $this->transportadora->razao_social;
+            $trans->ie = str_replace(array("-", ".", "/"), array("", "", ""), $this->transportadora->inscricao_estadual);
+            $trans->endereco = $this->transportadora->endereco->rua;
+            $trans->municipio = $this->transportadora->endereco->cidade->nome;
+            $trans->estado = $this->transportadora->endereco->cidade->estado->sigla;
+
+            if ($trans->nome == "O MESMO" || $trans->nome == "FRETE FOB") {
+
+                $trans->cnpj = $dest->cnpj;
+                $trans->nome = $dest->nome;
+                $trans->ie = $dest->ie;
+                $trans->endereco = $dest->logadouro;
+                $trans->municipio = $dest->municipio;
+                $trans->estado = $dest->estado;
+
+                $base->frete_cif_fob = false;
+            }
+
+            $base->transportadora = $trans;
+            $base->produtos = array();
+
+
+            $total = 0;
+
+            for ($j = 0; $j < count($this->produtos); $j++) {
+
+                $p = $this->produtos[$j];
+
+                $produto = new stdClass();
+
+                $produto->codigo = $p->produto->id;
+                $produto->ncm = $p->produto->ncm;
+                $produto->unidade = $p->produto->unidade;
+                $produto->nome = $p->produto->nome;
+                $produto->quantidade = $p->quantidade;
+                $produto->valor = $p->valor_unitario;
+                $produto->informacao_adcional = $p->informacao_adicional;
+
+                if ($produto->informacao_adcional === "" || $produto->informacao_adcional === null) {
+                    $produto->informacao_adcional = "Sem informacoes adcionais";
+                }
+
+                $produto->pesoB = $p->produto->peso_bruto;
+                $produto->pesoL = $p->produto->peso_liquido;
+                $produto->ipi = $p->ipi;
+
+                $produto->reducao_base_calculo = 100 - $p->produto->categoria->base_calculo;
+                $produto->icms = (($p->icms / $p->base_calculo) * 100);
+
+                if (!$p->produto->categoria->icms_normal) {
+                    $produto->cst200 = true;
+                }
+
+                if ($this->cliente->endereco->cidade->estado->id === $this->empresa->endereco->cidade->estado->id) {
+                    $produto->sem_icms = true;
+                }
+
+                $total += $p->quantidade * $p->valor_unitario;
+
+                $base->produtos[] = $produto;
+            }
+            
+            $base->vencimentos = array();
+            
+            $this->vencimentos = $this->getVencimentos($con);
+            
+            foreach($this->vencimentos as $key=>$value){
+                
+                $v = new stdClass();
+                $v->data = $value->data;
+                $v->valor = $value->valor;
+                $base->vencimentos[] = $v;
+                
+            }
+            
+            $agora = round(microtime(true)*1000);
+            $arquivo = "emissao_$agora.json";
+            $comando = Utilidades::toJson($base);
+            Sistema::mergeArquivo($arquivo, $comando, false);
+            $endereco = Sistema::$ENDERECO."php/uploads/".$arquivo;
+            
+            
+        }
+
         $this->emitida = true;
 
-        $ps = $con->getConexao()->prepare("UPDATE nota SET emitida=true WHERE id=$this->id");
-        $ps->execute();
-        $ps->close();
+        //$ps = $con->getConexao()->prepare("UPDATE nota SET emitida=true WHERE id=$this->id");
+        //$ps->execute();
+        //$ps->close();
     }
 
     public function cancelar($con, $motivo) {
@@ -538,7 +694,7 @@ class Nota {
             $totp += $value->valor_total;
         }
 
-        if ((($totv > ($totp+0.1)) || ($totv < ($totp-0.1))) && $this->validar) {
+        if ((($totv > ($totp + 0.1)) || ($totv < ($totp - 0.1))) && $this->validar) {
 
             throw new Exception('Somatorio das parcelas difere do valor da nota Total:' . $totp . ', Somatorio: ' . $totv);
         }
@@ -661,7 +817,7 @@ class Nota {
 
         $ps = $con->getConexao()->prepare("SELECT vencimento.id,vencimento.valor,UNIX_TIMESTAMP(vencimento.data)*1000,movimento.id,UNIX_TIMESTAMP(movimento.data)*1000,movimento.saldo_anterior,movimento.valor,movimento.juros,movimento.descontos,movimento.estorno,historico.id,historico.nome,operacao.id,operacao.nome,operacao.debito,banco.id,banco.nome,banco.conta,banco.saldo,banco.codigo,movimento.baixa_total FROM vencimento LEFT JOIN movimento ON movimento.id=vencimento.id_movimento LEFT JOIN banco ON movimento.id_banco=banco.id LEFT JOIN operacao ON operacao.id=movimento.id_operacao LEFT JOIN historico ON historico.id=movimento.id_historico WHERE id_nota=$this->id ORDER BY vencimento.data ASC");
         $ps->execute();
-        $ps->bind_result($id, $valor, $data, $id_mov, $data_mov, $sal_mov, $val_mov, $mov_jur, $mov_desc, $mov_estorno, $hist_id, $hist_nom, $op_id, $op_nom, $op_deb, $ban_id, $ban_nom, $ban_cont, $ban_sal, $ban_cod,$baixa_total);
+        $ps->bind_result($id, $valor, $data, $id_mov, $data_mov, $sal_mov, $val_mov, $mov_jur, $mov_desc, $mov_estorno, $hist_id, $hist_nom, $op_id, $op_nom, $op_deb, $ban_id, $ban_nom, $ban_cont, $ban_sal, $ban_cod, $baixa_total);
 
         while ($ps->fetch()) {
 

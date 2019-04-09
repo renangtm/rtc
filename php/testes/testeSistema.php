@@ -19,16 +19,11 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         $con = new ConnectionFactory();
         
-        $e = new Empresa(2071,$con);
+        $empresa = new Empresa(1735,$con);
+        $nota = $empresa->getNotas($con,0, 1,"nota.emitida=false AND nota.saida=true");
+        $nota = $nota[0];
         
-        $usuarios = $e->getUsuarios($con, 0, 1,"usuario.id=4599");
-        $usuario = $usuarios[0];
-        
-        $tarefa = $usuario->getTarefas($con,"tarefa.id=3352"); 
-        $tarefa = $tarefa[0];
-        
-        $tarefa->tipo_tarefa->aoFinalizar($tarefa,$usuario);
-        
+        $nota->emitir($con);
         
         return;
 

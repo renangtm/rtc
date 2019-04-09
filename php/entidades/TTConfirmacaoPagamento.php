@@ -42,13 +42,20 @@ class TTConfirmacaoPagamento extends TipoTarefa {
                 }
 
                 $t = new Tarefa();
-                $t->tipo_tarefa = Sistema::TT_SEPARACAO($empresa->id);
+                $t->tipo_tarefa = Sistema::TT_SEPARACAO($emp->id);
                 $t->titulo = "Separacao do pedido $pedido->id";
-                $t->descricao .= "<a style='font-size:20px;text-decoration:underline;color:SteelBlue' href='separacao.php?pedido=$this->id&empresa=" . $this->empresa->id . "'>SEPARAR PEDIDO</a>";
+                $t->descricao .= "<a style='font-size:20px;text-decoration:underline;color:SteelBlue' href='separacao.php?pedido=$pedido->id&empresa=" . $pedido->empresa->id . "'>SEPARAR PEDIDO</a>";
                
                 $t->tipo_entidade_relacionada = "PED_" . $pedido->empresa->id;
                 $t->id_entidade_relacionada = $pedido->id;
-                Sistema::novaTarefaEmpresa($con, $t, $empresa);
+                Sistema::novaTarefaEmpresa($con, $t, $emp);
+                
+                $pedido->status = Sistema::STATUS_SEPARACAO();
+                $pedido->merge($con);
+                
+                $log = Logger::gerarLog($pedido, "Pagamento confirmado. ".$tarefa->descricao);
+                $html = Sistema::getHtml('log',$log);
+                $pedido->empresa->email->enviarEmail($pedido->cliente->email->filtro(Email::$COMPRAS),"Confirmacao de Pagamento",$html);
                 
             }
         }
