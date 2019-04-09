@@ -19,18 +19,11 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         $con = new ConnectionFactory();
         
-        $empresa = new Empresa(1733,$con);
-        $tipos_tarefa = $empresa->getTiposTarefa($con);
         
-        $tarefa = null;
-        foreach($tipos_tarefa as $key=>$value){
-            $value->empresa = null;
-            if($value->nome==="Faturamento"){
-                $tarefa=$value;
-            }
-        }
-        
-        echo Utilidades::toJson($tarefa);
+        $empresa = new Empresa(1735,$con);
+        $nota = $empresa->getNotas($con,0, 1,"nota.emitida=false AND nota.saida=true");
+        $nota = $nota[0];
+        $nota->emitir($con);
         
         return;
 

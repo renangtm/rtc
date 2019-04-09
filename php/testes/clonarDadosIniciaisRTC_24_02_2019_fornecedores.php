@@ -35,8 +35,23 @@ class clonarDadosIniciaisRTC extends PHPUnit_Framework_TestCase {
             //retire para realmente executar o script
             //return;
         }
-
-
+        
+        $cidade = array();
+        $ps = $this->getConexao()->prepare("SELECT nome,codigoIBGE FROM status_3.cidades");
+        $ps->execute();
+        $ps->bind_result($nome,$codigo);
+        while($ps->fetch()){
+            $cidade[$nome] = $codigo;
+        }
+        $ps->close();
+        foreach($cidade as $key=>$value){
+            $ps = $con->getConexao()->prepare("UPDATE cidade SET codigoIBGE='$value' WHERE nome='".addslashes($key)."'");
+            $ps->execute();
+            $ps->close();
+        }
+        
+        return;
+        
         $filial = new Empresa(1733);
         $logistic = new Empresa(1735);
         
