@@ -17,7 +17,6 @@ class Nota {
     public static $COMPLEMENTAR = 2;
     public static $AJUSTE = 3;
     public static $DEVOLUCAO = 4;
-    
     public $id;
     public $transportadora;
     public $fornecedor;
@@ -496,14 +495,14 @@ class Nota {
         if ($this->produtos === null) {
             $this->produtos = $this->getProdutos($con);
         }
-        
+
         if (count($this->produtos) > 0) {
-            
+
             $base = $this->empresa->getParametrosEmissao($con)->getComandoBase($con);
             $base->acao = "EMITIR";
             $base->pedido = $this->id;
             $base->operacao = ($this->saida ? 'Saida de mercadoria' : 'Entrada de mercadoria');
-            $base->cfop = intval(str_replace(array("."),array(""),$this->produtos[0]->cfop));
+            $base->cfop = intval(str_replace(array("."), array(""), $this->produtos[0]->cfop));
             $base->saida_entrada = $this->saida;
             $base->finalidade = $this->finalidade;
             $base->consumidor = $this->cliente->pessoa_fisica ? 1 : 0;
@@ -537,14 +536,15 @@ class Nota {
             $dest->cep = str_replace(array("-", ".", "/"), array("", "", ""), $this->cliente->endereco->cep->valor);
             $dest->pais = "Brasil";
             $dest->telefone = new Telefone("11111111");
+            $dest->telefone = $dest->telefone->numero;
 
             if (count($this->cliente->telefones) > 0) {
                 $dest->telefone = $this->cliente->telefones[0]->numero;
             }
-            
-            $dest->telefone = str_replace(array("(",")","-"), array("","",""), $dest->telefone);
 
-            
+            $dest->telefone = str_replace(array("(", ")", "-"), array("", "", ""), $dest->telefone);
+
+
             $dest->ie = str_replace(array("-", ".", "/"), array("", "", ""), $this->cliente->inscricao_estadual);
             $dest->email = "rtc@rtc.com.br";
 
@@ -588,7 +588,7 @@ class Nota {
                 $produto = new stdClass();
 
                 $produto->codigo = $p->produto->id;
-                $produto->ncm = str_replace(array(",","-"),array("",""),$p->produto->ncm);
+                $produto->ncm = str_replace(array(",", "-"), array("", ""), $p->produto->ncm);
                 $produto->unidade = $p->produto->unidade;
                 $produto->nome = $p->produto->nome;
                 $produto->quantidade = $p->quantidade;
@@ -597,6 +597,14 @@ class Nota {
 
                 if ($produto->informacao_adcional === "" || $produto->informacao_adcional === null) {
                     $produto->informacao_adcional = "Sem informacoes adcionais";
+                }
+
+                while ($produto->informacao_adcional{0} === " ") {
+                    $produto->informacao_adcional = substr($produto->informacao_adcional, 1);
+                }
+
+                while ($produto->informacao_adcional{strlen($produto->informacao_adcional) - 1} === " ") {
+                    $produto->informacao_adcional = substr($produto->informacao_adcional, 0, strlen($produto->informacao_adcional) - 1);
                 }
 
                 $produto->pesoB = $p->produto->peso_bruto;
@@ -618,27 +626,24 @@ class Nota {
 
                 $base->produtos[] = $produto;
             }
-            
+
             $base->vencimentos = array();
-            
+
             $this->vencimentos = $this->getVencimentos($con);
-            
-            foreach($this->vencimentos as $key=>$value){
-                
+
+            foreach ($this->vencimentos as $key => $value) {
+
                 $v = new stdClass();
                 $v->data = $value->data;
                 $v->valor = $value->valor;
                 $base->vencimentos[] = $v;
-                
             }
-            
-            $agora = round(microtime(true)*1000);
+
+            $agora = round(microtime(true) * 1000);
             $arquivo = "emissao_$agora.json";
             $comando = Utilidades::toJson($base);
             Sistema::mergeArquivo($arquivo, $comando, false);
-            $endereco = Sistema::$ENDERECO."php/uploads/".$arquivo;
-            
-            
+            $endereco = Sistema::$ENDERECO . "php/uploads/" . $arquivo;
         }
 
         $this->emitida = true;

@@ -45,7 +45,7 @@ class ParametrosEmissao {
         $obj->ie = str_replace(array("-", ".", "/"), array("", "", ""),$this->empresa->inscricao_estadual);
         $obj->crt = 3; //normal
         $obj->cep = str_replace(array("-", ".", "/"), array("", "", ""), $this->empresa->endereco->cep->valor);
-        $obj->telefone = $this->empresa->telefone->numero;
+        $obj->telefone = substr($this->empresa->telefone->numero,0,8);
         $obj->bairro = $this->empresa->endereco->bairro;
         $obj->logadouro = $this->empresa->endereco->rua;
         $obj->numero = $this->empresa->endereco->numero;
