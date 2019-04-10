@@ -2704,7 +2704,7 @@ class Sistema {
 
     public static function mergeArquivo($nome, $conteudo, $b64 = true) {
 
-        $handle = fopen('uploads/' . $nome, 'a');//trocar devolta ../
+        $handle = fopen('../uploads/' . $nome, 'a');
         $c = $conteudo;
         if ($b64) {
             $c = Utilidades::base64decode($c);
@@ -2716,7 +2716,7 @@ class Sistema {
 
     public static function getMicroServicoJava($nome, $parametros = null) {
 
-        $servico = realpath('micro_servicos_java');// ../
+        $servico = realpath('../micro_servicos_java');
         $servico .= "/$nome.jar";
         $comando = "java -jar \"$servico\"";
 
