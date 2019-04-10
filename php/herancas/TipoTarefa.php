@@ -38,6 +38,11 @@ class TipoTarefa {
         $this->observacao_padrao = "";
         $this->excluido = false;
     }
+    
+    public function init($tarefa){
+        
+        
+    }
 
     protected function carregarDados() {
 

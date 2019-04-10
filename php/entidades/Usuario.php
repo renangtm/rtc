@@ -550,6 +550,7 @@ class Usuario {
                     $tarefas[$id_usuario] = array();
                 }
                 $tarefas[$id_usuario][] = $t;
+                $t->tipo_tarefa->init($t);
             }
 
             $t = $tmp[$id];
@@ -691,7 +692,7 @@ class Usuario {
                     $intervalos[] = array($k[0] + 0, $k[1] + 0);
                 }
                 $t->intervalos_execucao = $intervalos;
-
+               
                 $tarefas[$id] = $t;
             }
 
@@ -712,7 +713,7 @@ class Usuario {
         $retorno = array();
 
         foreach ($tarefas as $key => $value) {
-
+            $value->tipo_tarefa->init($value);
             $retorno[] = $value;
         }
 

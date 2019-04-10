@@ -43,6 +43,12 @@ class TTRecepcaoCliente extends TipoTarefa {
         $ps->execute();
         $ps->close();
     }
+    
+    public function init($tarefa){
+        
+        
+        
+    }
 
     public function aoFinalizar($tarefa,$usuario) {
         
