@@ -13,7 +13,7 @@
  */
 class Sistema {
 
-    public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
+    public static $ENDERECO = "http://192.168.0.17/novo_rtc_web/";
 
     /*
      * porcentagem
@@ -1514,7 +1514,9 @@ class Sistema {
                     if ($p->quantidade > $produto->validade->limite && $produto->validade->limite > 0) {
                         $p->quantidade = $produto->validade->limite;
                     }
-
+                    if($p->produto->disponivel<$p->quantidade){
+                        $p->quantidade = $p->produto->disponivel;
+                    }
                     $pedido->produtos[] = $p;
                     $p->pedido = $pedido;
                 } else {
@@ -1528,7 +1530,9 @@ class Sistema {
                     if ($p->quantidade > $produto->validade->limite && $produto->validade->limite > 0) {
                         $p->quantidade = $produto->validade->limite;
                     }
-
+                    if($p->produto->disponivel<$p->quantidade){
+                        $p->quantidade = $p->produto->disponivel;
+                    }
                     $pds = array($p);
 
                     if ($produto->validade->alem) {
@@ -2712,7 +2716,7 @@ class Sistema {
 
     public static function getMicroServicoJava($nome, $parametros = null) {
 
-        $servico = realpath('../micro_servicos_java');
+        $servico = realpath('micro_servicos_java');// ../
         $servico .= "/$nome.jar";
         $comando = "java -jar \"$servico\"";
 
@@ -2724,6 +2728,10 @@ class Sistema {
 
         exec($comando, $output);
 
+        if(!isset($output[0])){
+            return null;
+        }
+        
         return $output[0];
     }
 

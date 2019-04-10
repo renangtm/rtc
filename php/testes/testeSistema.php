@@ -17,13 +17,13 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
     public function testSimple() {
 
+        
         $con = new ConnectionFactory();
         
         $empresa = new Empresa(1735,$con);
-        $nota = $empresa->getNotas($con,0, 1,"nota.emitida=false AND nota.saida=true");
+        $nota = $empresa->getNotas($con,0, 1,"nota.emitida=true AND nota.ficha=898");
         $nota = $nota[0];
-        
-        $nota->emitir($con);
+        $nota->cancelar($con);
         
         return;
 

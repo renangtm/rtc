@@ -12,7 +12,60 @@
  * @author Renan
  */
 class Utilidades {
-    
+
+    public static function removerLacunas($obj, $pilha = array()) {
+
+        foreach ($pilha as $key => $value) {
+            if ($value === $obj) {
+                return $obj;
+            }
+        }
+
+
+        if ($obj === null) {
+
+            return null;
+        }
+
+        if (is_string($obj)) {
+
+            $str = $obj;
+            while (strlen($str) > 0) {
+                if ($str{0} === " ") {
+                    $str = substr($str, 1);
+                } else if ($str{strlen($str) - 1} === " ") {
+                    $str = substr($str, 0, strlen($str) - 1);
+                } else {
+                    break;
+                }
+            }
+
+            $str = str_replace(
+                    array("á", "à", "ã", "ã", "Á", "À", "Ã", "Â", "é", "É", "&", "í", "Í", "ó", "Ó", "õ", "Õ", "ê", "Ê", "ô", "Ô", "ú", "Ú", "Ç", "ç"), array("a", "a", "a", "a", "A", "A", "A", "A", "e", "E", "e", "i", "I", "o", "O", "o", "O", "e", "E", "o", "O", "u", "U", "C", "c"), utf8_encode($str));
+
+            return $str;
+        } else if (is_numeric($obj) || is_bool($obj)) {
+            return $obj;
+        }
+
+        if (is_array($obj)) {
+            foreach ($obj as $key => $value) {
+                $obj[$key] = Utilidades::removerLacunas($value, $pilha);
+            }
+            return $obj;
+        } else if (is_object($obj)) {
+
+            $pilha[] = $obj;
+            foreach ($obj as $key => $value) {
+                $obj->$key = Utilidades::removerLacunas($value, $pilha);
+            }
+            unset($pilha[count($pilha) - 1]);
+            return $obj;
+        }
+
+        return null;
+    }
+
     public static function normalizarDia($ms) {
 
         $d = explode(':', date('H:i:s', $ms / 1000));
@@ -24,6 +77,13 @@ class Utilidades {
         $nm -= intval($d[2]) * 1000;
 
         return $nm;
+    }
+
+    public static function removeMask($str) {
+
+        $str = str_replace(array(".", "-", "/", "(", ")"), array("", "", "", "", ""), $str);
+
+        return $str;
     }
 
     public static function getAttr($obj, $atributo) {
@@ -162,11 +222,11 @@ class Utilidades {
         }
 
         if (!is_object($obj)) {
-            
-            if(is_string($obj)){
+
+            if (is_string($obj)) {
                 return utf8_decode($obj);
             }
-            
+
             return $obj;
         }
 
@@ -177,6 +237,10 @@ class Utilidades {
 
         $real = null;
 
+        if (!isset($obj->_classe)) {
+            $obj->_classe = "stdClass";
+        }
+
         eval('$real = new ' . $obj->_classe . "();");
 
         $pilha[] = $real;
@@ -186,10 +250,10 @@ class Utilidades {
             if ($atributo == "_classe")
                 continue;
 
-            if(is_string($valor)){
-             
+            if (is_string($valor)) {
+
                 $real->$atributo = utf8_decode($valor);
-            }else if (is_numeric($valor)|| is_bool($valor)) {
+            } else if (is_numeric($valor) || is_bool($valor)) {
 
                 $real->$atributo = $valor;
             } else if (is_array($valor)) {
@@ -216,7 +280,7 @@ class Utilidades {
     public static function fromJson($str) {
 
         $json = utf8_encode($str);
-        $json = str_replace(array("\n", "\r","\\"), " ", $json);
+        $json = str_replace(array("\n", "\r", "\\"), " ", $json);
         $js = json_decode($json);
 
         return self::getObject($js);
@@ -1739,7 +1803,6 @@ class Utilidades {
 
         return $res;
     }
-    
 
     public static function base64decodeSPEC($val) {
 

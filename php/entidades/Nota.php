@@ -495,17 +495,16 @@ class Nota {
         if ($this->produtos === null) {
             $this->produtos = $this->getProdutos($con);
         }
-        
+
         if (count($this->produtos) > 0) {
-            
+
             $base = $this->empresa->getParametrosEmissao($con)->getComandoBase($con);
             $base->acao = "EMITIR";
             $base->pedido = $this->id;
             $base->operacao = ($this->saida ? 'Saida de mercadoria' : 'Entrada de mercadoria');
-            $base->cfop = $this->produtos[0]->cfop;
+            $base->cfop = intval(Utilidades::removeMask($this->produtos[0]->cfop));
             $base->saida_entrada = $this->saida;
             $base->finalidade = $this->finalidade;
-            $base->chave_devolucao = $this->chave_devolucao;
             $base->consumidor = $this->cliente->pessoa_fisica ? 1 : 0;
             $base->frete = 0;
             $base->frete_cif_fob = $this->frete_destinatario_remetente;
@@ -528,21 +527,25 @@ class Nota {
             $dest = new stdClass();
             $dest->id = $this->cliente->id;
             $dest->estado = $this->cliente->endereco->cidade->estado->sigla;
-            $dest->cnpj = str_replace(array("-", ".", "/"), array("", "", ""), $this->cliente->cnpj->valor);
+            $dest->cnpj = Utilidades::removeMask($this->cliente->cnpj->valor);
             $dest->nome = $this->cliente->razao_social;
             $dest->bairro = $this->cliente->endereco->bairro;
             $dest->logadouro = $this->cliente->endereco->rua;
             $dest->numero = $this->cliente->endereco->numero;
             $dest->municipio = $this->cliente->endereco->cidade->nome;
-            $dest->cep = str_replace(array("-", ".", "/"), array("", "", ""), $this->cliente->endereco->cep->valor);
+            $dest->cep = Utilidades::removeMask($this->cliente->endereco->cep->valor);
             $dest->pais = "Brasil";
             $dest->telefone = new Telefone("11111111");
+            $dest->telefone = $dest->telefone->numero;
 
             if (count($this->cliente->telefones) > 0) {
                 $dest->telefone = $this->cliente->telefones[0]->numero;
             }
 
-            $dest->ie = str_replace(array("-", ".", "/"), array("", "", ""), $this->cliente->inscricao_estadual);
+            $dest->telefone = Utilidades::removeMask($dest->telefone);
+
+
+            $dest->ie = Utilidades::removeMask($this->cliente->inscricao_estadual);
             $dest->email = "rtc@rtc.com.br";
 
             if ($this->cliente->suframado) {
@@ -553,9 +556,9 @@ class Nota {
 
             $trans = new stdClass();
             $trans->id = $this->transportadora->id;
-            $trans->cnpj = str_replace(array("-", ".", "/"), array("", "", ""), $this->transportadora->cnpj->valor);
+            $trans->cnpj = Utilidades::removeMask($this->transportadora->cnpj->valor);
             $trans->nome = $this->transportadora->razao_social;
-            $trans->ie = str_replace(array("-", ".", "/"), array("", "", ""), $this->transportadora->inscricao_estadual);
+            $trans->ie = Utilidades::removeMask($this->transportadora->inscricao_estadual);
             $trans->endereco = $this->transportadora->endereco->rua;
             $trans->municipio = $this->transportadora->endereco->cidade->nome;
             $trans->estado = $this->transportadora->endereco->cidade->estado->sigla;
@@ -585,7 +588,7 @@ class Nota {
                 $produto = new stdClass();
 
                 $produto->codigo = $p->produto->id;
-                $produto->ncm = $p->produto->ncm;
+                $produto->ncm = Utilidades::removeMask($p->produto->ncm);
                 $produto->unidade = $p->produto->unidade;
                 $produto->nome = $p->produto->nome;
                 $produto->quantidade = $p->quantidade;
@@ -615,37 +618,63 @@ class Nota {
 
                 $base->produtos[] = $produto;
             }
-            
+
             $base->vencimentos = array();
-            
+
             $this->vencimentos = $this->getVencimentos($con);
-            
-            foreach($this->vencimentos as $key=>$value){
-                
+
+            $minima = round(microtime(true) * 1000) + 100000;
+
+            $del = 0;
+            foreach ($this->vencimentos as $key => $value) {
+
                 $v = new stdClass();
-                $v->data = $value->data;
+                $v->data = $value->data + $del;
+                if ($v->data < $minima) {
+                    $del = $minima - $v->data;
+                    $v->data = $minima;
+                }
                 $v->valor = $value->valor;
                 $base->vencimentos[] = $v;
-                
             }
-            
-            $agora = round(microtime(true)*1000);
+
+
+            $base = Utilidades::removerLacunas($base);
+
+            $agora = round(microtime(true) * 1000);
             $arquivo = "emissao_$agora.json";
             $comando = Utilidades::toJson($base);
             Sistema::mergeArquivo($arquivo, $comando, false);
-            $endereco = Sistema::$ENDERECO."php/uploads/".$arquivo;
-            
-            
+            $endereco = Sistema::$ENDERECO . "php/uploads/" . $arquivo;
         }
 
-        $this->emitida = true;
 
-        //$ps = $con->getConexao()->prepare("UPDATE nota SET emitida=true WHERE id=$this->id");
-        //$ps->execute();
-        //$ps->close();
+
+        $ret = Utilidades::fromJson(Sistema::getMicroServicoJava('EmissorRTC', $endereco));
+
+        if ($ret->sucesso) {
+
+            $this->emitida = true;
+            $this->danfe = Sistema::$ENDERECO . "php/" . $ret->danfe;
+            $this->xml = Sistema::$ENDERECO . "php/" . $ret->xml;
+            $this->numero = $ret->nf;
+            $this->chave = $ret->chave;
+            $this->protocolo = $ret->protocolo;
+            $this->observacao .= ". Mensagem da SEFAZ: $ret->mensagem";
+            $this->merge($con);
+        } else {
+
+            $this->observacao .= ". Problema de emissao: $ret->mensagem";
+            $this->merge($con);
+        }
     }
 
-    public function cancelar($con, $motivo) {
+    public function cancelar($con, $motivo = "Nota emitida indevidamente") {
+
+        if (!$this->emitida) {
+
+            throw new Exception("Nota nao esta emitida para cancelar");
+        }
 
         $ps = $con->getConexao()->prepare("SELECT movimento.id FROM movimento "
                 . "INNER JOIN vencimento ON vencimento.id_movimento=movimento.id AND vencimento.id_nota=$this->id "
@@ -657,6 +686,27 @@ class Nota {
             throw new Exception('O movimento bancario ' . $idm . ', esta relacionado com a nota, e necessario que seja estornado ou excluido');
         }
         $ps->close();
+
+        $base = $this->empresa->getParametrosEmissao($con)->getComandoBase($con);
+        $base->acao = "CANCELAR";
+        $base->chave = $this->chave;
+        $base->motivo = $motivo;
+        $base->protocolo = $this->protocolo;
+
+        $base = Utilidades::removerLacunas($base);
+
+        $agora = round(microtime(true) * 1000);
+        $arquivo = "cancelamento_$agora.json";
+        $comando = Utilidades::toJson($base);
+        Sistema::mergeArquivo($arquivo, $comando, false);
+        $endereco = Sistema::$ENDERECO . "php/uploads/" . $arquivo;
+
+        $ret = Utilidades::fromJson(Sistema::getMicroServicoJava('EmissorRTC', $endereco));
+
+        if ($ret->sucesso) {
+            $this->cancelada = true;
+            $this->merge($con);
+        }
     }
 
     public function corrigir($con, $correcao) {

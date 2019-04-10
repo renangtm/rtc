@@ -371,15 +371,15 @@ rtc.service('tipoTarefaService', function ($http, $q) {
         }
     }
     this.getTipoTarefa = function (fn) {
-        if(este.empresa === null){
+        if (este.empresa === null) {
             baseService($http, $q, {
                 query: "$r->tipo_tarefa=new TipoTarefa();$r->tipo_tarefa->empresa=$empresa",
                 sucesso: fn,
                 falha: fn
             });
-        }else{
+        } else {
             baseService($http, $q, {
-                o:este.empresa,
+                o: este.empresa,
                 query: "$r->tipo_tarefa=new TipoTarefa();$r->tipo_tarefa->empresa=$o",
                 sucesso: fn,
                 falha: fn
@@ -399,7 +399,7 @@ rtc.service('cargoService', function ($http, $q) {
             });
         } else {
             baseService($http, $q, {
-                o:este.empresa,
+                o: este.empresa,
                 query: "$r->cargos=$o->getCargos($c)",
                 sucesso: fn,
                 falha: fn
@@ -407,15 +407,15 @@ rtc.service('cargoService', function ($http, $q) {
         }
     }
     this.getCargo = function (fn) {
-        if(este.empresa === null){
+        if (este.empresa === null) {
             baseService($http, $q, {
                 query: "$r->cargo=new Cargo();$r->cargo->empresa=$empresa",
                 sucesso: fn,
                 falha: fn
             });
-        }else{
+        } else {
             baseService($http, $q, {
-                o:este.empresa,
+                o: este.empresa,
                 query: "$r->cargo=new Cargo();$r->cargo->empresa=$o",
                 sucesso: fn,
                 falha: fn
@@ -596,9 +596,9 @@ rtc.service('movimentoService', function ($http, $q) {
             falha: fn
         });
     }
-    this.corretorSaldo = function (movimento,fn) {
+    this.corretorSaldo = function (movimento, fn) {
         baseService($http, $q, {
-            o:movimento,
+            o: movimento,
             query: "$o->corrigirSaldo($c);",
             sucesso: fn,
             falha: fn
@@ -999,9 +999,9 @@ rtc.service('acompanharPedidoService', function ($http, $q) {
 })
 
 rtc.service('pedidoService', function ($http, $q) {
-    this.getPedidoEspecifico = function (id_empresa,id_pedido,fn) {
+    this.getPedidoEspecifico = function (id_empresa, id_pedido, fn) {
         baseService($http, $q, {
-            o:{id_empresa:id_empresa,id_pedido:id_pedido},
+            o: {id_empresa: id_empresa, id_pedido: id_pedido},
             query: "$e=new Empresa($o->id_empresa,$c);$r->pedido=$e->getPedidos($c,0,1,'pedido.id='.$o->id_pedido);$r->pedido=$r->pedido[0];$r->pedido->produtos=$r->pedido->getProdutos($c)",
             sucesso: fn,
             falha: fn
@@ -1518,9 +1518,9 @@ rtc.service('clienteService', function ($http, $q) {
             falha: fn
         });
     }
-    this.getClienteEspecifico = function (id_empresa,id_cliente, fn) {
+    this.getClienteEspecifico = function (id_empresa, id_cliente, fn) {
         baseService($http, $q, {
-            o: {id_empresa:id_empresa,id_cliente:id_cliente},
+            o: {id_empresa: id_empresa, id_cliente: id_cliente},
             query: "$emp=new Empresa($o->id_empresa);$r->cliente=$emp->getClientes($c,0,1,'cliente.id='.$o->id_cliente,'');$r->cliente=$r->cliente[0];",
             sucesso: fn,
             falha: fn
@@ -2080,15 +2080,15 @@ rtc.service('sistemaService', function ($http, $q) {
     }
     this.finalizarSeparacao = function (pedido, fn) {
         baseService($http, $q, {
-            o: {pedido:pedido},
+            o: {pedido: pedido},
             query: "Sistema::finalizarSeparacao($c,$o->pedido,$usuario);",
             sucesso: fn,
             falha: fn
         });
     }
-    this.gerarRelatorioSeparacao = function (pedido,itens, fn) {
+    this.gerarRelatorioSeparacao = function (pedido, itens, fn) {
         baseService($http, $q, {
-            o: {pedido:pedido,itens:itens},
+            o: {pedido: pedido, itens: itens},
             query: "$r->relatorio=Sistema::relatorioSeparacao($c,$empresa,$o->itens,$o->pedido);",
             sucesso: fn,
             falha: fn
@@ -2102,9 +2102,9 @@ rtc.service('sistemaService', function ($http, $q) {
             falha: fn
         });
     }
-    this.setLimiteCredito = function (valor,id_cliente,id_empresa,id_pedido, fn) {
+    this.setLimiteCredito = function (valor, id_cliente, id_empresa, id_pedido, fn) {
         baseService($http, $q, {
-            o: {valor:valor,id_cliente:id_cliente,id_empresa:id_empresa,id_pedido:id_pedido},
+            o: {valor: valor, id_cliente: id_cliente, id_empresa: id_empresa, id_pedido: id_pedido},
             query: "Sistema::setLimiteCredito($o->valor,$o->id_cliente,$o->id_empresa,$usuario,$o->id_pedido);",
             sucesso: fn,
             falha: fn
@@ -2290,6 +2290,14 @@ rtc.service('empresaService', function ($http, $q) {
         baseService($http, $q, {
             o: pe,
             query: "$o->merge($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getStatusParametroEmissao = function (pe, fn) {
+        baseService($http, $q, {
+            o: pe,
+            query: "$r->status=$o->getStatus($c)",
             sucesso: fn,
             falha: fn
         });

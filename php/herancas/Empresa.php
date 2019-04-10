@@ -128,13 +128,13 @@ class Empresa {
 
         if ($id > 0 && $cf !== null) {
 
-            $ps = $cf->getConexao()->prepare("SELECT empresa.nome,empresa.cnpj,endereco.id,endereco.rua,endereco.bairro,endereco.cep,endereco.numero,cidade.id,cidade.nome,estado.id,estado.sigla FROM empresa INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' INNER JOIN cidade ON cidade.id=endereco.id_cidade INNER JOIN estado ON estado.id=cidade.id_estado WHERE empresa.id=$id");
+            $ps = $cf->getConexao()->prepare("SELECT empresa.nome,empresa.cnpj,endereco.id,endereco.rua,endereco.bairro,endereco.cep,endereco.numero,cidade.id,cidade.nome,estado.id,estado.sigla,empresa.inscricao_estadual FROM empresa INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' INNER JOIN cidade ON cidade.id=endereco.id_cidade INNER JOIN estado ON estado.id=cidade.id_estado WHERE empresa.id=$id");
             $ps->execute();
-            $ps->bind_result($nome, $cnpj, $end_id, $end_rua, $end_bairro, $end_cep, $end_num, $cid_id, $cid_nom, $est_id, $est_sg);
+            $ps->bind_result($nome, $cnpj, $end_id, $end_rua, $end_bairro, $end_cep, $end_num, $cid_id, $cid_nom, $est_id, $est_sg,$emp_ie);
             if ($ps->fetch()) {
                 $this->nome = $nome;
                 $this->cnpj = new CNPJ($cnpj);
-
+                $this->inscricao_estadual = $emp_ie;
                 $endereco = new Endereco();
                 $endereco->id = $end_id;
                 $endereco->rua = $end_rua;
@@ -167,6 +167,18 @@ class Empresa {
                 $this->email = $em;
             }
             $ps->close();
+            
+            $ps = $cf->getConexao()->prepare("SELECT id,numero FROM telefone WHERE tipo_entidade='EMP' AND id_entidade=$this->id");
+            $ps->execute();
+            $ps->bind_result($id, $numero);
+            if ($ps->fetch()) {
+                $em = new Telefone($numero);
+                $em->id = $id;
+                $this->telefone = $em;
+            }
+            $ps->close();
+            
+            
         }
     }
 

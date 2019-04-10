@@ -121,6 +121,8 @@ class Banco {
         
         $ps = $con->getConexao()->prepare("SELECT SUM((CASE WHEN operacao.debito THEN -1 ELSE 1 END)*(movimento.valor-movimento.descontos+movimento.juros)) FROM movimento "
                 . "INNER JOIN operacao ON movimento.id_operacao=operacao.id "
+                . "INNER JOIN vencimento ON vencimento.id=movimento.id_vencimento "
+                . "INNER JOIN nota ON nota.id=vencimento.id_nota AND nota.excluida=false "
                 . "WHERE movimento.id_banco=$this->id AND movimento.data>=FROM_UNIXTIME($data_anterior/1000)");
         $ps->execute();
         $ps->bind_result($valor);

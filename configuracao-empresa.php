@@ -279,6 +279,25 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="form-group row">
+                                                    <label for="txtname" class="col-4 col-lg-2 col-form-label text-left">Status</label>
+                                                    <div class="col-md-3">
+                                                        <div ng-if="status===null && parametros_emissao.certificado!==''" style="color:Orange">
+                                                            Certificado invalido, ou senha incorreta.
+                                                        </div>
+                                                        <div ng-if="parametros_emissao.certificado===''" style="color:#FF0000">
+                                                            Sem certificado
+                                                        </div>
+                                                        <div ng-if="status!==null" style="color:Green">
+                                                            <i class="fas fa-check"></i>&nbspCertificado Valido 
+                                                            <strong>{{status.validade_certificado.de | data}}</strong>
+                                                             até 
+                                                            <strong>{{status.validade_certificado.ate | data}}</strong>
+                                                            <hr>
+                                                            Status Sefaz: {{status.descricao}}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             <?php } ?>
                                             <hr>
                                             <button class="btn btn-sucess"><i class="fas fa-check"></i>&nbsp Confirmar Alteracoes</button>

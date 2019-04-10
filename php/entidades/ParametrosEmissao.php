@@ -30,6 +30,22 @@ class ParametrosEmissao {
         $this->serie = 0;
     }
 
+    public function getStatus($con) {
+
+        $base = $this->getComandoBase($con);
+        $base->acao = "STATUS";
+
+        $agora = round(microtime(true) * 1000);
+        $arquivo = "status_$agora.json";
+        $comando = Utilidades::toJson($base);
+        Sistema::mergeArquivo($arquivo, $comando, false);
+        $endereco = Sistema::$ENDERECO . "php/uploads/" . $arquivo;
+
+        $ret = Utilidades::fromJson(Sistema::getMicroServicoJava('EmissorRTC', $endereco));
+
+        return $ret;
+    }
+
     public function getComandoBase($con) {
 
         $obj = new stdClass();
@@ -37,15 +53,15 @@ class ParametrosEmissao {
         $obj->id = $this->id;
         $obj->lote = $this->lote;
         $obj->nf = $this->nota;
-        $obj->cnpj = str_replace(array("-", ".", "/"), array("", "", ""), $this->empresa->cnpj->valor);
+        $obj->cnpj = Utilidades::removeMask($this->empresa->cnpj->valor);
         $obj->serie = $this->serie;
         $obj->pais = "Brasil";
         $obj->municipio = $this->empresa->endereco->cidade->nome;
         $obj->nome = $this->empresa->nome;
-        $obj->ie = str_replace(array("-", ".", "/"), array("", "", ""),$this->empresa->inscricao_estadual);
+        $obj->ie = Utilidades::removeMask($this->empresa->inscricao_estadual);
         $obj->crt = 3; //normal
-        $obj->cep = str_replace(array("-", ".", "/"), array("", "", ""), $this->empresa->endereco->cep->valor);
-        $obj->telefone = $this->empresa->telefone->numero;
+        $obj->cep = Utilidades::removeMask($this->empresa->endereco->cep->valor);
+        $obj->telefone = Utilidades::removeMask($this->empresa->telefone->numero);
         $obj->bairro = $this->empresa->endereco->bairro;
         $obj->logadouro = $this->empresa->endereco->rua;
         $obj->numero = $this->empresa->endereco->numero;
@@ -53,21 +69,21 @@ class ParametrosEmissao {
         $arquivo = "logo_" . round(microtime(true) * 1000) . ".txt";
 
         $logo = $this->empresa->getLogo($con);
-        $decodificado = Utilidades::base64decode($logo->logo);
+        $bytes = Utilidades::base64decode($logo->logo);
 
-        while (strlen($decodificado) > 0) {
-            $buff = substr($decodificado, 0, 2000);
-            $decodificado = substr($decodificado, 2000);
-            Sistema::mergeArquivo($arquivo, $buff, false);
+        $aux = strlen($bytes);
+        for ($i = 0; $i < $aux; $i += 1024) {
+            $buffer = substr($bytes, 0, 1024);
+            Sistema::mergeArquivo($arquivo, $buffer, false);
+            $bytes = substr($bytes, 1024);
         }
 
-        $obj->logo = Sistema::$ENDERECO."php/uploads/".$arquivo;
+        $obj->logo = Sistema::$ENDERECO . "php/uploads/" . $arquivo;
         $obj->estado = $this->empresa->endereco->cidade->estado->sigla;
         $obj->certificado = $this->certificado;
         $obj->senha_certificado = $this->senha_certificado;
-     
+
         return $obj;
-        
     }
 
     public function merge($con) {

@@ -17,7 +17,7 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
         } else if (k === 1) {
             return "CAIXA";
         } else if (k === 2) {
-            return "UNIDADE DA CAIXA"
+            return "UNIDADE DA CAIXA";
         }
 
         return "SUB UNIDADE DA CAIXA";
@@ -33,15 +33,15 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
     $scope.gerarRelatorio = function () {
 
         sistemaService.gerarRelatorioSeparacao($scope.pedido, $scope.itens, function (r) {
-            
-            if(r.sucesso){
-                
+
+            if (r.sucesso) {
+
                 $scope.relatorio_separacao = r.relatorio;
-                
-            }else{
-                
+
+            } else {
+
                 msg.alerta(r.mensagem);
-                
+
             }
         })
 
@@ -85,8 +85,8 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
 
     $scope.bipe = function () {
 
-        for(var i=0;i<$scope.itens.length;i++){
-            if($scope.itens[i].codigo === $scope.codigo){
+        for (var i = 0; i < $scope.itens.length; i++) {
+            if ($scope.itens[i].codigo === $scope.codigo) {
                 $scope.itens[i].codigo_bipado = $scope.codigo;
                 break;
             }
@@ -98,10 +98,10 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
     $scope.podeFinalizar = function () {
 
         var a = true;
-        
-        for(var i=0;i<$scope.itens.length;i++){
-            if($scope.itens[i].codigo_bipado === ""){
-                a=false;
+
+        for (var i = 0; i < $scope.itens.length; i++) {
+            if ($scope.itens[i].codigo_bipado === "") {
+                a = false;
                 break;
             }
         }
@@ -111,22 +111,22 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
     }
 
     $scope.finalizarSeparacao = function () {
-         
-        sistemaService.finalizarSeparacao($scope.pedido,function(r){
-            
-            if(r.sucesso){
-                
+
+        sistemaService.finalizarSeparacao($scope.pedido, function (r) {
+
+            if (r.sucesso) {
+
                 msg.alerta("Finalizada com sucesso. Redirecionando a tela de tarefas");
-                window.location="tarefas.php";
-                
-            }else{
-                
-                msg.erro("Ocorreu um problema ao finalizar a separação");
-                
+                window.location = "tarefas.php";
+
+            } else {
+
+                msg.erro("Ocorreu um problema ao finalizar a separaï¿½ï¿½o");
+
             }
-            
+
         })
-    
+
     }
 
 
@@ -1790,6 +1790,7 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, sistemaServ
     $scope.empresa = null;
     $scope.filiais = [];
     $scope.parametros_emissao = null;
+    $scope.status = null;
     $scope.estados = [];
     $scope.cidades = [];
     $scope.estado = null;
@@ -1925,6 +1926,14 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, sistemaServ
                     $scope.estado = $scope.empresa.endereco.cidade.estado;
                 }
             }
+            
+            empresaService.getStatusParametroEmissao($scope.parametros_emissao, function (s) {
+               
+                $scope.status = s.status;
+                
+                
+            })
+
         })
 
 
@@ -1969,6 +1978,12 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, sistemaServ
                 baseService.merge($scope.parametros_emissao, function (rr) {
                     if (rr.sucesso) {
                         $scope.parametros_emissao = rr.o;
+                        
+                        empresaService.getStatusParametroEmissao($scope.parametros_emissao, function (s) {
+
+                            $scope.status = s.status;
+
+                        })
 
                         msg.alerta("Operacao efetuada com sucesso. Relogue para surtir as alteracoes");
 
