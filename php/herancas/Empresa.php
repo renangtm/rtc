@@ -985,7 +985,12 @@ class Empresa {
 
             $c = new CadastroLotePendente();
             $c->id_produto = $id;
-            $c->nome_produto = $nome;
+            
+            $escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c","");
+            $replacements = array("", "", "", "", "", "", "", "");
+            $result = str_replace($escapers, $replacements, $nome);
+            $c->nome_produto = $result;
+
             $c->quantidade = $quantidade;
             $c->grade = new Grade($grade);
 
@@ -3796,6 +3801,8 @@ class Empresa {
 
         return 0;
     }
+    
+    
 
     public function getProdutos($con, $x1, $x2, $filtro = "", $ordem = "") {
 

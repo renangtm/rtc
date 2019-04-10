@@ -15,16 +15,63 @@ include('includes.php');
 
 class testeSistema extends PHPUnit_Framework_TestCase {
 
+    private static $conexao;
+    
+    public static function getConexao() {
+
+        if (self::$conexao == null) {
+            self::$conexao = new mysqli("192.168.0.104", "SYSTEMUSER", "senha5dosistema1", "db_agrofauna", 10049);
+        }
+
+        return self::$conexao;
+    }
+
     public function testSimple() {
 
-        
+        date_default_timezone_set("America/Sao_Paulo");
+
         $con = new ConnectionFactory();
+
         
-        $empresa = new Empresa(1735,$con);
-        $nota = $empresa->getNotas($con,0, 1,"nota.emitida=true AND nota.ficha=898");
-        $nota = $nota[0];
-        $nota->cancelar($con);
+        $in = "(21,27409,26709,27019,27021,27023,27025,27027,27029,27031,27399,27401,27403,27405,27407";
+
+        $ps = $con->getConexao()->prepare("SELECT ficha FROM nota WHERE id_empresa=1733 AND excluida=false");
+        $ps->execute();
+        $ps->bind_result($ficha);
+        while ($ps->fetch()) {
+            $in .= ",$ficha";
+        }
+        $in .= ")";
+        $ps->close();
+
         
+        $pendentes = array();
+        $ps = self::getConexao()->prepare("SELECT P_NRCONTRO FROM db_agrofauna_filial17.CADPED WHERE P_NRCONTRO NOT IN $in");
+        $ps->execute();
+        $ps->bind_result($ficha);
+        $in = "(-1";
+        while ($ps->fetch()) {
+            $pendentes[] = $ficha;
+            $in .= ",$ficha";
+        }
+        $ps->close();
+        $in .= ")";
+         
+        $fichas = array();
+        $ps = $con->getConexao()->prepare("SELECT ficha "
+                . "FROM nota "
+                . "INNER JOIN vencimento ON vencimento.id_nota=nota.id "
+                . "INNER JOIN movimento ON movimento.id_vencimento=vencimento.id "
+                . "WHERE movimento.id_banco=99 AND nota.ficha IN $in "
+                . "AND nota.data_emissao<='2019-02-27'GROUP BY ficha");
+        $ps->execute();
+        $ps->bind_result($ficha);
+        while($ps->fetch()){
+            $fichas[] = $ficha;
+        }
+        $ps->close();
+        
+        echo Utilidades::toJson($fichas);
         return;
 
         for ($i = 0; $i < 7; $i++) {

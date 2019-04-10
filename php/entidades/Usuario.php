@@ -550,7 +550,6 @@ class Usuario {
                     $tarefas[$id_usuario] = array();
                 }
                 $tarefas[$id_usuario][] = $t;
-                $t->tipo_tarefa->init($t);
             }
 
             $t = $tmp[$id];
@@ -569,6 +568,12 @@ class Usuario {
 
         $ps->close();
 
+        foreach($tmp as $key=>$value){
+            if($value->tipo_tarefa !== null){
+                $value->tipo_tarefa->init($value);
+            }
+        }
+        
         //--------------------------------------
 
         foreach ($cache->arr_associados as $key => $usuario) {

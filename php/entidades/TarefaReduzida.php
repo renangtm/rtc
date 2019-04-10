@@ -49,7 +49,7 @@ class TarefaReduzida {
         $this->descricao = $tarefa->descricao;
 
         $this->intervalos_execucao = $tarefa->intervalos_execucao;
-        $this->observacoes = $tarefa->observacoes;
+        $this->observacoes = array();//$tarefa->observacoes;
         $this->prioridade = $tarefa->prioridade;
         $this->tipo_tarefa = $tarefa->tipo_tarefa->nome;
         $this->criada_por = $tarefa->criada_por;

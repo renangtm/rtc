@@ -37,7 +37,10 @@ class FechamentoCaixa{
             $ps->bind_result($data);
             if($ps->fetch()){
                 $ps->close();
-                $ps = $con->getConexao()->prepare("SELECT movimento.id FROM movimento WHERE data>'$data' AND data<=FROM_UNIXTIME($this->data/1000) AND id_banco=".$this->banco->id." AND visto=false");
+                $ps = $con->getConexao()->prepare("SELECT movimento.id FROM movimento "
+                        . "INNER JOIN vencimento ON vencimento.id=movimento.id_vencimento "
+                        . "INNER JOIN nota ON nota.id=vencimento.id_nota AND nota.excluida=false AND nota.cancelada=false "
+                        . "WHERE movimento.data>'$data' AND movimento.data<=FROM_UNIXTIME($this->data/1000) AND movimento.id_banco=".$this->banco->id." AND movimento.visto=false");
                 $ps->execute();
                 $ps->bind_result($id);
                 if($ps->fetch()){

@@ -662,10 +662,16 @@ class Nota {
             $this->protocolo = $ret->protocolo;
             $this->observacao .= ". Mensagem da SEFAZ: $ret->mensagem";
             $this->merge($con);
+            
+            Logger::gerarLog($this, "Nota emitida, $this->numero");
+            
         } else {
 
             $this->observacao .= ". Problema de emissao: $ret->mensagem";
             $this->merge($con);
+            
+            Logger::gerarLog($this, "Falha na emissao da nota, ficha $this->ficha");
+            
         }
     }
 
@@ -706,10 +712,57 @@ class Nota {
         if ($ret->sucesso) {
             $this->cancelada = true;
             $this->merge($con);
+            Logger::gerarLog($this, "Nota cancelada na Sefaz");
+        }else{
+            Logger::gerarLog($this, $ret->mensagem);
         }
     }
 
     public function corrigir($con, $correcao) {
+        
+        if (!$this->emitida) {
+
+            throw new Exception("Nota nao esta emitida para fazer carta de correcao");
+        }
+
+        $base = $this->empresa->getParametrosEmissao($con)->getComandoBase($con);
+        $base->acao = "CARTA_CORRECAO";
+        $base->chave = $this->chave;
+        $base->descricao = $correcao;
+        $base->protocolo = $this->protocolo;
+
+        $numero = 0;
+        $ps = $con->getConexao()->prepare("SELECT numero_carta_correcao FROM nota WHERE id=$this->id");
+        $ps->execute();
+        $ps->bind_result($n);
+        if($ps->fetch()){
+            $numero = $n+1; 
+        }
+        $ps->close();
+        
+        $ps = $con->getConexao()->prepare("UPDATE nota SET numero_carta_correcao=$numero,data_emissao=data_emissao WHERE id=$this->id");
+        $ps->execute();
+        $ps->close();
+        
+        $base->numero_sequencial = $numero;
+        
+        $base = Utilidades::removerLacunas($base);
+
+        $agora = round(microtime(true) * 1000);
+        $arquivo = "correcao_$agora.json";
+        $comando = Utilidades::toJson($base);
+        Sistema::mergeArquivo($arquivo, $comando, false);
+        $endereco = Sistema::$ENDERECO . "php/uploads/" . $arquivo;
+
+        $ret = Utilidades::fromJson(Sistema::getMicroServicoJava('EmissorRTC', $endereco));
+
+        if ($ret->sucesso) {
+            $this->cancelada = true;
+            $this->merge($con);
+            Logger::gerarLog($this, "Carta de corracao emitida na Sefaz: $correcao");
+        }else{
+            Logger::gerarLog($this, "Falha ao emitir carta de correcao: $correcao");
+        }
         
     }
 

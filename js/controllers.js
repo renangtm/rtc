@@ -54,6 +54,11 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
         $scope.itens = [];
         for (var i = 0; i < $scope.pedido.produtos.length; i++) {
             var p = $scope.pedido.produtos[i];
+            
+            if(!p.produto.sistema_lotes){
+                
+            }
+            continue;
             for (var j = 0; j < p.retiradas.length; j++) {
                 var r = p.retiradas[j];
                 var codigo = formatar(r[0], 7);
@@ -859,6 +864,22 @@ rtc.controller("crtTarefas", function ($scope, $sce, tarefaService, observacaoTa
 
     }
 
+    $scope.pf = function (tarefa) {
+
+        if (typeof tarefa.tipo_tarefa["porcentagem_fixa"] !== 'undefined') {
+            var base = 0;
+            for(var i=0;i<$scope.tarefa.observacoes.length;i++){
+                base += $scope.tarefa.observacoes[i].porcentagem;
+            }
+            
+            $scope.observacao_tarefa.porcentagem = base+tarefa.tipo_tarefa["porcentagem_fixa"];
+            return tarefa.tipo_tarefa["porcentagem_fixa"];
+        } else {
+            return 0;
+        }
+
+    }
+
     $scope.addObservacao = function () {
 
         if ($scope.observacao_tarefa.observacao === "") {
@@ -873,9 +894,12 @@ rtc.controller("crtTarefas", function ($scope, $sce, tarefaService, observacaoTa
         $scope.observacao_tarefa.porcentagem = dif;
 
 
+
         tarefaService.addObservacao($scope.tarefa, $scope.observacao_tarefa, function (f) {
 
             if (f.sucesso) {
+
+                $scope.tarefa = f.o.tarefa;
 
                 msg.alerta("Operacao efetuada com sucesso");
 
@@ -885,8 +909,6 @@ rtc.controller("crtTarefas", function ($scope, $sce, tarefaService, observacaoTa
                     $scope.tarefa_principal = t.tarefas[0];
 
                 })
-
-                $scope.tarefa.observacoes[$scope.tarefa.observacoes.length] = $scope.observacao_tarefa;
 
                 observacaoTarefaService.getObservacaoTarefa(function (o) {
 
@@ -1926,12 +1948,12 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, sistemaServ
                     $scope.estado = $scope.empresa.endereco.cidade.estado;
                 }
             }
-            
+
             empresaService.getStatusParametroEmissao($scope.parametros_emissao, function (s) {
-               
+
                 $scope.status = s.status;
-                
-                
+
+
             })
 
         })
@@ -1978,7 +2000,7 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, sistemaServ
                 baseService.merge($scope.parametros_emissao, function (rr) {
                     if (rr.sucesso) {
                         $scope.parametros_emissao = rr.o;
-                        
+
                         empresaService.getStatusParametroEmissao($scope.parametros_emissao, function (s) {
 
                             $scope.status = s.status;
@@ -6015,7 +6037,7 @@ rtc.controller("crtLotes", function ($scope, loteService, baseService) {
     $scope.atualizaPendencias = function () {
 
         loteService.getPendenciasCadastro('', function (p) {
-
+            
             for (var i = 0; i < p.pendencias.length; i++) {
                 p.pendencias[i].divisao = parseInt(p.pendencias[i].grade.str.split(',')[0]) * 48;
             }

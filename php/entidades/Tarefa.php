@@ -98,12 +98,16 @@ class Tarefa {
         foreach ($this->intervalos_execucao as $key => $value) {
             $intervalos .= $value[0] . "@" . $value[1] . ";";
         }
+        
+        $this->observacoes[] = $observacao;
+        
+        $this->tipo_tarefa->init($this);
 
         $ps = $con->getConexao()->prepare("UPDATE tarefa SET intervalos_execucao='$intervalos',inicio_minimo=inicio_minimo,porcentagem_conclusao=$porcentagem WHERE id=$this->id");
         $ps->execute();
         $ps->close();
         
-        $this->observacoes[] = $observacao;
+        
         
         if($this->porcentagem_conclusao >= 100){
 
