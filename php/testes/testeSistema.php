@@ -30,9 +30,6 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         date_default_timezone_set("America/Sao_Paulo");
 
-        $con = new ConnectionFactory();
-
-        
         $in = "(21,27409,26709,27019,27021,27023,27025,27027,27029,27031,27399,27401,27403,27405,27407";
 
         $ps = $con->getConexao()->prepare("SELECT ficha FROM nota WHERE id_empresa=1733 AND excluida=false");

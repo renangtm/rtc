@@ -47,10 +47,10 @@ class Movimento {
         
         $saldo = $this->saldo_anterior;
         $movimentos = array();
-        $ps = $con->getConexao()->prepare("SELECT movimento.id,movimento.valor*(CASE WHEN operacao.debito THEN -1 ELSE 1 END) FROM movimento"
+        $ps = $con->getConexao()->prepare("SELECT movimento.id,(movimento.valor+movimento.juros-movimento.descontos)*(CASE WHEN operacao.debito THEN -1 ELSE 1 END) FROM movimento"
                 . " INNER JOIN operacao ON operacao.id=movimento.id_operacao "
                 . " INNER JOIN vencimento ON vencimento.id=movimento.id_vencimento "
-                . " INNER JOIN nota ON nota.id=vencimento.id_nota AND nota.excluida=false "
+                . " INNER JOIN nota ON nota.id=vencimento.id_nota "
                 . " WHERE movimento.id_banco=".$this->banco->id." AND movimento.data>=FROM_UNIXTIME($this->data/1000)"
                 . " ORDER BY movimento.data ASC");
         $ps->execute();
