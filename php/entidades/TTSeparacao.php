@@ -38,6 +38,9 @@ class TTSeparacao extends TipoTarefa {
                 $empresa = new Empresa($id_empresa, $con);
                 $pedido = $empresa->getPedidos($con, 0, 1, "pedido.id=$tarefa->id_entidade_relacionada");
                 $pedido = $pedido[0];
+                
+                $pedido->status = Sistema::STATUS_FATURAMENTO();
+                $pedido->merge($con);
 
                 $emp = $pedido->empresa;
                 if ($pedido->logistica !== null) {
@@ -50,7 +53,7 @@ class TTSeparacao extends TipoTarefa {
 
                 if ($pedido->logistica !== null) {
                     $t->descricao = "Acompanhe o faturamento da nota do pedido </strong>$pedido->id</strong> da empresa <strong>'" .
-                            $pedido->empresa->nome . "'</strong> para o cliente <strong>'" .
+                            $pedido->empresa->nome . "', verificando se esta faturada e fazendo possiveis ajustes para faturar, </strong> para o cliente <strong>'" .
                             $pedido->cliente->razao_social . "'</strong><br>, e tambem o da nota de retorno da <strong>'" .
                             $pedido->logistica->nome . "'</strong> para a <strong>'" . $pedido->empresa->nome . "'</strong>";
                 } else {
@@ -63,8 +66,7 @@ class TTSeparacao extends TipoTarefa {
                 $t->id_entidade_relacionada = $pedido->id;
                 Sistema::novaTarefaEmpresa($con, $t, $emp);
 
-                $pedido->status = Sistema::STATUS_FATURAMENTO();
-                $pedido->merge($con);
+                
             }
         }
     }

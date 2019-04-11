@@ -80,8 +80,8 @@
                                         <div class="table-responsive">
                                             <div class="product-btn m-b-20">
                                                 <a href="#" class="btn btn-primary" data-title="AddCompra" ng-click="novoNota()" data-toggle="modal" data-target="#editCompra" ><i class="fas fa-plus-circle m-r-10"></i>Cadastrar Nota</a>
-                                                
-                                                
+
+
                                             </div>
                                             <hr><br>
                                             <table id="pedidos" class="table table-striped table-bordered first">
@@ -122,14 +122,72 @@
                                                             <div class="accordian-body collapse" id="demo{{notaa[0].id}}">
                                                                 <div class="row mx-auto m-b-30">
                                                                     <div class="col">
-                                                                        <table class="table table-bordered w-100">
-
+                                                                        <table class="table table-striped w-100">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>
+                                                                                        Log
+                                                                                    </th>
+                                                                                    <th>
+                                                                                        Momento
+                                                                                    </th>
+                                                                                    <th>
+                                                                                        Usuario
+                                                                                    </th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tr ng-repeat="log in notaa[0].logs">
+                                                                                <td>
+                                                                                    {{log.obs}}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {{l.momento | data}}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {{l.usuario.nome}}
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr ng-if="notaa[0].logs.length===0">
+                                                                                <td colspan="3">
+                                                                                    Sem nenhum log
+                                                                                </td>
+                                                                            </tr>
                                                                         </table>
-                                                                    </div>	
-                                                                    <div class="col">
-                                                                        <table class="table-bordered w-100">
-
-                                                                        </table>
+                                                                    </div>
+                                                                    <div class="col" ng-if="operacao_sefaz>0">
+                                                                        <span style="margin-left:auto;margin-tight:auto" class="dashboard-spinner spinner-success spinner-lg "></span>
+                                                                        <hr>
+                                                                        <h4>
+                                                                            Operacao sendo executada
+                                                                        </h4>
+                                                                    </div>
+                                                 <div class="col" style="margin-top:10px" ng-if="operacao_sefaz===0">
+                                                                        <div ng-if="notaa[0].saida && notaa[0].emitida">
+                                                                            <button class="btn btn-outline-danger" ng-click="cancelar(notaa[0])"> 
+                                                                                <i class="fas fa-times"></i>
+                                                                                &nbsp Cancelar NF {{notaa[0].numero}}  
+                                                                            </button>
+                                                                            <button class="btn btn-outline-warning" ng-click="corrigir(notaa[0])"> 
+                                                                                <i class="fas fa-list"></i>
+                                                                                &nbsp Corrigir NF {{notaa[0].numero}}  
+                                                                            </button>
+                                                                                <hr>
+                                                                                <textarea rows="5" ng-model="observacao_sefaz" class="form-control" style="width:100%">
+                                                                                    
+                                                                                </textarea>
+                                                                        </div>
+                                                                        <div ng-if="notaa[0].saida && !notaa[0].emitida">
+                                                                            <button class="btn btn-outline-success" style="width:100%;height:50px;font-size:16px" ng-click="emitir(notaa[0])"> 
+                                                                                <i class="fas fa-check"></i>
+                                                                                &nbsp Emitir NF
+                                                                            </button>
+                                                                        </div>
+                                                                        <div ng-if="!notaa[0].saida && !notaa[0].emitida">
+                                                                            <button class="btn btn-outline-primary" style="width:100%;height:50px;font-size:16px" ng-click="manifestar(notaa[0])"> 
+                                                                                <i class="fas fa-certificate"></i>
+                                                                                &nbsp Manifestar NF
+                                                                            </button>
+                                                                        </div>    
                                                                     </div>																
                                                                 </div>	
                                                             </div> 
@@ -787,38 +845,38 @@
             <!-- Optional JavaScript -->
             <script>
 
-                                                      var l = $('#loading');
+                                                        var l = $('#loading');
+                                                        l.hide();
+
+
+                                                        var x = 0;
+                                                        var y = 0;
+
+                                                        $(document).mousemove(function (e) {
+
+                                                            x = e.clientX;
+                                                            y = e.clientY;
+
+                                                            var s = $(this).scrollTop();
+
+                                                            l.offset({top: (y + s), left: x});
+
+                                                        })
+
+                                                        var sh = false;
+                                                        var it = null;
+
+                                                        loading.show = function () {
+                                                            l.show();
+                                                            var s = $(document).scrollTop();
+
+                                                            l.offset({top: (y + s), left: x});
+
+                                                        }
+
+                                                        loading.close = function () {
                                                             l.hide();
-
-                                                            
-                                                            var x = 0;
-                                                            var y = 0;
-                                                                
-                                                            $(document).mousemove(function (e) {
-                                                                
-                                                                x = e.clientX;
-                                                                y = e.clientY;
-                                                                
-                                                                var s = $(this).scrollTop();
-
-                                                                l.offset({top: (y + s), left: x});
-
-                                                            })
-
-                                                            var sh = false;
-                                                            var it = null;
-
-                                                            loading.show = function () {
-                                                                l.show();
-                                                                var s = $(document).scrollTop();
-
-                                                                l.offset({top: (y + s), left: x});
-                                                                
-                                                            }
-
-                                                            loading.close = function () {
-                                                                l.hide();
-                                                            }
+                                                        }
 
                                                         $(document).ready(function () {
                                                             $('.btnvis').tooltip({title: "Visualizar", placement: "top"});
