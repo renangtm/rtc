@@ -30,6 +30,41 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         date_default_timezone_set("America/Sao_Paulo");
 
+        $con = new ConnectionFactory();
+        
+        $movs = array();
+        $movs2 = array();
+        $ps = $this->getConexao()->prepare("SELECT m.VALOR,m.ID_FICHA,(m.VALOR+m.JUROS-m.DESCONTO)*(CASE WHEN o.TIPO='C' THEN 1 ELSE -1 END) FROM AF_financeiro_filial17.MOVIMENTO m INNER JOIN AF_financeiro_filial17.OPERACAO o ON o.ID=m.ID_OPERACAO WHERE m.DATA >= '2018-10-15' AND m.DATA<'2019-02-27' AND m.ID_BANCO=99");
+        $ps->execute();
+        $ps->bind_result($valor,$id_ficha,$soma);
+        while($ps->fetch()){
+            $movs[] = array($valor,$id_ficha,$soma);
+        }
+        $ps->close();
+        
+        $ps = $con->getConexao()->prepare("SELECT m.valor,n.ficha FROM movimento m INNER JOIN vencimento v ON m.id_vencimento=v.id INNER JOIN nota n ON n.id=v.id_nota WHERE m.data >= '2018-10-15' AND m.data<'2019-02-27' AND m.id_banco=99");
+        $ps->execute();
+        $ps->bind_result($valor,$id_ficha);
+        while($ps->fetch()){
+            $movs2[] = array($valor,$id_ficha);
+        }
+        $ps->close();
+        $valor = 0;
+        $nao_achou = array();
+        foreach($movs as $key=>$value){
+            foreach($movs2 as $key2=>$value2){
+                if($value2[1]===$value[1] && abs($value2[0]-$value[0])<0.1){
+                    unset($movs2[$key2]);
+                    continue 2;
+                }
+            }
+            $nao_achou[] = $value;
+            $valor += $value[2];
+        }
+        
+        echo $valor;
+        
+        return;
         $in = "(21,27409,26709,27019,27021,27023,27025,27027,27029,27031,27399,27401,27403,27405,27407";
 
         $ps = $con->getConexao()->prepare("SELECT ficha FROM nota WHERE id_empresa=1733 AND excluida=false");

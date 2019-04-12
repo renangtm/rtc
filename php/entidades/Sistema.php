@@ -3080,10 +3080,11 @@ class Sistema {
 
         $status = array();
 
-        $status[] = new StatusPedidoEntrada(1, "Confirmacao de pedido", false, false, true);
-        $status[] = new StatusPedidoEntrada(2, "Em transito", false, true, false);
-        $status[] = new StatusPedidoEntrada(3, "Finalizado", true, false, false);
-        $status[] = new StatusPedidoEntrada(4, "Cancelado", false, false, true);
+        $status[] = new StatusPedidoEntrada(1, "Em Andamento", false, false, false);
+        $status[] = new StatusPedidoEntrada(2, "Confirmacao de pedido", false, false, true);
+        $status[] = new StatusPedidoEntrada(3, "Em transito", false, true, false);
+        $status[] = new StatusPedidoEntrada(4, "Finalizado", true, false, false);
+        $status[] = new StatusPedidoEntrada(5, "Cancelado", false, false, true);
 
         return $status;
     }

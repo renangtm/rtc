@@ -3368,7 +3368,7 @@ rtc.controller("crtMovimentos", function ($scope, movimentoService, sistemaServi
     }
 
 })
-rtc.controller("crtNotas", function ($scope, notaService, empresaService, baseService, produtoService, produtoNotaService, vencimentoService, sistemaService, formaPagamentoService, transportadoraService, clienteService, fornecedorService, uploadService) {
+rtc.controller("crtNotas", function ($scope,logService, notaService, empresaService, baseService, produtoService, produtoNotaService, vencimentoService, sistemaService, formaPagamentoService, transportadoraService, clienteService, fornecedorService, uploadService) {
 
     $scope.notas = createAssinc(notaService, 1, 10, 10);
     assincFuncs(
@@ -3407,7 +3407,79 @@ rtc.controller("crtNotas", function ($scope, notaService, empresaService, baseSe
     $scope.empresas_clientes = [];
     $scope.empresa = null;
 
-
+    $scope.operacao_sefaz = 0;
+    $scope.observacao_sefaz = "";
+    
+    
+    $scope.emitir = function(nota){
+        $scope.operacao_sefaz = 20;
+        notaService.emitir(nota,function(r){
+            if(r.sucesso){
+                $scope.operacao_sefaz = 0;   
+                msg.alerta(r.retorno_sefaz);
+            }else{
+                msg.erro("Ocorreu um problema ao efetuar a operacao");
+            }
+        })
+    }
+    
+    $scope.corrigir = function(nota){
+        $scope.observacao_sefaz = formatTextArea($scope.observacao_sefaz);
+        if($scope.observacao_sefaz.length<16){
+            msg.erro("Digite uma observacao maior");
+            return;
+        }
+        $scope.operacao_sefaz = 10;
+        notaService.corrigir(nota,$scope.observacao_sefaz,function(r){
+            if(r.sucesso){
+                $scope.operacao_sefaz = 0;   
+                if(r.retorno_sefaz === true){
+                    msg.alerta("Carta de correcao efetuada com sucesso");
+                }else{
+                    msg.alerta("Carta de correcao efetuada com sucesso");
+                }
+            }else{
+                msg.erro("Ocorreu um problema ao efetuar a operacao");
+            }
+        })
+    }
+    
+    $scope.manifestar = function(nota){
+        $scope.operacao_sefaz = 10;
+        notaService.manifestar(nota,function(r){
+            if(r.sucesso){
+                $scope.operacao_sefaz = 0;   
+                if(r.retorno_sefaz === true){
+                    msg.alerta("Nota manifestada com sucesso");
+                }else{
+                    msg.alerta("Falha ao manifestar nota");
+                }
+            }else{
+                msg.erro("Ocorreu um problema ao efetuar a operacao");
+            }
+        })
+    }
+    
+    $scope.cancelar = function(nota){
+        $scope.observacao_sefaz = formatTextArea($scope.observacao_sefaz);
+        if($scope.observacao_sefaz.length<16){
+            msg.erro("Digite uma observacao maior");
+            return;
+        }
+        $scope.operacao_sefaz = 10;
+        notaService.emitir(nota,$scope.observacao_sefaz,function(r){
+            if(r.sucesso){
+                $scope.operacao_sefaz = 0;   
+                if(r.retorno_sefaz === true){
+                    msg.alerta("Nota cancelada com sucesso");
+                }else{
+                    msg.alerta("Falha ao cancelar nota");
+                }
+            }else{
+                msg.erro("Ocorreu um problema ao efetuar a operacao");
+            }
+        })
+    }
 
     $scope.uploadXML = function (k) {
         $("#" + k).change(function () {
@@ -3629,7 +3701,8 @@ rtc.controller("crtNotas", function ($scope, notaService, empresaService, baseSe
         n.nota.xml = "";
         n.nota.danfe = "";
         $scope.nota_novo = angular.copy(n.nota);
-
+        
+        
         empresaService.getEmpresasClientes(function (e) {
 
             $scope.empresas_clientes = e.clientes;
@@ -3713,6 +3786,13 @@ rtc.controller("crtNotas", function ($scope, notaService, empresaService, baseSe
             return;
 
         }
+        
+        
+        logService.getLogs(nota,function(l){
+            
+            nota.logs = l.logs;
+            
+        })
 
         notaService.getProdutos(nota, function (p) {
 
@@ -4120,6 +4200,11 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tr
         cotacaoEntradaService.getProdutos(cotacao, function (p) {
 
             cotacao.produtos = p.produtos;
+            
+            for(var i=0;i<cotacao.produtos.length;i++){
+                cotacao.produtos[i].passar_pedido = false;
+            }
+            
             equalize(cotacao, "status", $scope.status_cotacao);
 
             var ic = $("#myIframe").contents();

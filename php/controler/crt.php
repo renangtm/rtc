@@ -2,6 +2,13 @@
 
 include("includes.php");
 
+function n($str){
+    $escapers = array("\\", "\n", "\r", "\t", "\x08", "\x0c");
+    $replacements = array("", "", "", "", "", "");
+    $result = str_replace($escapers, $replacements, $str);
+    return $str;
+}
+
 $ses = new SessionManager();
 
 $c = new ConnectionFactory();
@@ -14,10 +21,10 @@ $o = null;
 if (isset($_POST['o'])) {
 
 
-    $o = Utilidades::fromJson(Utilidades::base64decodeSPEC($_POST['o']));
+    $o = Utilidades::fromJson(n(Utilidades::base64decodeSPEC($_POST['o'])));
 } else if (isset($_GET['o'])) {
 
-    $o = Utilidades::fromJson(Utilidades::base64decodeSPEC($_GET['o']));
+    $o = Utilidades::fromJson(n(Utilidades::base64decodeSPEC($_GET['o'])));
 }
 
 
@@ -45,4 +52,4 @@ $r->sucesso = true;
 
 eval('try{ ' . $codigo . '; }catch(Exception $ex){$r->sucesso = false;$r->mensagem=$ex->getMessage();}');
 
-echo Utilidades::base64encodeSPEC(Utilidades::toJson($r));
+echo Utilidades::base64encodeSPEC(n(Utilidades::toJson($r)));

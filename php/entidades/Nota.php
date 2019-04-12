@@ -57,7 +57,7 @@ class Nota {
         $this->data_emissao = round(microtime(true) * 1000);
         $this->produtos = null;
         $this->vencimentos = null;
-        $this->interferir_estoque = true;
+        $this->interferir_estoque = true;//true;
         $this->forma_pagamento = null;
         $this->frete_destinatario_remetente = false;
         $this->emitida = false;
@@ -478,11 +478,40 @@ class Nota {
 
     public function manifestar($con) {
 
-        $this->emitida = true;
+        if ($this->emitida) {
+
+            throw new Exception("Nota ja esta manifestada");
+        }
+        
+        
+
+        $base = $this->empresa->getParametrosEmissao($con)->getComandoBase($con);
+        $base->acao = "MANIFESTAR";
+        $base->chave = $this->chave;
+        $base = Utilidades::removerLacunas($base);
+
+        $agora = round(microtime(true) * 1000);
+        $arquivo = "correcao_$agora.json";
+        $comando = Utilidades::toJson($base);
+        Sistema::mergeArquivo($arquivo, $comando, false);
+        $endereco = Sistema::$ENDERECO . "php/uploads/" . $arquivo;
+
+        $ret = Utilidades::fromJson(Sistema::getMicroServicoJava('EmissorRTC', $endereco));
 
         $ps = $con->getConexao()->prepare("UPDATE nota SET emitida=true WHERE id=$this->id");
         $ps->execute();
         $ps->close();
+        
+        if ($ret->sucesso) {
+            $this->emitida = true;
+            $this->merge($con);
+            Logger::gerarLog($this, "Manifestada na sefaz");
+            return true;
+        }else{
+            Logger::gerarLog($this, "Falha ao manifestar nota");
+            return false;
+        }
+        
     }
 
     public function emitir($con) {
@@ -655,8 +684,8 @@ class Nota {
         if ($ret->sucesso) {
 
             $this->emitida = true;
-            $this->danfe = Sistema::$ENDERECO . "php/" . $ret->danfe;
-            $this->xml = Sistema::$ENDERECO . "php/" . $ret->xml;
+            $this->danfe = Sistema::$ENDERECO . "php/controler/" . $ret->danfe;
+            $this->xml = Sistema::$ENDERECO . "php/controler/" . $ret->xml;
             $this->numero = $ret->nf;
             $this->chave = $ret->chave;
             $this->protocolo = $ret->protocolo;
@@ -669,10 +698,13 @@ class Nota {
 
             $this->observacao .= ". Problema de emissao: $ret->mensagem";
             $this->merge($con);
-            
+            Sistema::avisoDEVS("Falha emissao link XML: <a href='".Sistema::$ENDERECO."php/controler/".$ret->falha."'>LINK</a>");
             Logger::gerarLog($this, "Falha na emissao da nota, ficha $this->ficha");
             
         }
+        
+        return $ret->mensagem;
+        
     }
 
     public function cancelar($con, $motivo = "Nota emitida indevidamente") {
@@ -713,9 +745,12 @@ class Nota {
             $this->cancelada = true;
             $this->merge($con);
             Logger::gerarLog($this, "Nota cancelada na Sefaz");
+            return true;
         }else{
             Logger::gerarLog($this, $ret->mensagem);
+            return false;
         }
+        
     }
 
     public function corrigir($con, $correcao) {
@@ -760,8 +795,10 @@ class Nota {
             $this->cancelada = true;
             $this->merge($con);
             Logger::gerarLog($this, "Carta de corracao emitida na Sefaz: $correcao");
+            return true;
         }else{
             Logger::gerarLog($this, "Falha ao emitir carta de correcao: $correcao");
+            return false;
         }
         
     }

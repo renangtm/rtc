@@ -636,6 +636,38 @@ rtc.service('notaService', function ($http, $q) {
             falha: fn
         });
     }
+    this.emitir = function (nota,fn) {
+        baseService($http, $q, {
+            o:nota,
+            query: "$r->retorno_sefaz=$o->emitir($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.cancelar = function (nota,motivo,fn) {
+        baseService($http, $q, {
+            o:{nota:nota,motivo:motivo},
+            query: "$r->retorno_sefaz=$o->nota->cancelar($c,$o->motivo)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.corrigir = function (nota,correcao,fn) {
+        baseService($http, $q, {
+            o:{nota:nota,correcao:correcao},
+            query: "$r->retorno_sefaz=$o->nota->emitir($c,$o->correcao)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.manifestar = function (nota,fn) {
+        baseService($http, $q, {
+            o:{nota:nota},
+            query: "$r->retorno_sefaz=$o->nota->manifestar($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.calcularImpostosAutomaticamente = function (nota, fn) {
         baseService($http, $q, {
             o: nota,

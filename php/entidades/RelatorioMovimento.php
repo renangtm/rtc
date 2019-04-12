@@ -22,7 +22,7 @@ class RelatorioMovimento extends Relatorio {
         }
 
 
-        parent::__construct("SELECT movimento.data as 'data_movimento',movimento.saldo_anterior as 'saldo_anterior',movimento.valor as 'valor',movimento.juros as 'juros',movimento.descontos as 'desconto',(CASE WHEN operacao.debito THEN 'Debito' ELSE 'Credito' END) as 'tipo_movimento',nota.numero as 'nota',nota.ficha as 'ficha', operacao.nome as 'operacao', historico.nome as 'historico', (CASE WHEN nota.saida THEN cliente.razao_social ELSE fornecedor.nome END) as 'destinatario' FROM movimento INNER JOIN vencimento ON vencimento.id=movimento.id_vencimento INNER JOIN nota ON vencimento.id_nota=nota.id INNER JOIN operacao ON movimento.id_operacao=operacao.id INNER JOIN historico ON movimento.id_historico=historico.id LEFT JOIN fornecedor ON fornecedor.id=nota.id_fornecedor LEFT JOIN cliente ON cliente.id =nota.id_cliente WHERE nota.id_empresa=$empresa->id AND nota.excluida=false", 1);
+        parent::__construct("SELECT movimento.data as 'data_movimento',banco.nome as 'nome_banco',movimento.saldo_anterior as 'saldo_anterior',movimento.valor as 'valor',movimento.juros as 'juros',movimento.descontos as 'desconto',(CASE WHEN operacao.debito THEN 'Debito' ELSE 'Credito' END) as 'tipo_movimento',nota.numero as 'nota',nota.ficha as 'ficha', operacao.nome as 'operacao', historico.nome as 'historico', (CASE WHEN nota.saida THEN cliente.razao_social ELSE fornecedor.nome END) as 'destinatario' FROM movimento INNER JOIN vencimento ON vencimento.id=movimento.id_vencimento INNER JOIN nota ON vencimento.id_nota=nota.id INNER JOIN operacao ON movimento.id_operacao=operacao.id INNER JOIN banco ON banco.id=movimento.id_banco INNER JOIN historico ON movimento.id_historico=historico.id LEFT JOIN fornecedor ON fornecedor.id=nota.id_fornecedor LEFT JOIN cliente ON cliente.id =nota.id_cliente WHERE nota.id_empresa=$empresa->id", 1);
 
         $this->nome = "Relatorio de Movimentos";
 
@@ -60,20 +60,19 @@ class RelatorioMovimento extends Relatorio {
         $destinatario = new CampoRelatorio('destinatario', 'Pessoa', 'T');
     
 
-
+        $banco = new CampoRelatorio('nome_banco', 'Banco', 'T');
 
         $this->campos = array(
             $data,
             $saldo_anterior,
             $valor,
-            $juros,
-            $desconto,
             $tipo,
             $nota,
             $ficha,
             $operacao,
             $historico,
-            $destinatario);
+            $destinatario,
+            $banco);
     }
 
 }
