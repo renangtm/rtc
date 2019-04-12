@@ -53,9 +53,9 @@ class TTConfirmacaoPagamento extends TipoTarefa {
                 $pedido->status = Sistema::STATUS_SEPARACAO();
                 $pedido->merge($con);
                 
-                $log = Logger::gerarLog($pedido, "Pagamento confirmado. ".$tarefa->descricao);
-                $html = Sistema::getHtml('log',$log);
-                $pedido->empresa->email->enviarEmail($pedido->cliente->email->filtro(Email::$COMPRAS),"Confirmacao de Pagamento",$html);
+                //$log = Logger::gerarLog($pedido, "Pagamento confirmado. ".$tarefa->descricao);
+                //$html = Sistema::getHtml('log',$log);
+                //$pedido->empresa->email->enviarEmail($pedido->cliente->email->filtro(Email::$COMPRAS),"Confirmacao de Pagamento",$html);
                 
             }
         }

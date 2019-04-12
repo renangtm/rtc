@@ -700,8 +700,8 @@ class Pedido {
         }
         $this->produtos = $np;
 
-        Logger::gerarLog($this, $this->status->nome);
-        $this->status->enviarEmails($this);
+        //Logger::gerarLog($this, $this->status->nome);
+        //$this->status->enviarEmails($this);
 
         if ($this->status->nota && $this->id_nota == 0) {
 

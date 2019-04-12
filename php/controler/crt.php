@@ -3,10 +3,10 @@
 include("includes.php");
 
 function n($str){
-    $escapers = array("\\", "\n", "\r", "\t", "\x08", "\x0c");
-    $replacements = array("", "", "", "", "", "");
+    $escapers = array("\\", "\n", "\r", "\t", "\x08", "\x0c","\f");
+    $replacements = array("", "", "", "", "", "","");
     $result = str_replace($escapers, $replacements, $str);
-    return $str;
+    return $result;
 }
 
 $ses = new SessionManager();

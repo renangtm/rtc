@@ -105,6 +105,7 @@
                                                         <?php if ($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))) { ?>
                                                             <th data-ordem="produto.ativo">Princ&iacute;pio ativo</th>
                                                         <?php } ?>
+                                                        <th data-ordem="produto.id_logistica">Armazenagem</th>
                                                         <th width="180px">A&ccedil;&atilde;o</th>
                                                     </tr>
                                                 </thead>
@@ -122,6 +123,7 @@
                                                         <?php if ($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))) { ?>
                                                             <td>{{produto[0].ativo}}</td>
                                                         <?php } ?>
+                                                        <td>{{produto[0].logistica===null?'Propria':produto[0].logistica.nome}}</td>
                                                         <th>
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setProduto(produto[0]);getReceituario(produto[0])" data-target="#demo{{produto[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
@@ -236,6 +238,7 @@
                                                         <?php if ($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))) { ?>
                                                             <th>Princ&iacute;pio ativo</th>
                                                         <?php } ?>
+                                                        <th>Armazenagem</th>
                                                         <th width="150px">A&ccedil;&atilde;o</th>
                                                     </tr>
                                                 </tfoot>

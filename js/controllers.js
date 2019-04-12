@@ -7176,12 +7176,12 @@ rtc.controller("crtClientes", function ($scope, categoriaProspeccaoService, clie
 })
 rtc.controller("crtProdutos", function ($scope, fabricanteService, ativoService, culturaService, sistemaService, uploadService, pragaService, produtoService, baseService, categoriaProdutoService, receituarioService) {
 
-    $scope.produtos = createAssinc(produtoService, 1, 3, 10);
+    $scope.produtos = createAssinc(produtoService, 1, 10, 10);
     $scope.produtos.attList();
     assincFuncs(
             $scope.produtos,
             "produto",
-            ["codigo", "nome", "estoque", "disponivel", "transito", "valor_base", "ativo", "classe_risco"],
+            ["codigo","id_logistica", "nome", "estoque", "disponivel", "transito", "valor_base", "ativo", "classe_risco"],
             null, false);
 
     $scope.produto = {};

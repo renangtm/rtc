@@ -44,12 +44,12 @@ class TarefaReduzida {
         $this->titulo = $tarefa->titulo . "...";
         
         $this->descricao_resumida = substr($tarefa->descricao, 0, 50) . "...";
-
+        
 
         $this->descricao = $tarefa->descricao;
 
         $this->intervalos_execucao = $tarefa->intervalos_execucao;
-        $this->observacoes = array();//$tarefa->observacoes;
+        $this->observacoes = $tarefa->observacoes;
         $this->prioridade = $tarefa->prioridade;
         $this->tipo_tarefa = $tarefa->tipo_tarefa->nome;
         $this->criada_por = $tarefa->criada_por;

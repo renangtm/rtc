@@ -45,7 +45,7 @@ class FechamentoCaixa{
                 $ps->bind_result($id);
                 if($ps->fetch()){
                     $ps->close();
-                    throw new Exception('Existem movimentos sem vistar ainda');
+                    //throw new Exception('Existem movimentos sem vistar ainda');
                 }
             }
             
