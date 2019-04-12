@@ -32,6 +32,10 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         $con = new ConnectionFactory();
         
+        $r = new RoboFaturista();
+        $r->executar($con);
+        
+        return;
         $movs = array();
         $movs2 = array();
         $ps = $this->getConexao()->prepare("SELECT m.VALOR,m.ID_FICHA,(m.VALOR+m.JUROS-m.DESCONTO)*(CASE WHEN o.TIPO='C' THEN 1 ELSE -1 END) FROM AF_financeiro_filial17.MOVIMENTO m INNER JOIN AF_financeiro_filial17.OPERACAO o ON o.ID=m.ID_OPERACAO WHERE m.DATA >= '2018-10-15' AND m.DATA<'2019-02-27' AND m.ID_BANCO=99");

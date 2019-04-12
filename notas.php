@@ -141,10 +141,10 @@
                                                                                     {{log.obs}}
                                                                                 </td>
                                                                                 <td>
-                                                                                    {{l.momento | data}}
+                                                                                    {{log.momento | data}}
                                                                                 </td>
                                                                                 <td>
-                                                                                    {{l.usuario.nome}}
+                                                                                    {{log.usuario}}
                                                                                 </td>
                                                                             </tr>
                                                                             <tr ng-if="notaa[0].logs.length===0">
@@ -154,14 +154,14 @@
                                                                             </tr>
                                                                         </table>
                                                                     </div>
-                                                                    <div class="col" ng-if="operacao_sefaz>0">
+                                                                    <div class="col" ng-if="operacao_sefaz>0" style="margin-top:20px">
                                                                         <span style="margin-left:auto;margin-tight:auto" class="dashboard-spinner spinner-success spinner-lg "></span>
                                                                         <hr>
                                                                         <h4>
                                                                             Operacao sendo executada
                                                                         </h4>
                                                                     </div>
-                                                 <div class="col" style="margin-top:10px" ng-if="operacao_sefaz===0">
+                                                                    <div class="col" style="margin-top:10px" ng-if="operacao_sefaz===0">
                                                                         <div ng-if="notaa[0].saida && notaa[0].emitida">
                                                                             <button class="btn btn-outline-danger" ng-click="cancelar(notaa[0])"> 
                                                                                 <i class="fas fa-times"></i>
@@ -171,8 +171,8 @@
                                                                                 <i class="fas fa-list"></i>
                                                                                 &nbsp Corrigir NF {{notaa[0].numero}}  
                                                                             </button>
-                                                                                <hr>
-                                                                                <textarea rows="5" ng-model="observacao_sefaz" class="form-control" style="width:100%">
+                                                                                <hr>                        
+                                                                                <textarea rows="5" ng-model="notaa[0].observacao_sefaz" class="form-control" style="width:100%">
                                                                                     
                                                                                 </textarea>
                                                                         </div>
@@ -386,7 +386,7 @@
                                     </div>
                                     <div class="form-row" ng-if="nota.emitida">
                                         <button type="button" class="btn btn-success" style="margin-left:5px" ng-if="nota.xml !== ''" ng-download="{{nota.xml}}"><i class="fas fa-save"></i>&nbspBaixar XML</button>
-                                        <button type="button" class="btn btn-success" style="margin-left:5px" ng-if="nota.danfe !== ''" ng-download="{{nota.xml}}"><i class="fas fa-save"></i>&nbspBaixar DANFE</button>
+                                        <button type="button" class="btn btn-success" style="margin-left:5px" ng-if="nota.danfe !== ''" ng-download="{{nota.danfe}}"><i class="fas fa-save"></i>&nbspBaixar DANFE</button>
 
                                         <button class="btn btn-light" type="button" style="margin-left:5px" ng-if="nota.xml === ''" ng-click="uploadXML('uploaderXML')"><i class="fas fa-upload"></i>&nbspFazer upload do XML</button>
                                         <button class="btn btn-light" type="button" style="margin-left:5px" ng-if="nota.danfe === ''" ng-click="uploadDANFE('uploaderDANFE')"><i class="fas fa-upload"></i>&nbspFazer upload da DANFE</button>

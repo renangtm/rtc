@@ -57,7 +57,7 @@ class Nota {
         $this->data_emissao = round(microtime(true) * 1000);
         $this->produtos = null;
         $this->vencimentos = null;
-        $this->interferir_estoque = true;//true;
+        $this->interferir_estoque = true; //true;
         $this->forma_pagamento = null;
         $this->frete_destinatario_remetente = false;
         $this->emitida = false;
@@ -482,8 +482,8 @@ class Nota {
 
             throw new Exception("Nota ja esta manifestada");
         }
-        
-        
+
+
 
         $base = $this->empresa->getParametrosEmissao($con)->getComandoBase($con);
         $base->acao = "MANIFESTAR";
@@ -501,17 +501,16 @@ class Nota {
         $ps = $con->getConexao()->prepare("UPDATE nota SET emitida=true WHERE id=$this->id");
         $ps->execute();
         $ps->close();
-        
+
         if ($ret->sucesso) {
             $this->emitida = true;
             $this->merge($con);
             Logger::gerarLog($this, "Manifestada na sefaz");
             return true;
-        }else{
+        } else {
             Logger::gerarLog($this, "Falha ao manifestar nota");
             return false;
         }
-        
     }
 
     public function emitir($con) {
@@ -520,6 +519,12 @@ class Nota {
 
             throw new Exception("Nao e possivel emitir nota de entrada.");
         }
+
+        if ($this->emitida) {
+
+            throw new Exception("A nota ja foi emitida");
+        }
+
 
         if ($this->produtos === null) {
             $this->produtos = $this->getProdutos($con);
@@ -547,7 +552,7 @@ class Nota {
             }
 
             $base->volumes = $volumes;
-            $base->informacoes_adcionais = $this->observacao;
+            $base->informacoes_adcionais = $this->empresa->observacao_padrao_nota . " " . $this->observacao;
 
             if ($this->finalidade === Nota::$COMPLEMENTAR || $this->finalidade === Nota::$DEVOLUCAO) {
                 $base->chave_devolucao = $this->chave_devolucao;
@@ -557,11 +562,11 @@ class Nota {
             $dest->id = $this->cliente->id;
             $dest->estado = $this->cliente->endereco->cidade->estado->sigla;
             $dest->cnpj = Utilidades::removeMask($this->cliente->cnpj->valor);
-            $dest->nome = $this->cliente->razao_social;
-            $dest->bairro = $this->cliente->endereco->bairro;
-            $dest->logadouro = $this->cliente->endereco->rua;
-            $dest->numero = $this->cliente->endereco->numero;
-            $dest->municipio = $this->cliente->endereco->cidade->nome;
+            $dest->nome = Utilidades::ifn($this->cliente->razao_social, "sem nome");
+            $dest->bairro = Utilidades::ifn($this->cliente->endereco->bairro, "nao cadastrado");
+            $dest->logadouro = Utilidades::ifn($this->cliente->endereco->rua, "nao cadastrado");
+            $dest->numero = Utilidades::ifn($this->cliente->endereco->numero, "nao cadastrado");
+            $dest->municipio = Utilidades::ifn($this->cliente->endereco->cidade->nome, "sem cidade");
             $dest->cep = Utilidades::removeMask($this->cliente->endereco->cep->valor);
             $dest->pais = "Brasil";
             $dest->telefone = new Telefone("11111111");
@@ -586,11 +591,11 @@ class Nota {
             $trans = new stdClass();
             $trans->id = $this->transportadora->id;
             $trans->cnpj = Utilidades::removeMask($this->transportadora->cnpj->valor);
-            $trans->nome = $this->transportadora->razao_social;
+            $trans->nome = Utilidades::ifn($this->transportadora->razao_social, "sem nome");
             $trans->ie = Utilidades::removeMask($this->transportadora->inscricao_estadual);
-            $trans->endereco = $this->transportadora->endereco->rua;
-            $trans->municipio = $this->transportadora->endereco->cidade->nome;
-            $trans->estado = $this->transportadora->endereco->cidade->estado->sigla;
+            $trans->endereco = Utilidades::ifn($this->transportadora->endereco->rua, "nao cadastrada");
+            $trans->municipio = Utilidades::ifn($this->transportadora->endereco->cidade->nome, "nao cadastrada");
+            $trans->estado = Utilidades::ifn($this->transportadora->endereco->cidade->estado->sigla, "nao cadastrada");
 
             if ($trans->nome == "O MESMO" || $trans->nome == "FRETE FOB") {
 
@@ -619,7 +624,7 @@ class Nota {
                 $produto->codigo = $p->produto->id;
                 $produto->ncm = Utilidades::removeMask($p->produto->ncm);
                 $produto->unidade = $p->produto->unidade;
-                $produto->nome = $p->produto->nome;
+                $produto->nome = Utilidades::ifn($p->produto->nome, "sem nome");
                 $produto->quantidade = $p->quantidade;
                 $produto->valor = $p->valor_unitario;
                 $produto->informacao_adcional = $p->informacao_adicional;
@@ -633,7 +638,7 @@ class Nota {
                 $produto->ipi = $p->ipi;
 
                 $produto->reducao_base_calculo = 100 - $p->produto->categoria->base_calculo;
-                $produto->icms = (($p->icms / $p->base_calculo) * 100);
+                $produto->icms = ($p->base_calculo == 0) ? 0 : (($p->icms / $p->base_calculo) * 100);
 
                 if (!$p->produto->categoria->icms_normal) {
                     $produto->cst200 = true;
@@ -681,6 +686,13 @@ class Nota {
 
         $ret = Utilidades::fromJson(Sistema::getMicroServicoJava('EmissorRTC', $endereco));
 
+        if ($ret === null) {
+
+            Sistema::avisoDEVS("Falha emissao xml");
+            Logger::gerarLog($this, "Falha grave na emissao, verificar certificado digital.");
+            return "";
+        }
+
         if ($ret->sucesso) {
 
             $this->emitida = true;
@@ -691,20 +703,17 @@ class Nota {
             $this->protocolo = $ret->protocolo;
             $this->observacao .= ". Mensagem da SEFAZ: $ret->mensagem";
             $this->merge($con);
-            
+
             Logger::gerarLog($this, "Nota emitida, $this->numero");
-            
         } else {
 
             $this->observacao .= ". Problema de emissao: $ret->mensagem";
             $this->merge($con);
-            Sistema::avisoDEVS("Falha emissao link XML: <a href='".Sistema::$ENDERECO."php/controler/".$ret->falha."'>LINK</a>");
+            Sistema::avisoDEVS("Falha emissao link XML: <a href='" . Sistema::$ENDERECO . "php/controler/" . $ret->falha . "'>LINK</a>");
             Logger::gerarLog($this, "Falha na emissao da nota, ficha $this->ficha");
-            
         }
-        
+
         return $ret->mensagem;
-        
     }
 
     public function cancelar($con, $motivo = "Nota emitida indevidamente") {
@@ -746,15 +755,14 @@ class Nota {
             $this->merge($con);
             Logger::gerarLog($this, "Nota cancelada na Sefaz");
             return true;
-        }else{
+        } else {
             Logger::gerarLog($this, $ret->mensagem);
             return false;
         }
-        
     }
 
     public function corrigir($con, $correcao) {
-        
+
         if (!$this->emitida) {
 
             throw new Exception("Nota nao esta emitida para fazer carta de correcao");
@@ -770,17 +778,17 @@ class Nota {
         $ps = $con->getConexao()->prepare("SELECT numero_carta_correcao FROM nota WHERE id=$this->id");
         $ps->execute();
         $ps->bind_result($n);
-        if($ps->fetch()){
-            $numero = $n+1; 
+        if ($ps->fetch()) {
+            $numero = $n + 1;
         }
         $ps->close();
-        
+
         $ps = $con->getConexao()->prepare("UPDATE nota SET numero_carta_correcao=$numero,data_emissao=data_emissao WHERE id=$this->id");
         $ps->execute();
         $ps->close();
-        
+
         $base->numero_sequencial = $numero;
-        
+
         $base = Utilidades::removerLacunas($base);
 
         $agora = round(microtime(true) * 1000);
@@ -796,11 +804,10 @@ class Nota {
             $this->merge($con);
             Logger::gerarLog($this, "Carta de corracao emitida na Sefaz: $correcao");
             return true;
-        }else{
+        } else {
             Logger::gerarLog($this, "Falha ao emitir carta de correcao: $correcao");
             return false;
         }
-        
     }
 
     public function merge($con) {

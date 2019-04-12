@@ -65,6 +65,13 @@ class Utilidades {
 
         return null;
     }
+    
+    public static function ifn($dado,$r){
+        if($dado === "" || $dado === null){
+            return $r;
+        }
+        return $dado;
+    }
 
     public static function normalizarDia($ms) {
 

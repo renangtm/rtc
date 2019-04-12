@@ -81,6 +81,7 @@ class Empresa {
     public $permissoes_especiais;
     public $cargos_fixos;
     public $tarefas_fixas;
+    public $observacao_padrao_nota;
 
     function __construct($id = 0, $cf = null) {
 
@@ -100,6 +101,7 @@ class Empresa {
         $this->endereco = new Endereco();
         $this->tipo_empresa = false;
         $this->permissoes_especiais = array();
+        $this->observacao_padrao_nota = "";
         $this->cargos_fixos = array(
             Empresa::CF_SEM_CARGO($this),
             Empresa::CF_DIRETOR($this),

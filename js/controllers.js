@@ -50,15 +50,14 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
     pedidoService.getPedidoEspecifico(rtc.id_empresa, rtc.id_pedido, function (pedido) {
 
         $scope.pedido = pedido.pedido;
-
+        
         $scope.itens = [];
         for (var i = 0; i < $scope.pedido.produtos.length; i++) {
             var p = $scope.pedido.produtos[i];
             
             if(!p.produto.sistema_lotes){
-                
+                continue;
             }
-            continue;
             for (var j = 0; j < p.retiradas.length; j++) {
                 var r = p.retiradas[j];
                 var codigo = formatar(r[0], 7);
@@ -3408,7 +3407,6 @@ rtc.controller("crtNotas", function ($scope,logService, notaService, empresaServ
     $scope.empresa = null;
 
     $scope.operacao_sefaz = 0;
-    $scope.observacao_sefaz = "";
     
     
     $scope.emitir = function(nota){
@@ -3424,7 +3422,10 @@ rtc.controller("crtNotas", function ($scope,logService, notaService, empresaServ
     }
     
     $scope.corrigir = function(nota){
-        $scope.observacao_sefaz = formatTextArea($scope.observacao_sefaz);
+        
+        
+        $scope.observacao_sefaz = formatTextArea(nota.observacao_sefaz);
+        
         if($scope.observacao_sefaz.length<16){
             msg.erro("Digite uma observacao maior");
             return;
@@ -3461,13 +3462,13 @@ rtc.controller("crtNotas", function ($scope,logService, notaService, empresaServ
     }
     
     $scope.cancelar = function(nota){
-        $scope.observacao_sefaz = formatTextArea($scope.observacao_sefaz);
+        $scope.observacao_sefaz = formatTextArea(nota.observacao_sefaz);
         if($scope.observacao_sefaz.length<16){
             msg.erro("Digite uma observacao maior");
             return;
         }
         $scope.operacao_sefaz = 10;
-        notaService.emitir(nota,$scope.observacao_sefaz,function(r){
+        notaService.cancelar(nota,$scope.observacao_sefaz,function(r){
             if(r.sucesso){
                 $scope.operacao_sefaz = 0;   
                 if(r.retorno_sefaz === true){
