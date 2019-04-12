@@ -655,7 +655,7 @@ rtc.service('notaService', function ($http, $q) {
     this.corrigir = function (nota,correcao,fn) {
         baseService($http, $q, {
             o:{nota:nota,correcao:correcao},
-            query: "$r->retorno_sefaz=$o->nota->emitir($c,$o->correcao)",
+            query: "$r->retorno_sefaz=$o->nota->corrigir($c,$o->correcao)",
             sucesso: fn,
             falha: fn
         });
