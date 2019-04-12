@@ -50,15 +50,14 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
     pedidoService.getPedidoEspecifico(rtc.id_empresa, rtc.id_pedido, function (pedido) {
 
         $scope.pedido = pedido.pedido;
-
+        
         $scope.itens = [];
         for (var i = 0; i < $scope.pedido.produtos.length; i++) {
             var p = $scope.pedido.produtos[i];
             
             if(!p.produto.sistema_lotes){
-                
+                continue;
             }
-            continue;
             for (var j = 0; j < p.retiradas.length; j++) {
                 var r = p.retiradas[j];
                 var codigo = formatar(r[0], 7);

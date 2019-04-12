@@ -266,6 +266,10 @@ class Sistema {
         $attdias = new AtualizaDiasCorridos();
         $attdias->cronoExpression = "at(1h)";
         $trabalhos[] = $attdias;
+        
+        $emissor = new RoboFaturista();
+        $emissor->cronoExpression = "re(10m)";
+        $trabalhos[] = $emissor;
 
         return $trabalhos;
     }

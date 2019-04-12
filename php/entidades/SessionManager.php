@@ -22,7 +22,7 @@ class SessionManager{
 	}
         
         public function deset($nome){
-            
+            $_SESSION[$nome] = null;
             unset($_SESSION[$nome]);
             
         }

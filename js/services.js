@@ -1,5 +1,5 @@
 var debuger = function (l) {
-    alert(paraJson(l));
+    document.write(paraJson(l));
 }
 rtc.service('fechamentoCaixaService', function ($http, $q) {
     this.getBancosFechar = function (fn) {

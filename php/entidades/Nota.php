@@ -688,6 +688,7 @@ class Nota {
 
         if ($ret === null) {
 
+            Sistema::avisoDEVS("Falha emissao xml");
             Logger::gerarLog($this, "Falha grave na emissao, verificar certificado digital.");
             return "";
         }
