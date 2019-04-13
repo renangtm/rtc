@@ -130,7 +130,7 @@
                                                 </div>
                                                 <div class="carousel-item">
                                                     <a href="http://agrofauna.com.br/apresentacao_rtc_v6.pdf" target="_blank">
-                                                        <img class="d-block w-100" src="assets/images/banner_conheca_projeto_novos_rumos_784x295_v2.jpg" alt="Second slide">
+                                                        <img class="d-block w-100" src="assets/images/banner_fraude_em_boletos_784x295.jpg" alt="First slide">
                                                     </a>    
                                                 </div>
                                                 <?php
@@ -158,7 +158,7 @@
                                     <!-- ============================================================== -->
                                     <!-- texto resultado -->                                   
 
-                                    <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12" ng-repeat="produto in dividir(produtos.elementos, 2)[0]">
+                                    <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12" ng-if="!carregando_compra" ng-repeat="produto in dividir(produtos.elementos, 2)[0]">
                                         <div class="product-thumbnail">
                                             <div class="product-img-head">
                                                 <div class="product-img">
@@ -223,7 +223,24 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12" ng-if="carregando_compra" ng-repeat="l in loaders">
+                                        <div class="product-thumbnail" style="height:500px;border:1px dashed;border:3px solid #DDDDDD;border-radius:5px;border-bottom: 250px solid #F2F2F2">
+                                            <div class="product-img-head">
+                                                <div class="product-img">
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="product-content">
+                                                <div class="product-content-head">
+                                                    <h3 class="product-title"></h3>
+                                                </div>
+                                            </div>
 
+                                            <div class="product-btn text-center">
+                                                <span class="dashboard-spinner spinner-success spinner-lg" style="width:100px;height:100px;margin-bottom:95px"></span>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <!-- ============================================================== -->
                                     <!-- banner  -->
@@ -232,7 +249,7 @@
 
 
 
-                                    <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12" ng-repeat="produto in dividir(produtos.elementos, 2)[1]">
+                                    <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12" ng-if="!carregando_compra" ng-repeat="produto in dividir(produtos.elementos, 2)[1]">
                                         <div class="product-thumbnail">
                                             <div class="product-img-head">
                                                 <div class="product-img">
@@ -319,9 +336,7 @@
                             <!-- ============================================================== -->	
 
                             <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-12">
-                                <div class="product-sidebar m-b-30">
-
-
+                                <div class="product-sidebar m-b-30" ng-if="!carregando_compra">
                                     <div class="product-sidebar-widget" ng-repeat="filtro in produtos.filtro">
                                         <h4 ng-if="filtro._classe === 'FiltroTextual'" class="product-sidebar-widget-title">Busca por filtro</h4>
                                         <h4 ng-if="filtro._classe === 'FiltroOpcional'" class="product-sidebar-widget-title">
@@ -344,15 +359,15 @@
                                             <button type="button" class="btn btn-success" ng-click="resetarFiltro()"><i class="fas fa-certificate"></i>&nbsp Mostrar Todos Produtos</button>
                                         </div>
                                     </div>
-
-
-
-
                                     <div class="product-sidebar-widget">
                                         <button type="button" class="btn btn-outline-light" ng-click="resetarFiltro()">Resetar Filtro</button>
                                     </div>
                                 </div>
-
+                                <div class="product-sidebar m-b-30" ng-if="carregando_compra" style="height:1200px;border:3px solid #DDDDDD;border-radius:5px">
+                                   <div class="product-sidebar-widget" style="text-align: center">
+                                        <span class="dashboard-spinner spinner-success spinner-sm " style="width:150px;height:150px;margin-top:95px"></span>
+                                    </div>
+                                </div>
                                 <!-- ============================================================== -->
                                 <!-- MODAL validade produto  -->
                                 <!-- ============================================================== -->
@@ -481,10 +496,10 @@
                                                                             // Now use the Angular API's triggerHandler function to call the change.
                                                                             angular.element($(this)).triggerHandler('change');
                                                                             $(this).change();
-                                                                            
+
                                                                             var body = $("html, body");
                                                                             body.stop().animate({scrollTop: 290}, 500, 'swing', function () {
-                                                                                
+
                                                                             });
 
                                                                         })

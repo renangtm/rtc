@@ -2345,7 +2345,8 @@ rtc.controller("crtEmpresa", function ($scope, empresaService) {
 
     $scope.empresa = null;
     $scope.filiais = [];
-
+    $scope.carregando_empresa = true;
+    
     empresaService.getEmpresa(function (r) {
 
 
@@ -2360,9 +2361,10 @@ rtc.controller("crtEmpresa", function ($scope, empresaService) {
                 if (rr.filiais[i].id === $scope.empresa.id)
                     continue;
                 $scope.filiais[$scope.filiais.length] = rr.filiais[i];
-
+               
             }
-
+            $scope.carregando_empresa = false;
+            
         })
 
     })
@@ -2394,11 +2396,15 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
         return typeof produto["validades"] !== 'undefined';
 
     }
+    
+    $scope.carregando_compra = true;
+    $scope.loaders = [{id:0},{id:1},{id:2},{id:3},{id:4},{id:5}];
 
     $scope.produtos = createFilterList(compraParceiroService, 3, 6, 10);
     $scope.produtos["posload"] = function (elementos) {
         sistemaService.getMesesValidadeCurta(function (p) {
             produtoService.remessaGetValidades(p.meses_validade_curta, elementos, function () {});
+            $scope.carregando_compra = false;
         });
     }
     $scope.produtos.attList();
@@ -3176,7 +3182,7 @@ rtc.controller("crtEntrada", function ($scope, sistemaService, uploadService) {
 })
 rtc.controller("crtProdutoClienteLogistic", function ($scope, produtoClienteLogisticService) {
 
-    $scope.produtos = createAssinc(produtoClienteLogisticService, 1, 3, 10);
+    $scope.produtos = createAssinc(produtoClienteLogisticService, 1, 10, 10);
     $scope.produtos.attList();
     assincFuncs(
             $scope.produtos,

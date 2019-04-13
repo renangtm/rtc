@@ -32,8 +32,38 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         $con = new ConnectionFactory();
         
-        $r = new RoboFaturista();
-        $r->executar($con);
+        $empresa = new Empresa(1733,$con);
+        $empresa_nova = new Empresa(1734,$con);
+        
+        $produtos = $empresa_nova->getProdutos($con, 0, 100000,"produto.id_logistica=1735");
+        $ap = array();
+        foreach($produtos as $key=>$value){
+            $ap[$value->id_universal] = $value;
+        }
+        
+        $campanhas = $empresa->getCampanhas($con, 0, 20,"","campanha.id DESC");
+        
+        foreach($campanhas as $key=>$campanha){
+            
+            $campanha->id = 0;
+            
+            foreach($campanha->produtos as $key2=>$produto){
+                
+                $produto->id = 0;
+                
+                if(!isset($ap[$produto->produto->id_universal])){
+                    throw new Exception("Nao encontrado produto $produto->nome-$produto->id_universal");
+                }
+                
+                $produto->produto = $ap[$produto->produto->id_universal];
+                
+            }
+            
+            $campanha->empresa = $empresa_nova;
+            
+            $campanha->merge($con);
+            
+        }
         
         return;
         $movs = array();

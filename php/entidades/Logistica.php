@@ -13,30 +13,42 @@
  */
 class Logistica extends Empresa {
 
-    function __construct($id=0,$con=null) {
+    function __construct($id = 0, $con = null) {
 
-        parent::__construct($id,$con);
-        
+        parent::__construct($id, $con);
+
         $this->permissoes_especiais[] = array(
             Sistema::P_PRODUTO_CLIENTE(),
             Sistema::P_EMPRESA_PEDIDO(),
             Sistema::P_RELATORIO_PRODUTO_LOGISTICA(),
             Sistema::P_RELATORIO_MAX_PALET());
-        
-        
     }
 
     public function getCountProdutoClienteLogistic($con, $filtro = "") {
+        
+        $categorias = "(-1";
+        
+        $c = Sistema::getCategoriaProduto(null);
+        
+        foreach($c as $key=>$value){
+            if($value->loja){
+                $categorias .= ",$value->id";
+            }
+        }
+        
+        $categorias .= ")";
 
-        $sql = "SELECT COUNT(*) "
+        $sql = "SELECT COUNT(*) FROM (SELECT produto.id_universal "
                 . "FROM produto "
                 . "INNER JOIN empresa ON empresa.id=produto.id_empresa "
-                . "WHERE produto.id_logistica=$this->id ";
+                . "WHERE produto.id_logistica=$this->id AND produto.id_categoria IN $categorias ";
 
         if ($filtro != "") {
 
             $sql .= "AND $filtro ";
         }
+
+        $sql .= "GROUP BY produto.id_universal) l";
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
@@ -48,10 +60,10 @@ class Logistica extends Empresa {
         }
         $ps->close();
         return 0;
-        
     }
 
     public function getProdutoClienteLogistic($con, $x1, $x2, $filtro = "", $ordem = "") {
+        
 
         $sql = "SELECT "
                 . "produto.id_universal, "
@@ -75,8 +87,6 @@ class Logistica extends Empresa {
             $sql .= "ORDER BY $ordem ";
         }
 
-        $sql .= "LIMIT $x1, " . ($x2 - $x1) . " ";
-
         $ps = $con->getConexao()->prepare($sql);
 
         $ps->execute();
@@ -88,12 +98,15 @@ class Logistica extends Empresa {
 
         while ($ps->fetch()) {
 
+            if ($estoque === 0)
+                continue;
+
             if (!isset($produtos[$id])) {
 
                 $p = new ProdutoClienteLogistic();
                 $p->id = $id;
                 $p->nome = $nome;
-                $categoria = Sistema::getCategoriaProduto(null,$cat_id);
+                $categoria = Sistema::getCategoriaProduto(null, $cat_id);
                 $p->categoria = $categoria->nome;
 
                 $produtos[$id] = $p;
@@ -152,11 +165,30 @@ class Logistica extends Empresa {
             $retorno[] = $value;
         }
 
-        return $retorno;
+
+        $rr = array();
+
+        for ($i = $x1; $i < $x2 && $i < count($retorno); $i++) {
+            $rr[] = $retorno[$i];
+        }
+
+        return $rr;
     }
 
     //@Override
     public function getCadastroLotesPendentes($con) {
+        
+        $categorias = "(-1";
+        
+        $c = Sistema::getCategoriaProduto(null);
+        
+        foreach($c as $key=>$value){
+            if($value->loja){
+                $categorias .= ",$value->id";
+            }
+        }
+        
+        $categorias .= ")";
 
         $sql = "SELECT "
                 . "produto.id,"
@@ -165,7 +197,7 @@ class Logistica extends Empresa {
                 . "produto.grade "
                 . "FROM produto "
                 . "LEFT JOIN (SELECT lote.id_produto,SUM(lote.quantidade_real) as 'quantidade' FROM lote WHERE lote.excluido=false GROUP BY lote.id_produto) l ON l.id_produto=produto.id "
-                . "WHERE (produto.id_empresa = $this->id OR produto.id_logistica = $this->id) AND produto.excluido = false AND (produto.disponivel-IFNULL(l.quantidade,0))>0";
+                . "WHERE (produto.id_empresa = $this->id OR produto.id_logistica = $this->id) AND produto.excluido = false AND (produto.disponivel-IFNULL(l.quantidade,0))>0 AND produto.sistema_lotes=true AND produto.id_categoria In $categorias ";
 
 
         $ps = $con->getConexao()->prepare($sql);
@@ -431,7 +463,7 @@ class Logistica extends Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $numero_lote, $rua_lote, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro,$cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $numero_lote, $rua_lote, $altura, $validade, $entrada, $grade, $quantidade_inicial, $quantidade_real, $codigo_fabricante, $retirada, $id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $lotes = array();
 
@@ -516,7 +548,7 @@ class Logistica extends Empresa {
                     $oferta->produto = $p;
                 }
 
-                $p->categoria = Sistema::getCategoriaProduto(null,$cat_id);
+                $p->categoria = Sistema::getCategoriaProduto(null, $cat_id);
 
                 $produtos[$id_pro] = $p;
             }
@@ -562,7 +594,7 @@ class Logistica extends Empresa {
 
         return $lotes;
     }
-    
+
     public function getPedidos($con, $x1, $x2, $filtro = "", $ordem = "") {
 
         $sql = "SELECT "
@@ -701,10 +733,10 @@ class Logistica extends Empresa {
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
 
-        
+
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pedido, $id_log, $id_nota, $frete_incluso, $data, $prazo, $parcelas, $id_status, $id_forma_pagamento, $frete, $obs, $id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $tra_id, $cod_tra, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_cli_id, $email_cli_end, $email_cli_senha, $email_tra_id, $email_tra_end, $email_tra_senha, $email_usu_id, $email_usu_end, $email_usu_senha,$id_empresa_empresa, $tipo_empresa_empresa, $nome_empresa_empresa, $inscricao_empresa_empresa, $consigna_empresa, $aceitou_contrato_empresa, $juros_mensal_empresa, $cnpj_empresa, $numero_endereco_empresa, $id_endereco_empresa, $rua_empresa, $bairro_empresa, $cep_empresa, $id_cidade_empresa, $nome_cidade_empresa, $id_estado_empresa, $nome_estado_empresa, $id_email_empresa, $endereco_email_empresa, $senha_email_empresa, $id_telefone_empresa, $numero_telefone_empresa);
+        $ps->bind_result($id_pedido, $id_log, $id_nota, $frete_incluso, $data, $prazo, $parcelas, $id_status, $id_forma_pagamento, $frete, $obs, $id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $tra_id, $cod_tra, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_cli_id, $email_cli_end, $email_cli_senha, $email_tra_id, $email_tra_end, $email_tra_senha, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa_empresa, $tipo_empresa_empresa, $nome_empresa_empresa, $inscricao_empresa_empresa, $consigna_empresa, $aceitou_contrato_empresa, $juros_mensal_empresa, $cnpj_empresa, $numero_endereco_empresa, $id_endereco_empresa, $rua_empresa, $bairro_empresa, $cep_empresa, $id_cidade_empresa, $nome_cidade_empresa, $id_estado_empresa, $nome_estado_empresa, $id_email_empresa, $endereco_email_empresa, $senha_email_empresa, $id_telefone_empresa, $numero_telefone_empresa);
 
 
         $pedidos = array();
@@ -713,7 +745,7 @@ class Logistica extends Empresa {
         $clientes = array();
 
         while ($ps->fetch()) {
-            
+
             $empresa = Sistema::getEmpresa($tipo_empresa_empresa);
 
             $empresa->id = $id_empresa_empresa;
@@ -755,7 +787,7 @@ class Logistica extends Empresa {
             $telefone_empresa->id = $id_telefone_empresa;
 
             $empresa->telefone = $telefone_empresa;
-            
+
             //------------------------
 
             $cliente = new Cliente();

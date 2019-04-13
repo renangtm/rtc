@@ -1190,6 +1190,19 @@ class Sistema {
     }
 
     public static function getProdutosDoDia($con, $dia, $num, $empresa) {
+        
+        
+        $categorias = "(-1";
+        
+        $c = Sistema::getCategoriaProduto($empresa);
+        
+        foreach($c as $key=>$value){
+            if($value->loja){
+                $categorias .= ",$value->id";
+            }
+        }
+        
+        $categorias .= ")";
 
         $dia = $dia - 1;
 
@@ -1199,40 +1212,55 @@ class Sistema {
 
         $dia = $dia % $num;
 
-        $classes = array();
-        $ps = $con->getConexao()->prepare("SELECT id,classificacao_saida FROM produto WHERE id_empresa=$empresa->id AND produto.disponivel > 0");
+        $produtos = array();
+        $ps = $con->getConexao()->prepare("SELECT id,classificacao_saida,id_logistica,nome FROM produto WHERE id_empresa=$empresa->id AND produto.disponivel > 0 AND produto.id_categoria IN $categorias");
         $ps->execute();
-        $ps->bind_result($id, $classe);
+        $ps->bind_result($id, $classe,$logistica,$nome);
         while ($ps->fetch()) {
-            if (!isset($classes[$classe])) {
-                $classes[$classe] = array();
+            $h = explode(' ',$nome);
+            $h = $h[0];
+            
+            $a = $classe."_".$logistica;
+            
+            if(!isset($produtos[$a])){
+                $produtos[$a] = array();
             }
-            $classes[$classe][] = $id;
+            $produtos[$a][] = array($id,$h);
         }
         $ps->close();
 
-        $produtos = "(-1";
-
-
-        foreach ($classes as $key => $classe) {
-
-            $fat = floor(count($classe) / $num);
-            $rst = count($classe) % $num;
-
-            for ($i = $fat * $dia; $i < $fat * ($dia + 1); $i++) {
-                $produtos .= "," . $classe[$i];
-            }
-
-            if ($dia < $rst) {
-
-                $produtos .= "," . $classe[$fat * $num + $dia];
+        $dias = array();
+        for($i=0;$i<$num;$i++){
+            $dias[$i] = array();
+        }
+        
+        foreach($produtos as $key=>$grupo){
+            $i=0;
+            foreach($grupo as $key2=>$produto){
+                $j=$i;
+                for($k=0;$k<$num;$k++,$j=($j+1)%$num){
+                    foreach($dias[$j] as $k=>$v){
+                        if($v[1]==$produto[1]){
+                            continue 2;
+                        }
+                    }
+                    break;
+                }
+                $dias[$j][] = $produto;
+                $i=($i+1)%$num;
             }
         }
-
+        
+        $produtos = "(-1";
+        
+        foreach($dias[$dia] as $key=>$value){
+            $produtos .= ",".$value[0];
+        }
+        
         $produtos .= ")";
-
-
-        return $empresa->getProdutos($con, 0, 10000000, "produto.id IN $produtos", "");
+        
+        return $empresa->getProdutos($con,0,10000,"produto.id IN $produtos","produto.nome");
+        
     }
 
     public static function getBanners($con) {

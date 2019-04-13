@@ -144,7 +144,7 @@ class GerenciadorAtividade {
                 . "UNIX_TIMESTAMP(a.mom)*1000,"
                 . "a.online "
                 . "FROM "
-                . "(SELECT id_usuario,MAX(momento) as 'mom',ABS(UNIX_TIMESTAMP(CURRENT_TIMESTAMP)-UNIX_TIMESTAMP(MAX(momento)))<" . self::$TIME_SINAL . "/1000 as 'online' FROM atividade_usuario WHERE tipo=" . Atividade::$SINAL . " AND momento>FROM_UNIXTIME($this->periodo_inicial/1000) AND momento<FROM_UNIXTIME($this->periodo_final/1000) GROUP BY id_usuario) a "
+                . "(SELECT id_usuario,MAX(momento) as 'mom',ABS(UNIX_TIMESTAMP(CURRENT_TIMESTAMP)-UNIX_TIMESTAMP(MAX(momento)))<" . self::$TIME_SINAL . "/1000 as 'online' FROM atividade_usuario WHERE momento>FROM_UNIXTIME($this->periodo_inicial/1000) AND momento<FROM_UNIXTIME($this->periodo_final/1000) GROUP BY id_usuario) a "
                 . "INNER JOIN usuario u ON u.id=a.id_usuario INNER JOIN empresa e ON e.id=u.id_empresa WHERE a.id_usuario >= 0 AND $r";
 
 

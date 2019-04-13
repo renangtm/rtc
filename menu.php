@@ -103,9 +103,12 @@ $possiveis[0] = $rtc;
         <a class="navbar-brand" href="comprar.php"><img id="logo" src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" title="" style="max-height:50px"></a>
         &nbsp;
         <div ng-controller="crtEmpresa" style="margin-right: 10px">
-            <select class="form-control" ng-model="empresa" ng-change="setEmpresa()">
+            <select class="form-control" ng-model="empresa" ng-change="setEmpresa()" ng-if="!carregando_empresa">
                 <option ng-repeat="e in filiais" ng-value="e">{{e.nome}}</option>
             </select>
+            <div class="progress mb-1" ng-if="carregando_empresa" style="width:150px">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+            </div>
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -232,9 +235,9 @@ $possiveis[0] = $rtc;
                                                 <br>
                                                 {{cobranca.descricao}}
                                                 <br>
-                                                Prazo: <strong>{{cobranca.calculado_momento_conclusao | data}}</strong>
+                                                Prazo: <strong>{{cobranca.calculado_momento_conclusao| data}}</strong>
                                                 <div class="notification-date">{{cobranca.porcentagem_conclusao}} % concluida</div>
-                                                <div ng-if="cobranca.id===cobrancas[0].id" style="width:100%;text-align: center;font-style: italic">
+                                                <div ng-if="cobranca.id === cobrancas[0].id" style="width:100%;text-align: center;font-style: italic">
                                                     <hr>
                                                     De Atençao a esta pendencia.
                                                 </div>
@@ -337,7 +340,7 @@ $possiveis[0] = $rtc;
                             <a class="nav-link" href="campanhas.php" ><button class="btn btn-warning" onmousedown="tutorial('Campanhas', 'Aqui � onde voc� define promo��es para os seus produtos, e tamb�m pode consultar e alterar parametros promocionais')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-anchor"></i>Campanhas</a>
                         </li>
                     <?php } ?>
-                         <?php if ($usuario->temPermissao(Sistema::P_CFG()->m("C"))) { ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_CFG()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="cfg.php" ><button class="btn btn-warning" onmousedown="tutorial('CFG', 'Aqui � onde voc� cria novos usuarios para a sua empresa, atribui autoriza��es e retira')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-male mr-2"></i>CFG</a>
                         </li>         
@@ -382,12 +385,12 @@ $possiveis[0] = $rtc;
                             <a class="nav-link" href="gerenciador.php" ><button class="btn btn-warning" onmousedown="tutorial('Gerenciador', 'Aqui voc� consegue ver os usuarios que estao online no per�odo selecionado, ou que entraram no periodo selecionado, apareceram com uma bolinha verde os que estiverem online, e uma vermelha para os que ja sairam, al�m disso aqui voc� consegue ver parametros como a quantidade maxima de usuarios que acessam simultaneamente o RTC em um periodo, tamb�m consegue checar dados de um usu�rio especifico, ver sua pontua��o seus logs de acesso, e tamb�m via grafico, a frequencia de sua atividade')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-chart-bar"></i>Gerenciador</a>
                         </li>
                     <?php } ?>    
-                            
 
-                        
-                    
-                    
-                    
+
+
+
+
+
                     <?php if ($usuario->temPermissao(Sistema::P_LISTA_PRECO()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="lista-de-preco.php" ><button class="btn btn-warning" onmousedown="tutorial('Lista de pre�o', 'Esta � uma pagina de consulta para que voc� consiga fazer o seu receituario, contem todas as rela��es de praga, produto e cultura')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-clipboard-list"></i>Receituario</a>
@@ -418,16 +421,16 @@ $possiveis[0] = $rtc;
                             <a class="nav-link" href="produto-cliente-logistic.php"><button class="btn btn-warning" onmousedown="tutorial('Produtos Logistic', 'Aqui � onde a empresa de armazenamento, ve os produtos de seus clientes, com respectivos estoques que est�o armazenados no armaz�n')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-camera"></i>Produtos cliente Logistic</a>
                         </li>
                     <?php } ?>
-                        
+
                     <?php if ($usuario->temPermissao(Sistema::P_RELACAO_CLIENTE()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="relacao_clientes.php"><button class="btn btn-warning" onmousedown="tutorial('Relacao Cliente', 'Aqui e onde voce ve a situacao dos clientes das empresas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-male"></i>Relacao Clientes</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_TAREFAS()->m("C"))) { ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="tarefas.php" ><button class="btn btn-warning" onmousedown="tutorial('Atividades', 'Aqui e onde voce ve suas atividades e cria novas atividades')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks mr-2"></i>Atividades</a>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="tarefas.php" ><button class="btn btn-warning" onmousedown="tutorial('Atividades', 'Aqui e onde voce ve suas atividades e cria novas atividades')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks mr-2"></i>Atividades</a>
+                        </li>
                     <?php } ?>    
                     <?php if ($usuario->temPermissao(Sistema::P_TRANSPORTADORA()->m("C"))) { ?>
                         <li class="nav-item">

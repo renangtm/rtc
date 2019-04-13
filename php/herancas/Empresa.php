@@ -966,6 +966,18 @@ class Empresa {
     }
 
     public function getCadastroLotesPendentes($con) {
+        
+        $categorias = "(-1";
+        
+        $c = Sistema::getCategoriaProduto(null);
+        
+        foreach($c as $key=>$value){
+            if($value->loja){
+                $categorias .= ",$value->id";
+            }
+        }
+        
+        $categorias .= ")";
 
         $sql = "SELECT "
                 . "produto.id,"
@@ -974,7 +986,7 @@ class Empresa {
                 . "produto.grade "
                 . "FROM produto "
                 . "LEFT JOIN (SELECT lote.id_produto,SUM(lote.quantidade_real) as 'quantidade' FROM lote WHERE lote.excluido=false GROUP BY lote.id_produto) l ON l.id_produto=produto.id "
-                . "WHERE produto.id_empresa = $this->id AND produto.excluido = false AND (produto.disponivel-IFNULL(l.quantidade,0))>0 AND produto.id_logistica=0 AND produto.sistema_lotes=true";
+                . "WHERE produto.id_empresa = $this->id AND produto.excluido = false AND (produto.disponivel-IFNULL(l.quantidade,0))>0 AND produto.id_logistica=0 AND produto.sistema_lotes=true AND produto.id_categoria IN $categorias";
 
 
         $ps = $con->getConexao()->prepare($sql);
