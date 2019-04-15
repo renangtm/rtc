@@ -636,33 +636,33 @@ rtc.service('notaService', function ($http, $q) {
             falha: fn
         });
     }
-    this.emitir = function (nota,fn) {
+    this.emitir = function (nota, fn) {
         baseService($http, $q, {
-            o:nota,
+            o: nota,
             query: "$r->retorno_sefaz=$o->emitir($c)",
             sucesso: fn,
             falha: fn
         });
     }
-    this.cancelar = function (nota,motivo,fn) {
+    this.cancelar = function (nota, motivo, fn) {
         baseService($http, $q, {
-            o:{nota:nota,motivo:motivo},
+            o: {nota: nota, motivo: motivo},
             query: "$r->retorno_sefaz=$o->nota->cancelar($c,$o->motivo)",
             sucesso: fn,
             falha: fn
         });
     }
-    this.corrigir = function (nota,correcao,fn) {
+    this.corrigir = function (nota, correcao, fn) {
         baseService($http, $q, {
-            o:{nota:nota,correcao:correcao},
+            o: {nota: nota, correcao: correcao},
             query: "$r->retorno_sefaz=$o->nota->corrigir($c,$o->correcao)",
             sucesso: fn,
             falha: fn
         });
     }
-    this.manifestar = function (nota,fn) {
+    this.manifestar = function (nota, fn) {
         baseService($http, $q, {
-            o:{nota:nota},
+            o: {nota: nota},
             query: "$r->retorno_sefaz=$o->nota->manifestar($c)",
             sucesso: fn,
             falha: fn
@@ -1453,6 +1453,24 @@ rtc.service('cidadeService', function ($http, $q) {
         });
     }
 })
+rtc.service('produtoAlocalService', function ($http, $q) {
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountProdutosAlocais($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getProdutosAlocais($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('fornecedorService', function ($http, $q) {
     this.getFornecedor = function (fn) {
         baseService($http, $q, {
@@ -1720,12 +1738,19 @@ rtc.service('produtoService', function ($http, $q) {
 
                 if (!produto.sistema_lotes) {
 
-                    var validade = {validade: 1000, quantidade: produto.disponivel, alem: false, limite: -1, valor: produto.valor_base, validades: []};
+                    if (produto.disponivel === 0) {
+                        produto.validades = [];
+                        continue;
+                    }
 
+                    var validade = {validade: 1000, quantidade: produto.disponivel, alem: false, limite: -1, valor: produto.valor_base, validades: []};
+                    var atual = new Date().getTime();
                     for (var j = 0; j < produto.ofertas.length; j++) {
 
                         validade.valor = produto.ofertas[j].valor;
                         validade.limite = produto.ofertas[j].limite;
+                        validade.restante = produto.ofertas[j].campanha.fim - atual;
+                        validade.oferta = true;
 
                     }
 
@@ -1861,12 +1886,20 @@ rtc.service('produtoService', function ($http, $q) {
 
         if (!produto.sistema_lotes) {
 
-            var validade = {validade: 1000, quantidade: produto.disponivel, alem: false, limite: -1, valor: produto.valor_base, validades: []};
+            if (produto.disponivel === 0) {
+                produto.validades = [];
+                return;
+            }
 
+            var validade = {validade: 1000, quantidade: produto.disponivel, alem: false, limite: -1, valor: produto.valor_base, validades: []};
+            var atual = new Date().getTime();
             for (var j = 0; j < produto.ofertas.length; j++) {
 
                 validade.valor = produto.ofertas[j].valor;
                 validade.limite = produto.ofertas[j].limite;
+                validade.restante = produto.ofertas[j].campanha.fim - atual;
+                validade.oferta = true;
+
 
             }
 

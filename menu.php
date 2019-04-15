@@ -103,8 +103,7 @@ $possiveis[0] = $rtc;
         <a class="navbar-brand" href="comprar.php"><img id="logo" src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" title="" style="max-height:50px"></a>
         &nbsp;
         <div ng-controller="crtEmpresa" style="margin-right: 10px">
-            <select class="form-control" ng-model="empresa" ng-change="setEmpresa()" ng-if="!carregando_empresa">
-                <option ng-repeat="e in filiais" ng-value="e">{{e.nome}}</option>
+            <select class="form-control" ng-model="$parent.empresa" ng-change="setEmpresa()" ng-if="!carregando_empresa" ng-options="e as e.nome for e in filiais">
             </select>
             <div class="progress mb-1" ng-if="carregando_empresa" style="width:150px">
                 <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>

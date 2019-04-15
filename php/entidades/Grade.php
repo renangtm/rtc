@@ -66,7 +66,21 @@ class Grade {
             $it = new Item();
             $it->quantidade = $quantidade;
             $it->quantidade_filhos = 0;
-            $it->removivel = true;
+            $it->removivel = false;
+            /*
+             * O Algorítmo de separação utilizado anteriormente, tinha este parametro como 'true',
+             * no entando ao efetuar analise mais profunda, identificou-se varios problemas
+             * nessa abordagem, dificultando muito a integridade dos dados do processo de
+             * separação, quando colocado no contexto pratico de cancelamentos e alterações 
+             * com essa analise também descobri que tendo o parametro como 'false', é possível
+             * manter a integridade de forma muito mais simplificada, e facilitar diversos 
+             * processos computacionais, portanto ao invés de trabalhar na complexidade maior da primeira
+             * opção que tem seus beneficios, julguei como sendo melhor trabalhar com uma opção que me
+             * reduza a complexidade e garanta integridade, tendo em vista o prazo de desenvolvimento,
+             * posteriormente seria interessante pegar um tempo para estudar melhor a primeira, que
+             * na pratica pode oferecer benefícios bastante interessantes também, mas no momento
+             * fica inviável pelo prazo.
+             */
             $it->pai = $pai;
             $it->numero = $clone_k;
 
@@ -131,6 +145,12 @@ class Grade {
                 }
             }
         }
+
+        if ($it->quantidade === 0) {
+
+            return null;
+        }
+
 
         return $it;
     }

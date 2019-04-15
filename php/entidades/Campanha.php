@@ -38,6 +38,23 @@ class Campanha {
         
     }
     
+    public function getReduzida(){
+        
+        $c = new CampanhaReduzida();
+        $c->id = $this->id;
+        $c->parcelas = $this->parcelas;
+        $c->cliente_expression= $this->cliente_expression;
+        $c->empresa = $this->empresa;
+        $c->prazo = $this->prazo;
+        $c->parcelas = $this->parcelas;
+        $c->nome = $this->nome;
+        $c->inicio = $this->inicio;
+        $c->fim = $this->fim;
+        
+        return $c;
+        
+    }
+    
     public function merge($con) {
 
         if ($this->id == 0) {

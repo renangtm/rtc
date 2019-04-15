@@ -5,10 +5,10 @@
         <meta charset="utf-8">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?2"></script>
-        <script src="js/filters.js?2"></script>
-        <script src="js/services.js?2"></script>
-        <script src="js/controllers.js?2"></script>    
+        <script src="js/rtc.js?3"></script>
+        <script src="js/filters.js?3"></script>
+        <script src="js/services.js?3"></script>
+        <script src="js/controllers.js?3"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -91,6 +91,7 @@
                                                         <th data-ordem="nota.numero">Numero</th>
                                                         <th data-ordem="nota.transportadora.razao_social">Transportadora</th>
                                                         <th data-ordem="nota.saida">Tipo</th>
+                                                        <th data-ordem="nota.id_pedido">Pedido</th>
                                                         <th data-ordem="nota.data">Data Emissao</th>
                                                         <th data-ordem="nota.cliente.razao_social">Cliente</th>
                                                         <th data-ordem="nota.fornecedor.nome">Fornecedor</th>
@@ -104,6 +105,7 @@
                                                         <td>{{notaa[0].numero}}</td>
                                                         <td>{{notaa[0].transportadora.razao_social}}</td>
                                                         <td>{{notaa[0].saida ? 'Saída' : 'Entrada'}}</td>
+                                                        <td>{{notaa[0].id_pedido}}</td>
                                                         <td ng-if="notaa[0].emitida">{{notaa[0].data_emissao| data}}</td>
                                                         <td ng-if="!notaa[0].emitida">---------</td>
                                                         <td>{{notaa[0].cliente == null ? '--------' : notaa[0].cliente.razao_social}}</td>
@@ -200,6 +202,7 @@
                                                         <th>Numero</th>
                                                         <th>Transportadora</th>
                                                         <th>Tipo</th>
+                                                        <th>Pedido</th>
                                                         <th>Data Emissao</th>
                                                         <th>Cliente</th>
                                                         <th>Fornecedor</th>

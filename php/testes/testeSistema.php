@@ -32,8 +32,20 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         $con = new ConnectionFactory();
         
-        $empresa = new Empresa(1733,$con);
+        $empresa = new Empresa(1734,$con);
         $empresa_nova = new Empresa(1734,$con);
+        
+        
+        $pedido = $empresa->getPedidos($con, 0, 2,'','pedido.id DESC');
+        $pedido = $pedido[0];
+        $pedido->produtos = $pedido->getProdutos($con);
+        
+        $b = new BoletoEspecialAgroFauna();
+        $ret = $b->aoFinalizarPedido($pedido);
+        
+        echo Utilidades::toJson($ret);
+        
+        return;
         
         $produtos = $empresa_nova->getProdutos($con, 0, 100000,"produto.id_logistica=1735");
         $ap = array();

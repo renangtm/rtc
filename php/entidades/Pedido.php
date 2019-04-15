@@ -161,6 +161,8 @@ class Pedido {
                 $empresa->telefone = $telefone;
 
                 $campanhas[$id]->empresa = $empresa;
+
+                $campanhas[$id] = $campanhas[$id]->getReduzida();
             }
 
             $campanha = $campanhas[$id];
@@ -178,8 +180,6 @@ class Pedido {
             }
 
             $ofertas[$id_produto][] = $p;
-
-            $campanhas[$id]->produtos[] = $p;
         }
 
         $ps->close();
@@ -292,11 +292,11 @@ class Pedido {
             $p->ncm = $ncm;
             $p->lucro_consignado = $lucro;
             $p->empresa = $this->empresa;
-            $p->ofertas = (!isset($ofertas[$p->id]) ? array() : $ofertas[$p->id]);
+            $p->ofertas = (!isset($ofertas[$p->codigo]) ? array() : $ofertas[$p->codigo]);
 
             foreach ($p->ofertas as $key => $oferta) {
 
-                $oferta->produto = $p;
+                $oferta->produto = $p->getReduzido();
             }
 
             $p->categoria = Sistema::getCategoriaProduto(null, $cat_id);
@@ -468,14 +468,25 @@ class Pedido {
 
             $pn = new ProdutoNota();
             $pn->base_calculo = $value->base_calculo;
-            $pn->cfop = "5152"; // verificar esse ponto depois
+            $pn->cfop = CFOP::$VENDA_DENTRO_ESTADO; // verificar esse ponto depois
+            if ($this->cliente->endereco->cidade->estado->sigla !== $this->empresa->endereco->cidade->estado->sigla) {
+                $pn->cfop = CFOP::$VENDA_FORA_ESTADO;
+            }
             $pn->icms = $value->icms;
             $pn->base_calculo = $value->base_calculo;
             $pn->ipi = $value->ipi;
             $pn->produto = $value->produto;
             $pn->quantidade = $value->quantidade;
             $pn->valor_unitario = ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete);
-            $pn->informacao_adicional = "Produto referente a nota "; //Verificar esse ponto tambem;
+            $pn->informacao_adicional = "Cl Risco: " . $value->produto->classe_risco . "."; //Verificar esse ponto tambem;
+
+            if ($value->produto->sistema_lotes) {
+                $pn->informacao_adicional = "Validade: " . date("d/m/Y", $value->validade_minima) . ".";
+                foreach ($value->retiradas as $key2 => $retirada) {
+                    $pn->informacao_adicional .= "Lote: " . $retirada[0] . " - Qtd: " . $retirada[1];
+                }
+            }
+
             $pn->nota = $nota;
             $pn->valor_total = $pn->valor_unitario * $pn->quantidade;
 
@@ -668,7 +679,6 @@ class Pedido {
 
         $erro = null;
 
-
         foreach ($prods as $key => $value) {
 
             foreach ($this->produtos as $key2 => $value2) {
@@ -688,11 +698,14 @@ class Pedido {
             }
         }
 
+
         $np = array();
+        $merged = array();
         foreach ($this->produtos as $key2 => $value2) {
             try {
                 $value2->merge($con);
                 $np[] = $value2;
+                $merged[] = $value2;
             } catch (Exception $ex) {
                 $this->status = $status_anterior;
                 $erro = $ex->getMessage() . ", produto cod: " . $value2->produto->id . ", estoque: " . $value2->produto->estoque . ", disponivel: " . $value2->produto->disponivel . ", quantidade: " . $value2->quantidade;
@@ -700,8 +713,8 @@ class Pedido {
         }
         $this->produtos = $np;
 
-        //Logger::gerarLog($this, $this->status->nome);
-        //$this->status->enviarEmails($this);
+        Logger::gerarLog($this, $this->status->nome);
+        $this->status->enviarEmails($this);
 
         if ($this->status->nota && $this->id_nota == 0) {
 
@@ -716,27 +729,89 @@ class Pedido {
             $ps->execute();
             $ps->close();
 
+            $ps = $con->getConexao()->prepare("UPDATE nota SET data_emissao=data_emissao,id_pedido=$this->id WHERE id=$nota->id");
+            $ps->execute();
+            $ps->close();
+
             if ($this->logistica !== null) {
 
                 $getter = new Getter($this->logistica);
 
                 $nota_logistica_empresa = $this->gerarNotaPadrao();
+                foreach ($nota_logistica_empresa->produtos as $key => $value) {
+                    $value->cfop = CFOP::$RETORNO_DEPOSITO;
+                }
+                $nota_logistica_empresa->observacao = "Nota emitida referente a processamento de pedido do " . $this->logistica->nome . " para a " . $this->empresa->nome . ". Isento RESERVADO AO FISCO
+                conforme artigo 41 item I do anexo I do decreto 45490 00 do RICMS - SP. Pedido: $this->id";
                 $nota_logistica_empresa->empresa = $this->logistica;
                 $nota_logistica_empresa->cliente = $getter->getClienteViaEmpresa($con, $this->empresa);
 
                 $nota_logistica_empresa->merge($con);
+
+                $ps = $con->getConexao()->prepare("UPDATE nota SET data_emissao=data_emissao,id_pedido=$this->id WHERE id=$nota_logistica_empresa->id");
+                $ps->execute();
+                $ps->close();
             }
         }
 
         if ($erro !== null) {
-            if (!$recursao) {
+            if (!$recursao && !$inicial) {
                 $this->merge($con, true);
+            } else if ($inicial) {
+
+                foreach ($merged as $key => $value) {
+                    $value->delete($con);
+                }
+
+                $ps = $con->getConexao()->prepare("DELETE FROM pedido WHERE id=$this->id");
+                $ps->execute();
+                $ps->close();
             }
             throw new Exception($erro);
+        }
+
+        if (!$this->status->nota) {
+            try {
+                $this->cancelarNotas($con);
+            } catch (Exception $e) {
+                throw new Exception("Nao foi possivel cancelar as notas do pedido, favor cancelar manualmente");
+            }
+        }
+    }
+
+    private function cancelarNotas($con) {
+
+        $ps = $con->getConexao()->prepare("SELECT id FROM nota WHERE id_pedido=$this->id AND cancelada=false");
+        $ps->execute();
+        $ps->bind_result($id);
+        if ($ps->fetch()) {
+            $ps->close();
+
+            $notas = $this->empresa->getNotas($con, 0, 50, "nota.id_pedido=$this->id AND nota.cancelada=false");
+
+            if ($this->logistica !== null) {
+                $notas_logistica = $this->logistica->getNotas($con, 0, 50, "nota.id_pedido=$this->id AND nota.cancelada=false");
+                foreach ($notas_logistica as $key => $value) {
+                    $notas[] = $value;
+                }
+            }
+
+            foreach ($notas as $key => $value) {
+                if ($value->emitida) {
+                    $value->cancelar($con, "Pedido $this->id, referente a nota foi cancelado");
+                } else {
+                    $value->delete($con);
+                }
+            }
+            
+        } else {
+            $ps->close();
         }
     }
 
     public function delete($con) {
+
+        $this->cancelarNotas($con);
 
         $ps = $con->getConexao()->prepare("UPDATE pedido SET excluido=true WHERE id = " . $this->id);
         $ps->execute();
@@ -748,20 +823,17 @@ class Pedido {
 
         $erro = null;
 
+
         $ps = $con->getConexao()->prepare("UPDATE tarefa SET inicio_minimo=inicio_minimo,excluida=true "
                 . "WHERE tipo_entidade_relacionada='PED_" . $this->empresa->id . "' AND id_entidade_relacionada=$this->id AND porcentagem_conclusao<100");
         $ps->execute();
         $ps->close();
 
         foreach ($this->produtos as $key => $value) {
-
             try {
-
                 $value->merge($con);
             } catch (Exception $ex) {
-
                 $value->delete($con);
-
                 $erro = $ex->getMessage() . ", produto cod: " . $value->produto->id . ", estoque: " . $value->produto->estoque . ", disponivel: " . $value->produto->disponivel . ", quantidade: " . $value->quantidade;
             }
         }

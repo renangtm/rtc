@@ -5,10 +5,10 @@
         <meta charset="utf-8">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?2"></script>
-        <script src="js/filters.js?2"></script>
-        <script src="js/services.js?2"></script>
-        <script src="js/controllers.js?2"></script>    
+        <script src="js/rtc.js?3"></script>
+        <script src="js/filters.js?3"></script>
+        <script src="js/services.js?3"></script>
+        <script src="js/controllers.js?3"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -105,7 +105,6 @@
                                                         <th>
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setPedido(pedid[0])" data-toggle="modal" data-target="#editCompra"><i class="fas fa-eye"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setPedido(pedid[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
                                                                 <a href="#" class="btn btn-outline-success" data-title="Logs" data-toggle="modal" ng-click="getLogsPedido(pedid[0])" data-target="#logs"><i class="fas fa-list-alt"></i></a>
                                                             </div>
                                                         </th>

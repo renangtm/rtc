@@ -6,10 +6,10 @@
         <meta charset="utf-8">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?2"></script>
-        <script src="js/filters.js?2"></script>
-        <script src="js/services.js?2"></script>
-        <script src="js/controllers.js?2"></script>    
+        <script src="js/rtc.js?3"></script>
+        <script src="js/filters.js?3"></script>
+        <script src="js/services.js?3"></script>
+        <script src="js/controllers.js?3"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -129,7 +129,6 @@
                                                                             <th>Validade</th>
                                                                             <th class="text-center">Limite</th>
                                                                             <th class="text-center">Valor</th>
-                                                                            <th class="text-center">Armazem</th>
                                                                             </thead>
                                                                             <tr ng-repeat="prod in campanha[0].produtos">
                                                                                 <th class="text-center">{{prod.produto.codigo}}</th>
@@ -138,7 +137,6 @@
                                                                                 <th ng-if="prod.validade === 1000">------</th>
                                                                                 <th class="text-center">{{prod.limite}}</th>
                                                                                 <th class="text-center">R$ {{prod.valor}}</th>
-                                                                                <th class="text-center">{{prod.produto.logistica===null?'Proprio':prod.produto.logistica.nome}}</th>
                                                                             </tr>
                                                                         </table>
                                                                     </div>	
@@ -264,7 +262,6 @@
                                             <th>Validade</th>
                                             <th>Limite</th>
                                             <th>Valor</th>
-                                            <th>Armazem</th>
                                             <th>Excluir</th>
                                             </thead>
                                             <tr ng-repeat="prod in campanha.produtos">
@@ -274,7 +271,6 @@
                                                 <th ng-if="prod.validade === 1000">------</th>
                                                 <th><input type="text" class="form-control" ng-model="prod.limite"></th>
                                                 <th><input type="text" class="form-control" ng-model="prod.valor"></th>
-                                                <th>{{prod.produto.logistica===null?'Proprio':prod.produto.logistica.nome}}</th>
                                                 <th><button class="btn btn-danger" ng-click="deleteProdutoCampanha(campanha, prod)"><i class="fa fa-times"></i></button></th>
                                             </tr>
                                         </table>
@@ -540,7 +536,6 @@
                                     <th>Validade</th>
                                     <th>Limite</th>
                                     <th>Valor</th>
-                                    <th>Armazem</th>
                                     <th ng-repeat="v in campanha.lista.elementos[0][0].valores">Sugestao</th>
                                     <th><i class="fas fa-edit"></i> R$</th>
                                     </thead>
@@ -551,7 +546,6 @@
                                         <th ng-if="prod[0].validade === 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-warning" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">------</strong> ({{prod[0].quantidade_validade}})</th>
                                         <th><input type="text" style="max-width:60px" class="form-control" ng-model="prod[0].limite"></th>
                                         <th>{{prod[0].produto.custo}}</th>
-                                        <th>{{prod[0].produto.logistica===null?'Proprio':prod[0].produto.logistica.nome}}</th>
                                         <th ng-click="selecionarValor(prod[0], v)" style="cursor:pointer;{{v.selecionado?'text-decoration:underline;color:Green':''}}" ng-repeat="v in prod[0].valores">{{v.valor}} R$</th>
                                         <th ng-click="selecionarValor(prod[0], prod[0].valor_editavel)"><input type="text" class="form-control" style="width:50px;{{prod[0].valor_editavel.selecionado?'color:Green;text-decoration:underline':''}}" ng-model="prod[0].valor_editavel.valor"></th>
                                     </tr>
@@ -597,6 +591,9 @@
                                         <th class="text-center">{{v.quantidade}}</th>
                                         <th><button class="btn btn-success" data-dismiss="modal" aria-label="Close" ng-click="setAutoValidade(v)"><i class="fas fa-plus-circle"></i></th>
                                     </tr>
+                                    <tr ng-if="produto.validades.length===0">
+                                        <td colspan="4">Não existe um lote valido cadastrado (pode estar vencido, ou nao cadastrado)</td>
+                                    </tr>
                                 </table>
 
                             </div>
@@ -623,7 +620,6 @@
                                     <th>Produto</th>
                                     <th>Disponivel</th>
                                     <th>Valor</th>
-                                    <th>Armazem</th>
                                     <th>Ver Validades</th>
                                     </thead>
                                     <tr ng-repeat="produto in produtos2.elementos">
@@ -631,7 +627,6 @@
                                         <th>{{produto[0].nome}}</th>
                                         <th class="text-center">{{produto[0].disponivel}}</th>
                                         <th class="text-center">{{produto[0].valor_base}}</th>
-                                        <th class="text-center">{{produto[0].logistica===null?'Proprio':produto[0].logistica.nome}}</th>
                                         <th class="text-center"><button class="btn btn-primary" ng-click="addProdutoCamp(c,produto[0])"><i class="fas fa-plus-circle"></i></button></th>
                                     </tr>
                                     </tr>
@@ -670,7 +665,6 @@
                                     <th>Produto</th>
                                     <th>Disponivel</th>
                                     <th>Valor</th>
-                                    <th>Armazem</th>
                                     <th>Ver Validades</th>
                                     </thead>
                                     <tr ng-repeat-start="produto in produtos.elementos">
@@ -678,7 +672,6 @@
                                         <th>{{produto[0].nome}}</th>
                                         <th class="text-center">{{produto[0].disponivel}}</th>
                                         <th class="text-center">{{produto[0].valor_base}}</th>
-                                        <th class="text-center">{{produto[0].logistica===null?'Proprio':produto[0].logistica.nome}}</th>
                                         <th class="text-center"><button class="btn btn-outline-light" ng-click="getValidades(produto[0])" data-target="#demo{{produto[0].id}}" data-toggle="collapse" class="accordion-toggle"><i class="fas fa-pencil-alt"></i></button></th>
                                     </tr>
                                     <tr ng-repeat-end>

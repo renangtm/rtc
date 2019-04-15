@@ -76,7 +76,11 @@ class ProdutoPedidoSaida {
 
             $this->produto->estoque += $dif_est;
             $this->produto->disponivel += $dif_res;
-            $this->produto->merge($con);
+
+            $ps = $con->getConexao()->prepare("UPDATE produto SET estoque=" . $this->produto->estoque . ", disponivel=" . $this->produto->disponivel .
+                    " WHERE id=" . $this->produto->id);
+            $ps->execute();
+            $ps->close();
 
             $this->influencia_estoque = $x_est;
             $this->influencia_reserva = $x_res;
@@ -148,7 +152,11 @@ class ProdutoPedidoSaida {
 
                 $this->produto->estoque -= $this->influencia_estoque;
                 $this->produto->disponivel -= $this->influencia_reserva;
-                $this->produto->merge($con);
+
+                $ps = $con->getConexao()->prepare("UPDATE produto SET estoque=" . $this->produto->estoque . ", disponivel=" . $this->produto->disponivel .
+                        " WHERE id=" . $this->produto->id);
+                $ps->execute();
+                $ps->close();
 
                 $this->influencia_estoque = 0;
                 $this->influencia_reserva = 0;
@@ -224,7 +232,10 @@ class ProdutoPedidoSaida {
 
                             $this->produto->estoque -= $this->influencia_estoque;
                             $this->produto->disponivel -= $this->influencia_reserva;
-                            $this->produto->merge($con);
+                            $ps = $con->getConexao()->prepare("UPDATE produto SET estoque=" . $this->produto->estoque . ", disponivel=" . $this->produto->disponivel .
+                                    " WHERE id=" . $this->produto->id);
+                            $ps->execute();
+                            $ps->close();
 
                             $this->influencia_estoque = 0;
                             $this->influencia_reserva = 0;
@@ -251,15 +262,54 @@ class ProdutoPedidoSaida {
             }
 
             foreach ($ls as $key => $value) {
-
-                $this->retiradas[] = array($value->id, $value->quantidade_real, 0);
+                if ($value->quantidade_inicial === $value->quantidade_real) {
+                    $this->retiradas[] = array($value->id, $value->quantidade_real, 0);
+                } else {
+                    $i = $value->getItem();
+                    $i->lote_maior = $value;
+                    $is[] = $i;
+                }
             }
 
-            if ($li != null) {
+            if (count($is) > 0) {
+
+                for ($i = 0; $i < count($is); $i++) {
+
+                    $it = $is[$i];
+
+                    if ($it === null)
+                        continue;
+
+                    $a = false;
+                    $j = $it->filhos;
+                    for ($k = 0; $k < count($j); $k++) {
+                        if ($j[$k] === null) {
+                            $a = true;
+                            break;
+                        }
+                        foreach ($j[$k]->filhos as $key => $value) {
+                            $j[] = $value;
+                        }
+                    }
+                    if ($a) {
+                        $is[$i] = null;
+                        foreach ($it->filhos as $key => $value) {
+                            if ($value === null)
+                                continue;
+                            if (isset($it->lote_maior)) {
+                                $value->lote_maior = $it->lote_maior;
+                            }
+                            $is[] = $value;
+                        }
+                    }
+                }
 
                 foreach ($is as $key => $value) {
 
-                    $r = array($li->id, $value->quantidade);
+                    if ($value === null)
+                        continue;
+
+                    $r = array((!isset($value->lote_maior)) ? $li->id : $value->lote_maior->id, $value->quantidade);
 
                     foreach ($value->numero as $key2 => $value2) {
 
@@ -295,16 +345,16 @@ class ProdutoPedidoSaida {
     }
 
     public function atualizarCustos() {
-       
-       if ($this->id === 0) {
-           
+
+        if ($this->id === 0) {
+
             $campanha = null;
             $valor_oferta = 0;
             foreach ($this->produto->ofertas as $key => $value) {
                 $kc = $value->validade == $this->validade_minima;
-                if(!$kc && $this->validade_minima > $value->validade){
-                    $agora = round(microtime(true)*1000)+(Sistema::getMesesValidadeCurta()*30*24*60*60*1000);
-                    $kc = $value->validade > $agora; 
+                if (!$kc && $this->validade_minima > $value->validade) {
+                    $agora = round(microtime(true) * 1000) + (Sistema::getMesesValidadeCurta() * 30 * 24 * 60 * 60 * 1000);
+                    $kc = $value->validade > $agora;
                 }
                 if ($kc) {
                     $campanha = $value->campanha;
@@ -312,7 +362,7 @@ class ProdutoPedidoSaida {
                     break;
                 }
             }
-           
+
             if ($campanha !== null) {
                 if ($campanha->parcelas > 0 && $campanha->prazo >= 0) {
                     if ($this->pedido->prazo > $campanha->prazo) {
@@ -350,7 +400,6 @@ class ProdutoPedidoSaida {
             if ($emp->endereco->cidade->estado->id == $this->pedido->cliente->endereco->cidade->estado->id || $this->pedido->cliente->suframado) {
 
                 $this->icms = 0;
-                
             } else {
 
                 $base = ($cat->base_calculo / 100) * ($icms / 100);
@@ -360,10 +409,10 @@ class ProdutoPedidoSaida {
                     $base = ($cat->base_calculo / 100) * ($this->produto->categoria->icms / 100);
                 }
 
-                $base = (1-$base);
-                $icms = round(($this->valor_base + $this->juros)/$base, 2);
-                $icms = $icms-$this->valor_base-$this->juros;
-                
+                $base = (1 - $base);
+                $icms = round(($this->valor_base + $this->juros) / $base, 2);
+                $icms = $icms - $this->valor_base - $this->juros;
+
                 $this->icms = $icms;
             }
         }
@@ -397,7 +446,10 @@ class ProdutoPedidoSaida {
             $this->produto->atualizarEstoque($con);
             $this->produto->estoque -= $this->influencia_estoque;
             $this->produto->disponivel -= $this->influencia_reserva;
-            $this->produto->merge($con);
+            $ps = $con->getConexao()->prepare("UPDATE produto SET estoque=" . $this->produto->estoque . ", disponivel=" . $this->produto->disponivel .
+                    " WHERE id=" . $this->produto->id);
+            $ps->execute();
+            $ps->close();
             $this->influencia_estoque = 0;
             $this->influencia_reserva = 0;
 

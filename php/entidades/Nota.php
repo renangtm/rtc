@@ -43,7 +43,8 @@ class Nota {
     public $chave_devolucao;
     public $validar;
     public $baixa_total;
-
+    public $id_pedido;
+    
     function __construct() {
 
         $this->id = 0;
@@ -66,6 +67,8 @@ class Nota {
         $this->cancelada = false;
         $this->baixa_total = 0;
         $this->finalidade = Nota::$NORMAL;
+        $this->id_pedido = 0;
+        
     }
 
     public function igualaVencimento() {
@@ -259,6 +262,9 @@ class Nota {
                 $empresa->telefone = $telefone;
 
                 $campanhas[$id]->empresa = $empresa;
+            
+                $campanhas[$id] = $campanhas[$id]->getReduzida();
+                
             }
 
             $campanha = $campanhas[$id];
@@ -274,8 +280,6 @@ class Nota {
 
                 $ofertas[$id_produto] = array();
             }
-
-            $campanhas[$id]->produtos[] = $p;
 
             $ofertas[$id_produto][] = $p;
         }
@@ -387,11 +391,11 @@ class Nota {
             $p->ncm = $ncm;
             $p->lucro_consignado = $lucro;
             $p->empresa = $this->empresa;
-            $p->ofertas = (!isset($ofertas[$p->id]) ? array() : $ofertas[$p->id]);
+            $p->ofertas = (!isset($ofertas[$p->codigo]) ? array() : $ofertas[$p->codigo]);
 
             foreach ($p->ofertas as $key => $oferta) {
 
-                $oferta->produto = $p;
+                $oferta->produto = $p->getReduzido();
             }
 
 
@@ -535,7 +539,7 @@ class Nota {
             $base = $this->empresa->getParametrosEmissao($con)->getComandoBase($con);
             $base->acao = "EMITIR";
             $base->pedido = $this->id;
-            $base->operacao = ($this->saida ? 'Saida de mercadoria' : 'Entrada de mercadoria');
+            $base->operacao = CFOP::descricao($this->produtos[0]->cfop);
             $base->cfop = intval(Utilidades::removeMask($this->produtos[0]->cfop));
             $base->saida_entrada = $this->saida;
             $base->finalidade = $this->finalidade;

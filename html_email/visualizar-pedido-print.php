@@ -107,7 +107,11 @@
                                                                             </tr>
                                                                             <tr>
                                                                                 <td style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);">Email:</td>
-                                                                                <td style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);" id=""><?php echo $p->cliente->email->endereco; ?></td>
+                                                                                <td style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);" id="emailCliente"><?php echo $p->cliente->email->endereco; ?></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);">Suframa:</td>
+                                                                                <td style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);" id="suframa"><?php echo $p->cliente->inscricao_suframa; ?></td>
                                                                             </tr>
                                                                             <tr>
                                                                                 <td style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);">CPF/CNPJ:</td>

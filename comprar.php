@@ -7,10 +7,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?2"></script>
-        <script src="js/filters.js?2"></script>
-        <script src="js/services.js?2"></script>
-        <script src="js/controllers.js?2"></script>   
+        <script src="js/rtc.js?3"></script>
+        <script src="js/filters.js?3"></script>
+        <script src="js/services.js?3"></script>
+        <script src="js/controllers.js?3"></script>   
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
@@ -51,7 +51,7 @@
             <!-- left sidebar -->
             <!-- ============================================================== -->
             <?php
-            $filtro = "ng-model='produtos.filtro[0].valor' ng-confirm='produtos.attList()'";
+            $filtro = "ng-model='produtos.filtro[0].valor' ng-confirm='produtos.attList()' ng-if='!carregando_compra'";
 
             include("menu.php");
 
@@ -166,54 +166,53 @@
                                                     <br>
                                                     <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm" style="width:100px;height:100px;margin-bottom:95px"></span>
                                                 </div>
-                                                <div class="ribbons" ng-if="produto.ofertas.length > 0"></div>
-                                                <div class="ribbons-text" ng-if="produto.ofertas.length > 0" style="margin-left: 5px;">Oferta</div>
+                                                <div class="ribbons" ng-if="produto.ofertas>0"></div>
+                                                <div class="ribbons-text" ng-if="produto.ofertas>0" style="margin-left: 5px;">Oferta</div>
 
                                             </div>
                                             <div class="product-content">
                                                 <div class="product-content-head">
                                                     <h3 class="product-title">{{produto.nome}}</h3>
                                                     <hr>
-
-
-                                                    <button ng-click="addCarrinho(produto, validade)" class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;position:relative;margin-left:2px;width:100%;margin-bottom:10px">
-
-                                                        <div ng-if="validade.oferta" style="margin-bottom: 5px;">
-                                                            <cronometro model="validade.restante"></cronometro>
-                                                        </div>
-
-                                                        <div ng-if="validade.validade !== 1000">
-                                                            <span style="font-size: 14px;">Val: {{validade.validade| data_st}}</span>
-                                                        </div>
-                                                        <div ng-if="validade.validade === 1000">
-                                                            <span style="font-size: 14px;">Sem validade</span>
-                                                        </div>
-                                                        <span style="font-size: 18px;">R$ {{validade.valor}}</span>
-                                                        <br>
-                                                        <span style="font-size: 14px;">R$ {{(validade.valor / produto.quantidade_unidade).toFixed(2)}} por {{produto.liquido?'Lt':'Kg'}}</span> 
-                                                        <hr>
-                                                        <i class="fas fa-shopping-cart"></i>&nbsp Comprar
-
-
-                                                    </button>
-
-
-                                                    <div class="progress mb-1" ng-if="!tv(produto)">
-                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 60%"></div>
+                                                    
+                                                    <table class="table table-striped" ng-if="tv(produto)">
+                                                        
+                                                        <thead>
+                                                            <th ng-repeat="it in produto.produtos">
+                                                                {{it.logistica===null?it.empresa.nome:it.logistica.nome}}
+                                                            </th>
+                                                        </thead>
+                                                        <tr ng-repeat="i in nl(produto)">
+                                                            <td ng-repeat="it in produto.produtos" style="text-align: center">
+                                                                <div ng-if="it.validades.length<=i">
+                                                                    ------
+                                                                </div>
+                                                                <div ng-click="addCarrinho(it, it.validades[i])" ng-if="it.validades.length>i" style="cursor:pointer;font-weight: bold;padding:10px;width:100%" class="btn {{it.validades[i].oferta?'btn-success':'btn-warning'}}">
+                                                                    <cronometro ng-if="it.validades[i].oferta" model="it.validades[i].restante"></cronometro>
+                                                                    <span ng-if="it.validades[i].validade !== 1000">
+                                                                    {{it.validades[i].validade | data_st}}
+                                                                    </span>
+                                                                    <span ng-if="it.validades[i].validade === 1000">
+                                                                    ------
+                                                                    </span>
+                                                                    <br>
+                                                                    <strong style="text-decoration: underline;font-size:18px">R$ {{it.validades[i].valor}}</strong>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    
+                                                    <div class="progress mb-1" ng-if="!tv(produto)" style="height:40px">
+                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 60%;height: 40px"></div>
                                                     </div>
-
-                                                    <div style="color:SteelBlue">
-                                                        <i class="fas fa-road"></i>&nbsp {{produto.empresa.nome}} 
-                                                    </div>
-
-                                                    <div ng-if="produto.logistica !== null" style="color:DarkBlue">
-
-                                                        <i class="fas fa-box"></i>&nbsp {{produto.logistica.nome}} 
+                                                    <hr>
+                                                    <div style="color:SteelBlue;font-size:18px;font-weight: bold">
+                                                        <i class="fas fa-home"></i>&nbsp {{produto.empresa.nome}} 
                                                     </div>
 
                                                 </div>
 
-                                                <div class="product-quant">{{produto.grade.gr[0]}} p/ caixa</div>
+                                                <div class="product-quant" style="font-size:15px;font-weight: bold;font-style: italic;color:#000000">{{produto.grade.gr[0]}} por caixa</div>
 
                                             </div>
 
@@ -247,61 +246,61 @@
                                     <!-- ============================================================== -->
 
 
-
-
                                     <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12" ng-if="!carregando_compra" ng-repeat="produto in dividir(produtos.elementos, 2)[1]">
                                         <div class="product-thumbnail">
                                             <div class="product-img-head">
                                                 <div class="product-img">
-                                                    <img src="{{produto.imagem}}" id="img_{{produto.id}}" onload="fechaLoad(this)" alt="" class="img-fluid" style="display: none"></div>
-                                                <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm " style="width:100px;height:100px;margin-bottom:95px"></span>
-                                                <div class="ribbons" ng-if="produto.ofertas.length > 0"></div>
-                                                <div class="ribbons-text" ng-if="produto.ofertas.length > 0" style="margin-left: 5px;">Oferta</div>
+                                                    <img src="{{produto.imagem}}" id="img_{{produto.id}}" alt="" class="img-fluid" onload="fechaLoad(this)" style="display: none">
+                                                    <br>
+                                                    <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm" style="width:100px;height:100px;margin-bottom:95px"></span>
+                                                </div>
+                                                <div class="ribbons" ng-if="produto.ofertas>0"></div>
+                                                <div class="ribbons-text" ng-if="produto.ofertas>0" style="margin-left: 5px;">Oferta</div>
 
                                             </div>
                                             <div class="product-content">
                                                 <div class="product-content-head">
                                                     <h3 class="product-title">{{produto.nome}}</h3>
                                                     <hr>
-
-
-                                                    <button ng-click="addCarrinho(produto, validade)" class="btn {{validade.oferta?'btn-outline-success':'btn-outline-light'}}" ng-if="tv(produto)" ng-repeat="validade in produto.validades" style="font-size:15px;margin-left:2px;width:100%;margin-bottom:10px">
-
-                                                        <div ng-if="validade.oferta" style="margin-bottom: 5px;">
-                                                            <cronometro model="validade.restante"></cronometro>
-                                                        </div>
-
-                                                        <div ng-if="validade.validade !== 1000">
-                                                            <span style="font-size: 14px;">Val: {{validade.validade| data_st}}</span>
-                                                        </div>
-                                                        <div ng-if="validade.validade === 1000">
-                                                            <span style="font-size: 14px;">Sem validade</span>
-                                                        </div>
-                                                        <span style="font-size: 18px;">R$ {{validade.valor}}</span>
-                                                        <br>
-                                                        <span style="font-size: 14px;">R$ {{(validade.valor / produto.quantidade_unidade).toFixed(2)}} por {{produto.liquido?'Lt':'Kg'}}</span> 
-                                                        <hr>
-                                                        <i class="fas fa-shopping-cart"></i>&nbsp Comprar
-
-                                                    </button>
-
-
-                                                    <div class="progress mb-1" ng-if="!tv(produto)">
-                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 60%"></div>
+                                                    
+                                                    <table class="table table-striped" ng-if="tv(produto)">
+                                                        
+                                                        <thead>
+                                                            <th ng-repeat="it in produto.produtos">
+                                                                {{it.logistica===null?it.empresa.nome:it.logistica.nome}}
+                                                            </th>
+                                                        </thead>
+                                                        <tr ng-repeat="i in nl(produto)">
+                                                            <td ng-repeat="it in produto.produtos" style="text-align: center">
+                                                                <div ng-if="it.validades.length<=i">
+                                                                    ------
+                                                                </div>
+                                                                <div ng-click="addCarrinho(it, it.validades[i])" ng-if="it.validades.length>i" style="cursor:pointer;font-weight: bold;padding:10px;width:100%" class="btn {{it.validades[i].oferta?'btn-success':'btn-warning'}}">
+                                                                    <cronometro ng-if="it.validades[i].oferta" model="it.validades[i].restante"></cronometro>
+                                                                    <span ng-if="it.validades[i].validade !== 1000">
+                                                                    {{it.validades[i].validade | data_st}}
+                                                                    </span>
+                                                                    <span ng-if="it.validades[i].validade === 1000">
+                                                                    ------
+                                                                    </span>
+                                                                    <br>
+                                                                    <strong style="text-decoration: underline;font-size:18px">R$ {{it.validades[i].valor}}</strong>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    
+                                                    <div class="progress mb-1" ng-if="!tv(produto)" style="height:40px">
+                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 60%;height: 40px"></div>
                                                     </div>
-
-                                                    <div style="color:SteelBlue">
-                                                        <i class="fas fa-road"></i>&nbsp {{produto.empresa.nome}} 
-                                                    </div>
-
-                                                    <div ng-if="produto.logistica !== null" style="color:DarkBlue">
-
-                                                        <i class="fas fa-box"></i>&nbsp {{produto.logistica.nome}} 
+                                                    <hr>
+                                                    <div style="color:SteelBlue;font-size:18px;font-weight: bold">
+                                                        <i class="fas fa-home"></i>&nbsp {{produto.empresa.nome}} 
                                                     </div>
 
                                                 </div>
 
-                                                <div class="product-quant">{{produto.grade.gr[0]}} p/ caixa</div>
+                                                <div class="product-quant" style="font-size:15px;font-weight: bold;font-style: italic;color:#000000">{{produto.grade.gr[0]}} por caixa</div>
 
                                             </div>
 
@@ -309,7 +308,9 @@
 
                                             </div>
                                         </div>
-                                    </div>       
+                                    </div>
+
+                                         
 
 
 

@@ -60,7 +60,7 @@ class Empresa {
     public static function CF_SEPARADOR($emp) {
         return new CargoFixo(11, "Separador", $emp);
     }
-    
+
     public static function CF_FATURISTA($emp) {
         return new CargoFixo(12, "Faturista", $emp);
     }
@@ -132,7 +132,7 @@ class Empresa {
 
             $ps = $cf->getConexao()->prepare("SELECT empresa.nome,empresa.cnpj,endereco.id,endereco.rua,endereco.bairro,endereco.cep,endereco.numero,cidade.id,cidade.nome,estado.id,estado.sigla,empresa.inscricao_estadual FROM empresa INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' INNER JOIN cidade ON cidade.id=endereco.id_cidade INNER JOIN estado ON estado.id=cidade.id_estado WHERE empresa.id=$id");
             $ps->execute();
-            $ps->bind_result($nome, $cnpj, $end_id, $end_rua, $end_bairro, $end_cep, $end_num, $cid_id, $cid_nom, $est_id, $est_sg,$emp_ie);
+            $ps->bind_result($nome, $cnpj, $end_id, $end_rua, $end_bairro, $end_cep, $end_num, $cid_id, $cid_nom, $est_id, $est_sg, $emp_ie);
             if ($ps->fetch()) {
                 $this->nome = $nome;
                 $this->cnpj = new CNPJ($cnpj);
@@ -169,7 +169,7 @@ class Empresa {
                 $this->email = $em;
             }
             $ps->close();
-            
+
             $ps = $cf->getConexao()->prepare("SELECT id,numero FROM telefone WHERE tipo_entidade='EMP' AND id_entidade=$this->id");
             $ps->execute();
             $ps->bind_result($id, $numero);
@@ -179,8 +179,6 @@ class Empresa {
                 $this->telefone = $em;
             }
             $ps->close();
-            
-            
         }
     }
 
@@ -356,7 +354,7 @@ class Empresa {
         $ps->execute();
         $ps->close();
     }
-    
+
     public function setAdm($con, $adm) {
 
         $ps = $con->getConexao()->prepare("UPDATE empresa SET empresa_adm=" . ($adm !== null ? $adm->id : 0) . " WHERE id=$this->id");
@@ -966,17 +964,17 @@ class Empresa {
     }
 
     public function getCadastroLotesPendentes($con) {
-        
+
         $categorias = "(-1";
-        
+
         $c = Sistema::getCategoriaProduto(null);
-        
-        foreach($c as $key=>$value){
-            if($value->loja){
+
+        foreach ($c as $key => $value) {
+            if ($value->loja) {
                 $categorias .= ",$value->id";
             }
         }
-        
+
         $categorias .= ")";
 
         $sql = "SELECT "
@@ -999,8 +997,8 @@ class Empresa {
 
             $c = new CadastroLotePendente();
             $c->id_produto = $id;
-            
-            $escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c","");
+
+            $escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c", "");
             $replacements = array("", "", "", "", "", "", "", "");
             $result = str_replace($escapers, $replacements, $nome);
             $c->nome_produto = $result;
@@ -1788,7 +1786,7 @@ class Empresa {
                 . "produto_campanha.valor, "
                 . "produto.id,"
                 . "produto.codigo,"
-                . "produto.id_logistica,"
+                . "produto.locais,"
                 . "produto.id_universal,"
                 . "produto.imagem,"
                 . "produto.liquido,"
@@ -1798,14 +1796,10 @@ class Empresa {
                 . "produto.custo,"
                 . "produto.peso_bruto,"
                 . "produto.peso_liquido,"
-                . "produto.estoque,"
-                . "produto.disponivel,"
-                . "produto.transito,"
                 . "produto.grade,"
                 . "produto.unidade,"
                 . "produto.ncm,"
                 . "produto.nome,"
-                . "produto.lucro_consignado,"
                 . "produto.ativo,"
                 . "produto.concentracao,"
                 . "produto.id_categoria,"
@@ -1830,8 +1824,12 @@ class Empresa {
                 . "email.endereco,"
                 . "email.senha,"
                 . "telefone.id,"
-                . "telefone.numero "
-                . "FROM (SELECT * FROM campanha WHERE campanha.excluida=false AND campanha.id_empresa=$this->id ";
+                . "telefone.numero,"
+                . "produto.estoque_t,"
+                . "produto.disponivel_t,"
+                . "produto.transito_t,"
+                . "produto.sistema_lotes "
+                . "FROM (SELECT * FROM campanha WHERE id_empresa=$this->id AND campanha.excluida=false ";
 
         if ($filtro != "") {
 
@@ -1847,7 +1845,7 @@ class Empresa {
 
         $sql .= ") campanha "
                 . "INNER JOIN produto_campanha ON campanha.id = produto_campanha.id_campanha "
-                . "INNER JOIN produto ON produto.id = produto_campanha.id_produto "
+                . "INNER JOIN (SELECT *,GROUP_CONCAT(produto.id_logistica separator ',') as 'locais',SUM(produto.estoque) 'estoque_t',SUM(produto.disponivel) as 'disponivel_t',SUM(produto.transito) as 'transito_t' FROM produto GROUP BY produto.codigo) produto ON produto.codigo = produto_campanha.id_produto "
                 . "INNER JOIN empresa ON produto.id_empresa=empresa.id "
                 . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
                 . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
@@ -1860,11 +1858,12 @@ class Empresa {
             $sql .= "ORDER BY $ordem ";
         }
 
+        
         $campanhas = array();
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_pro, $cod_pro, $id_log, $id_uni, $img_prod, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_pro, $cod_pro, $locais, $id_uni, $img_prod, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $gr, $uni, $ncm, $nome, $ativo, $conc, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone,$estoque,$disponivel,$transito,$sistema_lotes);
 
 
 
@@ -1901,8 +1900,8 @@ class Empresa {
 
             if (!isset($prods[$id_pro])) {
 
-                $pro = new Produto();
-                $pro->logistica = $id_log;
+                $pro = new ProdutoAlocal();
+                $pro->locais = explode(',', $locais);
                 $pro->id = $id_pro;
                 $pro->codigo = $cod_pro;
                 $pro->nome = $nome;
@@ -1917,13 +1916,13 @@ class Empresa {
                 $pro->concentracao = $conc;
                 $pro->peso_bruto = $pb;
                 $pro->peso_liquido = $pl;
-                $pro->estoque = $est;
-                $pro->disponivel = $disp;
-                $pro->transito = $tr;
                 $pro->grade = new Grade($gr);
                 $pro->unidade = $uni;
                 $pro->ncm = $ncm;
-                $pro->lucro_consignado = $lucro;
+                $pro->estoque = $estoque;
+                $pro->disponivel = $disponivel;
+                $pro->transito = $transito;
+                $pro->sistema_lotes = $sistema_lotes;
 
                 $pro->categoria = Sistema::getCategoriaProduto(null, $cat_id);
 
@@ -1969,10 +1968,11 @@ class Empresa {
 
                 $empresa->telefone = $telefone;
 
-
                 $pro->empresa = $empresa;
 
-                $prods[$id_pro] = $pro;
+                $locais = array();
+
+                $prods[$cod_pro] = $pro;
             }
 
             //----
@@ -1980,15 +1980,23 @@ class Empresa {
 
             $campanhas[$id]->produtos[] = $p;
 
-            $p->produto = $prods[$id_pro];
+            $p->produto = $prods[$cod_pro]->getReduzido();
 
-            $prods[$id_pro]->ofertas[] = $p;
+            $prods[$cod_pro]->ofertas[] = $p;
         }
 
         $ps->close();
 
-        foreach ($prods as $key => $value) {
-            $value->logistica = Sistema::getLogisticaById($con, $value->logistica);
+        foreach ($prods as $key => $pro) {
+            $locais = array();
+            foreach ($pro->locais as $key => $value) {
+                $i = intval($value);
+                if ($i === 0) {
+                    $locais[] = $empresa;
+                    continue;
+                }
+                $locais[] = Sistema::getLogisticaById($con, $i);
+            }
         }
 
         $real = array();
@@ -2003,13 +2011,13 @@ class Empresa {
 
     public function getCountCampanha($con, $filtro = "") {
 
-        $sql = "SELECT COUNT(*) FROM campanha WHERE campanha.excluida=false AND campanha.id_empresa=$this->id ";
+        $sql = "SELECT COUNT(*) FROM campanha WHERE id_empresa=$this->id ";
 
         if ($filtro != "") {
 
             $sql .= "AND $filtro ";
         }
-
+        
         $ps = $con->getConexao()->prepare($sql);
 
         $ps->execute();
@@ -2264,7 +2272,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_mov,$baixa_total, $data_mov, $saldo_mov, $valor_mov, $juros_mov, $desc_mov, $estorno,$visto, $id_venc, $val_venc, $data_venc, $hist_id, $hist_nom, $op_id, $op_nom, $op_deb, $ban_id, $ban_nom, $ban_cod, $ban_sal, $ban_con, $id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $id_email_cliente, $end_email_cliente, $senh_email_cliente, $id_for, $cod_for, $nom_for, $cnpj_for, $hab_for, $ie_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for, $tra_id, $cod_tra, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_email_tra, $end_email_tra, $sen_email_tra, $id_nf, $sai_nf, $cha_nf, $obs_nf, $dt_nf, $nf_inf_est, $id_fp_nf, $fdr, $emitida, $danfe, $xml, $numero, $ficha, $cancelada, $protocolo);
+        $ps->bind_result($id_mov, $baixa_total, $data_mov, $saldo_mov, $valor_mov, $juros_mov, $desc_mov, $estorno, $visto, $id_venc, $val_venc, $data_venc, $hist_id, $hist_nom, $op_id, $op_nom, $op_deb, $ban_id, $ban_nom, $ban_cod, $ban_sal, $ban_con, $id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $id_email_cliente, $end_email_cliente, $senh_email_cliente, $id_for, $cod_for, $nom_for, $cnpj_for, $hab_for, $ie_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for, $tra_id, $cod_tra, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_email_tra, $end_email_tra, $sen_email_tra, $id_nf, $sai_nf, $cha_nf, $obs_nf, $dt_nf, $nf_inf_est, $id_fp_nf, $fdr, $emitida, $danfe, $xml, $numero, $ficha, $cancelada, $protocolo);
 
         while ($ps->fetch()) {
 
@@ -2278,8 +2286,8 @@ class Empresa {
             $m->juros = $juros_mov;
             $m->descontos = $desc_mov;
             $m->estorno = $estorno;
-            $m->visto = $visto==1;
-            $m->baixa_total =  $baixa_total;
+            $m->visto = $visto == 1;
+            $m->baixa_total = $baixa_total;
             $v = new Vencimento();
             $v->id = $id_venc;
             $v->valor = $val_venc;
@@ -2684,7 +2692,8 @@ class Empresa {
                 . "nota.ficha,"
                 . "nota.cancelada,"
                 . "nota.protocolo,"
-                . "nota.baixa_total "
+                . "nota.baixa_total,"
+                . "nota.id_pedido "
                 . "FROM nota "
                 . "LEFT JOIN cliente ON nota.id_cliente=cliente.id "
                 . "LEFT JOIN categoria_cliente ON categoria_cliente.id = cliente.id_categoria "
@@ -2725,7 +2734,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $id_email_cliente, $end_email_cliente, $senh_email_cliente, $id_for, $cod_for, $nom_for, $cnpj_for, $hab_for, $ie_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for, $tra_id, $cod_tra, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_email_tra, $end_email_tra, $sen_email_tra, $id_nf, $sai_nf, $cha_nf, $obs_nf, $id_pag_nf, $dt_nf, $nf_inf_est, $fdr, $emitida, $danfe, $xml, $numero, $ficha, $cancelada, $protocolo,$baixa_total);
+        $ps->bind_result($id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $id_email_cliente, $end_email_cliente, $senh_email_cliente, $id_for, $cod_for, $nom_for, $cnpj_for, $hab_for, $ie_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for, $tra_id, $cod_tra, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_email_tra, $end_email_tra, $sen_email_tra, $id_nf, $sai_nf, $cha_nf, $obs_nf, $id_pag_nf, $dt_nf, $nf_inf_est, $fdr, $emitida, $danfe, $xml, $numero, $ficha, $cancelada, $protocolo, $baixa_total,$id_pedido);
 
         while ($ps->fetch()) {
 
@@ -2874,6 +2883,7 @@ class Empresa {
             $nota->fornecedor = $fornecedor;
             $nota->transportadora = $transportadora;
             $nota->empresa = $this;
+            $nota->id_pedido = $id_pedido;
             $nota->emitida = $emitida == 1;
             $nota->danfe = $danfe;
             $nota->xml = $xml;
@@ -3106,7 +3116,7 @@ class Empresa {
         }
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
-        
+
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
@@ -3816,7 +3826,270 @@ class Empresa {
         return 0;
     }
     
-    
+    public function getCountProdutosAlocais($con, $filtro = "") {
+
+        $sql = "SELECT COUNT(*) FROM (SELECT * FROM produto GROUP BY produto.codigo,produto.id_empresa) produto WHERE produto.id_empresa=$this->id AND produto.excluido=false ";
+        
+        if($filtro !== ""){
+            $sql .= "AND $filtro";
+        }
+        
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($qtd);
+        if($ps->fetch()){
+            $ps->close();
+            return $qtd;
+        }
+        $ps->close();
+        return 0;
+        
+    }
+
+    public function getProdutosAlocais($con, $x1, $x2, $filtro = "", $ordem = "") {
+
+        $campanhas = array();
+        $ofertas = array();
+
+        $ps = $con->getConexao()->prepare("SELECT "
+                . "campanha.id,"
+                . "UNIX_TIMESTAMP(campanha.inicio)*1000,"
+                . "UNIX_TIMESTAMP(campanha.fim)*1000,"
+                . "campanha.prazo,"
+                . "campanha.parcelas,"
+                . "campanha.cliente_expression,"
+                . "produto_campanha.id,"
+                . "produto_campanha.id_produto,"
+                . "UNIX_TIMESTAMP(produto_campanha.validade)*1000,"
+                . "produto_campanha.limite,"
+                . "produto_campanha.valor, "
+                . "empresa.id,"
+                . "empresa.tipo_empresa,"
+                . "empresa.nome,"
+                . "empresa.inscricao_estadual,"
+                . "empresa.consigna,"
+                . "empresa.aceitou_contrato,"
+                . "empresa.juros_mensal,"
+                . "empresa.cnpj,"
+                . "endereco.numero,"
+                . "endereco.id,"
+                . "endereco.rua,"
+                . "endereco.bairro,"
+                . "endereco.cep,"
+                . "cidade.id,"
+                . "cidade.nome,"
+                . "estado.id,"
+                . "estado.sigla,"
+                . "email.id,"
+                . "email.endereco,"
+                . "email.senha,"
+                . "telefone.id,"
+                . "telefone.numero "
+                . "FROM campanha "
+                . "INNER JOIN produto_campanha ON campanha.id = produto_campanha.id_campanha "
+                . "INNER JOIN empresa ON campanha.id_empresa=empresa.id "
+                . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
+                . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
+                . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
+                . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
+                . "INNER JOIN estado ON cidade.id_estado = estado.id "
+                . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
+
+        $ps->execute();
+        $ps->bind_result($id, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+
+        while ($ps->fetch()) {
+
+            if (!isset($campanhas[$id])) {
+
+                $campanhas[$id] = new Campanha();
+                $campanhas[$id]->id = $id;
+                $campanhas[$id]->inicio = $inicio;
+                $campanhas[$id]->fim = $fim;
+                $campanhas[$id]->prazo = $prazo;
+                $campanhas[$id]->parcelas = $parcelas;
+                $campanhas[$id]->cliente_expression = $cliente;
+
+                $empresa = Sistema::getEmpresa($tipo_empresa);
+
+                $empresa->id = $id_empresa;
+                $empresa->cnpj = new CNPJ($cnpj);
+                $empresa->inscricao_estadual = $inscricao_empresa;
+                $empresa->nome = $nome_empresa;
+                $empresa->aceitou_contrato = $aceitou_contrato;
+                $empresa->juros_mensal = $juros_mensal;
+                $empresa->consigna = $consigna;
+
+                $endereco = new Endereco();
+                $endereco->id = $id_endereco;
+                $endereco->rua = $rua;
+                $endereco->bairro = $bairro;
+                $endereco->cep = new CEP($cep);
+                $endereco->numero = $numero_endereco;
+
+                $cidade = new Cidade();
+                $cidade->id = $id_cidade;
+                $cidade->nome = $nome_cidade;
+
+                $estado = new Estado();
+                $estado->id = $id_estado;
+                $estado->sigla = $nome_estado;
+
+                $cidade->estado = $estado;
+
+                $endereco->cidade = $cidade;
+
+                $empresa->endereco = $endereco;
+
+                $email = new Email($endereco_email);
+                $email->id = $id_email;
+                $email->senha = $senha_email;
+
+                $empresa->email = $email;
+
+                $telefone = new Telefone($numero_telefone);
+                $telefone->id = $id_telefone;
+
+                $empresa->telefone = $telefone;
+
+                $campanhas[$id]->empresa = $empresa;
+
+                $campanhas[$id] = $campanhas[$id]->getReduzida();
+            }
+
+            $campanha = $campanhas[$id];
+
+            $p = new ProdutoCampanha();
+            $p->id = $id_produto_campanha;
+            $p->validade = $validade;
+            $p->limite = $limite;
+            $p->valor = $valor;
+            $p->campanha = $campanha;
+
+            if (!isset($ofertas[$id_produto])) {
+
+                $ofertas[$id_produto] = array();
+            }
+
+            $ofertas[$id_produto][] = $p;
+        }
+
+        $ps->close();
+
+
+        $sql = "SELECT "
+                . "produto.id,"
+                . "produto.codigo,"
+                . "GROUP_CONCAT(produto.id_logistica separator ','),"
+                . "produto.classe_risco,"
+                . "produto.fabricante,"
+                . "produto.imagem,"
+                . "produto.id_universal,"
+                . "produto.liquido,"
+                . "produto.quantidade_unidade,"
+                . "produto.habilitado,"
+                . "produto.valor_base,"
+                . "produto.custo,"
+                . "produto.peso_bruto,"
+                . "produto.peso_liquido,"
+                . "produto.grade,"
+                . "produto.unidade,"
+                . "produto.ncm,"
+                . "produto.nome,"
+                . "produto.ativo,"
+                . "produto.concentracao,"
+                . "produto.id_categoria,"
+                . "SUM(produto.estoque),"
+                . "SUM(produto.disponivel),"
+                . "SUM(produto.transito),"
+                . "produto.sistema_lotes "
+                . "FROM produto "
+                . "WHERE produto.id_empresa = $this->id AND produto.excluido = false ";
+
+
+        if ($filtro != "") {
+
+            $sql .= "AND $filtro ";
+        }
+
+
+        $sql .= "GROUP BY produto.codigo ";
+
+        if ($ordem != "") {
+
+            $sql .= "ORDER BY $ordem ";
+        }
+
+        $produtos = array();
+
+        $sql .= "LIMIT $x1, " . ($x2 - $x1);
+
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $gr, $uni, $ncm, $nome, $ativo, $conc, $cat_id,$estoque,$disponivel,$transito,$sis);
+
+        while ($ps->fetch()) {
+
+            $p = new ProdutoAlocal();
+
+            $p->locais = explode(',', $id_log);
+
+            $p->id = $id_pro;
+            $p->codigo = $cod_pro;
+            $p->classe_risco = $classe_risco;
+            $p->fabricante = $fabricante;
+            $p->imagem = $imagem;
+            $p->nome = $nome;
+            $p->id_universal = $id_uni;
+            $p->liquido = $liq == 1;
+            $p->quantidade_unidade = $qtd_un;
+            $p->habilitado = $hab;
+            $p->valor_base = $vb;
+            $p->custo = $cus;
+            $p->peso_bruto = $pb;
+            $p->peso_liquido = $pl;
+            $p->ativo = $ativo;
+            $p->concentracao = $conc;
+            $p->grade = new Grade($gr);
+            $p->estoque = $estoque;
+            $p->disponivel = $disponivel;
+            $p->transito = $transito;
+            $p->unidade = $uni;
+            $p->ncm = $ncm;
+            $p->sistema_lotes = $sis;
+            $p->ofertas = (!isset($ofertas[$p->codigo]) ? array() : $ofertas[$p->codigo]);
+
+            foreach ($p->ofertas as $key => $oferta) {
+
+                $oferta->produto = $p->getReduzido();
+            }
+
+            $p->categoria = Sistema::getCategoriaProduto(null, $cat_id);
+
+            $p->empresa = $this;
+
+            $produtos[] = $p;
+        }
+
+        $ps->close();
+
+        foreach ($produtos as $key => $value) {
+            $locais = array();
+            foreach ($value->locais as $key2 => $value2) {
+                $i = intval($value2);
+                if ($i === 0) {
+                    $locais[] = $this;
+                    continue;
+                }
+                $locais[] = Sistema::getLogisticaById($con, $i);
+            }
+
+            $value->locais = $locais;
+        }
+
+        return $produtos;
+    }
 
     public function getProdutos($con, $x1, $x2, $filtro = "", $ordem = "") {
 
@@ -3925,6 +4198,8 @@ class Empresa {
                 $empresa->telefone = $telefone;
 
                 $campanhas[$id]->empresa = $empresa;
+
+                $campanhas[$id] = $campanhas[$id]->getReduzida();
             }
 
             $campanha = $campanhas[$id];
@@ -3940,8 +4215,6 @@ class Empresa {
 
                 $ofertas[$id_produto] = array();
             }
-
-            $campanhas[$id]->produtos[] = $p;
 
             $ofertas[$id_produto][] = $p;
         }
@@ -4031,11 +4304,11 @@ class Empresa {
             $p->unidade = $uni;
             $p->ncm = $ncm;
             $p->lucro_consignado = $lucro;
-            $p->ofertas = (!isset($ofertas[$p->id]) ? array() : $ofertas[$p->id]);
+            $p->ofertas = (!isset($ofertas[$p->codigo]) ? array() : $ofertas[$p->codigo]);
 
             foreach ($p->ofertas as $key => $oferta) {
 
-                $oferta->produto = $p;
+                $oferta->produto = $p->getReduzido();
             }
 
             $p->categoria = Sistema::getCategoriaProduto(null, $cat_id);
@@ -4708,7 +4981,7 @@ class Empresa {
         return 0;
     }
 
-    public function getCountFechamento($con, $filtro="") {
+    public function getCountFechamento($con, $filtro = "") {
 
         $sql = "SELECT "
                 . "COUNT(*) "
@@ -4770,7 +5043,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $valor, $data, $id_banco, $nome_banco, $saldo_banco, $conta_banco,$codigo_banco, $agencia_banco, $codigo_contimatic_banco);
+        $ps->bind_result($id, $valor, $data, $id_banco, $nome_banco, $saldo_banco, $conta_banco, $codigo_banco, $agencia_banco, $codigo_contimatic_banco);
 
         while ($ps->fetch()) {
 

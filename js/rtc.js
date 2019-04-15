@@ -1426,7 +1426,7 @@ rtc.directive('cronometro', function ($interval) {
         scope: {
             model: '='
         },
-        templateUrl: 'cronometro.html',
+        templateUrl: 'cronometroooo.html',
         link: function (scope, element, attrs) {
 
             $interval(function () {

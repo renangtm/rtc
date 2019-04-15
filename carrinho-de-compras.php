@@ -8,10 +8,10 @@
         <!-- Bootstrap CSS -->
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?2"></script>
-        <script src="js/filters.js?2"></script>
-        <script src="js/services.js?2"></script>
-        <script src="js/controllers.js?2"></script>  
+        <script src="js/rtc.js?3"></script>
+        <script src="js/filters.js?3"></script>
+        <script src="js/services.js?3"></script>
+        <script src="js/controllers.js?3"></script>  
 
 
         <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">

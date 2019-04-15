@@ -5,10 +5,10 @@
         <meta charset="utf-8">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?2"></script>
-        <script src="js/filters.js?2"></script>
-        <script src="js/services.js?2"></script>
-        <script src="js/controllers.js?2"></script>    
+        <script src="js/rtc.js?3"></script>
+        <script src="js/filters.js?3"></script>
+        <script src="js/services.js?3"></script>
+        <script src="js/controllers.js?3"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -198,7 +198,7 @@
                                                 <input type="text" ng-model="pedido.cliente.razao_social" class="form-control" placeholder="Nome do cliente" value="" disabled="">
                                             </div>
                                             <div class="col">
-                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" ng-click="clientes.attList()" data-target="#clientes" ng-disabled="!pedido.status.altera" ng-if="pedido.empresa.id===<?php echo $empresa->id; ?>"><i class="fas fa-search"></i></a>
+                                                <a href="#" class="btn btn-outline-light btnedit" data-toggle="modal" ng-click="clientes.attList()" data-target="#clientes" ng-disabled="!pedido.status.altera" ng-if="pedido.empresa.id ===<?php echo $empresa->id; ?>"><i class="fas fa-search"></i></a>
                                             </div>
                                         </div>
                                     </div>
@@ -206,7 +206,7 @@
                                     <div class="form-group">
                                         <label for="">Logistica</label>
                                         <div class="form-row">
-                                                <select ng-model="pedido.logistica" style="width:40%" class="form-control" ng-change="resetarPedido()" ng-disabled="!pedido.status.altera || pedido.empresa.id !== <?php echo $empresa->id; ?>">
+                                            <select ng-model="pedido.logistica" style="width:40%" class="form-control" ng-change="resetarPedido()" ng-disabled="!pedido.status.altera || pedido.empresa.id !== <?php echo $empresa->id; ?>">
                                                 <option ng-repeat="l in logisticas" ng-value="l">{{l.nome}}</option>
                                             </select>
                                         </div>
@@ -353,7 +353,7 @@
                                                 <label for="">Forma de pagamento</label>
                                             </div>
                                             <div class="form-inline" style="margin-left: 40px;">
-                                                    <select ng-disabled="!pedido.status.altera || pedido.empresa.id !== <?php echo $empresa->id; ?>" class="form-control" id="ped" ng-model="pedido.forma_pagamento">    
+                                                <select ng-disabled="!pedido.status.altera || pedido.empresa.id !== <?php echo $empresa->id; ?>" class="form-control" id="ped" ng-model="pedido.forma_pagamento">    
                                                     <option ng-value="forma_pagamento" ng-repeat="forma_pagamento in formas_pagamento">{{forma_pagamento.nome}}</option>
                                                 </select>
                                             </div>
@@ -395,8 +395,8 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                                <button class="btn btn-primary"  data-toggle="modal" data-target="#observacoes">
-                                    <i class="fas fa-save"></i> &nbsp; Salvar
+                                <button class="btn btn-primary" ng-disabled="carregando" data-toggle="modal" data-target="#observacoes">
+                                    <i class="fas fa-save"></i> &nbsp; Salvar. {{carregando?'Aguarde... Algumas operacoes podem demorar alguns segundos':''}}
                                 </button>
                             </div>
                         </div>
@@ -418,8 +418,8 @@
                                 <textarea class="form-control" ng-model="pedido.observacao_status"></textarea>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary" ng-click="mergePedido()">Prosseguir</button>
-                                <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
+                                <button class="btn btn-primary" data-dismiss="modal" aria-label="Close" ng-disabled="carregando" ng-click="mergePedido()">Prosseguir</button>
+                                <button type="button" class="btn btn-light" data-dismiss="modal" aria-label="Close">Fechar</button>
                             </div>
                         </div>
                     </div>
@@ -437,7 +437,7 @@
                                 <p class="text-center"> Tem certeza de que deseja excluir este Pedido?</p>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary" ng-click="deletePedido()">Sim</button>
+                                <button class="btn btn-primary" ng-disabled="carregando" ng-click="deletePedido()">Sim. {{carregando?'Aguarde... Pode demorar devido a operacoes fiscais':''}}</button>
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Não</button>
                             </div>
                         </div>
@@ -794,66 +794,56 @@
             <!-- Optional JavaScript -->
             <script>
 
-                                                        var l = $('#loading');
-                                                        l.hide();
+                                                var l = $('#loading');
+                                                l.hide();
+                                                var x = 0;
+                                                var y = 0;
+                                                $(document).mousemove(function (e) {
 
-
-                                                        var x = 0;
-                                                        var y = 0;
-
-                                                        $(document).mousemove(function (e) {
-
-                                                            x = e.clientX;
-                                                            y = e.clientY;
-
-                                                            var s = $(this).scrollTop();
-
-                                                            l.offset({top: (y + s), left: x});
-
-                                                        })
+                                                x = e.clientX;
+                                                y = e.clientY;
+                                                var s = $(this).scrollTop();
+                                                l.offset({top: (y + s), left: x});
+                                                })
 
                                                         var sh = false;
-                                                        var it = null;
+                                                var it = null;
+                                                loading.show = function () {
+                                                l.show();
+                                                var s = $(document).scrollTop();
+                                                l.offset({top: (y + s), left: x});
+                                                }
 
-                                                        loading.show = function () {
-                                                            l.show();
-                                                            var s = $(document).scrollTop();
+                                                loading.close = function () {
+                                                l.hide();
+                                                }
 
-                                                            l.offset({top: (y + s), left: x});
-
+                                                $(document).ready(function () {
+                                                $('.btnvis').tooltip({title: "Visualizar", placement: "top"});
+                                                $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                                                $('.btndel').tooltip({title: "Deletar", placement: "top"});
+                                                $('.btnaddprod').tooltip({title: "Adicionar", placement: "top"});
+                                                });
+                                                $(document).ready(function () {
+                                                $(document).on({
+                                                'show.bs.modal': function () {
+                                                var zIndex = 1040 + (10 * $('.modal:visible').length);
+                                                $(this).css('z-index', zIndex);
+                                                setTimeout(function () {
+                                                $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+                                                }, 0);
+                                                },
+                                                        'hidden.bs.modal': function () {
+                                                        if ($('.modal:visible').length > 0) {
+                                                        // restore the modal-open class to the body element, so that scrolling works
+                                                        // properly after de-stacking a modal.
+                                                        setTimeout(function () {
+                                                        $(document.body).addClass('modal-open');
+                                                        }, 0);
                                                         }
-
-                                                        loading.close = function () {
-                                                            l.hide();
                                                         }
-
-                                                        $(document).ready(function () {
-                                                            $('.btnvis').tooltip({title: "Visualizar", placement: "top"});
-                                                            $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                                                            $('.btndel').tooltip({title: "Deletar", placement: "top"});
-                                                            $('.btnaddprod').tooltip({title: "Adicionar", placement: "top"});
-                                                        });
-
-                                                        $(document).ready(function () {
-                                                            $(document).on({
-                                                                'show.bs.modal': function () {
-                                                                    var zIndex = 1040 + (10 * $('.modal:visible').length);
-                                                                    $(this).css('z-index', zIndex);
-                                                                    setTimeout(function () {
-                                                                        $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
-                                                                    }, 0);
-                                                                },
-                                                                'hidden.bs.modal': function () {
-                                                                    if ($('.modal:visible').length > 0) {
-                                                                        // restore the modal-open class to the body element, so that scrolling works
-                                                                        // properly after de-stacking a modal.
-                                                                        setTimeout(function () {
-                                                                            $(document.body).addClass('modal-open');
-                                                                        }, 0);
-                                                                    }
-                                                                }
-                                                            }, '.modal');
-                                                        });
+                                                }, '.modal');
+                                                });
             </script>
 
     </body>

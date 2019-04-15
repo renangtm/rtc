@@ -5,7 +5,7 @@
         <meta charset="utf-8">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?2"></script>
+        <script src="js/rtc.js?3"></script>
 
         <script>
 
@@ -23,9 +23,9 @@ $id_pedido = $_GET['pedido'];
 
         </script>
 
-        <script src="js/filters.js?2"></script>
-        <script src="js/services.js?2"></script>
-        <script src="js/controllers.js?2"></script>    
+        <script src="js/filters.js?3"></script>
+        <script src="js/services.js?3"></script>
+        <script src="js/controllers.js?3"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -196,20 +196,23 @@ $id_pedido = $_GET['pedido'];
 
         <!-- Optional JavaScript -->
         <script>
-            
-            
-            setInterval(function(){
-                $("#txtBipe").focus();
-            },1000)
+
+
+                                setInterval(function () {
+                                    $("#txtBipe").focus();
+                                }, 1000)
 
                                 var first_load = true;
                                 function imprimir() {
-                                    
-                                    if(first_load){
-                                        first_load = false;
+
+                                    if (first_load) {
+                                        setTimeout(function () {
+                                            first_load = false;
+                                        }, 2000);
+
                                         return;
                                     }
-                                    
+
                                     var pdfFrame = window.frames["pdf"];
                                     pdfFrame.focus();
                                     pdfFrame.print();

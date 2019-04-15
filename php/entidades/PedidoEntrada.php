@@ -158,6 +158,9 @@ class PedidoEntrada {
                 $empresa->telefone = $telefone;
 
                 $campanhas[$id]->empresa = $empresa;
+                
+                $campanhas[$id] = $campanhas[$id]->getReduzida();
+                
             }
 
             $campanha = $campanhas[$id];
@@ -173,8 +176,6 @@ class PedidoEntrada {
 
                 $ofertas[$id_produto] = array();
             }
-
-            $campanhas[$id]->produtos[] = $p;
 
             $ofertas[$id_produto][] = $p;
         }
@@ -281,11 +282,11 @@ class PedidoEntrada {
             $p->unidade = $uni;
             $p->ncm = $ncm;
             $p->lucro_consignado = $lucro;
-            $p->ofertas = (!isset($ofertas[$p->id]) ? array() : $ofertas[$p->id]);
+            $p->ofertas = (!isset($ofertas[$p->codigo]) ? array() : $ofertas[$p->codigo]);
 
             foreach ($p->ofertas as $key => $oferta) {
 
-                $oferta->produto = $p;
+                $oferta->produto = $p->getReduzido();
             }
 
             $p->categoria = Sistema::getCategoriaProduto(null, $cat_id);
