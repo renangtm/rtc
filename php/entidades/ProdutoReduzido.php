@@ -16,12 +16,14 @@ class ProdutoReduzido {
     public $id;
     public $nome;
     public $codigo;
+    public $imagem;
     
     function __construct() {
 
         $this->id = 0;
         $this->nome = "";
         $this->codigo = 0;
+        $this->imagem = "";
         
     }
 

@@ -125,7 +125,8 @@ class Empresa {
             "TT_FATURAMENTO",
             "TT_RASTREIO",
             "TT_SEPARACAO",
-            "TT_SOLICITACAO_COLETA"
+            "TT_SOLICITACAO_COLETA",
+            "TT_VERIFICA_SUFRAMA"
         );
 
         if ($id > 0 && $cf !== null) {
@@ -1788,7 +1789,7 @@ class Empresa {
                 . "produto.codigo,"
                 . "produto.locais,"
                 . "produto.id_universal,"
-                . "produto.imagem,"
+                . "produto.img,"
                 . "produto.liquido,"
                 . "produto.quantidade_unidade,"
                 . "produto.habilitado,"
@@ -1845,7 +1846,7 @@ class Empresa {
 
         $sql .= ") campanha "
                 . "INNER JOIN produto_campanha ON campanha.id = produto_campanha.id_campanha "
-                . "INNER JOIN (SELECT *,GROUP_CONCAT(produto.id_logistica separator ',') as 'locais',SUM(produto.estoque) 'estoque_t',SUM(produto.disponivel) as 'disponivel_t',SUM(produto.transito) as 'transito_t' FROM produto GROUP BY produto.codigo) produto ON produto.codigo = produto_campanha.id_produto "
+                . "INNER JOIN (SELECT *,MAX(produto.imagem) as 'img',GROUP_CONCAT(produto.id_logistica separator ',') as 'locais',SUM(produto.estoque) 'estoque_t',SUM(produto.disponivel) as 'disponivel_t',SUM(produto.transito) as 'transito_t' FROM produto GROUP BY produto.codigo,produto.id_empresa) produto ON produto.codigo = produto_campanha.id_produto AND campanha.id_empresa=produto.id_empresa "
                 . "INNER JOIN empresa ON produto.id_empresa=empresa.id "
                 . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
                 . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
@@ -3983,7 +3984,7 @@ class Empresa {
                 . "GROUP_CONCAT(produto.id_logistica separator ','),"
                 . "produto.classe_risco,"
                 . "produto.fabricante,"
-                . "produto.imagem,"
+                . "MAX(produto.imagem),"
                 . "produto.id_universal,"
                 . "produto.liquido,"
                 . "produto.quantidade_unidade,"

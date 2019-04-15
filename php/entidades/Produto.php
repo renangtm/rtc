@@ -81,11 +81,12 @@ class Produto {
         $p->id = $this->id;
         $p->codigo = $this->codigo;
         $p->nome = $this->nome;
+        $p->imagem = $this->imagem;
 
         return $p;
     }
 
-    public function merge($con) {
+    public function merge($con, $verifica = true) {
 
         if ($this->id_universal === 0) {
 
@@ -136,17 +137,18 @@ class Produto {
                     $ps->close();
                 }
             }
-
-            $ps = $con->getConexao()->prepare("SELECT SUM(influencia_reserva)-SUM(influencia_estoque) FROM produto_pedido_saida WHERE id_produto=$this->id");
-            $ps->execute();
-            $ps->bind_result($d);
-            if ($ps->fetch()) {
-                $ps->close();
-                if ($this->disponivel !== $this->estoque + $d) {
-                    throw new Exception("Existem " . (-1 * $d) . " produtos reservados, portanto o estoque e disponivel nao batem");
+            if ($verifica) {
+                $ps = $con->getConexao()->prepare("SELECT SUM(influencia_reserva)-SUM(influencia_estoque) FROM produto_pedido_saida WHERE id_produto=$this->id");
+                $ps->execute();
+                $ps->bind_result($d);
+                if ($ps->fetch()) {
+                    $ps->close();
+                    if ($this->disponivel !== $this->estoque + $d) {
+                        throw new Exception("Existem " . (-1 * $d) . " produtos reservados, portanto o estoque($this->estoque) e disponivel($this->disponivel) nao batem");
+                    }
+                } else {
+                    $ps->close();
                 }
-            } else {
-                $ps->close();
             }
 
             if ($this->estoque < $this->disponivel) {

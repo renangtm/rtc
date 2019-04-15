@@ -66,8 +66,11 @@ class Utilidades {
         return null;
     }
     
-    public static function ifn($dado,$r){
+    public static function ifn($dado,$r,$len = 5){
         if($dado === "" || $dado === null){
+            return $r;
+        }
+        if(strlen($dado)<$len){
             return $r;
         }
         return $dado;

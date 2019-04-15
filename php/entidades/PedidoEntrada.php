@@ -361,7 +361,7 @@ class PedidoEntrada {
 
             $real_ret[] = $value;
         }
-
+        
         return $real_ret;
     }
 

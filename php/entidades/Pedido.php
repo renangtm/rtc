@@ -644,23 +644,19 @@ class Pedido {
                     $ps->execute();
                     $ps->close();
                 } else {
-                    $id_empresa = intval($pt[1]);
-                    $empresa = new Empresa($id_empresa, $con);
-                    $pedido = $empresa->getPedidos($con, 0, 1, "pedido.id=$tarefa->id_entidade_relacionada");
-                    $pedido = $pedido[0];
-
-                    $emp = $pedido->empresa;
-                    if ($pedido->logistica !== null) {
-                        $emp = $pedido->logistica;
+                    
+                    $emp = $this->empresa;
+                    if ($this->logistica !== null) {
+                        $emp = $this->logistica;
                     }
 
                     $t = new Tarefa();
                     $t->tipo_tarefa = Sistema::TT_SEPARACAO($emp->id);
-                    $t->titulo = "Separacao do pedido $pedido->id";
+                    $t->titulo = "Separacao do pedido $this->id";
                     $t->descricao .= "<a style='font-size:20px;text-decoration:underline;color:SteelBlue' href='separacao.php?pedido=$this->id&empresa=" . $this->empresa->id . "'>SEPARAR PEDIDO</a>";
 
-                    $t->tipo_entidade_relacionada = "PED_" . $pedido->empresa->id;
-                    $t->id_entidade_relacionada = $pedido->id;
+                    $t->tipo_entidade_relacionada = "PED_" . $this->empresa->id;
+                    $t->id_entidade_relacionada = $this->id;
                     Sistema::novaTarefaEmpresa($con, $t, $empresa);
 
                     $this->status = Sistema::STATUS_SEPARACAO();

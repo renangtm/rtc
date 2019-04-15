@@ -17,7 +17,7 @@ class CFOP {
     public static $VENDA_FORA_ESTADO = "6102";
     public static $REMESSA_DEPOSITO = "5905";
     public static $RETORNO_DEPOSITO = "5906";
-    
+    public static $ISENTO = "6110";
     
     public static function descricao($cfop){
         
@@ -31,6 +31,8 @@ class CFOP {
             return "Remessa de mercadoria para deposito";
         }else if($cfop === self::$RETORNO_DEPOSITO){
             return "Retorno de mercadoria para deposito";
+        }else if($cfop === self::$ISENTO){
+            return "Venda de merc destinada a zona franca de manaus";
         }
         
         return "Indefinido";

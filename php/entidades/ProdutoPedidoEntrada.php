@@ -66,11 +66,11 @@ class ProdutoPedidoEntrada {
 
                 throw new Exception('Sem estoque para executar essa operacao');
             }
-
+            
             $this->produto->estoque += $dif_est;
             $this->produto->disponivel += $dif_est;
             $this->produto->transito += $dif_res;
-            $this->produto->merge($con);
+            $this->produto->merge($con,false);
 
             $this->influencia_estoque = $x_est;
             $this->influencia_transito = $x_res;

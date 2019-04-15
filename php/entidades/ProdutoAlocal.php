@@ -79,6 +79,7 @@ class ProdutoAlocal {
         $p->id = $this->id;
         $p->codigo = $this->codigo;
         $p->nome = $this->nome;
+        $p->imagem = $this->imagem;
 
         return $p;
     }

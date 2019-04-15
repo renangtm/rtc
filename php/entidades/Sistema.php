@@ -13,7 +13,7 @@
  */
 class Sistema {
 
-    public static $ENDERECO = "http://192.168.0.17/novo_rtc_web/";
+    public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
 
     /*
      * porcentagem
@@ -519,6 +519,11 @@ class Sistema {
     public static function TT_CONFIRMACAO_PAGAMENTO($id_empresa) {
 
         return new TTConfirmacaoPagamento($id_empresa);
+    }
+    
+    public static function TT_VERIFICA_SUFRAMA($id_empresa) {
+
+        return new TTVerificaSuframa($id_empresa);
     }
 
     public static function TT_PROBLEMA_INTERNET($id_empresa) {
@@ -1619,7 +1624,7 @@ class Sistema {
 
             foreach ($value as $key2 => $produto) {
 
-                $unidade = $produto->quantidade_unidade;
+                $unidade = $produto->grade->gr[0];
                 if ($unidade === 0) {
                     $unidade = 1;
                 }

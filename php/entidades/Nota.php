@@ -44,7 +44,7 @@ class Nota {
     public $validar;
     public $baixa_total;
     public $id_pedido;
-    
+
     function __construct() {
 
         $this->id = 0;
@@ -68,7 +68,6 @@ class Nota {
         $this->baixa_total = 0;
         $this->finalidade = Nota::$NORMAL;
         $this->id_pedido = 0;
-        
     }
 
     public function igualaVencimento() {
@@ -262,9 +261,8 @@ class Nota {
                 $empresa->telefone = $telefone;
 
                 $campanhas[$id]->empresa = $empresa;
-            
+
                 $campanhas[$id] = $campanhas[$id]->getReduzida();
-                
             }
 
             $campanha = $campanhas[$id];
@@ -539,6 +537,7 @@ class Nota {
             $base = $this->empresa->getParametrosEmissao($con)->getComandoBase($con);
             $base->acao = "EMITIR";
             $base->pedido = $this->id;
+
             $base->operacao = CFOP::descricao($this->produtos[0]->cfop);
             $base->cfop = intval(Utilidades::removeMask($this->produtos[0]->cfop));
             $base->saida_entrada = $this->saida;
@@ -547,6 +546,9 @@ class Nota {
             $base->frete = 0;
             $base->frete_cif_fob = $this->frete_destinatario_remetente;
             $base->suframado = $this->cliente->suframado;
+            if ($base->suframado) {
+                $base->inscricao_suframa = $this->cliente->inscricao_suframa;
+            }
 
             $volumes = 0;
 
@@ -577,7 +579,10 @@ class Nota {
             $dest->telefone = $dest->telefone->numero;
 
             if (count($this->cliente->telefones) > 0) {
-                $dest->telefone = $this->cliente->telefones[0]->numero;
+                
+                $tel = new Telefone("11111111");
+                $dest->telefone = Utilidades::ifn($this->cliente->telefones[0]->numero."",$tel->numero);
+                
             }
 
             $dest->telefone = Utilidades::removeMask($dest->telefone);
@@ -599,7 +604,7 @@ class Nota {
             $trans->ie = Utilidades::removeMask($this->transportadora->inscricao_estadual);
             $trans->endereco = Utilidades::ifn($this->transportadora->endereco->rua, "nao cadastrada");
             $trans->municipio = Utilidades::ifn($this->transportadora->endereco->cidade->nome, "nao cadastrada");
-            $trans->estado = Utilidades::ifn($this->transportadora->endereco->cidade->estado->sigla, "nao cadastrada");
+            $trans->estado = $this->transportadora->endereco->cidade->estado->sigla;
 
             if ($trans->nome == "O MESMO" || $trans->nome == "FRETE FOB") {
 
@@ -642,15 +647,16 @@ class Nota {
                 $produto->ipi = $p->ipi;
 
                 $produto->reducao_base_calculo = 100 - $p->produto->categoria->base_calculo;
-                $produto->icms = ($p->base_calculo == 0) ? 0 : (($p->icms / $p->base_calculo) * 100);
+                $produto->icms = floor(($p->base_calculo == 0) ? 0 : (($p->icms / $p->base_calculo) * 100));
 
                 if (!$p->produto->categoria->icms_normal) {
                     $produto->cst200 = true;
                 }
 
-                if ($this->cliente->endereco->cidade->estado->id === $this->empresa->endereco->cidade->estado->id) {
+                if ($this->cliente->endereco->cidade->estado->id === $this->empresa->endereco->cidade->estado->id || $this->cliente->suframado) {
                     $produto->sem_icms = true;
                 }
+
 
                 $total += $p->quantidade * $p->valor_unitario;
 
