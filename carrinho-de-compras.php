@@ -126,7 +126,7 @@
                                                             <label for="">Tipo de Frete:</label><br>
                                                             <div class="custom-control custom-radio custom-control-inline" style="margin-left:30px;margin-top: 5px;">
                                                                 <input ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" type="radio" id="ra{{pedido.identificador}}" name="radio_{{pedido.identificador}}" ng-value="true" ng-change="atualizaCustosResetandoFrete(pedido)" ng-model="pedido.frete_incluso" class="custom-control-input">
-                                                                <label class="custom-control-label" for="ra{{pedido.identificador}}">Por conta da Empresa (CIF)</label>
+                                                                <label class="custom-control-label" for="ra{{pedido.identificador}}">Por conta do Fornecedor (CIF)</label>
                                                             </div>
                                                             <div class="custom-control custom-radio custom-control-inline" style="margin-left:30px;margin-top: 5px;">
                                                                 <input ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" type="radio" id="rb{{pedido.identificador}}" name="radio_{{pedido.identificador}}" ng-value="false" ng-change="atualizaCustosResetandoFrete(pedido)" ng-model="pedido.frete_incluso" class="custom-control-input">
