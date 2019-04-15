@@ -21,6 +21,8 @@ class CFOP {
     
     public static function descricao($cfop){
         
+        $cfop = str_replace(array("."), array(""), $cfop."");
+        
         if($cfop === self::$VENDA_DENTRO_ESTADO){
             return "Venda de mercadoria dentro do estado.";
         }else if($cfop === self::$VENDA_FORA_ESTADO){
