@@ -37,6 +37,8 @@ class TipoTarefa {
         $this->empresa = null;
         $this->observacao_padrao = "";
         $this->excluido = false;
+        $this->cargos = array();
+        
     }
     
     public function init($tarefa){

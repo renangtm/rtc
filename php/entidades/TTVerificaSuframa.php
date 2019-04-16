@@ -15,7 +15,7 @@ class TTVerificaSuframa extends TipoTarefa {
 
     function __construct($id_empresa) {
 
-        parent::__construct(23, $id_empresa);
+        parent::__construct(55, $id_empresa);
 
         $this->nome = "Verificar Suframa";
         $this->tempo_medio = 0.2;

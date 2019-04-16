@@ -537,7 +537,6 @@ class Nota {
             $base = $this->empresa->getParametrosEmissao($con)->getComandoBase($con);
             $base->acao = "EMITIR";
             $base->pedido = $this->id;
-
             $base->operacao = CFOP::descricao($this->produtos[0]->cfop);
             $base->cfop = intval(Utilidades::removeMask($this->produtos[0]->cfop));
             $base->saida_entrada = $this->saida;
@@ -571,7 +570,7 @@ class Nota {
             $dest->nome = Utilidades::ifn($this->cliente->razao_social, "sem nome");
             $dest->bairro = Utilidades::ifn($this->cliente->endereco->bairro, "nao cadastrado");
             $dest->logadouro = Utilidades::ifn($this->cliente->endereco->rua, "nao cadastrado");
-            $dest->numero = Utilidades::ifn($this->cliente->endereco->numero, "nao cadastrado");
+            $dest->numero = Utilidades::ifn($this->cliente->endereco->numero."", "nao cadastrado",1);
             $dest->municipio = Utilidades::ifn($this->cliente->endereco->cidade->nome, "sem cidade");
             $dest->cep = Utilidades::removeMask($this->cliente->endereco->cep->valor);
             $dest->pais = "Brasil";
@@ -810,7 +809,6 @@ class Nota {
         $ret = Utilidades::fromJson(Sistema::getMicroServicoJava('EmissorRTC', $endereco));
 
         if ($ret->sucesso) {
-            $this->cancelada = true;
             $this->merge($con);
             Logger::gerarLog($this, "Carta de corracao emitida na Sefaz: $correcao");
             return true;

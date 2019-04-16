@@ -727,6 +727,7 @@ class Sistema {
         }
 
         $cargos .= ")";
+        
 
         $usuarios = array();
         $ps = $con->getConexao()->prepare("SELECT usuario.id FROM usuario WHERE id_empresa=$empresa->id AND id_cargo IN $cargos");
@@ -736,6 +737,7 @@ class Sistema {
             $usuarios[] = $id;
         }
         $ps->close();
+        
 
         $in = "(0";
 
@@ -995,6 +997,7 @@ class Sistema {
 
         $default = Sistema::getTarefasFixas($empresa);
 
+      
         foreach ($default as $key => $value) {
 
             foreach ($tarefas as $key2 => $value2) {
@@ -1002,13 +1005,19 @@ class Sistema {
                 if ($value->id === $value2->id) {
 
                     $value->empresa = $value2->empresa;
-
+                    foreach($value2->cargos as $key3=>$value3){
+                        $value->cargos[] = $value3;
+                    }
+                    $value->prioridade=$value2->prioridade;
+                    $value->tempo_medio = $value2->tempo_medio;
+                    
                     $tarefas[$key2] = $value;
 
                     continue 2;
                 }
             }
 
+            
             $tarefas[] = $value;
         }
 
@@ -3610,6 +3619,17 @@ class Sistema {
         $cat->loja = false;
         return $cat;
     }
+    
+    public static function CATP_AGRICOLA_SUSP() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Agricola Suspenso";
+        $cat->id = 211;
+        $cat->base_calculo = 40;
+        $cat->parametros_agricolas = true;
+        $cat->loja = false;
+        return $cat;
+    }
 
     public static function CATP_AGRICOLA_ANUNCIANTE() {
 
@@ -3827,6 +3847,7 @@ class Sistema {
             $ret[] = Sistema::CATP_VETERINARIA();
             $ret[] = Sistema::CATP_INFORMATICA();
             $ret[] = Sistema::CATP_ADUBOS_FOLIARES();
+            $ret[] = Sistema::CATP_AGRICOLA_SUSP();
         } else {
 
             $ret[] = Sistema::CATP_AGRICOLA();
@@ -3847,6 +3868,7 @@ class Sistema {
             $ret[] = Sistema::CATP_VETERINARIA();
             $ret[] = Sistema::CATP_INFORMATICA();
             $ret[] = Sistema::CATP_ADUBOS_FOLIARES();
+            $ret[] = Sistema::CATP_AGRICOLA_SUSP();
         }
         if ($id < 0) {
             return $ret;
