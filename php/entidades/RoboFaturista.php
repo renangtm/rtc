@@ -41,7 +41,7 @@ class RoboFaturista {
         $empresas = Sistema::getEmpresas($con, 'empresa.rtc>=5');
         
         foreach($empresas as $key=>$empresa){
-            $notas = $empresa->getNotas($con, 0, 10,'nota.emissao_automatica=false && nota.emitida=false'); 
+            $notas = $empresa->getNotas($con, 0, 10,'nota.emissao_automatica=false AND nota.emitida=false'); 
             $in = "(0";
             foreach($notas as $key2=>$nota){
                 try{
@@ -50,7 +50,7 @@ class RoboFaturista {
                     }else if(!$nota->saida){
                         $nota->manifestar($con);
                     }
-                }catch(Exeption $ex){
+                }catch(Exception $ex){
                     
                 }
                 $in .= ",$nota->id";

@@ -419,7 +419,7 @@ class Pedido {
         return $total;
     }
 
-    private function gerarNotaPadrao() {
+    public function gerarNotaPadrao() {
 
         $this->parcelas = max($this->parcelas, 1);
 
@@ -714,10 +714,12 @@ class Pedido {
             }
         }
         $this->produtos = $np;
-
-        Logger::gerarLog($this, $this->status->nome);
-        $this->status->enviarEmails($this);
-
+        
+        if($inicial){
+            Logger::gerarLog($this, $this->status->nome);
+            $this->status->enviarEmails($this);
+        }
+        
         if ($this->status->nota && $this->id_nota == 0) {
 
             $nota = $this->gerarNotaPadrao();

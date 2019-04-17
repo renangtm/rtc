@@ -485,8 +485,6 @@ class Nota {
             throw new Exception("Nota ja esta manifestada");
         }
 
-
-
         $base = $this->empresa->getParametrosEmissao($con)->getComandoBase($con);
         $base->acao = "MANIFESTAR";
         $base->chave = $this->chave;
@@ -557,7 +555,7 @@ class Nota {
             }
 
             $base->volumes = $volumes;
-            $base->informacoes_adcionais = $this->empresa->observacao_padrao_nota . " " . $this->observacao;
+            $base->informacoes_adcionais = $this->observacao;
 
             if ($this->finalidade === Nota::$COMPLEMENTAR || $this->finalidade === Nota::$DEVOLUCAO) {
                 $base->chave_devolucao = $this->chave_devolucao;
@@ -717,9 +715,11 @@ class Nota {
         } else {
 
             $this->observacao .= ". Problema de emissao: $ret->mensagem";
-            $this->merge($con);
             Sistema::avisoDEVS("Falha emissao link XML: <a href='" . Sistema::$ENDERECO . "php/controler/" . $ret->falha . "'>LINK</a>");
             Logger::gerarLog($this, "Falha na emissao da nota, ficha $this->ficha");
+            
+            $this->merge($con);
+            
         }
 
         return $ret->mensagem;
