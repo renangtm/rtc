@@ -629,8 +629,7 @@ class Sistema {
         $cliente->merge($con);
 
         $tipo_tarefa = Sistema::TT_ANALISE_CREDITO($usuario->empresa->id);
-        $tarefas = $usuario->getTarefas($con, "tarefa.id_tipo_tarefa=$tipo_tarefa->id AND"
-                . " ((tarefa.tipo_entidade_relacionada='PED_$id_empresa' AND tarefa.id_entidade_relacionada=$id_pedido) "
+        $tarefas = $usuario->getTarefas($con,"((tarefa.tipo_entidade_relacionada='PED_$id_empresa' AND tarefa.id_entidade_relacionada=$id_pedido) "
                 . "OR (tarefa.tipo_entidade_relacionada='CLI' AND tarefa.id_entidade_relacionada=$id_cliente))");
 
         foreach ($tarefas as $key => $value) {
@@ -2107,7 +2106,7 @@ class Sistema {
 
         if ($empresa->cnpj->valor !== $cnpj_empresa->valor) {
 
-            $ps = $con->getConexao()->prepare("SELECT empresa.id FROM empresa INNER JOIN produto ON produto.id_empresa=empresa.id WHERE produto.id_logistica=$empresa->id AND empresa.cnpj='" . $cnpj_empresa->valor . "'");
+            $ps = $con->getConexao()->prepare("SELECT empresa.id FROM empresa INNER JOIN produto ON produto.id_empresa=empresa.id WHERE (produto.id_logistica=$empresa->id OR empresa.id=$empresa->id) AND empresa.cnpj='" . $cnpj_empresa->valor . "'");
             $ps->execute();
             $ps->bind_result($ide);
             if ($ps->fetch()) {
@@ -2122,9 +2121,20 @@ class Sistema {
         $escolhido = -1;
 
         $possiveis = array();
-
-        $cnpj_transportadora = new CNPJ($inf->transp->transporta->CNPJ);
-
+        
+        
+        $ccnpj = str_replace(array("-","."."/"), array("","",""),$inf->transp->transporta->CNPJ);
+        
+        if(isset($inf->transp->transporta->CPF)){
+            $ccnpj = str_replace(array("-","."."/"), array("","",""),$inf->transp->transporta->CPF);
+        }
+        
+        while(strlen($ccnpj) < 14){
+            $ccnpj .= "0";
+        }
+        
+        $cnpj_transportadora = new CNPJ($ccnpj);
+        
         $ps = $con->getConexao()->prepare("SELECT pedido_entrada.id FROM pedido_entrada INNER JOIN transportadora ON pedido_entrada.id_transportadora=transportadora.id WHERE transportadora.cnpj='" . $cnpj_transportadora->valor . "' AND pedido_entrada.id_empresa=$id_empresa AND id_status<=2");
         $ps->execute();
         $ps->bind_result($idt);
@@ -2132,15 +2142,17 @@ class Sistema {
             $possiveis[] = $idt;
         }
         $ps->close();
-
+        
         if (count($possiveis) == 0) {
 
             throw new Exception('Nao foi encontrado nenhum pedido de compra equivalente, com o CNPJ dessa transportadora');
         } else if (count($possiveis) == 1) {
 
             $escolhido = $possiveis[0];
+            
+            
         } else {
-
+            
             $in = "(-1";
             foreach ($possiveis as $key => $value) {
                 $in .= ",$value";
@@ -2215,7 +2227,8 @@ class Sistema {
         }
 
         $e = new Empresa($id_empresa, new ConnectionFactory());
-
+        
+        
         $pedido = $e->getPedidosEntrada($con, 0, 1, "pedido_entrada.id=$escolhido");
         $pedido = $pedido[0];
 

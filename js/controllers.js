@@ -2086,6 +2086,18 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
         $scope.carrinho = c.carrinho;
 
     })
+    
+    $scope.getTotal = function(pedido){
+        
+        var total = 0;
+        
+        for(var i=0;i<pedido.produtos.length;i++){
+            total += pedido.produtos[i].quantidade*pedido.produtos[i].valor_base;
+        }
+        
+        return total;
+        
+    }
 
     $scope.finalizarPedido = function (pedido) {
         pedido.status_finalizacao = {valor: "Aguarde... O Sistema esta fechando seu pedido", classe: "btn-primary", final: false};
@@ -3100,7 +3112,7 @@ rtc.controller("crtEntrada", function ($scope, sistemaService, uploadService) {
     $scope.arquivos = [];
 
     var buscarPedido = function (xml, i) {
-
+        
         sistemaService.getPedidoEntradaSemelhante(xml, function (p) {
 
             if (p.sucesso) {

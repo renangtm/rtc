@@ -34,6 +34,8 @@ class RegraTabela {
         
         $obj->cliente->cidade = $cidade->nome;
         
+        $obj->cliente->estado = $cidade->estado->sigla;
+        
         $obj->peso = $peso;
         
         $obj->valor = $valor;

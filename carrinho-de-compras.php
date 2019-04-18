@@ -119,7 +119,17 @@
                                     <div class="col-lg-10 col-sm-10 ml-auto">
                                         <table class="table table-clear">
                                             <tbody>
+                                                <tr>
+                                                    <td class="left">
+                                                        <div class="form-group">
+                                                            <label for="">Total:</label><br>
+                                                            <div class="custom-control custom-radio custom-control-inline" style="margin-left:30px;margin-top: 5px;">
+                                                                <strong>R$ {{getTotal(pedido)}}</strong>
+                                                            </div>
+                                                        </div>
+                                                    </td>
 
+                                                </tr>    
                                                 <tr>
                                                     <td class="left">
                                                         <div class="form-group">
