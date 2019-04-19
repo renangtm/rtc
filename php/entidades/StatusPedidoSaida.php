@@ -44,17 +44,12 @@ class StatusPedidoSaida {
     public function enviarEmails($pedido){
         
         if ($this->emailCliente !== "") {
-
             $html = Sistema::getHtml('visualizar-pedido-print', $pedido);
-
             $pedido->empresa->email->enviarEmail($pedido->cliente->email->filtro($this->emailCliente), "Pedido numero " . $pedido->id, $html);
-            
         } 
         
         if ($this->emailInterno !== "") {
-
             $html = Sistema::getHtml('visualizar-pedido-print', $pedido);
-
             $pedido->empresa->email->enviarEmail($pedido->empresa->email->filtro($this->emailInterno), "Pedido numero " . $pedido->id, $html);
         }
         

@@ -431,10 +431,10 @@ class Pedido {
         $nota->cancelada = false;
         $nota->forma_pagamento = $this->forma_pagamento;
         $nota->interferir_estoque = false;
-        
-        $nota->observacao = new OBS_NFE($this->empresa,$this);
+
+        $nota->observacao = new OBS_NFE($this->empresa, $this);
         $nota->observacao = $nota->observacao->getObs();
-        
+
         $nota->frete_destinatario_remetente = !$this->frete_incluso;
         $nota->transportadora = $this->transportadora;
 
@@ -475,7 +475,7 @@ class Pedido {
             if ($this->cliente->endereco->cidade->estado->sigla !== $this->empresa->endereco->cidade->estado->sigla) {
                 $pn->cfop = CFOP::$VENDA_FORA_ESTADO;
             }
-            if($this->cliente->suframado){
+            if ($this->cliente->suframado) {
                 $pn->cfop = CFOP::$ISENTO;
             }
             $pn->icms = $value->icms;
@@ -487,7 +487,7 @@ class Pedido {
             $pn->informacao_adicional = "Cl Risco: " . $value->produto->classe_risco . "."; //Verificar esse ponto tambem;
 
             if ($value->produto->sistema_lotes) {
-                $pn->informacao_adicional = "Validade: " . date("d/m/Y", $value->validade_minima/1000) . ".";
+                $pn->informacao_adicional = "Validade: " . date("d/m/Y", $value->validade_minima / 1000) . ".";
                 foreach ($value->retiradas as $key2 => $retirada) {
                     $pn->informacao_adicional .= "Lote: " . $retirada[0] . " - Qtd: " . $retirada[1];
                 }
@@ -518,6 +518,7 @@ class Pedido {
     }
 
     public function merge($con, $recursao = false) {
+
 
         $prods = $this->getProdutos($con);
 
@@ -577,7 +578,6 @@ class Pedido {
             if ($empresa === null) {
                 $empresa = $this->empresa;
             }
-
             $passar_direto = false;
             $analisar_credito = false;
             $divida = 0;
@@ -650,7 +650,7 @@ class Pedido {
                     $ps->execute();
                     $ps->close();
                 } else {
-                    
+
                     $emp = $this->empresa;
                     if ($this->logistica !== null) {
                         $emp = $this->logistica;
@@ -666,7 +666,7 @@ class Pedido {
                     Sistema::novaTarefaEmpresa($con, $t, $emp);
 
                     $this->status = Sistema::STATUS_SEPARACAO();
-                    
+
                     $ps = $con->getConexao()->prepare("UPDATE pedido SET data=data, id_status=" . $this->status->id . " WHERE id = $this->id");
                     $ps->execute();
                     $ps->close();
@@ -700,23 +700,28 @@ class Pedido {
             }
         }
 
-
         $np = array();
         $merged = array();
         foreach ($this->produtos as $key2 => $value2) {
             try {
+
                 $value2->merge($con);
                 $np[] = $value2;
                 $merged[] = $value2;
             } catch (Exception $ex) {
+
                 $this->status = $status_anterior;
                 $erro = $ex->getMessage() . ", produto cod: " . $value2->produto->id . ", estoque: " . $value2->produto->estoque . ", disponivel: " . $value2->produto->disponivel . ", quantidade: " . $value2->quantidade;
             }
         }
+
         $this->produtos = $np;
 
+
         Logger::gerarLog($this, $this->status->nome);
-        $this->status->enviarEmails($this);
+        if ($inicial) {
+            $this->status->enviarEmails($this);
+        }
 
         if ($this->status->nota && $this->id_nota == 0) {
 
@@ -740,7 +745,7 @@ class Pedido {
                 $getter = new Getter($this->logistica);
 
                 $nota_logistica_empresa = $this->gerarNotaPadrao();
-                
+
                 $l = $this->logistica;
                 $t = new Transportadora();
                 $t->razao_social = $l->nome;
@@ -754,12 +759,12 @@ class Pedido {
                 $t->nome_fantasia = $l->nome;
                 $t = $getter->getTransportadoraViaTransportadora($con, $t);
                 $nota_logistica_empresa->transportadora = $t;
-                
-                foreach($nota_logistica_empresa->produtos as $key=>$value){
+
+                foreach ($nota_logistica_empresa->produtos as $key => $value) {
                     $value->cfop = CFOP::$RETORNO_DEPOSITO;
                 }
-                
-                $nota_logistica_empresa->observacao = new OBS_NFE($this->logistica, $this,OBS_NFE::$RETORNO_REMESSA);
+
+                $nota_logistica_empresa->observacao = new OBSNFE($this->logistica, $this, OBSNFE::$RETORNO_REMESSA);
                 $nota_logistica_empresa->observacao = $nota_logistica_empresa->observacao->getObs();
                 $nota_logistica_empresa->empresa = $this->logistica;
                 $nota_logistica_empresa->cliente = $getter->getClienteViaEmpresa($con, $this->empresa);
@@ -821,7 +826,6 @@ class Pedido {
                     $value->delete($con);
                 }
             }
-            
         } else {
             $ps->close();
         }

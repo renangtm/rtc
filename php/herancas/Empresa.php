@@ -81,6 +81,7 @@ class Empresa {
     public $permissoes_especiais;
     public $cargos_fixos;
     public $tarefas_fixas;
+    public $observacao_padrao_nota;
 
     function __construct($id = 0, $cf = null) {
 
@@ -100,6 +101,7 @@ class Empresa {
         $this->endereco = new Endereco();
         $this->tipo_empresa = false;
         $this->permissoes_especiais = array();
+        $this->observacao_padrao_nota = "";
         $this->cargos_fixos = array(
             Empresa::CF_SEM_CARGO($this),
             Empresa::CF_DIRETOR($this),
@@ -123,15 +125,14 @@ class Empresa {
             "TT_FATURAMENTO",
             "TT_RASTREIO",
             "TT_SEPARACAO",
-            "TT_SOLICITACAO_COLETA",
-            "TT_VERIFICA_SUFRAMA"
+            "TT_SOLICITACAO_COLETA"
         );
 
         if ($id > 0 && $cf !== null) {
 
-            $ps = $cf->getConexao()->prepare("SELECT empresa.nome,empresa.cnpj,endereco.id,endereco.rua,endereco.bairro,endereco.cep,endereco.numero,cidade.id,cidade.nome,estado.id,estado.sigla,empresa.inscricao_estadual,empresa.tipo_empresa FROM empresa INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' INNER JOIN cidade ON cidade.id=endereco.id_cidade INNER JOIN estado ON estado.id=cidade.id_estado WHERE empresa.id=$id");
+            $ps = $cf->getConexao()->prepare("SELECT empresa.nome,empresa.cnpj,endereco.id,endereco.rua,endereco.bairro,endereco.cep,endereco.numero,cidade.id,cidade.nome,estado.id,estado.sigla,empresa.inscricao_estadual FROM empresa INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' INNER JOIN cidade ON cidade.id=endereco.id_cidade INNER JOIN estado ON estado.id=cidade.id_estado WHERE empresa.id=$id");
             $ps->execute();
-            $ps->bind_result($nome, $cnpj, $end_id, $end_rua, $end_bairro, $end_cep, $end_num, $cid_id, $cid_nom, $est_id, $est_sg, $emp_ie,$tipo_empresa);
+            $ps->bind_result($nome, $cnpj, $end_id, $end_rua, $end_bairro, $end_cep, $end_num, $cid_id, $cid_nom, $est_id, $est_sg, $emp_ie);
             if ($ps->fetch()) {
                 $this->nome = $nome;
                 $this->cnpj = new CNPJ($cnpj);
@@ -154,9 +155,6 @@ class Empresa {
                 $endereco->cidade = $cid;
 
                 $this->endereco = $endereco;
-                
-                $this->tipo_empresa = $tipo_empresa;
-                
             }
             $ps->close();
 
@@ -237,7 +235,7 @@ class Empresa {
             }
         }
 
-     
+
         $retorno = array();
 
         foreach ($tarefas as $key => $value) {
