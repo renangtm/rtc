@@ -419,7 +419,7 @@ class Pedido {
         return $total;
     }
 
-    private function gerarNotaPadrao() {
+    public function gerarNotaPadrao() {
 
         $this->parcelas = max($this->parcelas, 1);
 

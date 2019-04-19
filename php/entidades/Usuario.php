@@ -367,7 +367,7 @@ class Usuario {
     public function getTarefasSolicitadas($con) {
 
         $cm = new CacheManager(3600000);
-        
+
         $cache = $cm->getCache("tarefas_solicitadas_$this->id", false, true);
 
         if ($cache === null) {
@@ -460,7 +460,6 @@ class Usuario {
             }
             $ps->close();
             $cm->setCache("tarefas_solicitadas_$this->id", $cache, false, true);
-            
         }
         //---------------------------------------
 
@@ -532,6 +531,10 @@ class Usuario {
                     }
                 }
 
+                if ($t->tipo_tarefa === null) {
+                    continue;
+                }
+
                 $t->prioridade = $prioridade;
 
                 $t->intervalos_execucao = explode(";", $t->intervalos_execucao);
@@ -555,25 +558,25 @@ class Usuario {
             $t = $tmp[$id];
 
             if ($id_observacao !== null) {
-                
+
                 $obs = new ObservacaoTarefa();
                 $obs->id = $id_observacao;
                 $obs->momento = $momento_observacao;
                 $obs->porcentagem = $porcentagem_observacao;
                 $obs->observacao = $observacao;
-                
+
                 $t->observacoes[] = $obs;
             }
         }
 
         $ps->close();
 
-        foreach($tmp as $key=>$value){
-            if($value->tipo_tarefa !== null){
+        foreach ($tmp as $key => $value) {
+            if ($value->tipo_tarefa !== null) {
                 $value->tipo_tarefa->init($value);
             }
         }
-        
+
         //--------------------------------------
 
         foreach ($cache->arr_associados as $key => $usuario) {
@@ -591,7 +594,7 @@ class Usuario {
             }
 
             if (isset($tarefas[$usuario])) {
-                $t = Utilidades::copy($tarefas[$usuario]);
+                $t = $tarefas[$usuario];
             }
 
             $tarefas[$usuario] = IATarefas::aplicar($e, $a, $t);
@@ -683,6 +686,7 @@ class Usuario {
                 }
 
                 if ($t->tipo_tarefa === null) {
+                    echo $t->id . ",";
                     continue;
                 }
 
@@ -697,7 +701,7 @@ class Usuario {
                     $intervalos[] = array($k[0] + 0, $k[1] + 0);
                 }
                 $t->intervalos_execucao = $intervalos;
-               
+
                 $tarefas[$id] = $t;
             }
 

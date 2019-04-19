@@ -119,6 +119,7 @@ class IATarefas {
             if ($tempo_util > 0) {
                 $tarefa->calculado_previsao_util_conclusao = $tempo_util * (100 / max($tarefa->porcentagem_conclusao, 1));
             } else {
+               
                 $tarefa->calculado_previsao_util_conclusao = $tarefa->tipo_tarefa->tempo_medio * 60 * 60 * 1000;
             }
 

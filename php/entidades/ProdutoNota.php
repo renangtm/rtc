@@ -66,7 +66,10 @@ class ProdutoNota {
 
             $this->produto->estoque += $dif_res;
             $this->produto->disponivel += $dif_res;
-            $this->produto->merge($con);
+            
+            $ps = $con->getConexao()->prepare("UPDATE produto SET estoque=".$this->produto->estoque.", disponivel=".$this->produto->disponivel." WHERE id=".$this->produto->id);
+            $ps->execute();
+            $ps->close();
 
             $this->influencia_estoque = $x_res;
         }

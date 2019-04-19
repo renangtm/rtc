@@ -14,7 +14,7 @@
 class Virtual extends Empresa {
 
     public static function CF_ASSISTENTE_VIRTUAL_PROSPECCAO($emp) {
-        return new CargoFixo(12, "Assistente Virtual de Prospeccao", $emp);
+        return new CargoFixo(99, "Assistente Virtual de Prospeccao", $emp);
     }
 
     public static function CF_ASSISTENTE_VIRTUAL_RECEPCAO($emp) {

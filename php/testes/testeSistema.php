@@ -16,7 +16,7 @@ include('includes.php');
 class testeSistema extends PHPUnit_Framework_TestCase {
 
     private static $conexao;
-    
+
     public static function getConexao() {
 
         if (self::$conexao == null) {
@@ -40,113 +40,110 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         $pedido->merge($con);
         
         return;
-        
+
         $clientes = array();
-        $ps = $this->getConexao()->prepare("SELECT ENDPRI,NUMRES,BAIPRI,CODCLI FROM db_agrofauna.FATFCLIE");
+        $ps = $this->getConexao()->prepare("SELECT LIMCRE,DATAINCRED,DATAFNCRED,CODCLI FROM db_agrofauna.FATFCLIE WHERE DATAFNCRED IS NOT NULL AND DATAFNCRED>'2019-04-17'");
         $ps->execute();
-        $ps->bind_result($endereco,$numero,$bairro,$codigo);
-        while($ps->fetch()){
-            $clientes[$codigo] = array($endereco,$numero,$bairro);
+        $ps->bind_result($lc, $inicio, $fim, $codigo);
+        while ($ps->fetch()) {
+            $clientes[$codigo] = array($lc, $inicio, $fim);
         }
         $ps->close();
-        
+
         $rtc = array();
-        
-        $ps = $con->getConexao()->prepare("SELECT id,nome_fantasia FROM cliente WHERE id_empresa=1734");
-         $ps->execute();
-         $ps->bind_result($id,$nome);
-         while($ps->fetch()){
-             $e = explode('__',$nome);
-             if(count($e)!==2){
-                 continue;
-             }
-             $i = intval($e[1]);
-             $rtc[$i] = $id;
-         }
-         $ps->close();
-         
-         foreach($clientes as $codigo=>$dados){
-             
-             if(!isset($rtc[$codigo])){
-                 continue;
-             }
-             
-             $ps = $con->getConexao()->prepare("UPDATE endereco SET rua='".addslashes($dados[0])."',numero='".addslashes($dados[1]."")."',bairro='".addslashes($dados[2])."' WHERE tipo_entidade='CLI' AND id_entidade=".$rtc[$codigo]);
-             $ps->execute();
-             $ps->close();
-             
-         }
-         
+
+        $ps = $con->getConexao()->prepare("SELECT id,nome_fantasia FROM cliente WHERE id_empresa=1733");
+        $ps->execute();
+        $ps->bind_result($id, $nome);
+        while ($ps->fetch()) {
+            $e = explode('__', $nome);
+            if (count($e) !== 2) {
+                continue;
+            }
+            $i = intval($e[1]);
+            $rtc[$i] = $id;
+        }
+        $ps->close();
+
+        foreach ($clientes as $codigo => $dados) {
+
+            if (!isset($rtc[$codigo])) {
+                continue;
+            }
+
+            $ps = $con->getConexao()->prepare("UPDATE cliente SET limite_credito=" . $dados[0] . ",inicio_limite='" . $dados[1] . "',termino_limite='" . $dados[2] . "' WHERE id=" . $rtc[$codigo]);
+            $ps->execute();
+            $ps->close();
+        }
+
         return;
-        
-        $empresa = new Empresa(1733,$con);
-        $empresa_nova = new Empresa(1734,$con);
-        
-        $campanha = $empresa->getCotacoesEntrada($con, 0, 1,'cotacao_entrada.id=68');
+
+        $empresa = new Empresa(1733, $con);
+        $empresa_nova = new Empresa(1734, $con);
+
+        $campanha = $empresa->getCotacoesEntrada($con, 0, 1, 'cotacao_entrada.id=68');
         $campanha = $campanha[0];
         $campanha->enviar_email = false;
         $campanha->produtos = $campanha->getProdutos($con);
-        foreach($campanha->produtos as $key=>$value){
+        foreach ($campanha->produtos as $key => $value) {
             $value->passar_pedido = true;
         }
-        
+
         $campanha->formarPedido($con, null, 1);
-        
+
         return;
-        
-        $produtos = $empresa_nova->getProdutos($con, 0, 100000,"produto.id_logistica=1735");
+
+        $produtos = $empresa_nova->getProdutos($con, 0, 100000, "produto.id_logistica=1735");
         $ap = array();
-        foreach($produtos as $key=>$value){
+        foreach ($produtos as $key => $value) {
             $ap[$value->id_universal] = $value;
         }
-        
-        $campanhas = $empresa->getCampanhas($con, 0, 20,"","campanha.id DESC");
-        
-        foreach($campanhas as $key=>$campanha){
-            
+
+        $campanhas = $empresa->getCampanhas($con, 0, 20, "", "campanha.id DESC");
+
+        foreach ($campanhas as $key => $campanha) {
+
             $campanha->id = 0;
-            
-            foreach($campanha->produtos as $key2=>$produto){
-                
+
+            foreach ($campanha->produtos as $key2 => $produto) {
+
                 $produto->id = 0;
-                
-                if(!isset($ap[$produto->produto->id_universal])){
+
+                if (!isset($ap[$produto->produto->id_universal])) {
                     throw new Exception("Nao encontrado produto $produto->nome-$produto->id_universal");
                 }
-                
+
                 $produto->produto = $ap[$produto->produto->id_universal];
-                
             }
-            
+
             $campanha->empresa = $empresa_nova;
-            
+
             $campanha->merge($con);
-            
         }
-        
+
         return;
         $movs = array();
         $movs2 = array();
         $ps = $this->getConexao()->prepare("SELECT m.VALOR,m.ID_FICHA,(m.VALOR+m.JUROS-m.DESCONTO)*(CASE WHEN o.TIPO='C' THEN 1 ELSE -1 END) FROM AF_financeiro_filial17.MOVIMENTO m INNER JOIN AF_financeiro_filial17.OPERACAO o ON o.ID=m.ID_OPERACAO WHERE m.DATA >= '2018-10-15' AND m.DATA<'2019-02-27' AND m.ID_BANCO=99");
         $ps->execute();
-        $ps->bind_result($valor,$id_ficha,$soma);
-        while($ps->fetch()){
-            $movs[] = array($valor,$id_ficha,$soma);
+        $ps->bind_result($valor, $id_ficha, $soma);
+        while ($ps->fetch()) {
+            $movs[] = array($valor, $id_ficha, $soma);
         }
         $ps->close();
-        
+
         $ps = $con->getConexao()->prepare("SELECT m.valor,n.ficha FROM movimento m INNER JOIN vencimento v ON m.id_vencimento=v.id INNER JOIN nota n ON n.id=v.id_nota WHERE m.data >= '2018-10-15' AND m.data<'2019-02-27' AND m.id_banco=99");
         $ps->execute();
-        $ps->bind_result($valor,$id_ficha);
-        while($ps->fetch()){
-            $movs2[] = array($valor,$id_ficha);
+        $ps->bind_result($valor, $id_ficha);
+        while ($ps->fetch()) {
+            $movs2[] = array($valor, $id_ficha);
         }
         $ps->close();
         $valor = 0;
         $nao_achou = array();
-        foreach($movs as $key=>$value){
-            foreach($movs2 as $key2=>$value2){
-                if($value2[1]===$value[1] && abs($value2[0]-$value[0])<0.1){
+        foreach ($movs as $key => $value) {
+            foreach ($movs2 as $key2 => $value2) {
+                if ($value2[1] === $value[1] && abs($value2[0] - $value[0]) < 0.1) {
                     unset($movs2[$key2]);
                     continue 2;
                 }
@@ -154,9 +151,9 @@ class testeSistema extends PHPUnit_Framework_TestCase {
             $nao_achou[] = $value;
             $valor += $value[2];
         }
-        
+
         echo $valor;
-        
+
         return;
         $in = "(21,27409,26709,27019,27021,27023,27025,27027,27029,27031,27399,27401,27403,27405,27407";
 
@@ -169,7 +166,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         $in .= ")";
         $ps->close();
 
-        
+
         $pendentes = array();
         $ps = self::getConexao()->prepare("SELECT P_NRCONTRO FROM db_agrofauna_filial17.CADPED WHERE P_NRCONTRO NOT IN $in");
         $ps->execute();
@@ -181,7 +178,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         }
         $ps->close();
         $in .= ")";
-         
+
         $fichas = array();
         $ps = $con->getConexao()->prepare("SELECT ficha "
                 . "FROM nota "
@@ -191,11 +188,11 @@ class testeSistema extends PHPUnit_Framework_TestCase {
                 . "AND nota.data_emissao<='2019-02-27'GROUP BY ficha");
         $ps->execute();
         $ps->bind_result($ficha);
-        while($ps->fetch()){
+        while ($ps->fetch()) {
             $fichas[] = $ficha;
         }
         $ps->close();
-        
+
         echo Utilidades::toJson($fichas);
         return;
 

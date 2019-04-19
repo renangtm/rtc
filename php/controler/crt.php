@@ -2,9 +2,9 @@
 
 include("includes.php");
 
-function n($str){
-    $escapers = array("\\", "\n", "\r", "\t", "\x08", "\x0c","\f");
-    $replacements = array("/", "", "", "", "", "","");
+function n($str) {
+    $escapers = array("\\", "\n", "\r", "\t", "\x08", "\x0c", "\f", "\x1d", "\x1c", "\x13");
+    $replacements = array("/", "", "", "", "", "", "", "", "", "");
     $result = str_replace($escapers, $replacements, $str);
     return $result;
 }
