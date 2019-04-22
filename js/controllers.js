@@ -38,6 +38,19 @@ rtc.controller("crtEncomendas", function ($scope, encomendaService, logService, 
     $scope.valor_inicial = 0;
     $scope.valor_final = 0;
 
+    $scope.$watch(function(){
+        
+        if($scope.encomenda !== null){
+            for(var i=0;i<$scope.encomenda.produtos.length;i++){
+                var p = $scope.encomenda.produtos[i];
+                if(p.valor_base_inicial>p.valor_base_final){
+                    p.valor_base_inicial=p.valor_base_final;
+                }
+            }
+        }
+        
+    })
+
     $scope.produto = {};
 
     $scope.logs = [];
@@ -199,7 +212,7 @@ rtc.controller("crtEncomendas", function ($scope, encomendaService, logService, 
         baseService.merge(p, function (r) {
             if (r.sucesso) {
                 $scope.encomenda = r.o;
-                equalize($scope.pedido, "status", $scope.status_pedido);
+                equalize($scope.encomenda, "status", $scope.status_encomenda);
 
                 msg.alerta("Operacao efetuada com sucesso");
 
@@ -211,7 +224,7 @@ rtc.controller("crtEncomendas", function ($scope, encomendaService, logService, 
 
             } else {
                 $scope.encomenda = r.o;
-                equalize($scope.pedido, "status", $scope.status_pedido);
+                equalize($scope.encomenda, "status", $scope.status_encomenda);
                 msg.erro("Ocorreu o seguinte problema: " + r.mensagem);
             }
             $scope.carregando = false;
@@ -225,7 +238,7 @@ rtc.controller("crtEncomendas", function ($scope, encomendaService, logService, 
 
             $scope.encomenda = np.o;
 
-            equalize($scope.pedido, "status", $scope.status_pedido);
+            equalize($scope.encomenda, "status", $scope.status_encomenda);
 
         })
 

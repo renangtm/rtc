@@ -23,8 +23,8 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
 
         $r = new stdClass();
 
-        $r->codigoEmpresa = "1234567ASBNRTDIOASTE127UYU";
-        $r->chave = "ASDERTYUQISOERW1";
+        $r->codigoEmpresa = "J0476265100001320000031366";
+        $r->chave = "QL10ZP72VY83WO59";
         $r->pedido = $pedido->id . "";
         $r->urlRetorna = Sistema::$ENDERECO . "acompanhar-pedidos.php";
 
@@ -114,8 +114,7 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
 
             $r->observacao = "Boleto referente a pedido $pedido->id do RTC";
             $r->dataVencimento = $momento;
-
-
+            
             $codigo = Sistema::getMicroServicoJava('ItauShopline', addslashes(Utilidades::toJson($r)));
 
             $ret .= "<form action='https://shopline.itau.com.br/shopline/shopline.aspx' method='post' name='shopline_$i' target='SHOPLINE'>"

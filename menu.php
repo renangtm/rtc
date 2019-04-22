@@ -324,6 +324,11 @@ $possiveis[0] = $rtc;
                             <a class="nav-link" href="banners.php" ><button class="btn btn-warning" onmousedown="tutorial('Banners', 'Aqui vocï¿½ consegue confeccionar banners dinï¿½micos para entrar no RTC da sua empresa e serem enviados por email, esses banners tem que estar em formato HTML, e talvez precise de um profissional de marketing para criar esse HTML para vocï¿½, mas depois que ï¿½ criado o prï¿½prio sistema faz adaptaï¿½ï¿½es nele para servir para qualquer situaï¿½ï¿½o')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-image"></i>Banners</a>
                         </li>
                     <?php } ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_ENCOMENDA()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="encomenda.php" ><button class="btn btn-warning" onmousedown="tutorial('Encomenda', 'Aqui você pode gerenciar as encomendas realizadas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-clock"></i>Encomendas</a>
+                        </li>
+                    <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_BANCO()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="bancos.php" ><button class="btn btn-warning" onmousedown="tutorial('Bancos', 'Aqui vocï¿½ faz o cadastro de seus bancos com saldos, agencia, conta e outros dados, pode alterar e excluir tambï¿½m')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-calculator"></i>Bancos</a>

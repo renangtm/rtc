@@ -531,6 +531,10 @@ class Sistema {
         return new Permissao(51, "RelatorioFinanceiroReceber");
     }
 
+    public static function P_ENCOMENDA() {
+        return new Permissao(53, "Encomenda");
+    }
+
     public static function TT_COMPRA($id_empresa) {
 
         return new TTCompra($id_empresa);
@@ -2063,7 +2067,7 @@ class Sistema {
         global $obj;
         $obj = Sistema::encodeAll(Utilidades::copy($p));
 
-        $servico = realpath('../html_email');//trocar
+        $servico = realpath('../html_email'); //trocar
         $servico .= "/$nom.php";
 
         ob_start();
@@ -2924,7 +2928,7 @@ class Sistema {
 
     public static function getMicroServicoJava($nome, $parametros = null) {
 
-        $servico = realpath('../micro_servicos_java');
+        $servico = realpath('../micro_servicos_java');//trocar
         $servico .= "/$nome.jar";
         $comando = "java -jar \"$servico\"";
 
@@ -3562,7 +3566,8 @@ class Sistema {
                 Sistema::P_TAREFAS(),
                 Sistema::P_ACOMPANHA_TAREFAS()
                     )), new RTC(7, array(
-                Sistema::P_GERENCIADOR()
+                Sistema::P_GERENCIADOR(),
+                Sistema::P_ENCOMENDA()
         )));
     }
 

@@ -27,17 +27,19 @@ class testeSistema extends PHPUnit_Framework_TestCase {
     }
 
     public function testSimple() {
-
+        
+        date_default_timezone_set("America/Sao_Paulo");
         
         $con = new ConnectionFactory();
         
         $e = new Empresa(1734,$con);
-        $ce = $e->getEncomendas($con,0,100);
-        $encomenda = $ce[0];
+        $pedido = $e->getPedidos($con, 0, 1,'pedido.id=9324');
+        $pedido = $pedido[0];
+        $pedido->produtos = $pedido->getProdutos($con);
         
-        $produtos = $encomenda->getProdutos($con);
+        $fp = $pedido->forma_pagamento->aoFinalizarPedido($pedido);
         
-        echo Utilidades::toJson($produtos);
+        echo $fp;
         
         return;
         
