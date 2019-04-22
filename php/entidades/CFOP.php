@@ -20,29 +20,31 @@ class CFOP {
     public static $ISENTO = "6110";
     public static $VENDA_DENTRO_ESTADO_2 = "5102";
     public static $VENDA_FORA_ESTADO_2 = "5106";
-    
-    public static function descricao($cfop){
-        
-        $cfop = str_replace(array("."), array(""), $cfop."");
-        
-        if($cfop === self::$VENDA_DENTRO_ESTADO){
+    public static $TRANSFERENCIA = "6152";
+
+    public static function descricao($cfop) {
+
+        $cfop = str_replace(array("."), array(""), $cfop . "");
+
+        if ($cfop === self::$VENDA_DENTRO_ESTADO) {
             return "Venda de mercadoria dentro do estado.";
-        }else if($cfop === self::$VENDA_FORA_ESTADO){
+        } else if ($cfop === self::$VENDA_FORA_ESTADO) {
             return "Venda de mercadoria fora do estado";
-        }else if($cfop === self::$REMESSA_DEPOSITO){
+        } else if ($cfop === self::$REMESSA_DEPOSITO) {
             return "Remessa de mercadoria para deposito";
-        }else if($cfop === self::$RETORNO_DEPOSITO){
+        } else if ($cfop === self::$RETORNO_DEPOSITO) {
             return "Retorno de mercadoria para deposito";
-        }else if($cfop === self::$ISENTO){
+        } else if ($cfop === self::$ISENTO) {
             return "Venda de merc destinada a zona franca de manaus";
-        }else if($cfop === self::$VENDA_DENTRO_ESTADO_2){
+        } else if ($cfop === self::$VENDA_DENTRO_ESTADO_2) {
             return "Venda de mercadoria dentro do estado.";
-        }else if($cfop === self::$VENDA_FORA_ESTADO_2){
+        } else if ($cfop === self::$VENDA_FORA_ESTADO_2) {
             return "Venda de mercadoria fora do estado";
+        } else if ($cfop === self::$TRANSFERENCIA) {
+            return "Transferencia de mercadoria";
         }
-        
+
         return "Indefinido";
-        
     }
-    
+
 }

@@ -27,7 +27,7 @@ class Transportadora {
     public $habilitada;
     public $tabela;
     public $codigo;
-    
+
     function __construct() {
 
         $this->id = 0;
@@ -40,27 +40,34 @@ class Transportadora {
         $this->excluida = false;
         $this->habilitada = true;
         $this->codigo = 0;
-        
+    }
+
+    public function getReduzida() {
+
+        $tr = new TransportadoraReduzida();
+        $tr->id = $this->id;
+        $tr->cnpj = $this->cnpj;
+        $tr->razao_social = $this->razao_social;
+
+        return $tr;
     }
 
     public function merge($con) {
-        
-        if($this->codigo === 0){
-            
-            $ps = $con->getConexao()->prepare("SELECT IFNULL(MAX(codigo)+1,0) FROM transportadora WHERE id_empresa=".$this->empresa->id);
+
+        if ($this->codigo === 0) {
+
+            $ps = $con->getConexao()->prepare("SELECT IFNULL(MAX(codigo)+1,0) FROM transportadora WHERE id_empresa=" . $this->empresa->id);
             $ps->execute();
             $ps->bind_result($idn);
-            
-            if($ps->fetch()){
-                
+
+            if ($ps->fetch()) {
+
                 $this->codigo = $idn;
-                
             }
-            
+
             $ps->close();
-            
         }
-        
+
         if ($this->id == 0) {
 
             $ps = $con->getConexao()->prepare("INSERT INTO transportadora(razao_social,nome_fantasia,inscricao_estadual,despacho,id_empresa,cnpj,excluida,habilitada,codigo) VALUES('" . addslashes($this->razao_social) . "','" . addslashes($this->nome_fantasia) . "','" . addslashes($this->inscricao_estadual) . "',$this->despacho," . $this->empresa->id . ",'" . addslashes($this->cnpj->valor) . "',false," . ($this->habilitada ? "true" : "false") . ",$this->codigo)");
@@ -98,7 +105,7 @@ class Transportadora {
             $ps->execute();
             $ps->close();
         }
-        
+
         $tels = array();
         $ps = $con->getConexao()->prepare("SELECT id,numero FROM telefone WHERE tipo_entidade='TRA' AND id_entidade=$this->id AND excluido=false");
         $ps->execute();
@@ -125,13 +132,11 @@ class Transportadora {
         foreach ($this->telefones as $key => $value) {
 
             $value->merge($con);
-            
+
             $ps = $con->getConexao()->prepare("UPDATE telefone SET tipo_entidade='TRA', id_entidade=$this->id WHERE id=" . $value->id);
             $ps->execute();
             $ps->close();
-
         }
-        
     }
 
     public function setDocumentos($docs, $con) {

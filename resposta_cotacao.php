@@ -5,7 +5,7 @@
         <meta charset="utf-8">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?3"></script>
+        <script src="js/rtc.js?4"></script>
 
         <script>
 
@@ -24,9 +24,9 @@ $id_empresa = $_GET['empresa'];
 
         </script>
 
-        <script src="js/filters.js?3"></script>
-        <script src="js/services.js?3"></script>
-        <script src="js/controllers.js?3"></script>    
+        <script src="js/filters.js?4"></script>
+        <script src="js/services.js?4"></script>
+        <script src="js/controllers.js?4"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->

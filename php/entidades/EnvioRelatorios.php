@@ -37,14 +37,14 @@ class EnvioRelatorios {
     }
 
     public function executar($con) {
-        
+
         $data = 'CURRENT_DATE';
 
         $empresas = array();
         $empresas_inteiras = array();
         $ps = $con->getConexao()->prepare("SELECT id,tipo_empresa FROM empresa WHERE rtc>=6");
         $ps->execute();
-        $ps->bind_result($id,$tipo_empresa);
+        $ps->bind_result($id, $tipo_empresa);
         while ($ps->fetch()) {
             $e = Sistema::getEmpresa($tipo_empresa);
             $e->id = $id;
@@ -52,14 +52,21 @@ class EnvioRelatorios {
         }
         $ps->close();
 
+
+        $cpfs = array();
+        $tasks = array();
+        $envios = array();
+        $logos = array();
+
         foreach ($empresas as $key => $empresa) {
 
             $usuarios = $empresa->getUsuarios($con, 0, 10000);
 
             foreach ($usuarios as $key2 => $usuario) {
 
-                
-                $tarefas = $usuario->getTarefas($con, '(tarefa.porcentagem_conclusao < 100 OR (DATE(observacao.momento)=DATE('.$data.') AND MONTH(observacao.momento)=MONTH('.$data.') AND YEAR(observacao.momento)=YEAR('.$data.')))', '');
+                $cpf = md5($usuario->cpf->valor);
+
+                $tarefas = $usuario->getTarefas($con, '(tarefa.porcentagem_conclusao < 100 OR (DATE(observacao.momento)=DATE(' . $data . ') AND MONTH(observacao.momento)=MONTH(' . $data . ') AND YEAR(observacao.momento)=YEAR(' . $data . ')))', '');
 
                 if (count($tarefas) === 0) {
                     continue;
@@ -77,17 +84,21 @@ class EnvioRelatorios {
 
                 $tarefas = IATarefas::aplicar($expedientes, $ausencias, $tarefas);
 
-                $obj_relatorio = new stdClass();
-                $obj_relatorio->empresa = $empresa;
-                $obj_relatorio->usuario = $usuario;
-                $obj_relatorio->tarefas = $tarefas;
-
-                $html = Sistema::getHtml('relatorio_servico', $obj_relatorio);
 
                 $org = new Organograma($empresa);
                 $superiores = $org->getSuperiores($con, $usuario);
                 if ($superiores === null)
                     continue;
+
+                if (!isset($cpfs[$cpf])) {
+                    $cpfs[$cpf] = $usuario;
+                    $tasks[$cpf] = array();
+                    $envios[$cpf] = array();
+                }
+
+                foreach ($tarefas as $kk => $tt) {
+                    $tasks[$cpf][] = $tt;
+                }
 
                 $emails = "(-1";
                 foreach ($superiores as $key => $value) {
@@ -101,22 +112,36 @@ class EnvioRelatorios {
                 $ps->bind_result($id, $endereco, $senha);
                 $emails = array();
                 while ($ps->fetch()) {
-
                     $e = new Email($endereco);
                     $e->id = $id;
                     $e->senha = $senha;
-                    $emails[] = $e;
+                    $envios[$cpf][] = $e;
                 }
                 $ps->close();
-                
-                foreach ($emails as $key3 => $value3) {
 
-                    try {
-                        $empresa->email->enviarEmail($value3, 'Relatorio do ' . $usuario->nome, $html);
-                    } catch (Exception $ex) {
-
-                        Sistema::avisoDEVS('Erro no envio de email dos relatorios, ' . $ex->getMessage());
+                if (!isset($logos[$cpf])) {
+                    $logos[$cpf] = array($empresa, count($tarefas));
+                } else {
+                    if ($logos[$cpf][1] < count($tarefas)) {
+                        $logos[$cpf] = array($empresa, count($tarefas));
                     }
+                }
+            }
+        }
+
+
+        foreach ($cpfs as $cpf => $usuario) {
+            $obj_relatorio = new stdClass();
+            $obj_relatorio->empresa = $logos[$cpf][0];
+            $obj_relatorio->usuario = $usuario;
+            $obj_relatorio->tarefas = $tasks[$cpf];
+            $html = Sistema::getHtml('relatorio_servico', $obj_relatorio);
+            $emails = $envios[$cpf];
+            foreach ($emails as $key3 => $value3) {
+                try {
+                    $obj_relatorio->empresa->email->enviarEmail($value3, 'Relatorio do ' . $usuario->nome, $html);
+                } catch (Exception $ex) {
+                    Sistema::avisoDEVS('Erro no envio de email dos relatorios, ' . $ex->getMessage());
                 }
             }
         }

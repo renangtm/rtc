@@ -25,17 +25,17 @@ class Logistica extends Empresa {
     }
 
     public function getCountProdutoClienteLogistic($con, $filtro = "") {
-        
+
         $categorias = "(-1";
-        
+
         $c = Sistema::getCategoriaProduto(null);
-        
-        foreach($c as $key=>$value){
-            if($value->loja){
+
+        foreach ($c as $key => $value) {
+            if ($value->loja) {
                 $categorias .= ",$value->id";
             }
         }
-        
+
         $categorias .= ")";
 
         $sql = "SELECT COUNT(*) FROM (SELECT produto.id_universal "
@@ -63,7 +63,7 @@ class Logistica extends Empresa {
     }
 
     public function getProdutoClienteLogistic($con, $x1, $x2, $filtro = "", $ordem = "") {
-        
+
 
         $sql = "SELECT "
                 . "produto.id_universal, "
@@ -177,17 +177,17 @@ class Logistica extends Empresa {
 
     //@Override
     public function getCadastroLotesPendentes($con) {
-        
+
         $categorias = "(-1";
-        
+
         $c = Sistema::getCategoriaProduto(null);
-        
-        foreach($c as $key=>$value){
-            if($value->loja){
+
+        foreach ($c as $key => $value) {
+            if ($value->loja) {
                 $categorias .= ",$value->id";
             }
         }
-        
+
         $categorias .= ")";
 
         $sql = "SELECT "
@@ -599,6 +599,7 @@ class Logistica extends Empresa {
 
         $sql = "SELECT "
                 . "pedido.id,"
+                . "pedido.etapa_frete,"
                 . "pedido.id_logistica, "
                 . "pedido.id_nota, "
                 . "pedido.frete_inclusao, "
@@ -736,7 +737,7 @@ class Logistica extends Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pedido, $id_log, $id_nota, $frete_incluso, $data, $prazo, $parcelas, $id_status, $id_forma_pagamento, $frete, $obs, $id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $tra_id, $cod_tra, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_cli_id, $email_cli_end, $email_cli_senha, $email_tra_id, $email_tra_end, $email_tra_senha, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa_empresa, $tipo_empresa_empresa, $nome_empresa_empresa, $inscricao_empresa_empresa, $consigna_empresa, $aceitou_contrato_empresa, $juros_mensal_empresa, $cnpj_empresa, $numero_endereco_empresa, $id_endereco_empresa, $rua_empresa, $bairro_empresa, $cep_empresa, $id_cidade_empresa, $nome_cidade_empresa, $id_estado_empresa, $nome_estado_empresa, $id_email_empresa, $endereco_email_empresa, $senha_email_empresa, $id_telefone_empresa, $numero_telefone_empresa);
+        $ps->bind_result($id_pedido, $etapa_frete, $id_log, $id_nota, $frete_incluso, $data, $prazo, $parcelas, $id_status, $id_forma_pagamento, $frete, $obs, $id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $tra_id, $cod_tra, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_cli_id, $email_cli_end, $email_cli_senha, $email_tra_id, $email_tra_end, $email_tra_senha, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa_empresa, $tipo_empresa_empresa, $nome_empresa_empresa, $inscricao_empresa_empresa, $consigna_empresa, $aceitou_contrato_empresa, $juros_mensal_empresa, $cnpj_empresa, $numero_endereco_empresa, $id_endereco_empresa, $rua_empresa, $bairro_empresa, $cep_empresa, $id_cidade_empresa, $nome_cidade_empresa, $id_estado_empresa, $nome_estado_empresa, $id_email_empresa, $endereco_email_empresa, $senha_email_empresa, $id_telefone_empresa, $numero_telefone_empresa);
 
 
         $pedidos = array();
@@ -915,6 +916,7 @@ class Logistica extends Empresa {
             $pedido = new Pedido();
 
             $pedido->logistica = $id_log;
+            $pedido->etapa_frete = $etapa_frete;
             $pedido->cliente = $cliente;
             $pedido->data = $data;
             $pedido->empresa = $empresa;
@@ -1065,6 +1067,49 @@ class Logistica extends Empresa {
         }
 
         $ps->close();
+
+        $ids = "(-1";
+
+        foreach ($pedidos as $key => $value) {
+            $ids .= ",$value->id";
+        }
+
+        $ids .= ")";
+
+        $fretes = array();
+        $ps = $con->getConexao()->prepare("SELECT f.id,f.valor,f.ordem,f.id_pedido,f.id_empresa_destino,t.id,t.razao_social,t.cnpj FROM frete_intermediario f INNER JOIN transportadora t ON t.id=f.id_transportadora WHERE f.id_pedido IN $ids");
+        $ps->execute();
+        $ps->bind_result($id, $valor, $ordem, $id_pedido, $id_empresa_destino, $t_id, $t_nome, $t_cnpj);
+        while ($ps->fetch()) {
+            if (!isset($fretes[$id_pedido])) {
+                $fretes[$id_pedido] = array();
+            }
+            $f = new FreteIntermediario();
+            $f->id = $id;
+            $f->valor = $valor;
+            $f->ordem = $ordem;
+            $f->id_empresa_destino = $id_empresa_destino;
+
+            $t = new TransportadoraReduzida();
+            $t->id = $t_id;
+            $t->razao_social = $t_nome;
+            $t->cnpj = new CNPJ($t_cnpj);
+
+            $f->transportadora = $t;
+
+            $fretes[$id_pedido][] = $f;
+        }
+        $ps->close();
+
+        foreach ($pedidos as $key => $value) {
+            if (isset($fretes[$value->id])) {
+                $f = $fretes[$value->id];
+                foreach ($f as $key2 => $value2) {
+                    $value2->pedido = $value;
+                }
+                $value->fretes_intermediarios = $f;
+            }
+        }
 
         return $pedidos;
     }

@@ -144,7 +144,9 @@ class Email {
     }
 
     public function enviarEmail($destino, $titulo, $conteudo) {
-        
+
+        $con = new ConnectionFactory();
+
         $enderecos = $destino->getEnderecos();
 
         $th = $this->getEnderecos();
@@ -164,40 +166,56 @@ class Email {
             $servidor = array("mail." . $servidor, 587, true);
         }
 
-
-        $mail = new PHPMailer\PHPMailer\PHPMailer();
-
-        $mail->SMTPOptions = array(
-            'ssl' => array(
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-                'allow_self_signed' => true
-            )
-        );
-
-        $mail->IsSMTP();
-        $mail->SMTPAuth = true;
-        $mail->Host = $servidor[0];
-        $mail->Port = $servidor[1];
-
-        if ($servidor[2]) {
-            $mail->SMTPSecure = "tls";
-        }
-
-        $mail->IsHTML(true);
-
-        $mail->Username = $th; // your gmail address
-        $mail->Password = $this->senha; // password
-
-        $mail->Timeout = 5; // set the timeout (seconds)
-        $mail->SMTPKeepAlive = true; // don't close the connection between messages
-
         foreach ($enderecos as $key => $endereco) {
+
+            $hash = md5($conteudo . $endereco . $titulo);
+
+            $ps = $con->getConexao()->prepare("SELECT id FROM nao_repetencia_emails WHERE hash='$hash'");
+            $ps->execute();
+            if ($ps->fetch()) {
+                $ps->close();
+                continue;
+            } else {
+                $ps->close();
+            }
+
+            $mail = new PHPMailer\PHPMailer\PHPMailer();
+
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                )
+            );
+
+            $mail->IsSMTP();
+            $mail->SMTPAuth = true;
+            $mail->Host = $servidor[0];
+            $mail->Port = $servidor[1];
+
+            if ($servidor[2]) {
+                $mail->SMTPSecure = "tls";
+            }
+
+            $mail->IsHTML(true);
+
+            $mail->Username = $th; // your gmail address
+            $mail->Password = $this->senha; // password
+
+            $mail->Timeout = 5; // set the timeout (seconds)
+            $mail->SMTPKeepAlive = true; // don't close the connection between messages
+
+
             $mail->SetFrom($th);
             $mail->Subject = $titulo; // Mail subject
             $mail->Body = $conteudo;
             $mail->AddAddress($endereco);
             $mail->Send();
+
+            $ps = $con->getConexao()->prepare("INSERT INTO nao_repetencia_emails(hash) VALUES('$hash')");
+            $ps->execute();
+            $ps->close();
         }
     }
 

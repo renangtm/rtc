@@ -1,3 +1,297 @@
+rtc.controller("crtEncomendas", function ($scope, encomendaService, logService, baseService, produtoService, sistemaService, statusEncomendaService, clienteService, produtoEncomendaService) {
+
+    $scope.encomendas = createAssinc(encomendaService, 1, 10, 10);
+    $scope.encomendas.attList();
+    assincFuncs(
+            $scope.encomendas,
+            "encomenda",
+            ["id", "cliente.razao_social", "data", "id_status", "usuario.nome"]);
+
+    $scope.produtos = createAssinc(produtoService, 1, 3, 4);
+
+    assincFuncs(
+            $scope.produtos,
+            "produto",
+            ["codigo", "nome", "disponivel"], "filtroProdutos");
+
+    $scope.clientes = createAssinc(clienteService, 1, 3, 4);
+
+    $scope.carregando = false;
+
+    assincFuncs(
+            $scope.clientes,
+            "cliente",
+            ["codigo", "razao_social"], "filtroClientes");
+
+    $scope.status_encomenda = [];
+
+    $scope.status_excluido = {};
+
+    $scope.encomenda_novo = {};
+
+    $scope.produto_encomenda_novo = {};
+
+    $scope.encomenda = {};
+
+    $scope.qtd = 0;
+
+    $scope.valor_inicial = 0;
+    $scope.valor_final = 0;
+
+    $scope.produto = {};
+
+    $scope.logs = [];
+
+    $scope.getLogs = function () {
+
+        logService.getLogs($scope.encomenda, function (l) {
+
+            $scope.logs = l.logs;
+
+            $("#shLogs").children("*").each(function () {
+                $(this).remove();
+            })
+
+            for (var i = 0; i < $scope.logs.length; i++) {
+
+                var l = $scope.logs[i];
+
+                $("<div></div>").css('width', '100%').css('display', 'block').css('border-bottom', '1px solid Gray').css('padding', '10px').html(l.usuario + " / " + toTime(l.momento) + " / " + l.obs).appendTo($("#shLogs"));
+
+            }
+
+        })
+
+
+    }
+
+    $scope.getPesoBrutoEncomenda = function () {
+
+        var tot = 0;
+
+        for (var i = 0; i < $scope.encomenda.produtos.length; i++) {
+
+            var p = $scope.encomenda.produtos[i];
+
+            tot += (p.produto.peso_bruto) * p.quantidade;
+
+        }
+
+        return tot;
+
+    }
+
+    $scope.getTotalInicial = function () {
+
+        var tot = 0;
+
+        for (var i = 0; i < $scope.encomenda.produtos.length; i++) {
+
+            var p = $scope.encomenda.produtos[i];
+
+            tot += (p.valor_base_inicial + p.icms_inicial + p.ipi_inicial + p.juros_inicial) * p.quantidade;
+
+        }
+
+        return tot;
+
+    }
+
+    $scope.getTotalFinal = function () {
+
+        var tot = 0;
+
+        for (var i = 0; i < $scope.encomenda.produtos.length; i++) {
+
+            var p = $scope.encomenda.produtos[i];
+
+            tot += (p.valor_base_final + p.icms_final + p.ipi_final + p.juros_final) * p.quantidade;
+
+        }
+
+        return tot;
+
+    }
+
+
+    statusEncomendaService.getStatus(function (st) {
+
+        $scope.status_encomenda = st.status;
+
+    })
+
+    $scope.setCliente = function (cli) {
+
+        $scope.encomenda.cliente = cli;
+        $scope.atualizaCustos();
+
+    }
+
+    produtoEncomendaService.getProdutoEncomenda(function (pp) {
+
+        $scope.produto_encomenda_novo = pp.produto_encomenda;
+
+    })
+
+    $scope.addProduto = function (produto) {
+
+        if ($scope.valor_final < $scope.valor_inicial) {
+            msg.erro("O Valor final nao pode ser menor do que o inicial");
+            return;
+        }
+
+        var pp = angular.copy($scope.produto_encomenda_novo);
+        pp.produto = produto;
+        pp.pedido = $scope.encomenda;
+        pp.valor_base_inicial = $scope.valor_inicial;
+        pp.valor_base_final = $scope.valor_final;
+        pp.quantidade = $scope.qtd;
+
+        var a = false;
+        for (var j = 0; j < $scope.encomenda.produtos.length; j++) {
+
+            var pr = $scope.encomenda.produtos[j];
+
+            if (pr.produto.id === pp.produto.id) {
+
+                pr.quantidade += pp.quantidade;
+                a = true;
+                break;
+            }
+
+        }
+
+        if (!a) {
+            $scope.encomenda.produtos[$scope.encomenda.produtos.length] = pp;
+        }
+
+        $scope.atualizaCustos();
+
+    }
+
+    $scope.removerProduto = function (produto) {
+
+        remove($scope.pedido.produtos, produto);
+
+        $scope.atualizaCustos();
+
+    }
+
+    $scope.mergeEncomenda = function () {
+
+        $scope.carregando = true;
+
+        var p = $scope.encomenda;
+
+        if (p.cliente == null) {
+            msg.erro("Encomenda sem cliente.");
+            return;
+        }
+
+
+        if (p.status == null) {
+            msg.erro("Encomenda sem status.");
+            return;
+        }
+
+
+
+        baseService.merge(p, function (r) {
+            if (r.sucesso) {
+                $scope.encomenda = r.o;
+                equalize($scope.pedido, "status", $scope.status_pedido);
+
+                msg.alerta("Operacao efetuada com sucesso");
+
+                if (typeof $scope.encomenda["retorno"] !== 'undefined') {
+
+                    msg.alerta($scope.encomenda["retorno"]);
+
+                }
+
+            } else {
+                $scope.encomenda = r.o;
+                equalize($scope.pedido, "status", $scope.status_pedido);
+                msg.erro("Ocorreu o seguinte problema: " + r.mensagem);
+            }
+            $scope.carregando = false;
+        });
+
+    }
+
+    $scope.atualizaCustos = function () {
+
+        encomendaService.atualizarCustos($scope.encomenda, function (np) {
+
+            $scope.encomenda = np.o;
+
+            equalize($scope.pedido, "status", $scope.status_pedido);
+
+        })
+
+    }
+
+    encomendaService.getEncomenda(function (ped) {
+
+        ped.encomenda.produtos = [];
+        $scope.encomenda_novo = ped.encomenda;
+
+    })
+
+    $scope.novoEncomenda = function () {
+
+        $scope.setEncomenda(angular.copy($scope.encomenda_novo));
+
+    }
+
+    $scope.resetarEncomenda = function () {
+
+        $scope.encomenda.produtos = [];
+
+        $scope.produtos.attList();
+
+    }
+
+    $scope.setEncomenda = function (encomenda) {
+
+        $scope.encomenda = encomenda;
+
+        if ($scope.encomenda.id === 0) {
+
+            $scope.encomenda.status = $scope.status_encomenda[0];
+
+            return;
+
+        }
+
+        encomendaService.getProdutos(encomenda, function (p) {
+
+            encomenda.produtos = p.produtos;
+            equalize(encomenda, "status", $scope.status_encomenda);
+
+        })
+
+
+    }
+
+    $scope.deleteEncomenda = function () {
+        $scope.carregando = true;
+        baseService.delete($scope.encomenda, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.pedido = angular.copy($scope.novo_encomenda);
+                $scope.pedidos.attList();
+            } else {
+                msg.erro("Problema ao efetuar operacao");
+            }
+            $scope.carregando = false;
+        });
+
+    }
+
+
+})
+
 rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) {
 
 
@@ -37,7 +331,7 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
             if (r.sucesso) {
 
                 $scope.relatorio_separacao = r.relatorio;
-                
+
             } else {
 
                 msg.alerta(r.mensagem);
@@ -122,7 +416,7 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
 
                 msg.alerta("Finalizada com sucesso. Redirecionando a tela de tarefas");
                 window.location = "tarefas.php";
-                
+
             } else {
 
                 msg.erro("Ocorreu um problema ao finalizar a separa��o");
@@ -2068,6 +2362,7 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
     $scope.pedidos = [];
     $scope.pedido_contexto = null;
     $scope.carrinho = [];
+    $scope.carregando_frete = false;
     $scope.fretes = [];
     $scope.possibilidades = [
         {id: 0, prazo: 0, parcelas: 1, nome: "Antecipado"},
@@ -2086,17 +2381,68 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
         $scope.carrinho = c.carrinho;
 
     })
-    
-    $scope.getTotal = function(pedido){
-        
+
+    $scope.setFreteRedespacho = function (p) {
+
+        $('#mdlPossibilidadesFrete').modal('hide');
+
         var total = 0;
-        
-        for(var i=0;i<pedido.produtos.length;i++){
-            total += pedido.produtos[i].quantidade*pedido.produtos[i].valor_base;
+
+        for (var i = 0; i < p.length; i++) {
+            total += p[i].valor;
         }
-        
+
+        $scope.pedido_contexto.frete = parseFloat(total.toFixed(2));
+        $scope.pedido_contexto.transportadora = p[0].transportadora;
+        $scope.pedido_contexto.etapa_frete = 0;
+
+        var fretes_intermediarios = [];
+        for (var i = p.length - 2; i >= 1; i--) {
+            if ($scope.pedido_contexto.etapa_frete === 0) {
+                $scope.pedido_contexto.etapa_frete = i;
+            }
+            var fi = {
+                _classe: "FreteIntermediario",
+                id: 0,
+                ordem: i,
+                valor: p[i].valor,
+                transportadora: p[i].transportadora,
+                pedido: $scope.pedido_contexto,
+                id_empresa_destino: p[i].local.id,
+                local: p[i].local
+            };
+            fretes_intermediarios[fretes_intermediarios.length] = fi;
+        }
+
+        $scope.pedido_contexto.fretes_intermediarios = fretes_intermediarios;
+
+        $scope.atualizaCustos($scope.pedido_contexto);
+
+    }
+
+
+    $scope.getNomeLocal = function (ponto) {
+
+        if (typeof ponto.local['nome'] === 'undefined') {
+
+            return ponto.local.razao_social;
+
+        }
+
+        return ponto.local.nome;
+
+    }
+
+    $scope.getTotal = function (pedido) {
+
+        var total = 0;
+
+        for (var i = 0; i < pedido.produtos.length; i++) {
+            total += pedido.produtos[i].quantidade * (pedido.produtos[i].valor_base + pedido.produtos[i].frete + pedido.produtos[i].ipi + pedido.produtos[i].juros);
+        }
+
         return total;
-        
+
     }
 
     $scope.finalizarPedido = function (pedido) {
@@ -2180,6 +2526,8 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
 
 
         $scope.pedido_contexto.transportadora = frete.transportadora;
+        $scope.pedido_contexto.etapa_frete = 0;
+        $scope.pedido_contexto.fretes_intermediarios = [];
         $scope.pedido_contexto.frete = parseFloat(frete.valor.toFixed(2));
         $scope.atualizaCustos($scope.pedido_contexto);
 
@@ -2219,6 +2567,21 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
 
     }
 
+    $scope.getPossibilidadesFrete = function (pedido) {
+
+        $scope.carregando_frete = true;
+        $('#mdlPossibilidadesFrete').modal('show');
+        $scope.setPedidoContexto(pedido);
+
+        pedidoService.getPossibilidadesFreteIntermediario(pedido, function (f) {
+
+            pedido.possibilidades_frete = f.possibilidades;
+            $scope.carregando_frete = false;
+
+        })
+
+    }
+
     carrinhoService.getPedidosResultantes(function (r) {
 
         if (r.sucesso) {
@@ -2228,6 +2591,7 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
             for (var i = 0; i < r.pedidos.length; i++) {
 
                 r.pedidos[i].identificador = i;
+                r.pedidos[i].possibilidades_frete = [];
                 r.pedidos[i].status_finalizacao = null;
                 r.pedidos[i].prazo_parcelas = $scope.possibilidades[0];
                 equalize(r.pedidos[i], "forma_pagamento", r.pedidos[i].formas_pagamento);
@@ -2247,6 +2611,8 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
 
         pedido.transportadora = null;
         pedido.frete = 0;
+        pedido.etapa_frete = 0;
+        pedido.fretes_intermediarios = [];
 
         $scope.atualizaCustos(pedido);
 
@@ -2408,6 +2774,9 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
 
     }
 
+    $scope.locais = [];
+    $scope.produto = null;
+
     $scope.carregando_compra = true;
     $scope.loaders = [{id: 0}, {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}];
 
@@ -2416,8 +2785,8 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
         $scope.carregando_compra = false;
         sistemaService.getMesesValidadeCurta(function (p) {
             var produtos = [];
-            for(var i=0;i<elementos.length;i++){
-                for(var j=0;j<elementos[i].produtos.length;j++){
+            for (var i = 0; i < elementos.length; i++) {
+                for (var j = 0; j < elementos[i].produtos.length; j++) {
                     produtos[produtos.length] = elementos[i].produtos[j];
                 }
             }
@@ -2425,21 +2794,63 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
         });
     }
     $scope.produtos.attList();
-    
-    $scope.nl = function(grupo){
+
+    $scope.nl = function (grupo) {
         var m = 0;
-        for(var i=0;i<grupo.produtos.length;i++){
-            if(grupo.produtos[i].validades.length>m){
-                m=grupo.produtos[i].validades.length;
+        for (var i = 0; i < grupo.produtos.length; i++) {
+            if (grupo.produtos[i].validades.length > m) {
+                m = grupo.produtos[i].validades.length;
             }
         }
         var ret = [];
-        for(var i=0;i<m;i++){
+        for (var i = 0; i < m; i++) {
             ret[i] = i;
         }
         return ret;
     }
-    
+
+    $scope.maisLocais = function (produto) {
+
+        var principal = $scope.gp(produto);
+
+        $scope.produto = produto;
+
+        $scope.locais = [];
+
+        for (var i = 0; i < produto.produtos.length; i++) {
+            var p = produto.produtos[i];
+            if (p !== principal) {
+                for (var k = 0; k < p.validades.length; k++) {
+                    $scope.locais[$scope.locais.length] = {local: p, validade: p.validades[k]};
+                }
+            }
+        }
+
+        $("#locaisProduto").modal('show');
+
+    }
+
+    $scope.gp = function (grupo) {
+
+        var mi = -1;
+        var mq = 0;
+
+        for (var i = 0; i < grupo.produtos.length; i++) {
+            var produto = grupo.produtos[i];
+            var qtd = 0;
+            for (var k = 0; k < produto.validades.length; k++) {
+                qtd += produto.validades[k].quantidade;
+            }
+            if (mi < 0 || mq < qtd) {
+                mq = qtd;
+                mi = i;
+            }
+        }
+
+        return grupo.produtos[mi];
+
+    }
+
 
     $scope.qtd = 0;
     $scope.prod = null;
@@ -3112,7 +3523,7 @@ rtc.controller("crtEntrada", function ($scope, sistemaService, uploadService) {
     $scope.arquivos = [];
 
     var buscarPedido = function (xml, i) {
-        
+
         sistemaService.getPedidoEntradaSemelhante(xml, function (p) {
 
             if (p.sucesso) {
@@ -3410,7 +3821,7 @@ rtc.controller("crtNotas", function ($scope, logService, notaService, empresaSer
     assincFuncs(
             $scope.notas,
             "nota",
-            ["ficha", "numero", "transportadora.razao_social", "saida","id_pedido", "data_emissao", "cliente.razao_social", "fornecedor.nome"]);
+            ["ficha", "numero", "transportadora.razao_social", "saida", "id_pedido", "data_emissao", "cliente.razao_social", "fornecedor.nome"]);
 
     $scope.produtos = createAssinc(produtoService, 1, 3, 4);
 
@@ -4691,6 +5102,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
 
 
 })
+
 rtc.controller("crtAcompanharPedidos", function ($scope, acompanharPedidoService, logService, tabelaService, baseService, produtoService, sistemaService, statusPedidoSaidaService, formaPagamentoService, transportadoraService, clienteService, produtoPedidoService) {
 
     $scope.pedidos = createAssinc(acompanharPedidoService, 1, 10, 10);
@@ -5192,7 +5604,7 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
     }
 
     $scope.mergePedido = function () {
-        
+
         $scope.carregando = true;
 
         var p = $scope.pedido;
@@ -5411,26 +5823,26 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
             ic.find("#ruaCliente").html($scope.pedido.cliente.endereco.rua);
             ic.find("#cidadeCliente").html($scope.pedido.cliente.endereco.cidade.nome);
             ic.find("#emailCliente").html($scope.pedido.cliente.email.endereco);
-            
+
             ic.find("#transportadora").html($scope.pedido.transportadora.razao_social);
             ic.find("#cnpjTransportadora").html($scope.pedido.transportadora.cnpj.valor);
             ic.find("#emailTransportadora").html($scope.pedido.transportadora.email.endereco);
-            
+
             var telefones = "";
-            
-            for(var i=0;i<$scope.pedido.transportadora.telefones.length;i++){
-                telefones += $scope.pedido.transportadora.telefones[i].numero+"<br>";
+
+            for (var i = 0; i < $scope.pedido.transportadora.telefones.length; i++) {
+                telefones += $scope.pedido.transportadora.telefones[i].numero + "<br>";
             }
-            
+
             ic.find("#telefoneTransportadora").html(telefones);
-            ic.find("#cidadeEstadoTransportadora").html($scope.pedido.transportadora.endereco.cidade.nome+" - "+$scope.pedido.transportadora.endereco.cidade.estado.sigla);
+            ic.find("#cidadeEstadoTransportadora").html($scope.pedido.transportadora.endereco.cidade.nome + " - " + $scope.pedido.transportadora.endereco.cidade.estado.sigla);
 
             var suframa = "Sem suframa";
-            
-            if($scope.pedido.cliente.suframa){
+
+            if ($scope.pedido.cliente.suframa) {
                 suframa = $scope.pedido.cliente.inscricao_suframa;
             }
-            
+
             ic.find("#suframa").html(suframa);
 
             var p = ic.find("#produto").each(function () {
@@ -5573,7 +5985,7 @@ rtc.controller("crtListaPreco", function ($scope, listaPrecoProdutoService, list
     }
 
 })
-rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, produtoAlocalService,produtoService, sistemaService) {
+rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, produtoAlocalService, produtoService, sistemaService) {
 
     $scope.campanhas = createAssinc(campanhaService, 1, 10, 10);
     $scope.campanhas.attList();
@@ -6090,7 +6502,7 @@ rtc.controller("crtCampanhas", function ($scope, campanhaService, baseService, p
     $scope.getValidades = function (produto) {
 
         produtoService.getValidades($scope.meses_validade_curta, produto, function (validades) {
-            
+
             produto.validades = validades;
 
         })
@@ -7362,7 +7774,7 @@ rtc.controller("crtProdutos", function ($scope, fabricanteService, ativoService,
 
             } else {
 
-                msg.erro("Problema ao efetuar operacao. "+r.mensagem);
+                msg.erro("Problema ao efetuar operacao. " + r.mensagem);
 
             }
 

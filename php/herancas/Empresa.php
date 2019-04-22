@@ -65,6 +65,10 @@ class Empresa {
         return new CargoFixo(12, "Faturista", $emp);
     }
 
+    public static function CF_ASSISTENTE_COMPRAS($emp) {
+        return new CargoFixo(51, "Assistente Compras", $emp);
+    }
+
     public $id;
     public $nome;
     public $email;
@@ -115,7 +119,8 @@ class Empresa {
             Empresa::CF_SUPERVISOR_LOGISTICA($this),
             Empresa::CF_FINANCEIRO($this),
             Empresa::CF_SEPARADOR($this),
-            Empresa::CF_FATURISTA($this)
+            Empresa::CF_FATURISTA($this),
+            Empresa::CF_ASSISTENTE_COMPRAS($this)
         );
         $this->tarefas_fixas = array(
             "TT_ATIVIDADE_COMUM",
@@ -125,7 +130,8 @@ class Empresa {
             "TT_FATURAMENTO",
             "TT_RASTREIO",
             "TT_SEPARACAO",
-            "TT_SOLICITACAO_COLETA"
+            "TT_SOLICITACAO_COLETA",
+            "TT_COTACAO"
         );
 
         if ($id > 0 && $cf !== null) {
@@ -1321,10 +1327,329 @@ class Empresa {
         return $lotes;
     }
 
+    public function getEncomendas($con, $x1, $x2, $filtro = "", $ordem = "") {
+
+        $sql = "SELECT "
+                . "encomenda.id,"
+                . "UNIX_TIMESTAMP(encomenda.data)*1000, "
+                . "encomenda.prazo, "
+                . "encomenda.parcelas, "
+                . "encomenda.id_status, "
+                . "encomenda.observacoes, "
+                . "cliente.id,"
+                . "cliente.codigo, "
+                . "cliente.razao_social, "
+                . "cliente.nome_fantasia, "
+                . "cliente.limite_credito, "
+                . "UNIX_TIMESTAMP(cliente.inicio_limite)*1000, "
+                . "UNIX_TIMESTAMP(cliente.termino_limite)*1000, "
+                . "cliente.pessoa_fisica, "
+                . "cliente.cpf, "
+                . "cliente.cnpj, "
+                . "cliente.rg, "
+                . "cliente.inscricao_estadual, "
+                . "cliente.suframado, "
+                . "cliente.inscricao_suframa, "
+                . "categoria_cliente.id, "
+                . "categoria_cliente.nome, "
+                . "endereco_cliente.id, "
+                . "endereco_cliente.rua, "
+                . "endereco_cliente.numero, "
+                . "endereco_cliente.bairro, "
+                . "endereco_cliente.cep, "
+                . "cidade_cliente.id, "
+                . "cidade_cliente.nome, "
+                . "estado_cliente.id, "
+                . "estado_cliente.sigla, "
+                . "usuario.id, "
+                . "usuario.nome, "
+                . "usuario.login, "
+                . "usuario.senha, "
+                . "usuario.cpf, "
+                . "endereco_usuario.id, "
+                . "endereco_usuario.rua, "
+                . "endereco_usuario.numero, "
+                . "endereco_usuario.bairro, "
+                . "endereco_usuario.cep, "
+                . "cidade_usuario.id, "
+                . "cidade_usuario.nome, "
+                . "estado_usuario.id, "
+                . "estado_usuario.sigla,"
+                . "email_cliente.id,"
+                . "email_cliente.endereco,"
+                . "email_cliente.senha, "
+                . "email_usu.id, "
+                . "email_usu.endereco,"
+                . "email_usu.senha "
+                . "FROM encomenda "
+                . "INNER JOIN cliente ON cliente.id=encomenda.id_cliente "
+                . "INNER JOIN endereco endereco_cliente ON endereco_cliente.id_entidade=cliente.id AND endereco_cliente.tipo_entidade='CLI' "
+                . "INNER JOIN cidade cidade_cliente ON endereco_cliente.id_cidade=cidade_cliente.id "
+                . "INNER JOIN estado estado_cliente ON estado_cliente.id=cidade_cliente.id_estado "
+                . "INNER JOIN usuario ON usuario.id=encomenda.id_usuario "
+                . "INNER JOIN endereco endereco_usuario ON endereco_usuario.id_entidade=usuario.id AND endereco_usuario.tipo_entidade='USU' "
+                . "INNER JOIN cidade cidade_usuario ON endereco_usuario.id_cidade=cidade_usuario.id "
+                . "INNER JOIN estado estado_usuario ON estado_usuario.id=cidade_usuario.id_estado "
+                . "INNER JOIN categoria_cliente ON cliente.id_categoria=categoria_cliente.id "
+                . "INNER JOIN email email_cliente ON email_cliente.id_entidade=cliente.id AND email_cliente.tipo_entidade='CLI' "
+                . "INNER JOIN email email_usu ON email_usu.id_entidade=usuario.id AND email_usu.tipo_entidade='USU' "
+                . "WHERE encomenda.id_empresa = $this->id AND encomenda.excluida = false ";
+
+        if ($filtro != "") {
+
+            $sql .= "AND $filtro ";
+        }
+
+        if ($ordem != "") {
+
+            $sql .= "ORDER BY $ordem ";
+        }
+
+        $sql .= "LIMIT $x1, " . ($x2 - $x1);
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id_encomenda, $data, $prazo, $parcelas, $id_status, $obs, $id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_cli_id, $email_cli_end, $email_cli_senha, $email_usu_id, $email_usu_end, $email_usu_senha);
+
+
+        $encomendas = array();
+        $usuarios = array();
+        $clientes = array();
+
+        while ($ps->fetch()) {
+
+            $cliente = new Cliente();
+            $cliente->id = $id_cliente;
+            $cliente->codigo = $cod_cli;
+            $cliente->cnpj = new CNPJ($cnpj);
+            $cliente->cpf = new CPF($cpf);
+            $cliente->rg = new RG($rg);
+            $cliente->pessoa_fisica = $pessoa_fisica == 1;
+            $cliente->nome_fantasia = $nome_fantasia_cliente;
+            $cliente->razao_social = $nome_cliente;
+            $cliente->empresa = $this;
+            $cliente->email = new Email($email_cli_end);
+            $cliente->email->id = $email_cli_id;
+            $cliente->email->senha = $email_cli_senha;
+            $cliente->categoria = new CategoriaCliente();
+            $cliente->categoria->id = $cat_id;
+            $cliente->categoria->nome = $cat_nome;
+            $cliente->inicio_limite = $inicio;
+            $cliente->termino_limite = $fim;
+            $cliente->limite_credito = $limite;
+            $cliente->inscricao_suframa = $i_suf;
+            $cliente->suframado = $suf == 1;
+            $cliente->empresa = $this;
+            $cliente->inscricao_estadual = $ie;
+
+            $end = new Endereco();
+            $end->id = $end_cli_id;
+            $end->bairro = $end_cli_bairro;
+            $end->cep = new CEP($end_cli_cep);
+            $end->numero = $end_cli_numero;
+            $end->rua = $end_cli_rua;
+
+            $end->cidade = new Cidade();
+            $end->cidade->id = $cid_cli_id;
+            $end->cidade->nome = $cid_cli_nome;
+
+            $end->cidade->estado = new Estado();
+            $end->cidade->estado->id = $est_cli_id;
+            $end->cidade->estado->sigla = $est_cli_nome;
+
+            $cliente->endereco = $end;
+
+            if (!isset($clientes[$cliente->id])) {
+
+                $clientes[$cliente->id] = array();
+            }
+
+            $clientes[$cliente->id][] = $cliente;
+
+            $usuario = new Usuario();
+
+            $usuario->cpf = new CPF($cpf_usu);
+            $usuario->email = new Email($email_usu_end);
+            $usuario->email->id = $email_usu_id;
+            $usuario->email->senha = $email_usu_senha;
+            $usuario->empresa = $this;
+            $usuario->id = $id_usu;
+            $usuario->login = $login_usu;
+            $usuario->senha = $senha_usu;
+            $usuario->nome = $nome_usu;
+            $usuario->empresa = $this;
+
+            $end = new Endereco();
+            $end->id = $end_usu_id;
+            $end->bairro = $end_usu_bairro;
+            $end->cep = new CEP($end_usu_cep);
+            $end->numero = $end_usu_numero;
+            $end->rua = $end_usu_numero;
+
+            $end->cidade = new Cidade();
+            $end->cidade->id = $cid_usu_id;
+            $end->cidade->nome = $cid_usu_nome;
+
+            $end->cidade->estado = new Estado();
+            $end->cidade->estado->id = $est_usu_id;
+            $end->cidade->estado->sigla = $est_usu_nome;
+
+            $usuario->endereco = $end;
+
+            if (!isset($usuarios[$usuario->id])) {
+
+                $usuarios[$usuario->id] = array();
+            }
+
+            $usuarios[$usuario->id][] = $usuario;
+
+
+            $encomenda = new Encomenda();
+
+            $encomenda->cliente = $cliente;
+            $encomenda->data = $data;
+            $encomenda->empresa = $this;
+            $encomenda->id = $id_encomenda;
+            $encomenda->observacoes = $obs;
+            $encomenda->parcelas = $parcelas;
+            $encomenda->prazo = $prazo;
+
+            $status = Sistema::getStatusEncomenda();
+
+            foreach ($status as $key => $st) {
+                if ($st->id == $id_status) {
+                    $encomenda->status = $st;
+                    break;
+                }
+            }
+
+            $encomenda->usuario = $usuario;
+
+            $encomendas[] = $encomenda;
+        }
+
+        $ps->close();
+
+        $in_usu = "-1";
+        $in_cli = "-1";
+
+        foreach ($clientes as $id => $cliente) {
+            $in_cli .= ",";
+            $in_cli .= $id;
+        }
+
+        foreach ($usuarios as $id => $usuario) {
+            $in_usu .= ",";
+            $in_usu .= $id;
+        }
+
+        $ps = $con->getConexao()->prepare("SELECT telefone.id_entidade, telefone.tipo_entidade, telefone.id, telefone.numero FROM telefone WHERE (telefone.id_entidade IN ($in_cli) AND telefone.tipo_entidade='CLI') OR (telefone.id_entidade IN ($in_usu) AND telefone.tipo_entidade='USU') AND telefone.excluido = false");
+        $ps->execute();
+        $ps->bind_result($id_entidade, $tipo_entidade, $id, $numero);
+        while ($ps->fetch()) {
+
+            $v = $clientes;
+            if ($tipo_entidade == 'USU') {
+                $v = $usuarios;
+            }
+
+            $telefone = new Telefone($numero);
+            $telefone->id = $id;
+
+            foreach ($v[$id_entidade] as $key => $ent) {
+
+                $ent->telefones[] = $telefone;
+            }
+        }
+        $ps->close();
+
+        foreach ($usuarios as $key => $value) {
+            foreach ($value as $key2 => $value2) {
+                $value2->permissoes = Sistema::getPermissoes($value2->empresa);
+            }
+        }
+
+        $ps = $con->getConexao()->prepare("SELECT id_usuario, id_permissao,incluir,deletar,alterar,consultar FROM usuario_permissao WHERE id_usuario IN ($in_usu)");
+        $ps->execute();
+        $ps->bind_result($id_usuario, $id_permissao, $incluir, $deletar, $alterar, $consultar);
+
+        while ($ps->fetch()) {
+
+            foreach ($usuarios[$id_usuario] as $key => $usu) {
+
+                $permissoes = $usu->permissoes;
+
+                $p = null;
+
+                foreach ($permissoes as $key => $perm) {
+                    if ($perm->id == $id_permissao) {
+                        $p = $perm;
+                        break;
+                    }
+                }
+
+                if ($p == null) {
+
+                    continue;
+                }
+
+                $p->alt = $alterar == 1;
+                $p->in = $incluir == 1;
+                $p->del = $deletar == 1;
+                $p->cons = $consultar == 1;
+            }
+        }
+
+        $ps->close();
+
+        return $encomendas;
+    }
+
+    public function getCountEncomendas($con, $filtro = "") {
+
+        $sql = "SELECT COUNT(*) "
+                . "FROM encomenda "
+                . "INNER JOIN cliente ON cliente.id=encomenda.id_cliente "
+                . "INNER JOIN endereco endereco_cliente ON endereco_cliente.id_entidade=cliente.id AND endereco_cliente.tipo_entidade='CLI' "
+                . "INNER JOIN cidade cidade_cliente ON endereco_cliente.id_cidade=cidade_cliente.id "
+                . "INNER JOIN estado estado_cliente ON estado_cliente.id=cidade_cliente.id_estado "
+                . "INNER JOIN usuario ON usuario.id=encomenda.id_usuario "
+                . "INNER JOIN endereco endereco_usuario ON endereco_usuario.id_entidade=usuario.id AND endereco_usuario.tipo_entidade='USU' "
+                . "INNER JOIN cidade cidade_usuario ON endereco_usuario.id_cidade=cidade_usuario.id "
+                . "INNER JOIN estado estado_usuario ON estado_usuario.id=cidade_usuario.id_estado "
+                . "INNER JOIN categoria_cliente ON cliente.id_categoria=categoria_cliente.id "
+                . "INNER JOIN email email_cliente ON email_cliente.id_entidade=cliente.id AND email_cliente.tipo_entidade='CLI' "
+                . "INNER JOIN email email_usu ON email_usu.id_entidade=usuario.id AND email_usu.tipo_entidade='USU' "
+                . "WHERE encomenda.id_empresa = $this->id AND encomenda.excluida=false ";
+
+        if ($filtro != "") {
+
+            $sql .= " AND $filtro ";
+        }
+
+        $ps = $con->getConexao()->prepare($sql);
+
+        $ps->execute();
+
+        $ps->bind_result($qtd);
+
+        if ($ps->fetch()) {
+
+            $ps->close();
+
+            return $qtd;
+        }
+
+        $ps->close();
+
+        return 0;
+    }
+
     public function getPedidos($con, $x1, $x2, $filtro = "", $ordem = "") {
 
         $sql = "SELECT "
                 . "pedido.id,"
+                . "pedido.etapa_frete,"
                 . "pedido.id_logistica, "
                 . "pedido.id_nota, "
                 . "pedido.frete_inclusao, "
@@ -1433,7 +1758,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pedido, $id_log, $id_nota, $frete_incluso, $data, $prazo, $parcelas, $id_status, $id_forma_pagamento, $frete, $obs, $id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $tra_id, $cod_tra, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_cli_id, $email_cli_end, $email_cli_senha, $email_tra_id, $email_tra_end, $email_tra_senha, $email_usu_id, $email_usu_end, $email_usu_senha);
+        $ps->bind_result($id_pedido, $etapa_frete, $id_log, $id_nota, $frete_incluso, $data, $prazo, $parcelas, $id_status, $id_forma_pagamento, $frete, $obs, $id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $tra_id, $cod_tra, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_cli_id, $email_cli_end, $email_cli_senha, $email_tra_id, $email_tra_end, $email_tra_senha, $email_usu_id, $email_usu_end, $email_usu_senha);
 
 
         $pedidos = array();
@@ -1574,6 +1899,7 @@ class Empresa {
             $pedido->data = $data;
             $pedido->empresa = $this;
             $pedido->id_nota = $id_nota;
+            $pedido->etapa_frete = $etapa_frete;
 
             $formas_pagamento = Sistema::getFormasPagamento();
 
@@ -1721,6 +2047,50 @@ class Empresa {
 
         $ps->close();
 
+
+        $ids = "(-1";
+
+        foreach ($pedidos as $key => $value) {
+            $ids .= ",$value->id";
+        }
+
+        $ids .= ")";
+
+        $fretes = array();
+        $ps = $con->getConexao()->prepare("SELECT f.id,f.valor,f.ordem,f.id_pedido,f.id_empresa_destino,t.id,t.razao_social,t.cnpj FROM frete_intermediario f INNER JOIN transportadora t ON t.id=f.id_transportadora WHERE f.id_pedido IN $ids");
+        $ps->execute();
+        $ps->bind_result($id, $valor, $ordem, $id_pedido, $id_empresa_destino, $t_id, $t_nome, $t_cnpj);
+        while ($ps->fetch()) {
+            if (!isset($fretes[$id_pedido])) {
+                $fretes[$id_pedido] = array();
+            }
+            $f = new FreteIntermediario();
+            $f->id = $id;
+            $f->valor = $valor;
+            $f->ordem = $ordem;
+            $f->id_empresa_destino = $id_empresa_destino;
+
+            $t = new TransportadoraReduzida();
+            $t->id = $t_id;
+            $t->razao_social = $t_nome;
+            $t->cnpj = new CNPJ($t_cnpj);
+
+            $f->transportadora = $t;
+
+            $fretes[$id_pedido][] = $f;
+        }
+        $ps->close();
+
+        foreach ($pedidos as $key => $value) {
+            if (isset($fretes[$value->id])) {
+                $f = $fretes[$value->id];
+                foreach ($f as $key2 => $value2) {
+                    $value2->pedido = $value;
+                }
+                $value->fretes_intermediarios = $f;
+            }
+        }
+
         return $pedidos;
     }
 
@@ -1858,12 +2228,12 @@ class Empresa {
             $sql .= "ORDER BY $ordem ";
         }
 
-        
+
         $campanhas = array();
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_pro, $cod_pro, $locais, $id_uni, $img_prod, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $gr, $uni, $ncm, $nome, $ativo, $conc, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone,$estoque,$disponivel,$transito,$sistema_lotes);
+        $ps->bind_result($id, $camp_nome, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_pro, $cod_pro, $locais, $id_uni, $img_prod, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $gr, $uni, $ncm, $nome, $ativo, $conc, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone, $estoque, $disponivel, $transito, $sistema_lotes);
 
 
 
@@ -2017,7 +2387,7 @@ class Empresa {
 
             $sql .= "AND $filtro ";
         }
-        
+
         $ps = $con->getConexao()->prepare($sql);
 
         $ps->execute();
@@ -2734,7 +3104,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $id_email_cliente, $end_email_cliente, $senh_email_cliente, $id_for, $cod_for, $nom_for, $cnpj_for, $hab_for, $ie_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for, $tra_id, $cod_tra, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_email_tra, $end_email_tra, $sen_email_tra, $id_nf, $sai_nf, $cha_nf, $obs_nf, $id_pag_nf, $dt_nf, $nf_inf_est, $fdr, $emitida, $danfe, $xml, $numero, $ficha, $cancelada, $protocolo, $baixa_total,$id_pedido);
+        $ps->bind_result($id_cliente, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $id_email_cliente, $end_email_cliente, $senh_email_cliente, $id_for, $cod_for, $nom_for, $cnpj_for, $hab_for, $ie_for, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for, $tra_id, $cod_tra, $tra_nome, $tra_nome_fantasia, $tra_despacho, $tra_cnpj, $tra_habilitada, $tra_ie, $end_tra_id, $end_tra_rua, $end_tra_numero, $end_tra_bairro, $end_tra_cep, $cid_tra_id, $cid_tra_nome, $est_tra_id, $est_tra_nome, $id_email_tra, $end_email_tra, $sen_email_tra, $id_nf, $sai_nf, $cha_nf, $obs_nf, $id_pag_nf, $dt_nf, $nf_inf_est, $fdr, $emitida, $danfe, $xml, $numero, $ficha, $cancelada, $protocolo, $baixa_total, $id_pedido);
 
         while ($ps->fetch()) {
 
@@ -3825,25 +4195,24 @@ class Empresa {
 
         return 0;
     }
-    
+
     public function getCountProdutosAlocais($con, $filtro = "") {
 
         $sql = "SELECT COUNT(*) FROM (SELECT * FROM produto GROUP BY produto.codigo,produto.id_empresa) produto WHERE produto.id_empresa=$this->id AND produto.excluido=false ";
-        
-        if($filtro !== ""){
+
+        if ($filtro !== "") {
             $sql .= "AND $filtro";
         }
-        
+
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
         $ps->bind_result($qtd);
-        if($ps->fetch()){
+        if ($ps->fetch()) {
             $ps->close();
             return $qtd;
         }
         $ps->close();
         return 0;
-        
     }
 
     public function getProdutosAlocais($con, $x1, $x2, $filtro = "", $ordem = "") {
@@ -4027,7 +4396,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $gr, $uni, $ncm, $nome, $ativo, $conc, $cat_id,$estoque,$disponivel,$transito,$sis);
+        $ps->bind_result($id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $gr, $uni, $ncm, $nome, $ativo, $conc, $cat_id, $estoque, $disponivel, $transito, $sis);
 
         while ($ps->fetch()) {
 

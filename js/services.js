@@ -1,6 +1,57 @@
 var debuger = function (l) {
     document.write(paraJson(l));
 }
+
+
+rtc.service('encomendaService', function ($http, $q) {
+    this.getEncomenda = function (fn) {
+        baseService($http, $q, {
+            query: "$r->encomenda=new Encomenda();$r->encomenda->usuario=$usuario;$r->encomenda->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.atualizarCustos = function (encomenda, fn) {
+        baseService($http, $q, {
+            o: encomenda,
+            query: "$o->atualizarCustos()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getProdutos = function (encomenda, fn) {
+        var f = function (p) {
+            for (var i = 0; i < p.produtos.length; i++) {
+                p.produtos[i].pedido = encomenda;
+            }
+            fn(p);
+        }
+        baseService($http, $q, {
+            o: encomenda,
+            query: "$r->produtos=$o->getProdutos($c)",
+            sucesso: f,
+            falha: f
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountEncomendas($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getEncomendas($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+
+
 rtc.service('fechamentoCaixaService', function ($http, $q) {
     this.getBancosFechar = function (fn) {
         baseService($http, $q, {
@@ -1039,6 +1090,21 @@ rtc.service('pedidoService', function ($http, $q) {
             falha: fn
         });
     }
+    this.getPossibilidadesFreteIntermediario = function (pedido, fn) {
+        var peso = 0;
+        var valor = 0;
+        for (var i = 0; i < pedido.produtos.length; i++) {
+            var p = pedido.produtos[i];
+            valor += p.quantidade * (p.valor_base + p.icms + p.ipi + p.frete + p.juros);
+            peso += p.quantidade * p.produto.peso_bruto;
+        }
+        baseService($http, $q, {
+            o: {p: pedido, peso: peso, valor: valor},
+            query: "$f = new CalculadorFreteIntermediario($c,$o->p->logistica!==null?$o->p->logistica:$o->p->empresa,$o->peso,$o->valor);$r->possibilidades=$f->getPossibilidadesFrete($o->p->cliente)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getPedido = function (fn) {
         baseService($http, $q, {
             query: "$r->pedido=new Pedido();$r->pedido->usuario=$usuario;$r->pedido->empresa=$empresa",
@@ -1094,6 +1160,15 @@ rtc.service('pedidoService', function ($http, $q) {
     }
 })
 
+rtc.service('produtoEncomendaService', function ($http, $q) {
+    this.getProdutoEncomenda = function (fn) {
+        baseService($http, $q, {
+            query: "$r->produto_encomenda=new ProdutoEncomenda()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('produtoPedidoService', function ($http, $q) {
     this.getProdutoPedido = function (fn) {
         baseService($http, $q, {
@@ -1420,7 +1495,7 @@ rtc.service('tabelaService', function ($http, $q) {
     this.getFretes = function (empresa, parametros, fn) {
         baseService($http, $q, {
             o: {p: parametros, e: empresa},
-            query: "if(isset($o->e)){$empresa=$o->e;}$r->fretes=array();$t=$empresa->getTransportadoras($c,0,$empresa->getCountTransportadoras($c,'transportadora.habilitada=true AND tabela.nome IS NOT NULL'),'transportadora.habilitada=true AND tabela.nome IS NOT NULL','');$valores=array();foreach($t as $key=>$tr){if($tr->tabela->atende($o->p->cidade,$o->p->peso,$o->p->valor)){$f=new stdClass();$f->transportadora=$tr;$f->valor=$tr->tabela->valor($o->p->cidade,$o->p->peso,$o->p->valor);$r->fretes[]=$f;}}",
+            query: "if(isset($o->e)){$empresa=$o->e;}$r->fretes=array();$t=$empresa->getTransportadoras($c,0,$empresa->getCountTransportadoras($c,'transportadora.habilitada=true AND tabela.nome IS NOT NULL'),'transportadora.habilitada=true AND tabela.nome IS NOT NULL','');$valores=array();foreach($t as $key=>$tr){if($tr->tabela===null){continue;}if($tr->tabela->atende($o->p->cidade,$o->p->peso,$o->p->valor)){$f=new stdClass();$f->transportadora=$tr;$f->valor=$tr->tabela->valor($o->p->cidade,$o->p->peso,$o->p->valor);$r->fretes[]=$f;}}",
             sucesso: fn,
             falha: fn
         });
@@ -1609,6 +1684,22 @@ rtc.service('categoriaDocumentoService', function ($http, $q) {
     this.getElementos = function (fn) {
         baseService($http, $q, {
             query: "$r->elementos=Sistema::getCategoriaDocumentos($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('statusEncomendaService', function ($http, $q) {
+    this.getStatus = function (fn) {
+        baseService($http, $q, {
+            query: "$r->status=Sistema::getStatusEncomenda()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getStatusExcluido = function (fn) {
+        baseService($http, $q, {
+            query: "$r->status=Sistema::STATUS_ENCOMENDA_CANCELADA()",
             sucesso: fn,
             falha: fn
         });

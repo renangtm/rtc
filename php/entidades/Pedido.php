@@ -30,6 +30,8 @@ class Pedido {
     public $produtos;
     public $forma_pagamento;
     public $logistica;
+    public $fretes_intermediarios;
+    public $etapa_frete;
 
     function __construct() {
 
@@ -50,6 +52,8 @@ class Pedido {
         $this->produtos = null;
         $this->forma_pagamento = null;
         $this->logistica = null;
+        $this->fretes_intermediarios = array();
+        $this->etapa_frete = 0;
     }
 
     public function getProdutos($con) {
@@ -519,7 +523,6 @@ class Pedido {
 
     public function merge($con, $recursao = false) {
 
-
         $prods = $this->getProdutos($con);
 
         if ($this->produtos === null) {
@@ -562,10 +565,15 @@ class Pedido {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO pedido(id_cliente,id_transportadora,frete,observacoes,frete_inclusao,id_empresa,data,excluido,id_usuario,id_nota,prazo,parcelas,id_status,id_forma_pagamento,id_logistica) VALUES(" . $this->cliente->id . "," . $this->transportadora->id . ",$this->frete,'$this->observacoes'," . ($this->frete_incluso ? "true" : "false") . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data/1000),false," . $this->usuario->id . ",$this->id_nota,$this->prazo,$this->parcelas," . $this->status->id . "," . $this->forma_pagamento->id . "," . ($this->logistica != null ? $this->logistica->id : 0) . ")");
+            $ps = $con->getConexao()->prepare("INSERT INTO pedido(id_cliente,id_transportadora,frete,observacoes,frete_inclusao,id_empresa,data,excluido,id_usuario,id_nota,prazo,parcelas,id_status,id_forma_pagamento,id_logistica,etapa_frete) VALUES(" . $this->cliente->id . "," . $this->transportadora->id . ",$this->frete,'$this->observacoes'," . ($this->frete_incluso ? "true" : "false") . "," . $this->empresa->id . ",FROM_UNIXTIME($this->data/1000),false," . $this->usuario->id . ",$this->id_nota,$this->prazo,$this->parcelas," . $this->status->id . "," . $this->forma_pagamento->id . "," . ($this->logistica != null ? $this->logistica->id : 0) . ",$this->etapa_frete)");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
+
+            foreach ($this->fretes_intermediarios as $key => $value) {
+                $value->pedido = $this;
+                $value->merge($con);
+            }
 
             $atividade = new Atividade($this->usuario);
             $atividade->descricao = "Pedido fechado " . $this->getTotal();
@@ -674,9 +682,14 @@ class Pedido {
             }
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE pedido SET id_cliente=" . $this->cliente->id . ",id_transportadora=" . $this->transportadora->id . ",frete=$this->frete,observacoes='$this->observacoes',frete_inclusao=" . ($this->frete_incluso ? "true" : "false") . ",id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data/1000),excluido=false,id_usuario=" . $this->usuario->id . ",id_nota=$this->id_nota,prazo=$this->prazo,parcelas=$this->parcelas,id_status=" . $this->status->id . ",id_forma_pagamento=" . $this->forma_pagamento->id . ", id_logistica=" . ($this->logistica != null ? $this->logistica->id : 0) . " WHERE id=$this->id");
+            $ps = $con->getConexao()->prepare("UPDATE pedido SET id_cliente=" . $this->cliente->id . ",id_transportadora=" . $this->transportadora->id . ",frete=$this->frete,observacoes='$this->observacoes',frete_inclusao=" . ($this->frete_incluso ? "true" : "false") . ",id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data/1000),excluido=false,id_usuario=" . $this->usuario->id . ",id_nota=$this->id_nota,prazo=$this->prazo,parcelas=$this->parcelas,id_status=" . $this->status->id . ",id_forma_pagamento=" . $this->forma_pagamento->id . ", id_logistica=" . ($this->logistica != null ? $this->logistica->id : 0) . ",etapa_frete=$this->etapa_frete WHERE id=$this->id");
             $ps->execute();
             $ps->close();
+
+            foreach ($this->fretes_intermediarios as $key => $value) {
+                $value->pedido = $this;
+                $value->merge($con);
+            }
         }
 
         $erro = null;
@@ -722,11 +735,9 @@ class Pedido {
         if ($inicial) {
             $this->status->enviarEmails($this);
         }
-
-        if ($this->status->nota && $this->id_nota == 0) {
+        if ($this->status->nota && $this->id_nota == 0 && $this->etapa_frete === 0) {
 
             $nota = $this->gerarNotaPadrao();
-
 
             $nota->merge($con);
 
@@ -764,7 +775,7 @@ class Pedido {
                     $value->cfop = CFOP::$RETORNO_DEPOSITO;
                 }
 
-                $nota_logistica_empresa->observacao = new OBSNFE($this->logistica, $this, OBSNFE::$RETORNO_REMESSA);
+                $nota_logistica_empresa->observacao = new OBS_NFE($this->logistica, $this, OBS_NFE::$RETORNO_REMESSA);
                 $nota_logistica_empresa->observacao = $nota_logistica_empresa->observacao->getObs();
                 $nota_logistica_empresa->empresa = $this->logistica;
                 $nota_logistica_empresa->cliente = $getter->getClienteViaEmpresa($con, $this->empresa);
@@ -775,6 +786,55 @@ class Pedido {
                 $ps->execute();
                 $ps->close();
             }
+            
+        } else if ($this->status->nota && $this->id_nota == 0) {
+
+            $etapa = null;
+
+            foreach ($this->fretes_intermediarios as $key => $value) {
+                if ($value->ordem === $this->etapa_frete) {
+                    $etapa = $value;
+                    break;
+                }
+            }
+
+            $destino = Sistema::getEmpresas($con, "empresa.id=" . $etapa->id_empresa_destino);
+            $destino = $destino[0];
+
+            $empresa = $this->logistica !== null ? $this->logistica : $this->empresa;
+
+            $transportadora = $etapa->transportadora->getTransportadora($con);
+            
+            $getter = new Getter($empresa);
+
+            $nota = $this->gerarNotaPadrao();
+
+            $t = $getter->getTransportadoraViaTransportadora($con, $transportadora);
+            
+            $nota->transportadora = $t;
+
+            foreach ($nota->produtos as $key => $value) {
+                $value->cfop = CFOP::$TRANSFERENCIA;
+            }
+            
+            $nota->observacao = new OBS_NFE($empresa, $this, OBS_NFE::$TRANSFERENCIA);
+            $nota->observacao = $nota->observacao->getObs();
+            $nota->empresa = $empresa;
+            $nota->cliente = $getter->getClienteViaEmpresa($con, $destino);
+
+            $nota->merge($con);
+            
+            $this->id_nota = $nota->id;
+
+            $ps = $con->getConexao()->prepare("UPDATE nota SET data_emissao=data_emissao,id_pedido=$this->id WHERE id=$nota->id");
+            $ps->execute();
+            $ps->close();
+            
+            $ps = $con->getConexao()->prepare("UPDATE pedido SET id_nota=$this->id_nota WHERE id=$this->id");
+            $ps->execute();
+            $ps->close();
+            
+            
         }
 
         if ($erro !== null) {

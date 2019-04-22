@@ -8,10 +8,10 @@
         <!-- Bootstrap CSS -->
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?3"></script>
-        <script src="js/filters.js?3"></script>
-        <script src="js/services.js?3"></script>
-        <script src="js/controllers.js?3"></script>  
+        <script src="js/rtc.js?4"></script>
+        <script src="js/filters.js?4"></script>
+        <script src="js/services.js?4"></script>
+        <script src="js/controllers.js?4"></script>  
 
 
         <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
@@ -78,7 +78,7 @@
                         <!-- carrinho  -->
                         <!-- ============================================================== -->
                         <div class="">
-                           
+
                             <div ng-repeat="pedido in pedidos" style="display: inline-block; width:48%; min-width:500px;margin-left:10px;margin-bottom: 50px;">
                                 <div class="table-responsive-sm">
                                     <strong style="color:SteelBlue"><i class="fas fa-road"></i>&nbsp{{pedido.empresa.nome}}</strong>
@@ -124,7 +124,7 @@
                                                         <div class="form-group">
                                                             <label for="">Total:</label><br>
                                                             <div class="custom-control custom-radio custom-control-inline" style="margin-left:30px;margin-top: 5px;">
-                                                                <strong>R$ {{getTotal(pedido)}}</strong>
+                                                                <strong>R$ {{getTotal(pedido).toFixed(2)}}</strong>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -139,8 +139,15 @@
                                                                 <label class="custom-control-label" for="ra{{pedido.identificador}}">Por conta do Fornecedor (CIF)</label>
                                                             </div>
                                                             <div class="custom-control custom-radio custom-control-inline" style="margin-left:30px;margin-top: 5px;">
-                                                                <input ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" type="radio" id="rb{{pedido.identificador}}" name="radio_{{pedido.identificador}}" ng-value="false" ng-change="atualizaCustosResetandoFrete(pedido)" ng-model="pedido.frete_incluso" class="custom-control-input">
+                                                                <!-- GAMBIARRA "|| (pedido.empresa.id===1734 && pedido.logistica === null)"  --> 
+                                                                <input ng-disabled="(pedido.status_finalizacao !== null && pedido.status_finalizacao.final) || (pedido.empresa.id === 1734 && pedido.logistica === null)" type="radio" id="rb{{pedido.identificador}}" name="radio_{{pedido.identificador}}" ng-value="false" ng-change="atualizaCustosResetandoFrete(pedido)" ng-model="pedido.frete_incluso" class="custom-control-input">
                                                                 <label class="custom-control-label" for="rb{{pedido.identificador}}">Por sua conta (FOB)</label>
+                                                            </div>
+                                                            <hr>
+                                                            <div class="custom-control custom-radio custom-control-inline" style="margin-left:30px;margin-top: 5px;">
+                                                                <button class="btn btn-primary" ng-click="getPossibilidadesFrete(pedido)">
+                                                                    <i class="fas fa-calculator"></i>&nbsp Calcular Possibilidades de Frete com Redespacho
+                                                                </button>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -164,6 +171,10 @@
                                                                     <button ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" class="btn btn-primary" ng-click="getFretes(pedido)" data-toggle="modal" ng-if="pedido.frete_incluso" data-target="#fretes"><i class="fas fa-truck"></i>&nbspCalcular Frete</button>
                                                                 </div>
                                                             </div>
+                                                            <div ng-repeat="fi in pedido.fretes_intermediarios">
+                                                                <hr>
+                                                                <strong style="color:Red;font-style:italic">+ {{fi.transportadora.razao_social}}</strong> - <strong style="color:Purple;font-style:italic">{{getNomeLocal(fi)}}</strong>
+                                                            </div>
                                                         </div>
                                                     </td>
 
@@ -173,7 +184,7 @@
                                                         <div class="form-group">
                                                             <label for="">Valor do Frete R$</label>
                                                             <div class="form-row">
-                                                                <input type="text" ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final" class="form-control col-3" placeholder="0.0" style="padding-left:5px" ng-disabled="pedido.frete_incluso" ng-model="pedido.frete" ng-confirm="atualizaCustos(pedido)">
+                                                                <input type="text" ng-disabled="(pedido.status_finalizacao !== null && pedido.status_finalizacao.final) || pedido.frete_incluso" class="form-control col-3" placeholder="0.0" style="padding-left:5px" ng-disabled="pedido.frete_incluso" ng-model="pedido.frete" ng-confirm="atualizaCustos(pedido)">
                                                             </div>
                                                         </div>
                                                     </td>
@@ -214,17 +225,15 @@
                                         </div>
                                         <div class="col-sm-12 col-md-6 text-right">
                                             <button style="width:100%;white-space: normal" class="btn btn-lg {{pedido.status_finalizacao === null ? 'btn-primary':pedido.status_finalizacao.classe}}  text-uppercase" ng-disabled="pedido.transportadora === null || pedido.status_finalizacao !== null || atualizando_custo" ng-click="finalizarPedido(pedido)">
-                                               {{pedido.status_finalizacao === null ? 'Finalizar Compra':pedido.status_finalizacao.valor}} 
+                                                {{pedido.status_finalizacao === null ? 'Finalizar Compra':pedido.status_finalizacao.valor}} 
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                       
-                          </div>
+
+                            </div>
                         </div>	
-                        <!-- ============================================================== -->
-                        <!-- end carrinho  -->
-                        <!-- ============================================================== -->		
+
                         <div class="modal fade" id="finalizarCompraModal" tabindex="-1" role="dialog" aria-labelledby="vizPedido" aria-hidden="true">
                             <div class="modal-dialog modal-md">
                                 <div class="modal-content">
@@ -234,6 +243,42 @@
                                     </div>
                                     <div class="modal-body text-center" id="finalizarCompra">
 
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ============================================================== -->
+                        <!-- end carrinho  -->
+                        <!-- ============================================================== -->		
+                        <div class="modal fade" id="mdlPossibilidadesFrete" tabindex="-1" role="dialog" aria-labelledby="vizPedido" aria-hidden="true">
+                            <div class="modal-dialog modal-md">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-random fa-3x"></i>&nbsp;&nbsp;&nbsp;Frete com redespacho</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <div ng-if="carregando_frete">
+                                            <span style="margin:10px" class="dashboard-spinner spinner-warning spinner-md "></span>
+                                            &nbsp<h4>Aguarde, o sistema esta encontrando as possibilidades...</h4>
+                                        </div>
+                                        <div ng-if="!carregando_frete && pedido_contexto.possibilidades_frete.length > 0">
+                                            <div ng-click="setFreteRedespacho(p)" class="btn btn-outline-light" style="width:100%;padding:10px;margin-bottom:10px;border-radius: 5px" ng-repeat="p in pedido_contexto.possibilidades_frete">
+                                                <div ng-repeat="ponto in p">
+                                                    <h4 style="{{ponto.chegada?'color:Green':''}}">{{getNomeLocal(ponto)}} <i class="fas fa-star" ng-if="ponto.chegada"></i></h4>
+                                                    <div ng-if="ponto.transportadora !== null" style="font-style: italic;text-decoration: underline;font-weight: bold;color:steelblue">
+                                                        <i class="fas fa-arrow-up"></i>
+                                                        Transporte: {{ponto.transportadora.razao_social}} - <strong style="color:Red">R$ {{ponto.valor.toFixed(2)}}</strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div ng-if="!carregando_frete && pedido_contexto.possibilidades_frete.length === 0">
+                                            :(, Infelizmente não foram encotnradas possibilidades de frete com redespacho para a sua região.
+                                        </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
@@ -323,50 +368,50 @@
         <!-- ============================================================== -->
         <!-- end wrapper  -->
         <!-- ============================================================== -->
-<span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
+        <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
-                <!-- jquery 3.3.1 -->
-                <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-                <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
-                <script src="assets/libs/js/form-mask.js"></script>
-                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+        <!-- jquery 3.3.1 -->
+        <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+        <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
+        <script src="assets/libs/js/form-mask.js"></script>
+        <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
-                <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-                <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
-                <!-- slimscroll js -->
-                <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-                <!-- main js -->
-                <script src="assets/libs/js/main-js.js"></script>
-                <!-- chart chartist js -->
-                <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
-                <!-- sparkline js -->
-                <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
-                <!-- morris js -->
-                <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
-                <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
-                <!-- chart c3 js -->
-                <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
-                <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
-                <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
-                <script src="assets/libs/js/dashboard-ecommerce.js"></script>
-                <!-- parsley js -->
-                <script src="assets/vendor/parsley/parsley.js"></script>
+        <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+        <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+        <!-- slimscroll js -->
+        <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+        <!-- main js -->
+        <script src="assets/libs/js/main-js.js"></script>
+        <!-- chart chartist js -->
+        <script src="assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
+        <!-- sparkline js -->
+        <script src="assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+        <!-- morris js -->
+        <script src="assets/vendor/charts/morris-bundle/raphael.min.js"></script>
+        <script src="assets/vendor/charts/morris-bundle/morris.js"></script>
+        <!-- chart c3 js -->
+        <script src="assets/vendor/charts/c3charts/c3.min.js"></script>
+        <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+        <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
+        <script src="assets/libs/js/dashboard-ecommerce.js"></script>
+        <!-- parsley js -->
+        <script src="assets/vendor/parsley/parsley.js"></script>
 
-                <!-- Optional JavaScript -->
-                <script>
+        <!-- Optional JavaScript -->
+        <script>
 
-                                            var l = $('#loading');
+                                                            var l = $('#loading');
                                                             l.hide();
 
-                                                            
+
                                                             var x = 0;
                                                             var y = 0;
-                                                                
+
                                                             $(document).mousemove(function (e) {
-                                                                
+
                                                                 x = e.clientX;
                                                                 y = e.clientY;
-                                                                
+
                                                                 var s = $(this).scrollTop();
 
                                                                 l.offset({top: (y + s), left: x});
@@ -381,7 +426,7 @@
                                                                 var s = $(document).scrollTop();
 
                                                                 l.offset({top: (y + s), left: x});
-                                                                
+
                                                             }
 
                                                             loading.close = function () {

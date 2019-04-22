@@ -21,6 +21,12 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
 
     public function aoFinalizarPedido($pedido) {
 
+        $r = new stdClass();
+
+        $r->codigoEmpresa = "1234567ASBNRTDIOASTE127UYU";
+        $r->chave = "ASDERTYUQISOERW1";
+        $r->pedido = $pedido->id . "";
+        $r->urlRetorna = Sistema::$ENDERECO . "acompanhar-pedidos.php";
 
 
         $inscricao = $pedido->cliente->cnpj->valor;
@@ -39,6 +45,8 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
             $cep = "1234";
         }
 
+
+
         $bairro = $pedido->cliente->endereco->bairro;
         $cep = str_replace(array("-"), array(""), $cep);
         $estado = $pedido->cliente->endereco->cidade->estado->sigla;
@@ -56,12 +64,33 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
         $valor = round($valor / max(1, $pedido->parcelas), 2);
 
 
+        $r->numeroInscricao = $inscricao;
+
+        $r->enderecoSacado = $logadouro;
+
+        $r->bairroSacado = $bairro;
+
+        $r->cepSacado = $cep;
+
+        $r->cidadeSacado = $cidade;
+
+        $r->estadoSacado = $estado;
+
+        $r->nomeSacado = $nome;
+
+        if ($pedido->cliente->pessoa_fisica) {
+            $r->codigoInscricao = "01";
+        } else {
+            $r->codigoInscricao = "02";
+        }
+
+
         for ($i = 0; $i < max(1, $pedido->parcelas); $i++) {
 
             $fat = $pedido->prazo / max(1, $pedido->parcelas);
 
             $agora = round(microtime(true) * 1000);
-            $momento = $agora + ($fat * ($i+1) + 1) * 24 * 60 * 60 * 1000;
+            $momento = $agora + ($fat * ($i + 1) + 1) * 24 * 60 * 60 * 1000;
 
             if ($bairro === "") {
                 $bairro = "sem bairro";
@@ -75,20 +104,26 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
                 $logadouro = "sem rua";
             }
 
+            $momento = date('dmY', $momento / 1000);
 
-            $in = "itau;tipo:em;bairro:$bairro;cep:$cep;cidade:$cidade;estado:$estado;inscricao:$inscricao;logadouro:$logadouro;nome:$nome;documento:$documento;valor:$valor;vencimento:$momento";
+            $r->valor = str_replace('.', ',', round($valor, 2) . "");
 
-            $out = Sistema::getMicroServicoJava('ServidorBoletosRTC', $in);
+            while (strpos($r->valor, ",") !== false && strlen(explode(',', $r->valor)[1]) < 2) {
+                $r->valor .= "0";
+            }
 
-            $objeto = json_decode($out);
+            $r->observacao = "Boleto referente a pedido $pedido->id do RTC";
+            $r->dataVencimento = $momento;
 
-            $lk = $objeto->link;
 
-            $ret .= "<br><a target='_blank' style='margin-left:10px' href='$lk'><i class='fas fa-download'></i>&nbsp Abrir boleto $i</a>";
+            $codigo = Sistema::getMicroServicoJava('ItauShopline', addslashes(Utilidades::toJson($r)));
+
+            $ret .= "<form action='https://shopline.itau.com.br/shopline/shopline.aspx' method='post' name='shopline_$i' target='SHOPLINE'>"
+                    . "<input type='hidden' name='DC' value='$codigo'><br>"
+                    . "<input type='submit' name='Shopline' value='Boleto'>"
+                    . "</form><hr>";
         }
-        
-        $ret.="<hr><img src=''></img>";
-        
+
         return $ret;
     }
 

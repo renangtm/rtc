@@ -14,6 +14,7 @@
 class OBS_NFE {
 
     public static $RETORNO_REMESSA = 1;
+    public static $TRANSFERENCIA = 2;
     public $obss;
 
     public function __construct($empresa, $pedido, $op = 0) {

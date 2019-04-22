@@ -323,6 +323,26 @@ class Sistema {
         return new StatusPedidoSaida(30, "Excluido", false, false, Email::$COMPRAS, Email::$VENDAS, false, false, true, false);
     }
 
+    public static function STATUS_ENCOMENDA_ANALISE() {
+        return new StatusEncomenda(1, "Em Analise", Email::$COMPRAS, Email::$COMPRAS);
+    }
+
+    public static function STATUS_ENCOMENDA_COTACAO() {
+        return new StatusEncomenda(2, "Em Cotacao", Email::$COMPRAS, Email::$COMPRAS);
+    }
+
+    public static function STATUS_ENCOMENDA_EMTRANSITO() {
+        return new StatusEncomenda(3, "Em Transito", Email::$COMPRAS, Email::$COMPRAS);
+    }
+
+    public static function STATUS_ENCOMENDA_FINALIZADA() {
+        return new StatusEncomenda(4, "Finalizada", Email::$COMPRAS, Email::$COMPRAS);
+    }
+
+    public static function STATUS_ENCOMENDA_CANCELADA() {
+        return new StatusEncomenda(5, "Cancelada", Email::$COMPRAS, Email::$COMPRAS);
+    }
+
     public static function P_PEDIDO_ENTRADA() {
         return new Permissao(1, "pedido_entrada");
     }
@@ -520,7 +540,7 @@ class Sistema {
 
         return new TTConfirmacaoPagamento($id_empresa);
     }
-    
+
     public static function TT_VERIFICA_SUFRAMA($id_empresa) {
 
         return new TTVerificaSuframa($id_empresa);
@@ -591,6 +611,11 @@ class Sistema {
         return new TTAtendimentoPosVenda($id_empresa);
     }
 
+    public static function TT_COTACAO($id_empresa) {
+
+        return new TTCotacao($id_empresa);
+    }
+
     public static function TT_ANALISE_CREDITO($id_empresa) {
 
         return new TTAnaliseCredito($id_empresa);
@@ -629,7 +654,7 @@ class Sistema {
         $cliente->merge($con);
 
         $tipo_tarefa = Sistema::TT_ANALISE_CREDITO($usuario->empresa->id);
-        $tarefas = $usuario->getTarefas($con,"((tarefa.tipo_entidade_relacionada='PED_$id_empresa' AND tarefa.id_entidade_relacionada=$id_pedido) "
+        $tarefas = $usuario->getTarefas($con, "((tarefa.tipo_entidade_relacionada='PED_$id_empresa' AND tarefa.id_entidade_relacionada=$id_pedido) "
                 . "OR (tarefa.tipo_entidade_relacionada='CLI' AND tarefa.id_entidade_relacionada=$id_cliente))");
 
         foreach ($tarefas as $key => $value) {
@@ -726,7 +751,7 @@ class Sistema {
         }
 
         $cargos .= ")";
-        
+
 
         $usuarios = array();
         $ps = $con->getConexao()->prepare("SELECT usuario.id FROM usuario WHERE id_empresa=$empresa->id AND id_cargo IN $cargos");
@@ -736,7 +761,7 @@ class Sistema {
             $usuarios[] = $id;
         }
         $ps->close();
-        
+
 
         $in = "(0";
 
@@ -996,7 +1021,7 @@ class Sistema {
 
         $default = Sistema::getTarefasFixas($empresa);
 
-      
+
         foreach ($default as $key => $value) {
 
             foreach ($tarefas as $key2 => $value2) {
@@ -1004,19 +1029,19 @@ class Sistema {
                 if ($value->id === $value2->id) {
 
                     $value->empresa = $value2->empresa;
-                    foreach($value2->cargos as $key3=>$value3){
+                    foreach ($value2->cargos as $key3 => $value3) {
                         $value->cargos[] = $value3;
                     }
-                    $value->prioridade=$value2->prioridade;
+                    $value->prioridade = $value2->prioridade;
                     $value->tempo_medio = $value2->tempo_medio;
-                    
+
                     $tarefas[$key2] = $value;
 
                     continue 2;
                 }
             }
 
-            
+
             $tarefas[] = $value;
         }
 
@@ -1961,17 +1986,16 @@ class Sistema {
                     $grupo->valor_base = $value2->valor_base;
                     $grupo->imagem = $value2->imagem;
                     $grupo->grade = $value2->grade;
-                    
+
                     $produtos[$hash] = $grupo;
                 }
-                
+
                 $produtos[$hash]->produtos[] = $value2;
                 $produtos[$hash]->estoque = $value2->estoque;
                 $produtos[$hash]->disponivel += $value2->disponivel;
                 $produtos[$hash]->transito += $value2->transito;
                 $produtos[$hash]->estoque += $value2->estoque;
                 $produtos[$hash]->ofertas += count($value2->ofertas);
-                
             }
         }
 
@@ -1980,10 +2004,10 @@ class Sistema {
         foreach ($produtos as $key => $value) {
             $resultado[] = $value;
             $i = count($resultado);
-            while($i>0 && $resultado[$i]->ofertas>$resultado[$i-1]->ofertas){
+            while ($i > 0 && $resultado[$i]->ofertas > $resultado[$i - 1]->ofertas) {
                 $k = $resultado[$i];
-                $resultado[$i]=$resultado[$i-1];
-                $resultado[$i-1]=$k;
+                $resultado[$i] = $resultado[$i - 1];
+                $resultado[$i - 1] = $k;
             }
         }
 
@@ -2036,8 +2060,6 @@ class Sistema {
     }
 
     public static function getHtml($nom, $p = null) {
-
-
         global $obj;
         $obj = Sistema::encodeAll(Utilidades::copy($p));
 
@@ -2121,20 +2143,20 @@ class Sistema {
         $escolhido = -1;
 
         $possiveis = array();
-        
-        
-        $ccnpj = str_replace(array("-","."."/"), array("","",""),$inf->transp->transporta->CNPJ);
-        
-        if(isset($inf->transp->transporta->CPF)){
-            $ccnpj = str_replace(array("-","."."/"), array("","",""),$inf->transp->transporta->CPF);
+
+
+        $ccnpj = str_replace(array("-", "." . "/"), array("", "", ""), $inf->transp->transporta->CNPJ);
+
+        if (isset($inf->transp->transporta->CPF)) {
+            $ccnpj = str_replace(array("-", "." . "/"), array("", "", ""), $inf->transp->transporta->CPF);
         }
-        
-        while(strlen($ccnpj) < 14){
+
+        while (strlen($ccnpj) < 14) {
             $ccnpj .= "0";
         }
-        
+
         $cnpj_transportadora = new CNPJ($ccnpj);
-        
+
         $ps = $con->getConexao()->prepare("SELECT pedido_entrada.id FROM pedido_entrada INNER JOIN transportadora ON pedido_entrada.id_transportadora=transportadora.id WHERE transportadora.cnpj='" . $cnpj_transportadora->valor . "' AND pedido_entrada.id_empresa=$id_empresa AND id_status<=2");
         $ps->execute();
         $ps->bind_result($idt);
@@ -2142,17 +2164,15 @@ class Sistema {
             $possiveis[] = $idt;
         }
         $ps->close();
-        
+
         if (count($possiveis) == 0) {
 
             throw new Exception('Nao foi encontrado nenhum pedido de compra equivalente, com o CNPJ dessa transportadora');
         } else if (count($possiveis) == 1) {
 
             $escolhido = $possiveis[0];
-            
-            
         } else {
-            
+
             $in = "(-1";
             foreach ($possiveis as $key => $value) {
                 $in .= ",$value";
@@ -2227,8 +2247,8 @@ class Sistema {
         }
 
         $e = new Empresa($id_empresa, new ConnectionFactory());
-        
-        
+
+
         $pedido = $e->getPedidosEntrada($con, 0, 1, "pedido_entrada.id=$escolhido");
         $pedido = $pedido[0];
 
@@ -3568,6 +3588,19 @@ class Sistema {
         return $perms;
     }
 
+    public static function getStatusEncomenda() {
+
+        $status = array();
+
+        $status[] = Sistema::STATUS_ENCOMENDA_ANALISE();
+        $status[] = Sistema::STATUS_ENCOMENDA_COTACAO();
+        $status[] = Sistema::STATUS_ENCOMENDA_EMTRANSITO();
+        $status[] = Sistema::STATUS_ENCOMENDA_FINALIZADA();
+        $status[] = Sistema::STATUS_ENCOMENDA_CANCELADA();
+
+        return $status;
+    }
+
     public static function getStatusPedidoSaida() {
 
         $status = array();
@@ -3632,7 +3665,7 @@ class Sistema {
         $cat->loja = false;
         return $cat;
     }
-    
+
     public static function CATP_AGRICOLA_SUSP() {
 
         $cat = new CategoriaProduto();

@@ -5,10 +5,10 @@
         <meta charset="utf-8">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?3"></script>
-        <script src="js/filters.js?3"></script>
-        <script src="js/services.js?3"></script>
-        <script src="js/controllers.js?3"></script>    
+        <script src="js/rtc.js?4"></script>
+        <script src="js/filters.js?4"></script>
+        <script src="js/services.js?4"></script>
+        <script src="js/controllers.js?4"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -238,6 +238,14 @@
                                                 <label for="" style="margin-left: 25px;margin-right: 10px;">Frete R$</label>
                                                 <input type="text" class="form-control col-3" placeholder="0.0" ng-model="pedido.frete" ng-confirm="atualizaCustos()" ng-disabled="!pedido.status.altera">
                                             </div>
+                                        </div>
+                                        <hr>
+                                        <div ng-repeat="fi in pedido.fretes_intermediarios">
+                                            <strong style="color:{{(fi.ordem>pedido.etapa_frete)?'Gray':(fi.ordem<pedido.etapa_frete?'Red':'Green')}};font-style:italic">+ {{fi.transportadora.razao_social}}</strong> - <strong style="color:{{(fi.ordem>pedido.etapa_frete)?'Gray':(fi.ordem<pedido.etapa_frete?'Purple':'Green')}};font-style:italic">R$ {{fi.valor.toFixed(2)}}</strong>
+                                            <div ng-if="fi.ordem===pedido.etapa_frete" style="color:Green;font-weight: bold">
+                                                <i class="fas fa-truck"></i>&nbsp Pedido esta nessa etapa da transação
+                                            </div>
+                                            <hr>
                                         </div>
                                     </div>
                                     <hr>

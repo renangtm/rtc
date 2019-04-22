@@ -7,10 +7,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?3"></script>
-        <script src="js/filters.js?3"></script>
-        <script src="js/services.js?3"></script>
-        <script src="js/controllers.js?3"></script>   
+        <script src="js/rtc.js?4"></script>
+        <script src="js/filters.js?4"></script>
+        <script src="js/services.js?4"></script>
+        <script src="js/controllers.js?4"></script>   
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
@@ -166,42 +166,58 @@
                                                     <br>
                                                     <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm" style="width:100px;height:100px;margin-bottom:95px"></span>
                                                 </div>
-                                                <div class="ribbons" ng-if="produto.ofertas>0"></div>
-                                                <div class="ribbons-text" ng-if="produto.ofertas>0" style="margin-left: 5px;">Oferta</div>
+                                                <div class="ribbons" ng-if="produto.ofertas > 0"></div>
+                                                <div class="ribbons-text" ng-if="produto.ofertas > 0" style="margin-left: 5px;">Oferta</div>
 
                                             </div>
                                             <div class="product-content">
                                                 <div class="product-content-head">
                                                     <h3 class="product-title">{{produto.nome}}</h3>
                                                     <hr>
-                                                    
+
                                                     <table class="table table-striped" ng-if="tv(produto)">
-                                                        
                                                         <thead>
-                                                            <th ng-repeat="it in produto.produtos">
-                                                                {{it.logistica===null?it.empresa.nome:it.logistica.nome}}
-                                                            </th>
+                                                        <th>
+                                                            {{gp(produto).logistica === null ? gp(produto).empresa.nome : gp(produto).logistica.nome}}
+                                                        </th>
+                                                        <th ng-if="produto.produtos.length >= 2">
+                                                            Outros Locais
+                                                        </th>
                                                         </thead>
-                                                        <tr ng-repeat="i in nl(produto)">
-                                                            <td ng-repeat="it in produto.produtos" style="text-align: center">
-                                                                <div ng-if="it.validades.length<=i">
-                                                                    ------
-                                                                </div>
-                                                                <div ng-click="addCarrinho(it, it.validades[i])" ng-if="it.validades.length>i" style="cursor:pointer;font-weight: bold;padding:10px;width:100%" class="btn {{it.validades[i].oferta?'btn-success':'btn-warning'}}">
-                                                                    <cronometro ng-if="it.validades[i].oferta" model="it.validades[i].restante"></cronometro>
-                                                                    <span ng-if="it.validades[i].validade !== 1000">
-                                                                    {{it.validades[i].validade | data_st}}
+                                                        <tr ng-repeat="v in gp(produto).validades">
+                                                            <td style="text-align: center">
+                                                                <div ng-click="addCarrinho(gp(produto), v)" style="cursor:pointer;font-weight: bold;padding:10px;width:100%" class="btn {{v.oferta?'btn-success':'btn-warning'}}">
+                                                                    <cronometro ng-if="v.oferta" model="v.restante"></cronometro>
+                                                                    <span ng-if="v.validade !== 1000">
+                                                                        {{v.validade| data_st}}
                                                                     </span>
-                                                                    <span ng-if="it.validades[i].validade === 1000">
-                                                                    ------
+                                                                    <span ng-if="v.validade === 1000">
+                                                                        ------
                                                                     </span>
                                                                     <br>
-                                                                    <strong style="text-decoration: underline;font-size:18px">R$ {{it.validades[i].valor}}</strong>
+                                                                    <strong style="text-decoration: underline;font-size:18px">R$ {{v.valor}}</strong>
+                                                                </div>
+                                                            </td>
+                                                            <td ng-if="produto.produtos.length >= 2" style="text-align:center">
+                                                                <div ng-click="maisLocais(produto)" style="cursor:pointer;height:83px;font-weight: bold;padding:10px;width:100%;background-color: steelblue;color:#FFFFFF" class="btn btn-outline-light">
+                                                                    <i class="fas fa-map-pin fa-2x"></i>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr ng-if="gp(produto).validades.length === 0">
+                                                            <td style="text-align:center">
+                                                                <div style="cursor:pointer;height:83px;font-weight: bold;padding:10px;width:100%" class="btn btn-dark">
+                                                                    <i class="fas fa-clock"></i> &nbsp Indisponivel para compra
+                                                                </div>
+                                                            </td>
+                                                            <td ng-if="produto.produtos.length >= 2" style="text-align:center">
+                                                                <div ng-click="maisLocais(produto)" style="cursor:pointer;height:83px;font-weight: bold;padding:10px;width:100%;background-color: steelblue;color:#FFFFFF" ng-click="maisLocais(produto)" class="btn btn-outline-light">
+                                                                    <i class="fas fa-map-pin fa-2x"></i>
                                                                 </div>
                                                             </td>
                                                         </tr>
                                                     </table>
-                                                    
+
                                                     <div class="progress mb-1" ng-if="!tv(produto)" style="height:40px">
                                                         <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 60%;height: 40px"></div>
                                                     </div>
@@ -226,7 +242,7 @@
                                         <div class="product-thumbnail" style="height:500px;border:1px dashed;border:3px solid #DDDDDD;border-radius:5px;border-bottom: 250px solid #F2F2F2">
                                             <div class="product-img-head">
                                                 <div class="product-img">
-                                                    
+
                                                 </div>
                                             </div>
                                             <div class="product-content">
@@ -254,42 +270,58 @@
                                                     <br>
                                                     <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm" style="width:100px;height:100px;margin-bottom:95px"></span>
                                                 </div>
-                                                <div class="ribbons" ng-if="produto.ofertas>0"></div>
-                                                <div class="ribbons-text" ng-if="produto.ofertas>0" style="margin-left: 5px;">Oferta</div>
+                                                <div class="ribbons" ng-if="produto.ofertas > 0"></div>
+                                                <div class="ribbons-text" ng-if="produto.ofertas > 0" style="margin-left: 5px;">Oferta</div>
 
                                             </div>
                                             <div class="product-content">
                                                 <div class="product-content-head">
                                                     <h3 class="product-title">{{produto.nome}}</h3>
                                                     <hr>
-                                                    
+
                                                     <table class="table table-striped" ng-if="tv(produto)">
-                                                        
                                                         <thead>
-                                                            <th ng-repeat="it in produto.produtos">
-                                                                {{it.logistica===null?it.empresa.nome:it.logistica.nome}}
-                                                            </th>
+                                                        <th>
+                                                            {{gp(produto).logistica === null ? gp(produto).empresa.nome : gp(produto).logistica.nome}}
+                                                        </th>
+                                                        <th ng-if="produto.produtos.length >= 2">
+                                                            Outros Locais
+                                                        </th>
                                                         </thead>
-                                                        <tr ng-repeat="i in nl(produto)">
-                                                            <td ng-repeat="it in produto.produtos" style="text-align: center">
-                                                                <div ng-if="it.validades.length<=i">
-                                                                    ------
-                                                                </div>
-                                                                <div ng-click="addCarrinho(it, it.validades[i])" ng-if="it.validades.length>i" style="cursor:pointer;font-weight: bold;padding:10px;width:100%" class="btn {{it.validades[i].oferta?'btn-success':'btn-warning'}}">
-                                                                    <cronometro ng-if="it.validades[i].oferta" model="it.validades[i].restante"></cronometro>
-                                                                    <span ng-if="it.validades[i].validade !== 1000">
-                                                                    {{it.validades[i].validade | data_st}}
+                                                        <tr ng-repeat="v in gp(produto).validades">
+                                                            <td style="text-align: center">
+                                                                <div ng-click="addCarrinho(gp(produto), v)" style="cursor:pointer;font-weight: bold;padding:10px;width:100%" class="btn {{v.oferta?'btn-success':'btn-warning'}}">
+                                                                    <cronometro ng-if="v.oferta" model="v.restante"></cronometro>
+                                                                    <span ng-if="v.validade !== 1000">
+                                                                        {{v.validade| data_st}}
                                                                     </span>
-                                                                    <span ng-if="it.validades[i].validade === 1000">
-                                                                    ------
+                                                                    <span ng-if="v.validade === 1000">
+                                                                        ------
                                                                     </span>
                                                                     <br>
-                                                                    <strong style="text-decoration: underline;font-size:18px">R$ {{it.validades[i].valor}}</strong>
+                                                                    <strong style="text-decoration: underline;font-size:18px">R$ {{v.valor}}</strong>
+                                                                </div>
+                                                            </td>
+                                                            <td ng-if="produto.produtos.length >= 2" style="text-align:center">
+                                                                <div ng-click="maisLocais(produto)" style="cursor:pointer;height:83px;font-weight: bold;padding:10px;width:100%;background-color: steelblue;color:#FFFFFF" class="btn btn-outline-light">
+                                                                    <i class="fas fa-map-pin fa-2x"></i>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr ng-if="gp(produto).validades.length === 0">
+                                                            <td style="text-align:center">
+                                                                <div style="cursor:pointer;height:83px;font-weight: bold;padding:10px;width:100%" class="btn btn-dark">
+                                                                    <i class="fas fa-clock"></i> &nbsp Indisponivel para compra
+                                                                </div>
+                                                            </td>
+                                                            <td ng-if="produto.produtos.length >= 2" style="text-align:center">
+                                                                <div ng-click="maisLocais(produto)" style="cursor:pointer;height:83px;font-weight: bold;padding:10px;width:100%;background-color: steelblue;color:#FFFFFF" ng-click="maisLocais(produto)" class="btn btn-outline-light">
+                                                                    <i class="fas fa-map-pin fa-2x"></i>
                                                                 </div>
                                                             </td>
                                                         </tr>
                                                     </table>
-                                                    
+
                                                     <div class="progress mb-1" ng-if="!tv(produto)" style="height:40px">
                                                         <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 60%;height: 40px"></div>
                                                     </div>
@@ -310,7 +342,7 @@
                                         </div>
                                     </div>
 
-                                         
+
 
 
 
@@ -365,7 +397,7 @@
                                     </div>
                                 </div>
                                 <div class="product-sidebar m-b-30" ng-if="carregando_compra" style="height:1200px;border:3px solid #DDDDDD;border-radius:5px">
-                                   <div class="product-sidebar-widget" style="text-align: center">
+                                    <div class="product-sidebar-widget" style="text-align: center">
                                         <span class="dashboard-spinner spinner-success spinner-sm " style="width:150px;height:150px;margin-top:95px"></span>
                                     </div>
                                 </div>
@@ -373,32 +405,48 @@
                                 <!-- MODAL validade produto  -->
                                 <!-- ============================================================== -->
 
-                                <div class="modal fade" id="validadeProduto" tabindex="99" role="dialog" aria-labelledby="validadeProduto" aria-hidden="true">
+                                <div class="modal fade" id="locaisProduto" tabindex="99" role="dialog" aria-labelledby="locaisProduto" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Validades do produto {{prod.nome}}</h5>
+                                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Outros locais do produto {{produto.nome}}</h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                                             </div>
                                             <div class="modal-body">
 
-                                                <table class="table table-striped table-bordered first">
+                                                <table class="table table-striped">
                                                     <thead>
-                                                    <th>Produto</th>
-                                                    <th>Validade</th>
-                                                    <th>Valor</th>
-                                                    <th>Limite</th>
-                                                    <th>Selecionar</th>
+                                                    <th>
+                                                        Local
+                                                    </th>
+                                                    <th>
+                                                        Validade
+                                                    </th>
+                                                    <th>
+                                                        Preço (R$)
+                                                    </th>
+                                                    <th>
+                                                        <i class="fas fa-plus-circle"></i>
+                                                    </th>
                                                     </thead>
-                                                    <tr ng-repeat="v in prod.validades">
-                                                        <th>{{prod.nome}}</th>
-                                                        <th ng-if="v.validade !== 1000">{{v.validade| data_st}} <i class="fas fa-arrow-up" ng-if="v.alem" ></i></th>
-                                                        <th ng-if="v.validade === 1000"> ------ </th>
-                                                        <th>R$ {{v.valor}} </th>
-                                                        <th ng-if="v.limite > 0"> {{v.limite}} </th>
-                                                        <th ng-if="v.limite <= 0"> ------ </th>
-                                                        <th><button class="btn btn-success" data-dismiss="modal" aria-label="Close" ng-click="setValidade(v)" data-toggle="modal" data-target="#qtdProduto"><i class="fas fa-plus-circle"></i></button></th>
-                                                    </tr>
+                                                    <tbody>
+                                                        <tr ng-repeat="local in locais" style="{{local.validade.oferta?'color:Green !important':''}}">
+                                                            <td>
+                                                                {{(local.local.logistica !== null)?local.local.logistica.nome:local.local.empresa.nome}}
+                                                            </td>
+                                                            <td>
+                                                                {{local.validade.validade| data_st}}
+                                                            </td>
+                                                            <td>
+                                                                {{local.validade.valor}}
+                                                            </td>
+                                                            <td>
+                                                                <button class="btn btn-success" style="padding:5px;width:100%" ng-click="addCarrinho(local.local, local.validade)">
+                                                                    <i class="fas fa-plus"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
                                                 </table>
 
                                             </div>
@@ -487,72 +535,72 @@
         <!-- Optional JavaScript -->
         <script>
 
-                                                                    function filtro(fi) {
+                                                                            function filtro(fi) {
 
-                                                                        $('#filtro').each(function () {
+                                                                                $('#filtro').each(function () {
 
-                                                                            // Make sure the select element reflects the change (as setting the option doesn't always do this properly).
-                                                                            $(this).val(fi);
+                                                                                    // Make sure the select element reflects the change (as setting the option doesn't always do this properly).
+                                                                                    $(this).val(fi);
 
-                                                                            // Now use the Angular API's triggerHandler function to call the change.
-                                                                            angular.element($(this)).triggerHandler('change');
-                                                                            $(this).change();
+                                                                                    // Now use the Angular API's triggerHandler function to call the change.
+                                                                                    angular.element($(this)).triggerHandler('change');
+                                                                                    $(this).change();
 
-                                                                            var body = $("html, body");
-                                                                            body.stop().animate({scrollTop: 290}, 500, 'swing', function () {
+                                                                                    var body = $("html, body");
+                                                                                    body.stop().animate({scrollTop: 290}, 500, 'swing', function () {
 
-                                                                            });
+                                                                                    });
 
-                                                                        })
-
-
-
-                                                                    }
+                                                                                })
 
 
-                                                                    var l = $('#loading');
-                                                                    l.hide();
+
+                                                                            }
 
 
-                                                                    var x = 0;
-                                                                    var y = 0;
-
-                                                                    $(document).mousemove(function (e) {
-
-                                                                        x = e.clientX;
-                                                                        y = e.clientY;
-
-                                                                        var s = $(this).scrollTop();
-
-                                                                        l.offset({top: (y + s), left: x});
-
-                                                                    })
-
-                                                                    var sh = false;
-                                                                    var it = null;
-
-                                                                    loading.show = function () {
-                                                                        l.show();
-                                                                        var s = $(document).scrollTop();
-
-                                                                        l.offset({top: (y + s), left: x});
-
-                                                                    }
-
-                                                                    loading.close = function () {
-                                                                        l.hide();
-                                                                    }
-
-                                                                    function fechaLoad(img) {
-
-                                                                        var im = $(img);
-                                                                        var num = im.attr('id').split('_')[1];
+                                                                            var l = $('#loading');
+                                                                            l.hide();
 
 
-                                                                        $("#sp_" + num).hide();
-                                                                        im.css('display', 'initial');
+                                                                            var x = 0;
+                                                                            var y = 0;
 
-                                                                    }
+                                                                            $(document).mousemove(function (e) {
+
+                                                                                x = e.clientX;
+                                                                                y = e.clientY;
+
+                                                                                var s = $(this).scrollTop();
+
+                                                                                l.offset({top: (y + s), left: x});
+
+                                                                            })
+
+                                                                            var sh = false;
+                                                                            var it = null;
+
+                                                                            loading.show = function () {
+                                                                                l.show();
+                                                                                var s = $(document).scrollTop();
+
+                                                                                l.offset({top: (y + s), left: x});
+
+                                                                            }
+
+                                                                            loading.close = function () {
+                                                                                l.hide();
+                                                                            }
+
+                                                                            function fechaLoad(img) {
+
+                                                                                var im = $(img);
+                                                                                var num = im.attr('id').split('_')[1];
+
+
+                                                                                $("#sp_" + num).hide();
+                                                                                im.css('display', 'initial');
+
+                                                                            }
 
 
 

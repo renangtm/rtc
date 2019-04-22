@@ -31,8 +31,31 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         $con = new ConnectionFactory();
         
-        $er = new EnvioRelatorios();
-        $er->executar($con);
+        $e = new Empresa(1734,$con);
+        $ce = $e->getEncomendas($con,0,100);
+        $encomenda = $ce[0];
+        
+        $produtos = $encomenda->getProdutos($con);
+        
+        echo Utilidades::toJson($produtos);
+        
+        return;
+        
+        $cliente = $e->getClientes($con, 0, 1,"cliente.razao_social='Vanilton Pereira Braga 01211546101'");
+        $cliente = $cliente[0];
+        
+        $r = new CalculadorFreteIntermediario($con,$e,1000,1000);
+        $possibilidades = $r->getPossibilidadesFrete($cliente);
+        
+        echo Utilidades::toJson($possibilidades);
+        
+        return;
+        
+        $pedido = $er->getPedidos($con,0,1,"pedido.id=9225");
+        $pedido = $pedido[0];
+        $pedido->produtos = $pedido->getProdutos($con);
+        
+        echo $pedido->gerarCobranca();
         
         return;
         
