@@ -1,3 +1,304 @@
+rtc.controller("crtCarrinhoEncomendaFinal", function ($scope, sistemaService, carrinhoEncomendaService, encomendaService) {
+
+    $scope.possibilidades = [
+        {id: 0, prazo: 0, parcelas: 1, nome: "Antecipado"},
+        {id: 1, prazo: 30, parcelas: 1, nome: null},
+        {id: 2, prazo: 60, parcelas: 1, nome: null},
+        {id: 3, prazo: 90, parcelas: 1, nome: null},
+        {id: 4, prazo: 30, parcelas: 2, nome: null},
+        {id: 5, prazo: 60, parcelas: 2, nome: null},
+        {id: 6, prazo: 90, parcelas: 2, nome: null},
+        {id: 7, prazo: 60, parcelas: 3, nome: null},
+        {id: 8, prazo: 90, parcelas: 3, nome: null},
+    ];
+
+    $scope.atualizando_custo = false;
+    $scope.encomendas = [];
+    $scope.encomenda_contexto = null;
+    $scope.carrinho = [];
+
+    carrinhoEncomendaService.getCarrinho(function (c) {
+
+        $scope.carrinho = c.carrinho;
+
+    })
+
+    $scope.getTotalInicial = function (encomenda) {
+
+        var total = 0;
+
+        for (var i = 0; i < encomenda.produtos.length; i++) {
+            total += encomenda.produtos[i].quantidade * (encomenda.produtos[i].valor_base_inicial + encomenda.produtos[i].ipi_inicial + encomenda.produtos[i].juros_inicial);
+        }
+
+        return total;
+
+    }
+
+    $scope.getTotalFinal = function (encomenda) {
+
+        var total = 0;
+
+        for (var i = 0; i < encomenda.produtos.length; i++) {
+            total += encomenda.produtos[i].quantidade * (encomenda.produtos[i].valor_base_final + encomenda.produtos[i].ipi_final + encomenda.produtos[i].juros_final);
+        }
+
+        return total;
+
+    }
+
+    $scope.finalizarEncomenda = function (encomenda) {
+        encomenda.status_finalizacao = {valor: "Aguarde... O Sistema esta fechando sua encomenda", classe: "btn-primary", final: false};
+
+        sistemaService.finalizarEncomendaParceiros(encomenda, function (r) {
+
+            var novo_carrinho = [];
+
+            lbl:
+                    for (var i = 0; i < $scope.carrinho.length; i++) {
+
+                var it = $scope.carrinho[i];
+
+                for (var j = 0; j < encomenda.produtos.length; j++) {
+
+                    var p = encomenda.produtos[j];
+
+                    if (it.id === p.produto.id) {
+
+                        continue lbl;
+
+                    }
+
+                }
+
+                novo_carrinho[novo_carrinho.length] = it;
+
+            }
+
+            $scope.carrinho = novo_carrinho;
+            var p = r.o;
+            carrinhoEncomendaService.setCarrinho($scope.carrinho, function (s) {
+
+                encomenda.cobranca_gerada = true;
+                encomenda.status_finalizacao = {valor: "A Encomenda foi realizada com sucesso !, verifique a confirmacao em seu email", classe: "btn btn-warning", final: true};
+
+            })
+
+
+
+        })
+
+    }
+
+
+    carrinhoEncomendaService.getEncomendasResultantes(function (r) {
+
+        if (r.sucesso) {
+
+            $scope.encomendas = r.encomendas;
+
+            for (var i = 0; i < r.encomendas.length; i++) {
+
+                r.encomendas[i].identificador = i;
+                r.encomendas[i].possibilidades_frete = [];
+                r.encomendas[i].status_finalizacao = null;
+                r.encomendas[i].prazo_parcelas = $scope.possibilidades[0];
+            }
+
+        }
+
+    });
+
+    $scope.setEncomendaContexto = function (encomenda) {
+
+        $scope.encomenda_contexto = encomenda;
+
+    }
+
+
+    $scope.remover = function (produto) {
+
+        var nc = [];
+        for (var i = 0; i < $scope.carrinho.length; i++) {
+            if ($scope.carrinho[i].id === produto.produto.id) {
+                continue;
+            }
+            nc[nc.length] = $scope.carrinho[i];
+        }
+
+        carrinhoEncomendaService.setCarrinho(nc, function () {
+
+            location.reload();
+
+        })
+
+    }
+
+    $scope.attPrazoParcelas = function (encomenda) {
+
+        encomenda.prazo = encomenda.prazo_parcelas.prazo;
+        encomenda.parcelas = encomenda.prazo_parcelas.parcelas;
+
+        $scope.atualizaCustos(encomenda);
+
+    }
+
+    $scope.atualizaCustos = function (encomenda) {
+        $scope.atualizando_custo = true;
+        var i = 0;
+        for (; i < $scope.encomendas.length; i++) {
+            if ($scope.encomendas[i] === encomenda) {
+                break;
+            }
+        }
+
+        encomendaService.atualizarCustos(encomenda, function (np) {
+
+            $scope.encomendas[i] = np.o;
+            $scope.encomendas[i].identificador = i;
+            $scope.encomendas[i].status_finalizacao = null;
+            equalize($scope.encomendas[i], "prazo_parcelas", $scope.possibilidades);
+            $scope.encomenda_contexto = $scope.encomendas[i];
+            $scope.atualizando_custo = false;
+        })
+
+    }
+
+
+})
+
+rtc.controller("crtEncomendaParceiros", function ($scope, produtoService, encomendaParceiroService, sistemaService, carrinhoEncomendaService) {
+
+    $scope.locais = [];
+    $scope.produto = null;
+
+    $scope.carregando_encomenda = true;
+    $scope.loaders = [{id: 0}, {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}];
+
+    $scope.produtos = createFilterList(encomendaParceiroService, 3, 6, 10);
+    $scope.produtos["posload"] = function (els) {
+
+        $scope.carregando_encomenda = false;
+
+    }
+    $scope.produtos.attList();
+
+
+    $scope.qtd = 0;
+    $scope.prod = null;
+    $scope.val = null;
+
+    var carrinho = [];
+
+    carrinhoEncomendaService.getCarrinho(function (c) {
+
+        carrinho = c.carrinho;
+
+    })
+
+
+    $scope.addCarrinho = function (produto) {
+
+        $scope.prod = produto;
+
+        $scope.qtd = parseFloat(window.prompt("Quantidade"));
+        if (isNaN($scope.qtd)) {
+            msg.erro("Quantidade incorreta");
+            return;
+        }
+
+        $scope.qtd = parseInt(($scope.qtd + ""));
+
+
+        var p = angular.copy($scope.prod);
+        p.quantidade_comprada = $scope.qtd;
+
+        var a = false;
+        for (var i = 0; i < carrinho.length; i++) {
+            if (carrinho[i].id === p.id) {
+                a = true;
+                break;
+            }
+        }
+
+        if (!a) {
+            carrinho[carrinho.length] = p;
+        }
+        carrinhoEncomendaService.setCarrinho(carrinho, function (r) {
+
+            if (r.sucesso) {
+
+                msg.confirma("Adicionado com sucesso. Deseja finalizar ?", function () {
+                    window.location = 'carrinho_encomenda.php';
+                });
+
+
+            } else {
+
+                msg.erro("Falha ao adicionar o produto");
+
+            }
+
+        })
+
+    }
+
+
+    $scope.setProduto = function (produto) {
+        $scope.prod = produto;
+    }
+
+    $scope.addLevel = function (op, filtro) {
+        op.selecionada++;
+        op.selecionada = op.selecionada % 2;
+
+        for (var i = 0; i < filtro.opcoes.length; i++) {
+            if (filtro.opcoes[i].selecionada > 0 && filtro.opcoes[i].id !== op.id) {
+                filtro.opcoes[i].selecionada = 0;
+            }
+        }
+
+        $scope.produtos.attList();
+    }
+
+    $scope.resetarFiltro = function () {
+
+        for (var i = 0; i < $scope.produtos.filtro.length; i++) {
+            var f = $scope.produtos.filtro[i];
+            if (f._classe === 'FiltroTextual') {
+                f.valor = "";
+            } else if (f._classe === 'FiltroOpcional') {
+                for (var j = 0; j < f.opcoes.length; j++) {
+                    f.opcoes[j].selecionada = 0;
+                }
+            }
+        }
+
+        $scope.produtos.attList();
+
+    }
+
+    $scope.dividir = function (produtos, qtd) {
+
+        var k = Math.ceil((produtos.length) / qtd);
+
+        var m = [];
+
+        for (var a = 0; a < qtd; a++) {
+            m[a] = [];
+            for (var i = a * k; i < (a + 1) * k && i < produtos.length; i++) {
+                for (var j = 0; j < produtos[i].length; j++) {
+                    m[a][m[a].length] = produtos[i][j];
+                }
+            }
+        }
+
+        return m;
+
+    }
+
+})
+
 rtc.controller("crtEncomendas", function ($scope, encomendaService, logService, baseService, produtoService, sistemaService, statusEncomendaService, clienteService, produtoEncomendaService) {
 
     $scope.encomendas = createAssinc(encomendaService, 1, 10, 10);
@@ -38,17 +339,17 @@ rtc.controller("crtEncomendas", function ($scope, encomendaService, logService, 
     $scope.valor_inicial = 0;
     $scope.valor_final = 0;
 
-    $scope.$watch(function(){
-        
-        if($scope.encomenda !== null){
-            for(var i=0;i<$scope.encomenda.produtos.length;i++){
+    $scope.$watch(function () {
+
+        if ($scope.encomenda !== null) {
+            for (var i = 0; i < $scope.encomenda.produtos.length; i++) {
                 var p = $scope.encomenda.produtos[i];
-                if(p.valor_base_inicial>p.valor_base_final){
-                    p.valor_base_inicial=p.valor_base_final;
+                if (p.valor_base_inicial > p.valor_base_final) {
+                    p.valor_base_inicial = p.valor_base_final;
                 }
             }
         }
-        
+
     })
 
     $scope.produto = {};
@@ -155,7 +456,7 @@ rtc.controller("crtEncomendas", function ($scope, encomendaService, logService, 
 
         var pp = angular.copy($scope.produto_encomenda_novo);
         pp.produto = produto;
-        pp.pedido = $scope.encomenda;
+        pp.encomenda = $scope.encomenda;
         pp.valor_base_inicial = $scope.valor_inicial;
         pp.valor_base_final = $scope.valor_final;
         pp.quantidade = $scope.qtd;
@@ -235,9 +536,7 @@ rtc.controller("crtEncomendas", function ($scope, encomendaService, logService, 
     $scope.atualizaCustos = function () {
 
         encomendaService.atualizarCustos($scope.encomenda, function (np) {
-
             $scope.encomenda = np.o;
-
             equalize($scope.encomenda, "status", $scope.status_encomenda);
 
         })
@@ -280,6 +579,11 @@ rtc.controller("crtEncomendas", function ($scope, encomendaService, logService, 
         encomendaService.getProdutos(encomenda, function (p) {
 
             encomenda.produtos = p.produtos;
+
+            for (var i = 0; i < encomenda.produtos.length; i++) {
+                encomenda.produtos[i].encomenda = encomenda;
+            }
+
             equalize(encomenda, "status", $scope.status_encomenda);
 
         })
@@ -2697,6 +3001,7 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
 
 
 })
+
 rtc.controller("crtCarrinho", function ($scope, sistemaService, carrinhoService) {
 
     $scope.carrinho = [];

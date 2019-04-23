@@ -455,10 +455,6 @@ class Encomenda {
             $ps->execute();
             $ps->close();
 
-            foreach ($this->fretes_intermediarios as $key => $value) {
-                $value->pedido = $this;
-                $value->merge($con);
-            }
         }
 
         $erro = null;

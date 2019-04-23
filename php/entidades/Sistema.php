@@ -1508,6 +1508,12 @@ class Sistema {
             return $retorno;
         }
     }
+    
+    public static function finalizarEncomendaParceiros($con, $pedido, $empresa) {
+        
+        $pedido->merge($con);
+
+    }
 
     public static function finalizarCompraParceiros($con, $pedido, $empresa) {
 
@@ -1567,6 +1573,76 @@ class Sistema {
 
 
         $entrada->merge($con);
+    }
+
+    public static function getEncomendasResultantes($con, $carrinho, $empresa, $usuario) {
+
+        $grupos = array();
+        $campanhas = array();
+
+        foreach ($carrinho as $key => $item) {
+
+            if ($item->quantidade_comprada <= 0)
+                continue;
+
+            $hash = "e" . $item->empresa->id;
+
+
+            if (!isset($grupos[$hash])) {
+                $grupos[$hash] = array();
+            }
+
+            $grupos[$hash][] = $item;
+        }
+
+        $pedidos = array();
+
+        $status_inicial = Sistema::STATUS_ENCOMENDA_ANALISE();
+
+        foreach ($grupos as $key => $value) {
+
+            $base = $value[0];
+
+            $emp = $base->empresa;
+
+            $g = new Getter($emp);
+
+            $cliente = $g->getClienteViaEmpresa($con, $empresa);
+
+            $pedido = new Encomenda();
+            $pedido->empresa = $emp;
+            $pedido->cliente = $cliente;
+
+            $pedido->usuario = $usuario;
+            $pedido->status = $status_inicial;
+            $pedido->produtos = array();
+
+            foreach ($value as $key2 => $produto) {
+
+                $unidade = $produto->grade->gr[0];
+                if ($unidade === 0) {
+                    $unidade = 1;
+                }
+                $k = $unidade - ($produto->quantidade_comprada % $unidade);
+                if ($k < $unidade) {
+                    $produto->quantidade_comprada = min($produto->disponivel, $produto->quantidade_comprada + $k);
+                }
+
+                $p = new ProdutoEncomenda();
+                $p->produto = $produto;
+                $p->quantidade = $produto->quantidade_comprada;
+                $p->valor_base_final = $produto->valor_base_final;
+                $p->valor_base_inicial = $produto->valor_base_inicial;
+                $pedido->produtos[] = $p;
+                $p->encomenda = $pedido;
+            }
+
+            $pedido->atualizarCustos();
+
+            $pedidos[] = $pedido;
+        }
+
+        return $pedidos;
     }
 
     public static function getPedidosResultantes($con, $carrinho, $empresa, $usuario) {
@@ -1852,6 +1928,182 @@ class Sistema {
         return $retorno;
     }
 
+    public static function getEncomendaParceiros($con) {
+
+        $cm = new CacheManager();
+
+        $g = $cm->getCache('encomenda_parceiros');
+
+        if ($g !== null) {
+
+            return $g;
+        }
+
+        $empresas = array();
+
+        $ps = $con->getConexao()->prepare("SELECT "
+                . "empresa.id,"
+                . "empresa.tipo_empresa,"
+                . "empresa.nome,"
+                . "empresa.inscricao_estadual,"
+                . "empresa.consigna,"
+                . "empresa.aceitou_contrato,"
+                . "empresa.juros_mensal,"
+                . "empresa.cnpj,"
+                . "endereco.numero,"
+                . "endereco.id,"
+                . "endereco.rua,"
+                . "endereco.bairro,"
+                . "endereco.cep,"
+                . "cidade.id,"
+                . "cidade.nome,"
+                . "estado.id,"
+                . "estado.sigla,"
+                . "email.id,"
+                . "email.endereco,"
+                . "email.senha,"
+                . "telefone.id,"
+                . "telefone.numero "
+                . "FROM empresa "
+                . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
+                . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
+                . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
+                . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
+                . "INNER JOIN estado ON cidade.id_estado = estado.id "
+                . "WHERE empresa.vende_para_fora = true");
+        $ps->execute();
+        $ps->bind_result($id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+
+        while ($ps->fetch()) {
+
+            $empresa = Sistema::getEmpresa($tipo_empresa);
+
+            $empresa->id = $id_empresa;
+            $empresa->cnpj = new CNPJ($cnpj);
+            $empresa->inscricao_estadual = $inscricao_empresa;
+            $empresa->nome = $nome_empresa;
+            $empresa->aceitou_contrato = $aceitou_contrato;
+            $empresa->juros_mensal = $juros_mensal;
+            $empresa->consigna = $consigna;
+
+            $endereco = new Endereco();
+            $endereco->id = $id_endereco;
+            $endereco->rua = $rua;
+            $endereco->bairro = $bairro;
+            $endereco->cep = new CEP($cep);
+            $endereco->numero = $numero_endereco;
+
+            $cidade = new Cidade();
+            $cidade->id = $id_cidade;
+            $cidade->nome = $nome_cidade;
+
+            $estado = new Estado();
+            $estado->id = $id_estado;
+            $estado->sigla = $nome_estado;
+
+            $cidade->estado = $estado;
+
+            $endereco->cidade = $cidade;
+
+            $empresa->endereco = $endereco;
+
+            $email = new Email($endereco_email);
+            $email->id = $id_email;
+            $email->senha = $senha_email;
+
+            $empresa->email = $email;
+
+            $telefone = new Telefone($numero_telefone);
+            $telefone->id = $id_telefone;
+
+            $empresa->telefone = $telefone;
+
+            $empresas[] = $empresa;
+        }
+
+        $ps->close();
+
+        $categorias_loja = "(0";
+        $categorias = Sistema::getCategoriaProduto();
+
+        foreach ($categorias as $key => $value) {
+            if ($value->loja) {
+                $categorias_loja .= ",$value->id";
+            }
+        }
+
+        $categorias_loja .= ")";
+
+        $produtos = array();
+
+        foreach ($empresas as $key => $value) {
+
+            $prods = $value->getProdutos($con, 0, 500000, 'produto.id_categoria IN ' . $categorias_loja, '');
+
+            foreach ($prods as $key2 => $value2) {
+
+                $hash = $value2->empresa->id . "_" . $value2->codigo;
+
+                if ($value2->disponivel >= 100) {
+                    $produtos[$hash] = -1;
+                }
+
+                if ($produtos[$hash] === -1)
+                    continue;
+
+                $grupo = new ProdutoEncomendaParceiro();
+                $grupo->id = $value2->codigo;
+                $grupo->categoria = $value2->categoria;
+                $grupo->ativo = $value2->ativo;
+                $grupo->unidade = $value2->unidade;
+                $grupo->empresa = $value2->empresa;
+                $grupo->fabricante = $value2->fabricante;
+                $grupo->nome = $value2->nome;
+                $grupo->valor_base = $value2->valor_base;
+                $grupo->valor_base_inicial = $value2->valor_base * 0.95;
+                $grupo->valor_base_final = $value2->valor_base * 1.05;
+                $grupo->imagem = $value2->imagem;
+                $grupo->grade = $value2->grade;
+                $grupo->disponivel = $value2->disponivel;
+                $grupo->estoque = $value2->estoque;
+                $grupo->transito = $value2->transito;
+
+                $produtos[$hash] = $grupo;
+            }
+        }
+
+        $ps = $con->getConexao()->prepare("SELECT p.id_empresa,p.codigo,ROUND(SUM(pc.quantidade*pc.valor)/SUM(pc.quantidade),2) FROM cotacao_entrada c INNER JOIN produto_cotacao_entrada pc ON pc.id_cotacao=c.id INNER JOIN produto p ON pc.id_produto=p.id WHERE c.data>DATE_SUB(CURRENT_DATE,INTERVAL 60 DAY) GROUP BY p.codigo,p.id_empresa");
+        $ps->execute();
+        $ps->bind_result($id_empresa, $codigo, $valor);
+        while ($ps->fetch()) {
+
+            $hash = $id_empresa . "_" . $codigo;
+            if (isset($produtos[$hash])) {
+
+                if ($produto[$hash] === -1) {
+                    continue;
+                }
+                $produtos[$hash]->ofertas = 1;
+                $produtos[$hash]->custo_atualizado = true;
+                $produtos[$hash]->valor_base_inicial = round(($valor / 0.82), 2);
+                $produtos[$hash]->valor_base_final = round((($valor / 0.82) * 1.05), 2);
+            }
+        }
+        $ps->close();
+
+        $resultado = array();
+
+        foreach ($produtos as $key => $value) {
+            if ($value !== -1) {
+                $resultado[] = $value;
+            }
+        }
+
+        $cm->setCache('encomenda_parceiros', $resultado);
+
+        return $resultado;
+    }
+
     public static function getCompraParceiros($con) {
 
         $cm = new CacheManager();
@@ -2067,7 +2319,7 @@ class Sistema {
         global $obj;
         $obj = Sistema::encodeAll(Utilidades::copy($p));
 
-        $servico = realpath('../html_email'); //trocar
+        $servico = realpath('../../html_email');
         $servico .= "/$nom.php";
 
         ob_start();
@@ -2928,7 +3180,7 @@ class Sistema {
 
     public static function getMicroServicoJava($nome, $parametros = null) {
 
-        $servico = realpath('../micro_servicos_java');//trocar
+        $servico = realpath('../micro_servicos_java'); //trocar
         $servico .= "/$nome.jar";
         $comando = "java -jar \"$servico\"";
 

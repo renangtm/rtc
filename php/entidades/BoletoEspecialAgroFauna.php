@@ -21,12 +21,15 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
 
     public function aoFinalizarPedido($pedido) {
 
+        $con = new ConnectionFactory();
+
         $r = new stdClass();
 
         $r->codigoEmpresa = "J0476265100001320000031366";
         $r->chave = "QL10ZP72VY83WO59";
-        $r->pedido = $pedido->id . "";
-        $r->urlRetorna = Sistema::$ENDERECO . "acompanhar-pedidos.php";
+
+        $r->urlRetorna = "novo_rtc_web/acompanhar-pedidos.php";
+
 
 
         $inscricao = $pedido->cliente->cnpj->valor;
@@ -87,6 +90,21 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
 
         for ($i = 0; $i < max(1, $pedido->parcelas); $i++) {
 
+            $id = 0;
+            $ps = $con->getConexao()->prepare("SELECT IFNULL(MAX(id_boleto),0)+1 FROM boleto_shopline");
+            $ps->execute();
+            $ps->bind_result($id_boleto);
+            if ($ps->fetch()) {
+                $id = $id_boleto;
+            }
+            $ps->close();
+
+            $ps = $con->getConexao()->prepare("INSERT INTO boleto_shopline(id_boleto,id_pedido) VALUES($id,$pedido->id)");
+            $ps->execute();
+            $ps->close();
+
+            $r->pedido = $id . "";
+
             $fat = $pedido->prazo / max(1, $pedido->parcelas);
 
             $agora = round(microtime(true) * 1000);
@@ -114,12 +132,14 @@ class BoletoEspecialAgroFauna extends FormaPagamento {
 
             $r->observacao = "Boleto referente a pedido $pedido->id do RTC";
             $r->dataVencimento = $momento;
-            
+
+            $r = Utilidades::removeAcentos($r);
+
             $codigo = Sistema::getMicroServicoJava('ItauShopline', addslashes(Utilidades::toJson($r)));
 
             $ret .= "<form action='https://shopline.itau.com.br/shopline/shopline.aspx' method='post' name='shopline_$i' target='SHOPLINE'>"
                     . "<input type='hidden' name='DC' value='$codigo'><br>"
-                    . "<input type='submit' name='Shopline' value='Boleto'>"
+                    . "<input type='submit' name='Shopline' value='' style='width:199px;height:89px;background-image: url(assets/images/itau_boleto.jpg);border: none;cursor: pointer;'>"
                     . "</form><hr>";
         }
 

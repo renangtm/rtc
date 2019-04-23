@@ -309,6 +309,12 @@ $possiveis[0] = $rtc;
                         <a class="nav-link" href="carrinho-de-compras.php"><button class="btn btn-warning" onmousedown="tutorial('Carrinho', 'Aqui ï¿½ onde vocï¿½ finalizar sua compra, depois de ja ter adcionado os itens ao carrinho na aba de Compra Parceiros, aqui voce tambï¿½m vai ver todos os impostos que estao incidindo sobre a sua compra.')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px"><i class="fas fa-info"></i>&nbsp</button><i class="fa fa-fw fa-shopping-cart"></i>Carrinho</a>
                     </li>
                     <li class="nav-item ">
+                        <a class="nav-link" href="encomenda_parceiros.php"><button class="btn btn-warning" onmousedown="tutorial('Encomenda Parceiros', 'Aqui voce pode encomendar produtos da Agro Fauna, e de qualquer empresa do grupo Novos Rumos, adicione os produtos desejados ao seu carrinho de compras, e finalize seu pedido')" style="padding:0px;padding-left:4px;display:inline;margin: 0px">&nbsp<i class="fas fa-info"></i></button><i class="fa fa-fw fa-shopping-basket"></i>&nbspEncomenda Parceiros</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="carrinho_encomenda.php"><button class="btn btn-warning" onmousedown="tutorial('Carrinho de Encomenda', 'Aqui ï¿½ onde vocï¿½ finalizar sua encomenda, depois de ja ter adcionado os itens ao carrinho na aba de Encomenda Parceiros, aqui voce tambï¿½m vai ver todos os impostos que estao incidindo sobre a sua compra.')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px"><i class="fas fa-info"></i>&nbsp</button><i class="fa fa-fw fa-shopping-cart"></i>Carrinho de Encomenda</a>
+                    </li>
+                    <li class="nav-item ">
                         <a class="nav-link" href="acompanhar-pedidos.php"><button class="btn btn-warning" onmousedown="tutorial('Acompanhamento de pedido', 'Aqui voce pode acompanhar seus pedidos realizados')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px"><i class="fas fa-info"></i>&nbsp</button><i class="fa fa-fw fa-eye"></i>Acompanhar Pedidos</a>
                     </li>
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
@@ -326,7 +332,7 @@ $possiveis[0] = $rtc;
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_ENCOMENDA()->m("C"))) { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="encomenda.php" ><button class="btn btn-warning" onmousedown="tutorial('Encomenda', 'Aqui você pode gerenciar as encomendas realizadas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-clock"></i>Encomendas</a>
+                            <a class="nav-link" href="encomenda.php" ><button class="btn btn-warning" onmousedown="tutorial('Encomenda', 'Aqui vocï¿½ pode gerenciar as encomendas realizadas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-clock"></i>Encomendas</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_BANCO()->m("C"))) { ?>

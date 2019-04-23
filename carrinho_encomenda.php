@@ -26,7 +26,7 @@
         <title>RTC (Reltrab Cliente) - WEB</title>
     </head>
 
-    <body ng-controller="crtCarrinhoFinal">
+    <body ng-controller="crtCarrinhoEncomendaFinal">
         <!-- ============================================================== -->
         <!-- main wrapper -->
         <!-- ============================================================== -->
@@ -57,13 +57,13 @@
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="page-header">
-                                    <h2 class="pageheader-title">Seu carrinho de compras</h2>
+                                    <h2 class="pageheader-title">Seu carrinho de encomenda</h2>
                                     <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
                                     <div class="page-breadcrumb">
                                         <nav aria-label="breadcrumb">
                                             <ol class="breadcrumb">
                                                 <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">RTC</a></li>
-                                                <li class="breadcrumb-item active" aria-current="page">Seu carrinho de Compras</li>
+                                                <li class="breadcrumb-item active" aria-current="page">Seu carrinho de Encomendas</li>
                                             </ol>
                                         </nav>
                                     </div>
@@ -78,38 +78,33 @@
                         <!-- carrinho  -->
                         <!-- ============================================================== -->
                         <div class="">
-                           
-                            <div ng-repeat="pedido in pedidos" ng-if="!finalizado(pedido)" style="display: inline-block;margin-left:10px;margin-bottom: 50px;">
-                                 <div class="card">
-						<div class="card-body">
+
+                            <div ng-repeat="encomenda in encomendas" style="display: inline-block; width:48%; min-width:500px;margin-left:10px;margin-bottom: 50px;">
                                 <div class="table-responsive-sm">
-                                    <strong style="color:SteelBlue"><i class="fas fa-road"></i>&nbsp{{pedido.empresa.nome}}</strong>
-                                    <strong ng-if="pedido.logistica !== null" style="color:DarkBlue">&nbsp / &nbsp<i class="fas fa-box"></i>&nbsp{{pedido.logistica.nome}}</strong>
+                                    <strong style="color:SteelBlue"><i class="fas fa-road"></i>&nbsp{{encomenda.empresa.nome}}</strong>
                                     <table class="table table-striped" style="margin-bottom: 10px;">
                                         <thead>
                                             <tr style="border-top: 0px solid red;">
                                                 <th>Img produto</th>
                                                 <th>Produto</th>
                                                 <th class="right">Qtd</th>
-                                                <th class="text-center">Vl. Base</th>
+                                                <th class="text-center">Vl. Min/Max</th>
                                                 <th class="right">BC</th>
                                                 <th class="right">ICMS</th>
                                                 <th class="text-center">C. Fin</th>
-                                                <th class="right">Frete</th>
                                                 <th class="text-center">Sub Tot.</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr ng-repeat="produto in pedido.produtos">
-                                                <td class="center" width="10%" style="position: relative"><button class="btn btn-danger" style="position: absolute;left:5px;top:5px;width:20px;height:20px;padding:0px" ng-click="remover(produto)"><i class="fas fa-times"></i></button><img src="{{produto.produto.imagem}}" class="product-image"></td>
-                                                <td class="left">{{produto.produto.nome}}<hr><span ng-if="produto.validade_minima !== 1000">Val.<br><strong style="text-decorarion:underline">{{produto.validade_minima| data_st}}</strong></span></td>
-                                                <td class="text-center">{{produto.quantidade}}</td>
-                                                <td class="text-center" style="color:{{(retirouPromocao(produto) > 0) ? 'Orange' : '#000000'}}">{{produto.valor_base.toFixed(2)}} R$ <span ng-if="retirouPromocao(produto) > 0"><hr>Seria {{retirouPromocao(produto)}} R$ em campanha, no entanto a campanha nao contempla este prazo</span></td>
-                                                <td class="text-center" style="color:SteelBlue">{{produto.base_calculo.toFixed(2)}} R$</td>
-                                                <td class="text-center" style="{{produto.icms>0?'font-size:15px;color:DarkRed;text-decoration:underline':'text-decoration:line-through'}}">{{produto.icms.toFixed(2)}} R$</td>
-                                                <th class="text-center" style="{{produto.juros>0?'font-size:15px;color:DarkRed;text-decoration:underline':'text-decoration:line-through'}}">{{produto.juros.toFixed(2)}} R$</th>
-                                                <th class="text-center" style="{{produto.frete>0?'font-size:15px;color:DarkRed;text-decoration:underline':'text-decoration:line-through'}}">{{produto.frete.toFixed(2)}} R$</th>
-                                                <td class="text-center" style="color:Green">{{((produto.valor_base + produto.icms + produto.frete + produto.ipi + produto.juros) * produto.quantidade).toFixed(2)}} R$</td>
+                                            <tr ng-repeat="produto in encomenda.produtos">
+                                                <td class="center" width="10%" style="position: relative"><button class="btn btn-danger" style="position: absolute;left:5px;top:5px;width:20px;height:20px;padding:0px" ng-click="remover(produto)" ng-disabled="pedido.status_finalizacao !== null && pedido.status_finalizacao.final"><i class="fas fa-times"></i></button><img src="{{produto.produto.imagem}}" class="product-image"></td>
+                                                <td class="left">{{produto.produto.nome}}</td>
+                                                <td class="right">{{produto.quantidade}}</td>
+                                                <td class="text-center">{{produto.valor_base_inicial}} R$<hr>{{produto.valor_base_final}} R$</td>
+                                                <td class="text-center" style="color:SteelBlue">{{produto.base_calculo_inicial.toFixed(2)}} R$ <hr> {{produto.base_calculo_final.toFixed(2)}} R$</td>
+                                                <td class="text-center" style="{{produto.icms_inicial>0?'font-size:15px;color:DarkRed;text-decoration:underline':'text-decoration:line-through'}}">{{produto.icms_inicial.toFixed(2)}} R$ <hr> {{produto.icms_final.toFixed(2)}} R$</td>
+                                                <th class="right" style="{{produto.juros_inicial>0?'font-size:15px;color:DarkRed;text-decoration:underline':'text-decoration:line-through'}}">{{produto.juros_inicial.toFixed(2)}} R$ <hr> {{produto.juros_final.toFixed(2)}} R$</th>
+                                                <td class="text-center" style="color:Green">{{((produto.valor_base_inicial + produto.icms_inicial + produto.ipi_inicial + produto.juros_inicial) * produto.quantidade).toFixed(2)}} R$ <hr> {{((produto.valor_base_final + produto.icms_final + produto.ipi_final + produto.juros_final) * produto.quantidade).toFixed(2)}} R$</td>
                                             </tr>
 
                                         </tbody>
@@ -121,73 +116,23 @@
                                     <div class="col-lg-10 col-sm-10 ml-auto">
                                         <table class="table table-clear">
                                             <tbody>
-
                                                 <tr>
                                                     <td class="left">
                                                         <div class="form-group">
-                                                            <label for="">Tipo de Frete:</label><br>
+                                                            <label for="">Total:</label><br>
                                                             <div class="custom-control custom-radio custom-control-inline" style="margin-left:30px;margin-top: 5px;">
-                                                                <input type="radio" id="ra{{pedido.identificador}}" name="radio_{{pedido.identificador}}" ng-value="true" ng-change="atualizaCustosResetandoFrete(pedido)" ng-model="pedido.frete_incluso" class="custom-control-input">
-                                                                <label class="custom-control-label" for="ra{{pedido.identificador}}">Por conta da Empresa (CIF)</label>
-                                                            </div>
-                                                            <div class="custom-control custom-radio custom-control-inline" style="margin-left:30px;margin-top: 5px;">
-                                                                <input type="radio" id="rb{{pedido.identificador}}" name="radio_{{pedido.identificador}}" ng-value="false" ng-change="atualizaCustosResetandoFrete(pedido)" ng-model="pedido.frete_incluso" class="custom-control-input">
-                                                                <label class="custom-control-label" for="rb{{pedido.identificador}}">Por sua conta (FOB)</label>
+                                                                <strong>R$ {{getTotalInicial(encomenda).toFixed(2)}} - {{getTotalFinal(encomenda).toFixed(2)}}</strong>
                                                             </div>
                                                         </div>
                                                     </td>
 
-                                                </tr>
-                                                <tr>
-                                                    <td class="left">
-                                                        <div class="form-group">
-                                                            <label for="">Transportadora</label>
-                                                            <div class="form-row">
-                                                                <div class="col-2">
-                                                                    <input type="text" class="form-control" placeholder="Cod." ng-model="pedido.transportadora.id" disabled>
-                                                                </div>
-                                                                <div class="col-5">
-                                                                    <input type="text" class="form-control" ng-model="pedido.transportadora.razao_social" placeholder="Nome da Transportadora" disabled>
-                                                                </div>
-                                                                <div class="col-1">
-                                                                    <button ng-if="!pedido.frete_incluso" ng-click="setPedidoContexto(pedido)" class="btn btn-outline-light btnedit" data-toggle="modal" data-target="#transportadoras" ng-disabled="!pedido.status.altera" style="padding: .375rem .75rem;"><i class="fas fa-search"></i><span class="indicator" ng-if="pedido.transportadora === null"></span></button>   
-                                                                </div>
-                                                                <div class="col-1">
-                                                                    <button class="btn btn-primary" ng-click="getFretes(pedido)" data-toggle="modal" ng-if="pedido.frete_incluso" data-target="#fretes"><i class="fas fa-truck"></i>&nbspCalcular Frete</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-
-                                                </tr>
-                                                <tr>
-                                                    <td class="left">
-                                                        <div class="form-group">
-                                                            <label for="">Valor do Frete R$</label>
-                                                            <div class="form-row">
-                                                                <input type="text" class="form-control col-3" placeholder="0.0" style="padding-left:5px" ng-disabled="pedido.frete_incluso" ng-model="pedido.frete" ng-confirm="atualizaCustos(pedido)">
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="left">
-                                                        <div class="form-group">
-                                                            <label for="">Forma de pagamento</label>
-                                                            <div class="form-row">
-                                                                <select class="form-control" ng-model="pedido.forma_pagamento">
-                                                                    <option ng-repeat="f in pedido.formas_pagamento" ng-value="f">{{f.nome}}</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="left">
                                                         <div class="form-group">
                                                             <label for="">Prazo</label>
                                                             <div class="form-row">
-                                                                <select class="form-control" ng-change="attPrazoParcelas(pedido)" ng-model="pedido.prazo_parcelas">
+                                                                <select class="form-control" ng-disabled="encomenda.status_finalizacao !== null && encomenda.status_finalizacao.final" ng-change="attPrazoParcelas(encomenda)" ng-model="encomenda.prazo_parcelas">
                                                                     <option ng-repeat="f in possibilidades" ng-value="f">{{f.nome === null ? ('Prazo: ' + f.prazo + ' dias em ' + f.parcelas + ' parcelas') : f.nome}}</option>
                                                                 </select>
                                                             </div>
@@ -202,20 +147,71 @@
                                 <div class="col mb-2 m-t-40">
                                     <div class="row">
                                         <div class="col-sm-12  col-md-6">
-                                            <button class="btn btn-lg btn-block btn-light" onclick="location.href = 'comprar.html';" >Continuar comprando</button>
+                                            <button class="btn btn-lg btn-block btn-light" onclick="location.href = 'encomenda_parceiros.php';" >Continuar encomendando</button>
                                         </div>
                                         <div class="col-sm-12 col-md-6 text-right">
-                                            <button class="btn btn-lg btn-block btn-primary text-uppercase" ng-disabled="pedido.transportadora === null" ng-click="finalizarPedido(pedido)">Finalizar Compra</button>
+                                            <button style="width:100%;white-space: normal" class="btn btn-lg {{encomenda.status_finalizacao === null ? 'btn-primary':encomenda.status_finalizacao.classe}}  text-uppercase" ng-disabled="encomenda.status_finalizacao !== null || atualizando_custo" ng-click="finalizarEncomenda(encomenda)">
+                                                {{encomenda.status_finalizacao === null ? 'Finalizar Encomenda':encomenda.status_finalizacao.valor}} 
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
-                            </div>
-                          </div>
                         </div>	
+
+                        <div class="modal fade" id="finalizarCompraModal" tabindex="-1" role="dialog" aria-labelledby="vizPedido" aria-hidden="true">
+                            <div class="modal-dialog modal-md">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-check fa-3x"></i>&nbsp;&nbsp;&nbsp;Pedido finalizado com sucesso</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                    </div>
+                                    <div class="modal-body text-center" id="finalizarCompra">
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- ============================================================== -->
                         <!-- end carrinho  -->
                         <!-- ============================================================== -->		
+                        <div class="modal fade" id="mdlPossibilidadesFrete" tabindex="-1" role="dialog" aria-labelledby="vizPedido" aria-hidden="true">
+                            <div class="modal-dialog modal-md">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-random fa-3x"></i>&nbsp;&nbsp;&nbsp;Frete com redespacho</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <div ng-if="carregando_frete">
+                                            <span style="margin:10px" class="dashboard-spinner spinner-warning spinner-md "></span>
+                                            &nbsp<h4>Aguarde, o sistema esta encontrando as possibilidades...</h4>
+                                        </div>
+                                        <div ng-if="!carregando_frete && pedido_contexto.possibilidades_frete.length > 0">
+                                            <div ng-click="setFreteRedespacho(p)" class="btn btn-outline-light" style="width:100%;padding:10px;margin-bottom:10px;border-radius: 5px" ng-repeat="p in pedido_contexto.possibilidades_frete">
+                                                <div ng-repeat="ponto in p">
+                                                    <h4 style="{{ponto.chegada?'color:Green':''}}">{{getNomeLocal(ponto)}} <i class="fas fa-star" ng-if="ponto.chegada"></i></h4>
+                                                    <div ng-if="ponto.transportadora !== null" style="font-style: italic;text-decoration: underline;font-weight: bold;color:steelblue">
+                                                        <i class="fas fa-arrow-up"></i>
+                                                        Transporte: {{ponto.transportadora.razao_social}} - <strong style="color:Red">R$ {{ponto.valor.toFixed(2)}}</strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div ng-if="!carregando_frete && pedido_contexto.possibilidades_frete.length === 0">
+                                            :(, Infelizmente não foram encotnradas possibilidades de frete com redespacho para a sua região.
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="modal fade" id="fretes" tcalculoProntoabindex="-1" role="dialog" aria-labelledby="fretes" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -298,35 +294,16 @@
         <!-- ============================================================== -->
         <!-- end wrapper  -->
         <!-- ============================================================== -->
+        <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
-        <div class="modal fade modal-sm"id="loading" tabindex="-1" style="position:fixed;left:calc(100% - 380px)" role="dialog" aria-labelledby="edit" aria-hidden="true">
-            <div class="modal-dialog" style="position:absolute;top:calc(100% - 380px)">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-wifi"></i>&nbsp;&nbsp;&nbsp;Aguarde</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                    </div>
-                    <div class="modal-body text-center">
-
-                        <span style="margin-top:30px;" class="dashboard-spinner spinner-success spinner-sm "></span>
-                        <br>
-                        <h3 style="margin-top:20px;">Carregando as informações...</h3>
-
-                    </div>
-                    <div class="modal-footer">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ============================================================== -->
-        <!-- end main wrapper  -->
-        <!-- ============================================================== -->
-        <!-- Optional JavaScript -->
         <!-- jquery 3.3.1 -->
         <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-        <!-- bootstap bundle js -->
+        <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
+        <script src="assets/libs/js/form-mask.js"></script>
         <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+
+        <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+        <script src="assets/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
         <!-- slimscroll js -->
         <script src="assets/vendor/slimscroll/jquery.slimscroll.js"></script>
         <!-- main js -->
@@ -343,36 +320,43 @@
         <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
         <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
         <script src="assets/libs/js/dashboard-ecommerce.js"></script>
+        <!-- parsley js -->
+        <script src="assets/vendor/parsley/parsley.js"></script>
+
+        <!-- Optional JavaScript -->
         <script>
+
+                                                            var l = $('#loading');
+                                                            l.hide();
+
+
+                                                            var x = 0;
+                                                            var y = 0;
+
+                                                            $(document).mousemove(function (e) {
+
+                                                                x = e.clientX;
+                                                                y = e.clientY;
+
+                                                                var s = $(this).scrollTop();
+
+                                                                l.offset({top: (y + s), left: x});
+
+                                                            })
 
                                                             var sh = false;
                                                             var it = null;
 
                                                             loading.show = function () {
-                                                                if (it != null) {
-                                                                    clearInterval(it);
-                                                                }
-                                                                it = setInterval(function () {
-                                                                    $("#loading").modal("show");
-                                                                    if ($("#loading").hasClass('in')) {
-                                                                        clearInterval(it);
-                                                                    }
-                                                                }, 300)
+                                                                l.show();
+                                                                var s = $(document).scrollTop();
+
+                                                                l.offset({top: (y + s), left: x});
 
                                                             }
 
                                                             loading.close = function () {
-
-                                                                if (it != null) {
-                                                                    clearInterval(it);
-                                                                }
-                                                                it = setInterval(function () {
-                                                                    $("#loading").modal("hide");
-                                                                    if (!$("#loading").hasClass('in')) {
-                                                                        clearInterval(it);
-                                                                    }
-                                                                }, 300)
-
+                                                                l.hide();
                                                             }
 
                                                             $(document).ready(function () {

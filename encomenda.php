@@ -284,9 +284,17 @@
                                             <div class="form-inline col-3" style="">
                                                 <a href="#" class="btn btn-outline-success" data-title="logs" data-toggle="modal" ng-click="getLogs()" data-target="#logs"><i class="fas fa-clipboard-list"></i>&nbsp;Logs da encomenda</a>
                                             </div>
-
+                                            
                                         </div>
-                                    </div>					
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-row">
+                                            <div class="form-inline col-7">
+                                                Prazo: <input type="number" class="form-control" ng-model="encomenda.prazo" ng-confirm="atualizaCustos()" style="width:70px"> &nbsp
+                                                Parcelas: <input type="number" class="form-control" ng-model="encomenda.parcelas" ng-confirm="atualizaCustos()" style="width:70px">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </form>
 
                             </div>

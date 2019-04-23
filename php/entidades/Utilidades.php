@@ -13,6 +13,54 @@
  */
 class Utilidades {
 
+    public static function removeAcentos($string, $slug = false) {
+
+        if (is_string($string)) {
+
+            $string = strtolower($string);
+            // Código ASCII das vogais
+            $ascii['a'] = range(224, 230);
+            $ascii['e'] = range(232, 235);
+            $ascii['i'] = range(236, 239);
+            $ascii['o'] = array_merge(range(242, 246), array(240, 248));
+            $ascii['u'] = range(249, 252);
+            // Código ASCII dos outros caracteres
+            $ascii['b'] = array(223);
+            $ascii['c'] = array(231);
+            $ascii['d'] = array(208);
+            $ascii['n'] = array(241);
+            $ascii['y'] = array(253, 255);
+            foreach ($ascii as $key => $item) {
+                $acentos = '';
+                foreach ($item AS $codigo)
+                    $acentos .= chr($codigo);
+                $troca[$key] = '/[' . $acentos . ']/i';
+            }
+            $string = preg_replace(array_values($troca), array_keys($troca), $string);
+            // Slug?
+            if ($slug) {
+                // Troca tudo que não for letra ou número por um caractere ($slug)
+                $string = preg_replace('/[^a-z0-9]/i', $slug, $string);
+                // Tira os caracteres ($slug) repetidos
+                $string = preg_replace('/' . $slug . '{2,}/i', $slug, $string);
+                $string = trim($string, $slug);
+            }
+            return strtoupper($string);
+        } else if (is_object($string)) {
+
+            foreach ($string as $key => $value) {
+                $string->$key = Utilidades::removeAcentos($value);
+            }
+        } else if (is_array($string)) {
+
+            foreach ($string as $key => $value) {
+                $string[$key] = Utilidades::removeAcentos($value);
+            }
+        }
+
+        return $string;
+    }
+
     public static function removerLacunas($obj, $pilha = array()) {
 
         foreach ($pilha as $key => $value) {
@@ -65,12 +113,12 @@ class Utilidades {
 
         return null;
     }
-    
-    public static function ifn($dado,$r,$len = 5){
-        if($dado === "" || $dado === null){
+
+    public static function ifn($dado, $r, $len = 5) {
+        if ($dado === "" || $dado === null) {
             return $r;
         }
-        if(strlen($dado)<$len){
+        if (strlen($dado) < $len) {
             return $r;
         }
         return $dado;

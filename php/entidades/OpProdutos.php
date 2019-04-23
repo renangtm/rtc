@@ -30,7 +30,7 @@ class OpProdutos {
 
     public function getFiltrosPossiveis() {
 
-        $filtro_nome_principio = new FiltroTextual(1, "Nome ou Ativo", array("nome","ativo"));
+        $filtro_nome_principio = new FiltroTextual(1, "Nome ou Ativo", array("nome", "ativo"));
 
         $filtro_categoria = new FiltroOpcional(2, "Categoria", "categoria.nome");
 
@@ -123,27 +123,26 @@ class OpProdutos {
             $filtro_fabricante,
             $filtro_ativo);
     }
-    
+
     private $last_qtd = 0;
-    
-    public function getLastQtd(){
-        
+
+    public function getLastQtd() {
+
         return $this->last_qtd;
-        
     }
 
-    public function filtrar($x1, $x2, $filtros = null, $ordem = null) {
+    public function filtrar($x1, $x2, $filtros = null, $ordem = null, $disponivel = 0) {
 
         $k = array();
-        
-        foreach($this->lista as $key=>$value){
-            if($value->disponivel > 0){
+
+        foreach ($this->lista as $key => $value) {
+            if ($value->disponivel > $disponivel) {
                 $k[] = $value;
             }
         }
-        
+
         $this->lista = $k;
-        
+
         if ($filtros !== null) {
             $k = array();
             foreach ($this->lista as $keyl => $produto) {
@@ -160,8 +159,8 @@ class OpProdutos {
             }
             $this->lista = $k;
         }
-        
-        $odr = new Ordem(1,"","ofertas");
+
+        $odr = new Ordem(1, "", "ofertas");
         $odr->asc = true;
         $this->lista = $odr->ordenar($this->lista);
 
@@ -170,7 +169,7 @@ class OpProdutos {
         }
 
         $ret = array();
-        
+
         $this->last_qtd = count($this->lista);
 
         $x1 = min($x1, count($this->lista));

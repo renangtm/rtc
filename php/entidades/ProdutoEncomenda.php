@@ -59,7 +59,7 @@ class ProdutoEncomenda {
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE produto_encomenda SET id_produto = " . $this->produto->id . ", quantidade=$this->quantidade, valor_base_inicial=$this->valor_base_inicial,valor_base_final=$this->valor_base_final,juros_inicial=$this->juros_inicial,juros_fina=$this->juros_final,icms_inicial=$this->icms_inicial,icms_final=$this->icms_final,base_calculo_inicial=$this->base_calculo_inicial,base_calculo_final=$this->base_calculo_final,ipi_inicial=$this->ipi_inicial,ipi_final=$this->ipi_final,id_encomenda=" . $this->encomenda->id . " WHERE id = " . $this->id);
+            $ps = $con->getConexao()->prepare("UPDATE produto_encomenda SET id_produto = " . $this->produto->id . ", quantidade=$this->quantidade, valor_base_inicial=$this->valor_base_inicial,valor_base_final=$this->valor_base_final,juros_inicial=$this->juros_inicial,juros_final=$this->juros_final,icms_inicial=$this->icms_inicial,icms_final=$this->icms_final,base_calculo_inicial=$this->base_calculo_inicial,base_calculo_final=$this->base_calculo_final,ipi_inicial=$this->ipi_inicial,ipi_final=$this->ipi_final,id_encomenda=" . $this->encomenda->id . " WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
         }
@@ -76,7 +76,7 @@ class ProdutoEncomenda {
         $juros_dia = pow($juros_mes, 1 / 30);
 
         $this->juros_inicial = round(($this->valor_base_inicial * pow($juros_dia, $this->encomenda->prazo)) - $this->valor_base_inicial, 2);
-
+       
         if ($this->encomenda->cliente != null) {
 
             $this->base_calculo_inicial = ($cat->base_calculo / 100) * ($this->valor_base_inicial + $this->juros_inicial);

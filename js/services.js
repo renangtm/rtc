@@ -484,6 +484,16 @@ rtc.service('logService', function ($http, $q) {
         });
     }
 })
+rtc.service('encomendaParceiroService', function ($http, $q) {
+    this.getElementos = function (x1, x2, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x1: x1, x2: x2, ordem: ordem, filtro: filtro},
+            query: "$r->elementos=Sistema::getEncomendaParceiros($c);$op=new OpProdutos($r->elementos);$r->elementos=$op->filtrar($o->x1,$o->x2,$o->filtro,$o->ordem,-10);$r->qtd=$op->getLastQtd();$r->filtros=$op->getFiltrosPossiveis();$r->ordens=$op->getOrdensPossiveis()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('compraParceiroService', function ($http, $q) {
     this.getElementos = function (x1, x2, filtro, ordem, fn) {
         baseService($http, $q, {
@@ -2234,6 +2244,14 @@ rtc.service('sistemaService', function ($http, $q) {
             falha: fn
         });
     }
+    this.finalizarEncomendaParceiros = function (pedido, fn) {
+        baseService($http, $q, {
+            o: pedido,
+            query: "Sistema::finalizarEncomendaParceiros($c,$o,$empresa);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.finalizarSeparacao = function (pedido, fn) {
         baseService($http, $q, {
             o: {pedido: pedido},
@@ -2493,6 +2511,30 @@ rtc.service('carrinhoService', function ($http, $q) {
     this.getPedidosResultantes = function (fn) {
         baseService($http, $q, {
             query: "$car=$ses->get('carrinho');if($car===null){$car=array();$ses->set('carrinho',$car);};$r->pedidos=Sistema::getPedidosResultantes($c,$car,$empresa,$usuario)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('carrinhoEncomendaService', function ($http, $q) {
+    this.getCarrinho = function (fn) {
+        baseService($http, $q, {
+            query: "$car=$ses->get('carrinho_encomenda');if($car===null){$car=array();$ses->set('carrinho_encomenda',$car);};$r->carrinho=$car",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.setCarrinho = function (carrinho, fn) {
+        baseService($http, $q, {
+            o: {carrinho: carrinho},
+            query: "$ses->set('carrinho_encomenda',$o->carrinho)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getEncomendasResultantes = function (fn) {
+        baseService($http, $q, {
+            query: "$car=$ses->get('carrinho_encomenda');if($car===null){$car=array();$ses->set('carrinho_encomenda',$car);};$r->encomendas=Sistema::getEncomendasResultantes($c,$car,$empresa,$usuario)",
             sucesso: fn,
             falha: fn
         });
