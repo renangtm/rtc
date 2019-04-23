@@ -13,7 +13,7 @@
  */
 class Sistema {
 
-    public static $ENDERECO = "http://192.168.0.18/novo_rtc_web/";
+    public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
 
     /*
      * porcentagem
@@ -533,6 +533,10 @@ class Sistema {
 
     public static function P_ENCOMENDA() {
         return new Permissao(53, "Encomenda");
+    }
+
+    public static function P_ANALISE_COTACAO() {
+        return new Permissao(54, "Analise Cotacao");
     }
 
     public static function TT_COMPRA($id_empresa) {
@@ -1508,11 +1512,10 @@ class Sistema {
             return $retorno;
         }
     }
-    
-    public static function finalizarEncomendaParceiros($con, $pedido, $empresa) {
-        
-        $pedido->merge($con);
 
+    public static function finalizarEncomendaParceiros($con, $pedido, $empresa) {
+
+        $pedido->merge($con);
     }
 
     public static function finalizarCompraParceiros($con, $pedido, $empresa) {
@@ -3819,7 +3822,8 @@ class Sistema {
                 Sistema::P_ACOMPANHA_TAREFAS()
                     )), new RTC(7, array(
                 Sistema::P_GERENCIADOR(),
-                Sistema::P_ENCOMENDA()
+                Sistema::P_ENCOMENDA(),
+                Sistema::P_ANALISE_COTACAO()
         )));
     }
 

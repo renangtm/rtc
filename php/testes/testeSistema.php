@@ -32,6 +32,14 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         $con = new ConnectionFactory();
         
+        $e = new Empresa(1734,$con);
+        
+        $a = $e->getAnaliseCotacaoEntrada($con);
+        
+        echo Utilidades::toJson($a);
+        
+        return;
+        
         $enc = Sistema::getEncomendaParceiros($con);
         
         echo Utilidades::toJson($enc);

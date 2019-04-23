@@ -439,7 +439,7 @@ class Pedido {
         $nota->observacao = new OBS_NFE($this->empresa, $this);
         $nota->observacao = $nota->observacao->getObs();
 
-        $nota->frete_destinatario_remetente = !$this->frete_incluso;
+        $nota->frete_destinatario_remetente = $this->frete_incluso;
         $nota->transportadora = $this->transportadora;
 
         $total = $this->getTotal();

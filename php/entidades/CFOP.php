@@ -21,7 +21,8 @@ class CFOP {
     public static $VENDA_DENTRO_ESTADO_2 = "5102";
     public static $VENDA_FORA_ESTADO_2 = "5106";
     public static $TRANSFERENCIA = "6152";
-
+    public static $TRANSFERENCIA_DENTRO_ESTADO = "5152";
+    
     public static function descricao($cfop) {
 
         $cfop = str_replace(array("."), array(""), $cfop . "");
@@ -41,7 +42,9 @@ class CFOP {
         } else if ($cfop === self::$VENDA_FORA_ESTADO_2) {
             return "Venda de mercadoria fora do estado";
         } else if ($cfop === self::$TRANSFERENCIA) {
-            return "Transferencia de mercadoria";
+            return "Transferencia de mercadoria fora do estado";
+        }else if ($cfop === self::$TRANSFERENCIA_DENTRO_ESTADO) {
+            return "Transferencia de mercadoria dentro do estado";
         }
 
         return "Indefinido";

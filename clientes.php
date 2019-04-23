@@ -304,6 +304,15 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
+                                        <label for="txtnamef" class="col-3 col-lg-3 col-form-label text-left">Limite de Credito</label>
+                                        <div class="col-9 col-lg-9">
+                                            <input id="txtnamef" type="text" ng-model="cliente.limite_credito" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
                                         <div class="col-9 col-lg-10">
                                             <email entidade="Cliente" atributo="cliente.email" senha="false" alterar="true"></email>
                                         </div>

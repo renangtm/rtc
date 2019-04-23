@@ -155,6 +155,12 @@ class Cliente {
             $ps = $con->getConexao()->prepare("UPDATE cliente SET razao_social='" . addslashes($this->razao_social) . "', nome_fantasia='" . addslashes($this->nome_fantasia) . "', limite_credito=$this->limite_credito, inicio_limite=FROM_UNIXTIME($this->inicio_limite/1000), termino_limite=FROM_UNIXTIME($this->termino_limite/1000), pessoa_fisica=" . ($this->pessoa_fisica ? "true" : "false") . ", cpf='" . addslashes($this->cpf->valor) . "', rg='" . addslashes($this->rg->valor) . "', cnpj='" . addslashes($this->cnpj->valor) . "', excluido= false, id_categoria=" . $this->categoria->id . ", id_empresa=" . $this->empresa->id . ", inscricao_estadual='" . addslashes($this->inscricao_estadual) . "',suframado=" . ($this->suframado ? "true" : "false") . ", inscricao_suframa='$this->inscricao_suframa', codigo=$this->codigo WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
+
+            if ($this->getLimiteCredito() !== $this->limite_credito) {
+                $ps = $con->getConexao()->prepare("UPDATE cliente SET limite_credito=$this->limite_credito, inicio_limite=CURRENT_DATE,termino_limite=DATE_ADD(CURRENT_DATE,INTERVAL 10 DAY) WHERE id = " . $this->id);
+                $ps->execute();
+                $ps->close();
+            }
         }
 
         if ($this->codigo_contimatic > 0) {

@@ -648,6 +648,7 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
             if (r.sucesso) {
 
                 $scope.relatorio_separacao = r.relatorio;
+                $('#mdlRelatorio').modal('show');
 
             } else {
 
@@ -2755,7 +2756,7 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
         var total = 0;
 
         for (var i = 0; i < pedido.produtos.length; i++) {
-            total += pedido.produtos[i].quantidade * (pedido.produtos[i].valor_base + pedido.produtos[i].frete + pedido.produtos[i].ipi + pedido.produtos[i].juros);
+            total += pedido.produtos[i].quantidade * (pedido.produtos[i].valor_base + pedido.produtos[i].frete + pedido.produtos[i].ipi + pedido.produtos[i].juros + pedido.produtos[i].icms);
         }
 
         return total;

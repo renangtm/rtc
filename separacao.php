@@ -137,7 +137,22 @@ $id_pedido = $_GET['pedido'];
 
                     </div>
 
-                    <iframe style="display: none" onload="imprimir()" id="pdf" name="pdf" src="{{relatorio_separacao}}"></iframe>
+                    <div class="modal fade" style="overflow-y:scroll" id="mdlRelatorio" tabindex="-1" role="dialog" aria-labelledby="mdlFilhos" aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content" >
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-table fa-3x"></i>&nbsp;&nbsp;&nbsp;Gerado com sucesso !</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+
+                                <a href="{{relatorio_separacao}}" onclick="dms()" target="_blank"><i class="fas fa-upload"></i>&nbsp Abrir relatorio</a>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
                     <!-- ============================================================== -->
                     <!-- footer -->
                     <!-- ============================================================== -->
@@ -197,7 +212,13 @@ $id_pedido = $_GET['pedido'];
         <!-- Optional JavaScript -->
         <script>
 
-
+        function dms(){
+            
+            setTimeout(function(){
+                $("#mdlRelatorio").modal('hide');
+            },1000)
+            
+        }
                                 setInterval(function () {
                                     $("#txtBipe").focus();
                                 }, 1000)
