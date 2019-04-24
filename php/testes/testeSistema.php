@@ -34,9 +34,6 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         $e = new Empresa(1735,$con);
         
-        $a = $e->getUsuarios($con, 0, 1,"usuario.id=5283");
-        
-        echo Utilidades::toJson($a);
         
         return;
         
