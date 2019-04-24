@@ -335,6 +335,11 @@ $possiveis[0] = $rtc;
                             <a class="nav-link" href="encomenda.php" ><button class="btn btn-warning" onmousedown="tutorial('Encomenda', 'Aqui voc� pode gerenciar as encomendas realizadas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-clock"></i>Encomendas</a>
                         </li>
                     <?php } ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_ANALISE_COTACAO()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="analise_cotacao_entrada.php" ><button class="btn btn-warning" onmousedown="tutorial('Analise Cotacao', 'Aqui voc� pode gerenciar as encomendas realizadas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-bars"></i>Analise Cotacao Entrada</a>
+                        </li>
+                    <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_BANCO()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="bancos.php" ><button class="btn btn-warning" onmousedown="tutorial('Bancos', 'Aqui voc� faz o cadastro de seus bancos com saldos, agencia, conta e outros dados, pode alterar e excluir tamb�m')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-calculator"></i>Bancos</a>

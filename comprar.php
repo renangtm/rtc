@@ -110,19 +110,36 @@
 
                                         <div id="carouselExampleIndicators" class="product-carousel carousel slide m-b-40" data-ride="carousel">
                                             <ol class="carousel-indicators">
+                                               <!--
                                                 <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active" style="cursor: pointer;"></li>
+												
                                                 <li data-target="#carouselExampleIndicators" data-slide-to="1" style="cursor: pointer;"></li>
+												<li data-target="#carouselExampleIndicators" data-slide-to="2" style="cursor: pointer;"></li>
+												-->
                                                 <?php
-                                                $i = 2; //manter sempre proximo numero inteiro apos o <li data-slide-to> anterior
+                                                $i = 0; //manter sempre proximo numero inteiro apos o <li data-slide-to> anterior
 
                                                 for ($j = 0; $j < count($banners_frontais); $j++) {
+                                                    if($j + $i==0){?>
+													
+														<li data-target="#carouselExampleIndicators" data-slide-to="<?php echo ($j + $i); ?>" class="active" style="cursor: pointer;"></li>
+													
+													<?php 
+													}else{
+													?>
+														 <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo ($j + $i); ?>" style="cursor: pointer;"></li>
+														 
+													<?php
+													}
+														
                                                     ?>
-                                                    <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo ($j + $i); ?>" style="cursor: pointer;"></li>
+                                                   
                                                     <?php
                                                 }
                                                 ?>
                                             </ol>
                                             <div class="carousel-inner">
+											<!--
                                                 <div class="carousel-item active">
                                                     <a href="http://agrofauna.com.br/mail/fraude_boletos/email_fraude_boletos_bancarios.html">
                                                         <img class="d-block w-100" src="assets/images/banner_fraude_em_boletos_784x295.jpg" alt="First slide">
@@ -133,12 +150,27 @@
                                                         <img class="d-block w-100" src="assets/images/banner_fraude_em_boletos_784x295.jpg" alt="First slide">
                                                     </a>    
                                                 </div>
+												-->
                                                 <?php
                                                 for ($j = 0; $j < count($banners_frontais); $j++) {
+                                                    if($j + $i==0){?>
+													
+														<div class="carousel-item active" style="height:22vw">
+															<?php echo $banners_frontais[$j]; ?>
+														</div>
+													<?php 
+													}else{
+													?>
+													
+														<div class="carousel-item" style="height:22vw">
+															<?php echo $banners_frontais[$j]; ?>
+														</div>
+													
+													<?php
+													}
+														
                                                     ?>
-                                                    <div class="carousel-item" style="height:22vw">
-                                                        <?php echo $banners_frontais[$j]; ?>
-                                                    </div>
+													
                                                     <?php
                                                 }
                                                 ?>

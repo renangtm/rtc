@@ -1,3 +1,126 @@
+rtc.controller("crtAnaliseCotacao", function ($scope, $sce, analiseCotacaoService) {
+
+    $scope.analises = {};
+    $scope.elementos = [];
+
+
+    analiseCotacaoService.getElementos(function (t) {
+
+        $scope.elementos = t.elementos;
+        $scope.analises = createList($scope.elementos, 1, 10, "nome_produto");
+
+    })
+
+    $scope.passar = function (analise) {
+
+        analiseCotacaoService.passar(analise, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Produto vistado com sucesso");
+
+                var ne = [];
+
+                for (var i = 0; i < $scope.elementos.length; i++) {
+                    if ($scope.elementos[i].id !== analise.id) {
+                        ne[ne.length] = $scope.elementos[i];
+                    }
+                }
+
+                $scope.elementos = ne;
+
+                $scope.analises = createList($scope.elementos, 1, 10, "nome_produto");
+
+            } else {
+
+                msg.erro("Problema ao vistar produto, tente novamente mais tarde");
+
+            }
+
+        })
+
+
+    }
+
+    $scope.recusar = function (analise) {
+
+        analiseCotacaoService.recusar(analise, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Produto recusado com sucesso");
+
+                var ne = [];
+
+                for (var i = 0; i < $scope.elementos.length; i++) {
+                    if ($scope.elementos[i].id !== analise.id) {
+                        ne[ne.length] = $scope.elementos[i];
+                    }
+                }
+
+                $scope.elementos = ne;
+
+                $scope.analises = createList($scope.elementos, 1, 10, "nome_produto");
+
+            } else {
+
+                msg.erro("Problema ao recusar produto, tente novamente mais tarde");
+
+            }
+
+        })
+
+
+    }
+
+    $scope.aprovar = function (analise) {
+
+        analise.custo_atual = analise.valor;
+
+        analiseCotacaoService.aprovar(analise, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Produto aprovado com sucesso");
+
+            } else {
+
+                msg.erro("Problema ao aprovar produto, tente novamente mais tarde");
+
+            }
+
+        })
+
+    }
+
+    $scope.campanha = function (analise) {
+
+        var dias = 1;
+
+        if (typeof analise["dias_campanha"] !== 'undefined') {
+            dias = analise["dias_campanha"];
+        }
+
+        analiseCotacaoService.campanha(analise, dias, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Produto colocado na campanha por " + dias + " dias, com sucesso");
+
+            } else {
+
+                msg.erro("Problema ao colocar produto, tente novamente mais tarde");
+
+            }
+
+        })
+
+    }
+
+})
+
+
+
 rtc.controller("crtCarrinhoEncomendaFinal", function ($scope, sistemaService, carrinhoEncomendaService, encomendaService) {
 
     $scope.possibilidades = [
@@ -1170,6 +1293,7 @@ rtc.controller("crtAcompanharAtividades", function ($scope, usuarioService) {
     })
 
 })
+
 rtc.controller("crtFechamentoCaixa", function ($scope, movimentoService, notaService, baseService, fechamentoCaixaService, bancoService, movimentosFechamentoService) {
 
     $scope.fechamentos = createAssinc(fechamentoCaixaService, 1, 5, 10);
@@ -3927,7 +4051,9 @@ rtc.controller("crtEntrada", function ($scope, sistemaService, uploadService) {
                     reader["ii"] = i;
                     reader.onload = function (arquivo) {
 
-                        buscarPedido(xmlToJson(arquivo.target.result), this.ii);
+                       var k = xmlToJson(arquivo.target.result);
+
+                        buscarPedido(k, this.ii);
 
                     };
                     reader.readAsText(arquivos[i]);

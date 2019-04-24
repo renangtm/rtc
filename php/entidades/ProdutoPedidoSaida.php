@@ -346,6 +346,8 @@ class ProdutoPedidoSaida {
 
     public function atualizarCustos() {
 
+
+
         if ($this->id === 0) {
 
             $campanha = null;
@@ -376,6 +378,14 @@ class ProdutoPedidoSaida {
             }
         }
 
+        if($this->pedido->cliente !== null){
+            $con = new ConnectionFactory();
+            $pe = $this->pedido->cliente->getPrecoEspecial($con);
+            if ($pe > 0) {
+                $this->valor_base = round($this->produto->custo / $pe,2);
+            }
+        }
+        
         $cat = $this->produto->categoria;
 
         $emp = $this->pedido->empresa;

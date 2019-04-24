@@ -138,7 +138,7 @@ class Empresa {
 
             $ps = $cf->getConexao()->prepare("SELECT empresa.nome,empresa.cnpj,endereco.id,endereco.rua,endereco.bairro,endereco.cep,endereco.numero,cidade.id,cidade.nome,estado.id,estado.sigla,empresa.inscricao_estadual,empresa.juros_mensal FROM empresa INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' INNER JOIN cidade ON cidade.id=endereco.id_cidade INNER JOIN estado ON estado.id=cidade.id_estado WHERE empresa.id=$id");
             $ps->execute();
-            $ps->bind_result($nome, $cnpj, $end_id, $end_rua, $end_bairro, $end_cep, $end_num, $cid_id, $cid_nom, $est_id, $est_sg, $emp_ie,$emp_jm);
+            $ps->bind_result($nome, $cnpj, $end_id, $end_rua, $end_bairro, $end_cep, $end_num, $cid_id, $cid_nom, $est_id, $est_sg, $emp_ie, $emp_jm);
             if ($ps->fetch()) {
                 $this->nome = $nome;
                 $this->cnpj = new CNPJ($cnpj);
@@ -188,17 +188,19 @@ class Empresa {
             $ps->close();
         }
     }
-    
-    public function getAnaliseCotacaoEntrada($con){
-        
+
+    public function getAnaliseCotacaoEntrada($con) {
+
         $analises = array();
-        
-        $ps = $con->getConexao()->prepare("SELECT p.codigo,p.nome,SUM(pc.quantidade),ROUND(SUM(pc.quantidade*pc.valor)/SUM(pc.quantidade),2),MAX(pc.valor),MIN(pc.valor),GROUP_CONCAT(pc.id separator ','),MAX(ce.data) FROM cotacao_entrada ce INNER JOIN produto_cotacao_entrada pc ON pc.id_cotacao=ce.id INNER JOIN produto p ON p.id=pc.id_produto WHERE ce.id_empresa=$this->id AND ce.data > DATE_SUB(CURRENT_DATE,INTERVAL 60 DAY) AND pc.checado = false GROUP BY p.codigo");
+
+        $c = "(-1";
+
+        $ps = $con->getConexao()->prepare("SELECT p.codigo,p.nome,SUM(pc.quantidade),ROUND(SUM(pc.quantidade*pc.valor)/SUM(pc.quantidade),2),MAX(pc.valor),MIN(pc.valor),GROUP_CONCAT(pc.id separator ','),UNIX_TIMESTAMP(MAX(ce.data))*1000,p.custo,MAX(ce.id) FROM cotacao_entrada ce INNER JOIN produto_cotacao_entrada pc ON pc.id_cotacao=ce.id INNER JOIN produto p ON p.id=pc.id_produto WHERE ce.id_empresa=$this->id AND ce.data > DATE_SUB(CURRENT_DATE,INTERVAL 60 DAY) AND pc.checado = false GROUP BY p.codigo ORDER BY MAX(ce.data) DESC");
         $ps->execute();
-        $ps->bind_result($codigo,$nome,$quantidade,$valor,$valor_maximo,$valor_minimo,$ids,$data);
-        
-        while($ps->fetch()){
-            
+        $ps->bind_result($codigo, $nome, $quantidade, $valor, $valor_maximo, $valor_minimo, $ids, $data, $custo, $mc);
+
+        while ($ps->fetch()) {
+
             $a = new AnaliseCotacaoEntrada();
             $a->id = $codigo;
             $a->nome_produto = $nome;
@@ -207,21 +209,46 @@ class Empresa {
             $a->valor_maximo = $valor_maximo;
             $a->valor_minimo = $valor_minimo;
             $a->data = $data;
-            
+            $a->custo_atual = $custo;
+            $a->id_cotacao = $mc;
             $a->ids_produtos = explode(',', $ids);
-            
-            foreach($a->ids_produtos as $key=>$value){
-                $a->ids_produtos[$key] = intval($value."");
+            $c .= ",$mc";
+            foreach ($a->ids_produtos as $key => $value) {
+                $a->ids_produtos[$key] = intval($value . "");
             }
-            
+
             $analises[] = $a;
-            
         }
-        
+
         $ps->close();
-        
+
+        $c .= ")";
+
+        $cotacoes = array();
+        $ps = $con->getConexao()->prepare("SELECT c.id,f.nome,pc.valor,p.codigo FROM cotacao_entrada c INNER JOIN fornecedor f ON f.id=c.id_fornecedor INNER JOIN produto_cotacao_entrada pc ON pc.id_cotacao=c.id INNER JOIN produto p ON pc.id_produto=p.id WHERE c.id IN $c");
+        $ps->execute();
+        $ps->bind_result($id, $nome_fornecedor, $valor, $codigo);
+
+        while ($ps->fetch()) {
+
+            if (!isset($cotacoes[$id])) {
+                $cotacoes[$id] = array();
+            }
+
+            $cotacoes[$id][$codigo] = array($nome_fornecedor, $valor);
+        }
+
+        $ps->close();
+
+        foreach ($analises as $key => $value) {
+
+            $c = $cotacoes[$value->id_cotacao][$value->id];
+
+            $value->nome_fornecedor = $c[0];
+            $value->ultimo_custo = $c[1];
+        }
+
         return $analises;
-        
     }
 
     public function getEmpresasClientes($con) {
@@ -5519,6 +5546,7 @@ class Empresa {
         }
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
+        
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();

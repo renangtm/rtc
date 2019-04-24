@@ -2,6 +2,47 @@ var debuger = function (l) {
     document.write(paraJson(l));
 }
 
+rtc.service('analiseCotacaoService', function ($http, $q) {
+    this.getElementos= function (fn) {
+        baseService($http, $q, {
+            query: "$r->elementos=$empresa->getAnaliseCotacaoEntrada($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.recusar = function (analise, fn) {
+        baseService($http, $q, {
+            o: analise,
+            query: "$o->recusar($c,$empresa)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.passar = function (analise, fn) {
+        baseService($http, $q, {
+            o: analise,
+            query: "$o->passar($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.aprovar = function (analise, fn) {
+        baseService($http, $q, {
+            o: analise,
+            query: "$o->aprovar($c,$empresa)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.campanha = function (analise,dias, fn) {
+        baseService($http, $q, {
+            o: {analise:analise,dias:dias},
+            query: "$o->analise->campanha($c,$empresa,$o->dias)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 
 rtc.service('encomendaService', function ($http, $q) {
     this.getEncomenda = function (fn) {
