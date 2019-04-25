@@ -187,18 +187,20 @@
                                                         </tfoot>
                                                     </table>
 
+                                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                                        <nav aria-label="Page navigation example">
+                                                            <ul class="pagination justify-content-end">
+                                                                <li class="page-item" ng-repeat="pg in grupo[0].lista.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
+
 
                                                     <!-- TAREFA INDIVIDUAL -->
 
                                                 </div>
 
-                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                    <nav aria-label="Page navigation example">
-                                                        <ul class="pagination justify-content-end">
-                                                            <li class="page-item" ng-repeat="pg in tarefas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                        </ul>
-                                                    </nav>
-                                                </div>
+
                                             </div>
 
                                         </div>

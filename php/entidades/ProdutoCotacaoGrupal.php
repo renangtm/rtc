@@ -43,8 +43,6 @@ class ProdutoCotacaoGrupal {
             $ps->close();
         }
 
-        $prods = $this->getProdutos($con);
-
         $ids = "(0";
         foreach ($this->respostas as $key2 => $value2) {
 

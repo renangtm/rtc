@@ -13,7 +13,7 @@
  */
 class Sistema {
 
-    public static $ENDERECO = "http://189.50.142.58/";
+    public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
 
     /*
      * porcentagem
@@ -2064,7 +2064,8 @@ class Sistema {
                 $grupo->disponivel = $value2->disponivel;
                 $grupo->estoque = $value2->estoque;
                 $grupo->transito = $value2->transito;
-
+                $grupo->setImagemPadrao();
+                
                 $produtos[$hash] = $grupo;
             }
         }

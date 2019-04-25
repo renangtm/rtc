@@ -201,7 +201,7 @@ class Empresa {
             $sql .= "ORDER BY $ordem";
         }
         $ids = "(-1";
-        $ps = $con->getConexao()->prepare();
+        $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
         $ps->bind_result($id_forn, $nome_forn, $id_cot, $data_cot, $obs_cot, $env_cot);
         while ($ps->fetch()) {

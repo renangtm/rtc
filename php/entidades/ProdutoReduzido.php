@@ -24,6 +24,7 @@ class ProdutoReduzido {
         $this->nome = "";
         $this->codigo = 0;
         $this->imagem = "";
+        $this->imagem_padrao = "";
         
     }
 

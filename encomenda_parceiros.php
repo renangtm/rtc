@@ -162,7 +162,7 @@
                                         <div class="product-thumbnail">
                                             <div class="product-img-head">
                                                 <div class="product-img">
-                                                    <img src="{{produto.imagem}}" id="img_{{produto.id}}" alt="" class="img-fluid" onload="fechaLoad(this)" onerror="altImage(this)" style="display: none">
+                                                    <img src="{{produto.imagem}}" id="img_{{produto.id}}" data-padrao="{{produto.imagem_padrao}}" alt="" class="img-fluid" onload="fechaLoad(this)" onerror="altImg(this)" style="display: none">
                                                     <br>
                                                     <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm" style="width:100px;height:100px;margin-bottom:95px"></span>
                                                 </div>
@@ -247,7 +247,7 @@
                                         <div class="product-thumbnail">
                                             <div class="product-img-head">
                                                 <div class="product-img">
-                                                    <img src="{{produto.imagem}}" id="img_{{produto.id}}" alt="" class="img-fluid" onload="fechaLoad(this)" onerror="altImg(this)" style="display: none">
+                                                    <img src="{{produto.imagem}}" data-padrao="{{produto.imagem_padrao}}" id="img_{{produto.id}}" alt="" class="img-fluid" onload="fechaLoad(this)" onerror="altImg(this)" style="display: none">
                                                     <br>
                                                     <span id="sp_{{produto.id}}" class="dashboard-spinner spinner-success spinner-sm" style="width:100px;height:100px;margin-bottom:95px"></span>
                                                 </div>
@@ -564,13 +564,12 @@
 
                                                                             }
                                                                             function altImg(img) {
-
+                                                                                
                                                                                 var im = $(img);
                                                                                 var num = im.attr('id').split('_')[1];
 
-
                                                                                 $("#sp_" + num).hide();
-                                                                                im.css('display', 'initial');
+                                                                                im.attr('src',im.data('padrao'));
                                                                             }
 
 

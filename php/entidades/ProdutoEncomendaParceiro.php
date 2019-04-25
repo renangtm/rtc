@@ -30,6 +30,7 @@ class ProdutoEncomendaParceiro {
     public $disponivel;
     public $estoque;
     public $transito;
+    public $imagem_padrao;
 
     function __construct() {
 
@@ -50,7 +51,37 @@ class ProdutoEncomendaParceiro {
         $this->grade = "";
         $this->custo_atualizado = false;
         $this->ofertas = 0;
-        
+        $this->imagem_padrao = "";
+    }
+
+    public function setImagemPadrao() {
+
+        if ($this->unidade === "Frc") {
+
+            $this->imagem_padrao = "";
+        } else if ($this->unidade === "Pct") {
+
+            $this->imagem_padrao = "";
+        } else if ($this->unidade === "Gl") {
+
+            $this->imagem_padrao = "";
+        } else if ($this->unidade === "Bd") {
+
+            $this->imagem_padrao = "";
+        } else if ($this->unidade === "Sc") {
+
+            $this->imagem_padrao = "";
+        } else if ($this->unidade === "Env") {
+
+            $this->imagem_padrao = "";
+        } else if ($this->unidade === "Bd") {
+
+            $this->imagem_padrao = "";
+        } else if ($this->unidade === "Amp") {
+
+            $this->imagem_padrao = "";
+        }
+
     }
 
 }
