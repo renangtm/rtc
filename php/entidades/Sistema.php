@@ -2047,12 +2047,6 @@ class Sistema {
 
                 $hash = $value2->empresa->id . "_" . $value2->codigo;
 
-                if ($value2->disponivel >= 100) {
-                    $produtos[$hash] = -1;
-                }
-
-                if ($produtos[$hash] === -1)
-                    continue;
 
                 $grupo = new ProdutoEncomendaParceiro();
                 $grupo->id = $value2->codigo;
@@ -2093,6 +2087,31 @@ class Sistema {
             }
         }
         $ps->close();
+
+        $ps = $con->getConexao()->prepare("SELECT valor_base,codigo_produto,id_empresa FROM campanha_encomenda WHERE termino>CURRENT_TIMESTAMP");
+        $ps->execute();
+        $ps->bind_result($valor, $codigo, $id_empresa);
+        while ($ps->fetch()) {
+
+            $hash = $id_empresa . "_" . $codigo;
+            if (isset($produtos[$hash])) {
+
+                if ($produto[$hash] === -1) {
+                    continue;
+                }
+                $produtos[$hash]->ofertas = 2;
+                $produtos[$hash]->custo_atualizado = true;
+                $produtos[$hash]->valor_base_inicial = round(($valor / 0.82), 2);
+                $produtos[$hash]->valor_base_final = round((($valor / 0.82) * 1.05), 2);
+            }
+        }
+        $ps->close();
+
+        foreach ($produtos as $key => $value) {
+            if ($value->ofertas === 0) {
+                unset($produtos[$key]);
+            }
+        }
 
         $resultado = array();
 

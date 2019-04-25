@@ -193,9 +193,9 @@ class Empresa {
         
         $analises = array();
         
-        $ps = $con->getConexao()->prepare("SELECT p.codigo,p.nome,SUM(pc.quantidade),ROUND(SUM(pc.quantidade*pc.valor)/SUM(pc.quantidade),2),MAX(pc.valor),MIN(pc.valor),GROUP_CONCAT(pc.id separator ','),MAX(ce.data) FROM cotacao_entrada ce INNER JOIN produto_cotacao_entrada pc ON pc.id_cotacao=ce.id INNER JOIN produto p ON p.id=pc.id_produto WHERE ce.id_empresa=$this->id AND ce.data > DATE_SUB(CURRENT_DATE,INTERVAL 60 DAY) AND pc.checado = false GROUP BY p.codigo");
+        $ps = $con->getConexao()->prepare("SELECT p.codigo,p.nome,SUM(pc.quantidade),ROUND(SUM(pc.quantidade*pc.valor)/SUM(pc.quantidade),2),MAX(pc.valor),MIN(pc.valor),GROUP_CONCAT(pc.id separator ','),UNIX_TIMESTAMP(MAX(ce.data))*1000,p.custo FROM cotacao_entrada ce INNER JOIN produto_cotacao_entrada pc ON pc.id_cotacao=ce.id INNER JOIN produto p ON p.id=pc.id_produto WHERE ce.id_empresa=$this->id AND ce.data > DATE_SUB(CURRENT_DATE,INTERVAL 60 DAY) AND pc.checado = false GROUP BY p.codigo ORDER BY MAX(ce.data) DESC");
         $ps->execute();
-        $ps->bind_result($codigo,$nome,$quantidade,$valor,$valor_maximo,$valor_minimo,$ids,$data);
+        $ps->bind_result($codigo,$nome,$quantidade,$valor,$valor_maximo,$valor_minimo,$ids,$data,$custo);
         
         while($ps->fetch()){
             
@@ -207,6 +207,7 @@ class Empresa {
             $a->valor_maximo = $valor_maximo;
             $a->valor_minimo = $valor_minimo;
             $a->data = $data;
+            $a->custo_atual = $custo;
             
             $a->ids_produtos = explode(',', $ids);
             
