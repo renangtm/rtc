@@ -16,6 +16,7 @@ class CFOP {
     public static $VENDA_DENTRO_ESTADO = "5106";
     public static $VENDA_FORA_ESTADO = "6106";
     public static $REMESSA_DEPOSITO = "5906";
+    public static $REMESSA_DEPOSITO_2 = "5905";
     public static $RETORNO_DEPOSITO = "5907";
     public static $ISENTO = "6110";
     public static $VENDA_DENTRO_ESTADO_2 = "5102";
@@ -32,6 +33,8 @@ class CFOP {
         } else if ($cfop === self::$VENDA_FORA_ESTADO) {
             return "Venda de mercadoria fora do estado";
         } else if ($cfop === self::$REMESSA_DEPOSITO) {
+            return "Remessa de mercadoria para deposito";
+        }else if ($cfop === self::$REMESSA_DEPOSITO_2) {
             return "Remessa de mercadoria para deposito";
         } else if ($cfop === self::$RETORNO_DEPOSITO) {
             return "Retorno de mercadoria para deposito";

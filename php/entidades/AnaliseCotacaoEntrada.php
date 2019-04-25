@@ -22,7 +22,10 @@ class AnaliseCotacaoEntrada {
     public $data;
     public $ids_produtos;
     public $custo_atual;
-
+    public $id_cotacao;
+    public $nome_fornecedor;
+    public $ultimo_custo;
+    
     function __construct() {
 
         $this->id = 0;
@@ -34,6 +37,10 @@ class AnaliseCotacaoEntrada {
         $this->data = round(microtime(true) * 1000);
         $this->ids_produtos = array();
         $this->custo_atual = 0;
+        $this->id_cotacao = 0;
+        $this->nome_fornecedor = "";
+        $this->ultimo_custo = 0;
+        
     }
 
     public function recusar($con, $empresa) {

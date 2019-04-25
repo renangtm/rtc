@@ -1161,7 +1161,7 @@ function xmlToJson(xxx) {
 
     var xml = xxx;
 
-    if (xml.indexOf('<?xml version="1.0" encoding="UTF-8"?>') < 0) {
+    if (xml.toLowerCase().indexOf('<?xml version="1.0" encoding="utf-8"?>') < 0) {
         xml = '<?xml version="1.0" encoding="UTF-8"?>' + xml;
     }
     xml = xml.split("\n").join("").split("\t").join("").split("\r").join("").replace(/ +(?= )/g, '').split('> <').join('><');

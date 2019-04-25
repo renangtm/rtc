@@ -59,7 +59,7 @@ class ProdutoPedidoEntrada {
 
             if ($this->produto->transito + $dif_res < 0) {
 
-                throw new Exception('Sem estoque disponivel para executar essa operacao');
+                throw new Exception('Sem estoque disponivel para executar essa operacao ');
             }
 
             if ($this->produto->estoque + $dif_est < 0) {

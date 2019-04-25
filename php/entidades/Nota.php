@@ -569,7 +569,7 @@ class Nota {
             $dest->bairro = Utilidades::ifn($this->cliente->endereco->bairro, "nao cadastrado");
             $dest->logadouro = Utilidades::ifn($this->cliente->endereco->rua, "nao cadastrado");
             $dest->numero = Utilidades::ifn($this->cliente->endereco->numero."", "nao cadastrado",1);
-            $dest->municipio = Utilidades::ifn($this->cliente->endereco->cidade->nome, "sem cidade");
+            $dest->municipio = Utilidades::ifn($this->cliente->endereco->cidade->nome, "sem cidade",1);
             $dest->cep = Utilidades::removeMask($this->cliente->endereco->cep->valor);
             $dest->pais = "Brasil";
             $dest->telefone = new Telefone("11111111");

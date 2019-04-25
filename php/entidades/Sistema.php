@@ -13,7 +13,7 @@
  */
 class Sistema {
 
-    public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
+    public static $ENDERECO = "http://189.50.142.58/";
 
     /*
      * porcentagem
@@ -2113,6 +2113,31 @@ class Sistema {
             }
         }
 
+        $ps = $con->getConexao()->prepare("SELECT valor_base,codigo_produto,id_empresa FROM campanha_encomenda WHERE termino>CURRENT_TIMESTAMP");
+        $ps->execute();
+        $ps->bind_result($valor, $codigo, $id_empresa);
+        while ($ps->fetch()) {
+
+            $hash = $id_empresa . "_" . $codigo;
+            if (isset($produtos[$hash])) {
+
+                if ($produto[$hash] === -1) {
+                    continue;
+                }
+                $produtos[$hash]->ofertas = 2;
+                $produtos[$hash]->custo_atualizado = true;
+                $produtos[$hash]->valor_base_inicial = round(($valor / 0.82), 2);
+                $produtos[$hash]->valor_base_final = round((($valor / 0.82) * 1.05), 2);
+            }
+        }
+        $ps->close();
+
+        foreach ($produtos as $key => $value) {
+            if ($value->ofertas === 0) {
+                unset($produtos[$key]);
+            }
+        }
+
         $resultado = array();
 
         foreach ($produtos as $key => $value) {
@@ -2368,9 +2393,11 @@ class Sistema {
             if ($value->saida) {
 
                 $value->emitir($con);
+            
             } else {
 
                 $value->manifestar($con);
+            
             }
 
             if (isset($value->inverter)) {
@@ -2381,6 +2408,7 @@ class Sistema {
                 $nota->emitida = false;
                 $nota->cancelada = false;
                 $notas[] = $nota;
+                
             }
         }
     }
@@ -2389,7 +2417,7 @@ class Sistema {
 
         if (!isset($xml->nfeProc->NFe)) {
 
-            throw new Exception('XML em formato incorreto');
+            throw new Exception('XML em formato incorreto ');
         }
 
         $nfe = $xml->nfeProc->NFe;

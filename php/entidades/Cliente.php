@@ -69,6 +69,20 @@ class Cliente {
         return -1;
     }
 
+    public function getPrecoEspecial($con) {
+        $ps = $con->getConexao()->prepare("SELECT valor FROM preco_especial WHERE id_cliente=$this->id");
+        $ps->execute();
+        $ps->bind_result($valor);
+        if ($ps->fetch()) {
+            $ps->close();
+
+            return $valor;
+        }
+        $ps->close();
+
+        return -1;
+    }
+
     public function getDividas($con) {
 
         $valor = 0;

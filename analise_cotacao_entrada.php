@@ -85,10 +85,12 @@
                                                     <tr>
                                                         <th>Produto</th>
                                                         <th>Qtd</th>
+                                                        <th>Atual (R$)</th>
                                                         <th>Min (R$)</th>
                                                         <th>Max (R$)</th>
                                                         <th>Media Ponderada (R$)</th>
                                                         <th>Ultima Cotacao</th>
+                                                        <th>Forn.</th>
                                                         <th>Aprovar &nbsp <i class="fas fa-check"></i></th>
                                                         <th>Campanha &nbsp <i class="fas fa-anchor"></i></th>
                                                         <th>Recusar &nbsp <i class="fas fa-times"></i></th>
@@ -98,10 +100,12 @@
                                                     <tr ng-repeat="analise in analises.elementos" style="{{(analise[0].valor===analise[0].custo_atual)?'background-color:LightBlue;color:#000000':''}}">
                                                         <td>{{analise[0].nome_produto}}</td>
                                                         <td>{{analise[0].quantidade_produto}}</td>
+                                                        <td style="{{analise[0].valor===analise[0].custo_atual?'color:Green':''}}">{{analise[0].custo_atual.toFixed(2)}} R$</td>
                                                         <td style="color:Green">{{analise[0].valor_minimo.toFixed(2)}} R$</td>
                                                         <td style="color:Red">{{analise[0].valor_maximo.toFixed(2)}} R$</td>
                                                         <td style="color:steelblue"><input type="number" class="form-control" style="width:100px;display: inline;color:steelblue;font-weight: bold;text-decoration: underline" step="0.01" ng-model="analise[0].valor">&nbsp<strong style="display: inline">R$</strong></td>
-                                                        <td>{{analise[0].data| data}}</td>
+                                                        <td>{{analise[0].data| data}} - <strong style="color:blueviolet">{{analise[0].ultimo_custo.toFixed(2)}} R$</strong></td>
+                                                        <td style="font-size:12px">{{analise[0].nome_fornecedor.substring(0,10)}}...</td>
                                                         <td>
                                                             <button class="btn btn-success" ng-if="analise[0].valor!==analise[0].custo_atual" style="display: inline" ng-click="aprovar(analise[0])"><i class="fas fa-check"></i></button>
                                                             <button class="btn btn-outline-primary" ng-if="analise[0].valor===analise[0].custo_atual" style="display: inline" ng-click="passar(analise[0])"><i class="fas fa-arrow-right"></i></button>
