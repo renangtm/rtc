@@ -189,6 +189,109 @@ class Empresa {
         }
     }
 
+    public function getCotacoesGrupais($con, $x1, $x2, $filtro = "", $ordem = "") {
+
+        $cotacoes = array();
+
+        $sql = "SELECT f.id,f.nome,c.id,UNIX_TIMESTAMP(c.data)*1000,c.observacoes,c.enviada FROM (SELECT * FROM cotacao_grupal LIMIT $x1, " . ($x2 - $x1) . ") c INNER JOIN fornecedor f WHERE c.id_empresa=$this->id ";
+        if ($filtro !== "") {
+            $sql .= "AND $filtro ";
+        }
+        if ($ordem !== "") {
+            $sql .= "ORDER BY $ordem";
+        }
+        $ids = "(-1";
+        $ps = $con->getConexao()->prepare();
+        $ps->execute();
+        $ps->bind_result($id_forn, $nome_forn, $id_cot, $data_cot, $obs_cot, $env_cot);
+        while ($ps->fetch()) {
+
+            if (!isset($cotacoes[$id_cot])) {
+
+                $cot = new CotacaoGrupal();
+                $cot->id = $id_cot;
+                $cot->data = $data_cot;
+                $cot->observacoes = $obs_cot;
+                $cot->enviada = $env_cot == 1;
+                $cot->empresa = $this;
+
+                $cotacoes[$id_cot] = $cot;
+
+                $ids .= ",$id_cot";
+            }
+
+            $f = new FornecedorReduzido();
+            $f->id = $id_forn;
+            $f->nome = $nome_forn;
+
+            $cot->fornecedores[] = $f;
+        }
+
+        $ps->close();
+
+        $ids .= ")";
+
+        $ps = $con->getConexao()->prepare("SELECT p.id,p.quantidade,p.id_cotacao,p.id_produto,r.id,UNIX_TIMESTAMP(r.momento)*1000,r.valor,r.quantidade,pp.id,pp.nome,pp.codigo,pp.imagem,f.id,f.nome FROM produto_cotacao_grupal p LEFT JOIN resposta_cotacao_grupal r ON p.id=r.id_produto_cotacao LEFT JOIN fornecedor f ON f.id=r.id_fornecedor INNER JOIN produto pp ON pp.id=p.id_produto WHERE p.id_cotacao IN $ids");
+        $ps->execute();
+        $ps->bind_result($id, $quantidade, $id_cotacao, $id_produto, $id_resp, $momento_resp, $valor_resp, $quantidade_resp, $id_prod, $nom_prod, $cod_prod, $img_prod, $forn_id, $forn_nome);
+        while ($ps->fetch()) {
+
+            if (!isset($cotacoes[$id_cotacao]->produtos[$id])) {
+
+                $p = new ProdutoCotacaoGrupal();
+                $p->id = $id;
+                $p->quantidade = $quantidade;
+                $p->cotacao = $cotacoes[$id_cotacao];
+
+                $pr = new ProdutoReduzido();
+                $pr->id = $id_prod;
+                $pr->nome = $nom_prod;
+                $pr->codigo = $cod_prod;
+                $pr->imagem = $img_prod;
+
+                $p->produto = $pr;
+
+                $cotacoes[$id_cotacao]->produtos[$id] = $p;
+            }
+
+            if ($id_resp !== null) {
+
+                $resp = new RespostaCotacaoGrupal();
+                $resp->id = $id_resp;
+                $resp->momento = $momento_resp;
+                $resp->produto = $cotacoes[$id_cotacao]->produtos[$id];
+                $resp->quantidade = $quantidade_resp;
+                $resp->valor = $valor_resp;
+
+                $fr = new FornecedorReduzido();
+                $fr->id = $forn_id;
+                $fr->nome = $forn_nome;
+
+                $resp->fornecedor = $fr;
+
+                $cotacoes[$id_cotacao]->produtos[$id]->respostas[] = $resp;
+            }
+        }
+        $ps->close();
+
+        $retorno = array();
+
+        foreach ($cotacoes as $key => $value) {
+
+            $produtos = array();
+
+            foreach ($value->produtos as $key2 => $value2) {
+                $produtos[] = $value2;
+            }
+
+            $value->produtos = $produtos;
+
+            $retorno[] = $value;
+        }
+
+        return $retorno;
+    }
+
     public function getAnaliseCotacaoEntrada($con) {
 
         $analises = array();

@@ -18,6 +18,7 @@ class CotacaoGrupal {
     public $produtos;
     public $data;
     public $observacoes;
+    public $enviada;
     public $empresa;
 
     function __construct() {
@@ -34,13 +35,13 @@ class CotacaoGrupal {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO cotacao_grupal(id_empresa,observacoes,data) VALUES(" . $this->empresa->id . ",'" . addslashes($this->observacoes) . "',FROM_UNIXTIME($this->data/1000))");
+            $ps = $con->getConexao()->prepare("INSERT INTO cotacao_grupal(id_empresa,observacoes,data,enviada) VALUES(" . $this->empresa->id . ",'" . addslashes($this->observacoes) . "',FROM_UNIXTIME($this->data/1000)," . ($this->enviada ? "true" : "false") . ")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE cotacao_grupal SET id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data/1000),observacoes='" . addslashes($this->observacoes) . "' WHERE id = $this->id");
+            $ps = $con->getConexao()->prepare("UPDATE cotacao_grupal SET id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data/1000),observacoes='" . addslashes($this->observacoes) . "',enviada=" . ($this->enviada ? "true" : "false") . " WHERE id = $this->id");
             $ps->execute();
             $ps->close();
         }
