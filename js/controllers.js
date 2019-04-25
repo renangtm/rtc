@@ -4051,9 +4051,7 @@ rtc.controller("crtEntrada", function ($scope, sistemaService, uploadService) {
                     reader["ii"] = i;
                     reader.onload = function (arquivo) {
 
-                       var k = xmlToJson(arquivo.target.result);
-
-                        buscarPedido(k, this.ii);
+                        buscarPedido(xmlToJson(arquivo.target.result), this.ii);
 
                     };
                     reader.readAsText(arquivos[i]);

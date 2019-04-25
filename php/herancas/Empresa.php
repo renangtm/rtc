@@ -210,6 +210,7 @@ class Empresa {
             $a->valor_minimo = $valor_minimo;
             $a->data = $data;
             $a->custo_atual = $custo;
+            $a->id_cotacao = $mc;
             $a->ids_produtos = explode(',', $ids);
             $c .= ",$mc";
             foreach ($a->ids_produtos as $key => $value) {
@@ -5545,7 +5546,6 @@ class Empresa {
         }
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
-        
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
@@ -5683,4 +5683,3 @@ class Empresa {
     }
 
 }
-            $a->id_cotacao = $mc;
