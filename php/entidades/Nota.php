@@ -568,18 +568,17 @@ class Nota {
             $dest->nome = Utilidades::ifn($this->cliente->razao_social, "sem nome");
             $dest->bairro = Utilidades::ifn($this->cliente->endereco->bairro, "nao cadastrado");
             $dest->logadouro = Utilidades::ifn($this->cliente->endereco->rua, "nao cadastrado");
-            $dest->numero = Utilidades::ifn($this->cliente->endereco->numero."", "nao cadastrado",1);
-            $dest->municipio = Utilidades::ifn($this->cliente->endereco->cidade->nome, "sem cidade",1);
+            $dest->numero = Utilidades::ifn($this->cliente->endereco->numero . "", "nao cadastrado", 1);
+            $dest->municipio = Utilidades::ifn($this->cliente->endereco->cidade->nome, "sem cidade", 1);
             $dest->cep = Utilidades::removeMask($this->cliente->endereco->cep->valor);
             $dest->pais = "Brasil";
             $dest->telefone = new Telefone("11111111");
             $dest->telefone = $dest->telefone->numero;
 
             if (count($this->cliente->telefones) > 0) {
-                
+
                 $tel = new Telefone("11111111");
-                $dest->telefone = Utilidades::ifn($this->cliente->telefones[0]->numero."",$tel->numero);
-                
+                $dest->telefone = Utilidades::ifn($this->cliente->telefones[0]->numero . "", $tel->numero);
             }
 
             $dest->telefone = Utilidades::removeMask($dest->telefone);
@@ -708,18 +707,20 @@ class Nota {
             $this->numero = $ret->nf;
             $this->chave = $ret->chave;
             $this->protocolo = $ret->protocolo;
-            $this->observacao .= ". Mensagem da SEFAZ: $ret->mensagem";
             $this->merge($con);
+
+            $this->empresa->email->enviarEmail($this->empresa->email->filtro(Email::$LOGISTICA), "Emissao de NF $this->numero do pedido $this->id_pedido", "DANFE: <a href='$this->danfe'>VISUALIZAR</a><hr>XML: <a href='$this->xml'>VISUALIZAR</a><br>CHAVE: $this->chave");
+            $this->empresa->email->enviarEmail($this->cliente->email->filtro(Email::$LOGISTICA), "Emissao de NF $this->numero do pedido $this->id_pedido", "DANFE: <a href='$this->danfe'>VISUALIZAR</a><hr>XML: <a href='$this->xml'>VISUALIZAR</a><br>CHAVE: $this->chave");
 
             Logger::gerarLog($this, "Nota emitida, $this->numero");
         } else {
 
-            $this->observacao .= ". Problema de emissao: $ret->mensagem";
             Sistema::avisoDEVS("Falha emissao link XML: <a href='" . Sistema::$ENDERECO . "php/controler/" . $ret->falha . "'>LINK</a>");
             Logger::gerarLog($this, "Falha na emissao da nota, ficha $this->ficha");
-            
+
+            $this->empresa->email->enviarEmail($this->empresa->email->filtro(Email::$LOGISTICA), "Falha na emissao de NF do Pedido $this->id_pedido", "Problema: $ret->mensagem");
+
             $this->merge($con);
-            
         }
 
         return $ret->mensagem;

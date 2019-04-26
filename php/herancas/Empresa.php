@@ -193,7 +193,7 @@ class Empresa {
 
         $cotacoes = array();
 
-        $sql = "SELECT f.id,f.nome,c.id,UNIX_TIMESTAMP(c.data)*1000,c.observacoes,c.enviada FROM (SELECT * FROM cotacao_grupal LIMIT $x1, " . ($x2 - $x1) . ") c INNER JOIN fornecedor f WHERE c.id_empresa=$this->id ";
+        $sql = "SELECT f.id,f.nome,c.id,UNIX_TIMESTAMP(c.data)*1000,c.observacoes,c.enviada FROM (SELECT * FROM cotacao_grupal LIMIT $x1, " . ($x2 - $x1) . ") c INNER JOIN fornecedor_cotacao_grupal fp ON fp.id_cotacao=c.id INNER JOIN fornecedor f ON f.id=fp.id_fornecedor WHERE c.id_empresa=$this->id ";
         if ($filtro !== "") {
             $sql .= "AND $filtro ";
         }

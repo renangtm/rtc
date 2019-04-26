@@ -34,6 +34,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         $e = new Empresa(1734,$con);
         
+        
         $c = new CriadorCotacaoGrupalComBaseEncomenda();
         $c->executar($con);
 

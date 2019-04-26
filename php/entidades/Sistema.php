@@ -259,10 +259,6 @@ class Sistema {
         $relatorios->cronoExpression = "at(19h)";
         $trabalhos[] = $relatorios;
 
-        $relatorios = new EnvioRelatorios();
-        $relatorios->cronoExpression = "at(6h)";
-        $trabalhos[] = $relatorios;
-
         $attdias = new AtualizaDiasCorridos();
         $attdias->cronoExpression = "at(1h)";
         $trabalhos[] = $attdias;
@@ -271,6 +267,10 @@ class Sistema {
         $emissor->cronoExpression = "re(10m)";
         $trabalhos[] = $emissor;
 
+        $cotacao_grupal = new CriadorCotacaoGrupalComBaseEncomenda();
+        $cotacao_grupal->cronoExpression = "re(30m)";
+        $trabalhos[] = $cotacao_grupal;
+        
         return $trabalhos;
     }
 

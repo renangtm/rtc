@@ -39,7 +39,7 @@ class CriadorCotacaoGrupalComBaseEncomenda {
     public function executar($con) {
 
         $empresas = array();
-        $ps = $con->getConexao()->prepare("SELECT id FROM empresa WHERE id=1734");
+        $ps = $con->getConexao()->prepare("SELECT id FROM empresa WHERE rtc>=6");
         $ps->execute();
         $ps->bind_result($id);
         while ($ps->fetch()) {
@@ -64,7 +64,7 @@ class CriadorCotacaoGrupalComBaseEncomenda {
 
             $fornecedor_produto = array();
 
-            $ps = $con->getConexao()->prepare("SELECT f.id,f.nome,p.codigo FROM cotacao_entrada c INNER JOIN fornecedor f ON c.id_fornecedor=f.id INNER JOIN produto_cotacao_entrada pc ON pc.id_cotacao=c.id INNER JOIN produto p ON pc.id_produto=p.id WHERE pc.quantidade>0 AND f.habilitado AND c.id_empresa IN $grupo_empresarial");
+            $ps = $con->getConexao()->prepare("SELECT f.id,f.nome,p.codigo FROM cotacao_entrada c INNER JOIN fornecedor f ON c.id_fornecedor=f.id INNER JOIN produto_cotacao_entrada pc ON pc.id_cotacao=c.id INNER JOIN produto p ON pc.id_produto=p.id WHERE pc.quantidade>0 AND c.excluida=false AND f.habilitado AND c.id_empresa IN $grupo_empresarial");
             $ps->execute();
             $ps->bind_result($id, $nome, $codigo);
             while ($ps->fetch()) {
@@ -102,7 +102,7 @@ class CriadorCotacaoGrupalComBaseEncomenda {
                     $produto_fornecedor[$produto][] = $fornecedor;
                 }
             }
-           
+
             $encomendas = $empresa->getEncomendas($con, 0, 10, "encomenda.agrupada=false");
 
             $cotacoes = $empresa->getCotacoesGrupais($con, 0, 50, "", "c.id DESC");
@@ -126,6 +126,7 @@ class CriadorCotacaoGrupalComBaseEncomenda {
                     $c = new CotacaoGrupal();
                     $c->empresa = $empresa;
                     $c->enviada = false;
+                    $c->data = $data;
                     $c->observacoes = "Cotacao gerada automaticamente pelo sistema referente a data " . date("d/m/Y", $data / 1000);
                     $c->merge($con);
 
@@ -154,7 +155,7 @@ class CriadorCotacaoGrupalComBaseEncomenda {
                         }
                     }
 
-                    if ($a > 0) {
+                    if ($a >= 0) {
 
                         $cotacao->produtos[$a]->quantidade += $pc->quantidade;
                         
@@ -189,8 +190,6 @@ class CriadorCotacaoGrupalComBaseEncomenda {
                 $ps = $con->getConexao()->prepare("UPDATE encomenda SET agrupada=true,data=data WHERE id=$value->id");
                 $ps->execute();
                 $ps->close();
-                
-                
             }
         }
     }
