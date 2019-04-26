@@ -2,8 +2,27 @@ var debuger = function (l) {
     document.write(paraJson(l));
 }
 
+rtc.service('cotacaoGrupalService', function ($http, $q) {
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountCotacoesGrupais($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getCotacoesGrupais($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+
 rtc.service('analiseCotacaoService', function ($http, $q) {
-    this.getElementos= function (fn) {
+    this.getElementos = function (fn) {
         baseService($http, $q, {
             query: "$r->elementos=$empresa->getAnaliseCotacaoEntrada($c)",
             sucesso: fn,
@@ -34,9 +53,9 @@ rtc.service('analiseCotacaoService', function ($http, $q) {
             falha: fn
         });
     }
-    this.campanha = function (analise,dias, fn) {
+    this.campanha = function (analise, dias, fn) {
         baseService($http, $q, {
-            o: {analise:analise,dias:dias},
+            o: {analise: analise, dias: dias},
             query: "$o->analise->campanha($c,$empresa,$o->dias)",
             sucesso: fn,
             falha: fn
@@ -2248,7 +2267,6 @@ rtc.service('ativoService', function ($http, $q) {
         });
     }
 })
-
 rtc.service('fabricanteService', function ($http, $q) {
     this.getFabricantes = function (fn) {
         baseService($http, $q, {

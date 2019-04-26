@@ -189,6 +189,29 @@ class Empresa {
         }
     }
 
+    public function getCountCotacoesGrupais($con, $filtro = "") {
+
+        $sql = "SELECT COUNT(*) FROM (SELECT * FROM (SELECT * FROM cotacao_grupal LIMIT $x1, " . ($x2 - $x1) . ") c INNER JOIN fornecedor_cotacao_grupal fp ON fp.id_cotacao=c.id INNER JOIN fornecedor f ON f.id=fp.id_fornecedor WHERE c.id_empresa=$this->id ";
+
+        if ($filtro !== "") {
+
+            $sql .= "AND $filtro";
+        }
+
+        $sql .= " GROUP BY c.id)";
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($qtd);
+        if ($ps->fetch()) {
+            $ps->close();
+
+            return $qtd;
+        }
+
+        return 0;
+    }
+
     public function getCotacoesGrupais($con, $x1, $x2, $filtro = "", $ordem = "") {
 
         $cotacoes = array();

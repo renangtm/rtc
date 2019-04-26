@@ -307,6 +307,7 @@ rtc.controller("crtEncomendaParceiros", function ($scope, produtoService, encome
     $scope.produtos.attList();
 
 
+
     $scope.qtd = 0;
     $scope.prod = null;
     $scope.val = null;
@@ -422,7 +423,7 @@ rtc.controller("crtEncomendaParceiros", function ($scope, produtoService, encome
 
 })
 
-rtc.controller("crtEncomendas", function ($scope, encomendaService, logService, baseService, produtoService, sistemaService, statusEncomendaService, clienteService, produtoEncomendaService) {
+rtc.controller("crtEncomendas", function ($scope, cotacaoGrupalService, encomendaService, logService, baseService, produtoService, sistemaService, statusEncomendaService, clienteService, produtoEncomendaService) {
 
     $scope.encomendas = createAssinc(encomendaService, 1, 10, 10);
     $scope.encomendas.attList();
@@ -430,7 +431,14 @@ rtc.controller("crtEncomendas", function ($scope, encomendaService, logService, 
             $scope.encomendas,
             "encomenda",
             ["id", "cliente.razao_social", "data", "id_status", "usuario.nome"]);
-
+    /*    
+     $scope.cotacoes_grupais = createAssinc(cotacaoGrupalService, 1, 10, 10);
+     $scope.cotacoes_grupais.attList();
+     assincFuncs(
+     $scope.cotacoes_grupais,
+     "c",
+     ["id", "cliente.razao_social", "data", "id_status", "usuario.nome"]);
+     */
     $scope.produtos = createAssinc(produtoService, 1, 3, 4);
 
     assincFuncs(
@@ -5816,6 +5824,46 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
 
     $scope.carregando = false;
 
+    $scope.inverterPrecos = function () {
+
+        var p = $scope.pedido;
+
+        var total = 0;
+
+        for (var i = 0; i < p.produtos.length; i++) {
+            total += p.produtos[i].quantidade * p.produtos[i].valor_base;
+        }
+
+        for (var i = 0; i < p.produtos.length; i++) {
+
+            var pro = p.produtos[i];
+            var vun = pro.valor_base + pro.frete + pro.juros + pro.icms + pro.ipi;
+
+            var perc = pro.quantidade * pro.valor_base / total;
+
+            var frete = pro.frete * perc;
+            vun -= frete;
+
+            var ipi = 1 + (pro.ipi / (vun-pro.ipi));
+
+            vun -= pro.ipi;
+
+            var icms = ((vun-pro.icms)/(vun));
+
+            vun -= pro.icms;
+
+            var juros = 1 + (pro.juros / (vun-pro.juros));
+
+            var fat = juros / icms * ipi;
+            
+            pro.valor_base = parseFloat(((pro.valor_base - frete) / fat).toFixed(3));
+          
+
+        }
+        
+        $scope.atualizaCustos();
+
+    }
 
     assincFuncs(
             $scope.clientes,

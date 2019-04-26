@@ -27,6 +27,7 @@ class OBS_NFE {
                     . " de 06 06 00 reg. pelo decreto 4072 02 de 04 01 2002, as embalagens adquiridas nesta NF deverao ser devolvidas no prazo de 1 (um) ano,"
                     . " perfuradas e com a triplice lavagem realizada, na unidade de recebimento: "
                     . "Agro-Fauna Com. Ins. Ltda. R.Coutinho Cavalcanti, 1171 - Jd Alto Alegre - S J Rio Preto-SP. "
+                    . "ARIA - ASSOC DE REVENDEDORES DE INSUMOS AGROPECUARIOS Rua Gino Cecconi, 400 Distrito Industrial Carlos de Arnaldo Silva - Sao Jose do Rio Preto SP."
                     . "CENTRAL DE RECEBIMENTOS DE EMBALAGENS VAZIAS DE AGROTOXICOS Av Jose Geraldo de Matos, "
                     . "765A Distrito Industrial do Paracangua - Taubate SP . Pedido: " . $pedido->id;
 

@@ -34,9 +34,73 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         $e = new Empresa(1734,$con);
         
+        $t = new Empresa(2070,$con);
         
-        $c = new CriadorCotacaoGrupalComBaseEncomenda();
-        $c->executar($con);
+        $emails = array();
+        
+        $ps = $this->getConexao()->prepare("SELECT EMAIL,CODCLI FROM db_agrofauna.CADEMAIL");
+        $ps->execute();
+        $ps->bind_result($email,$codigo);
+        while($ps->fetch()){
+            if(!isset($emails[$codigo])){
+                $emails[$codigo] = array();
+            }
+            $emails[$codigo][] = $email;
+        }
+        $ps->close();
+        
+        $clientes = array();
+        $ps = $con->getConexao()->prepare("SELECT email.id,cliente.id,cliente.codigo FROM email INNER JOIN cliente ON cliente.id=email.id_entidade AND email.tipo_entidade='CLI' AND cliente.id_empresa=1734 AND email.endereco LIKE '%andre.agrovap%'");
+        $ps->execute();
+        $ps->bind_result($id_email,$id_cliente,$codigo_cliente);
+        while($ps->fetch()){
+            $clientes[] = array($id_email,$id_cliente,$codigo_cliente);
+        }
+        $ps->close();
+        
+        foreach($clientes as $key=>$cliente){
+            
+            $id_email = $cliente[0];
+            $id_cliente = $cliente[1];
+            $codigo_cliente = $cliente[2];
+            
+            $endereco = "emailinvalido@einvalido.com.br";
+            
+            if(isset($emails[$codigo_cliente])){
+                
+                $endereco = "";
+                foreach($emails[$codigo_cliente] as $ke=>$email){
+                    $endereco .= "$email;";
+                }
+                
+                $endereco = substr($endereco, 0,strlen($endereco)-1);
+                
+            }
+            
+            $ps = $con->getConexao()->prepare("UPDATE email SET endereco='".addslashes($endereco)."' WHERE id=$id_email");
+            $ps->execute();
+            $ps->close();
+            
+        }
+        
+        return;
+        
+        $clientes = $e->getClientes($con, 0, 2000);
+        
+        foreach($clientes as $key=>$value){
+            
+            $nf = Utilidades::copyId0($value);
+            $nf->empresa = $t;
+            $nf->telefones = Utilidades::copyId0($value->telefones);
+            $nf->email = Utilidades::copyId0($value->email);
+            $nf->endereco = Utilidades::copyId0($value->endereco);
+            
+            $nf->merge($con);
+            
+        }
+        
+        //$c = new CriadorCotacaoGrupalComBaseEncomenda();
+        //$c->executar($con);
 
         return;
 
