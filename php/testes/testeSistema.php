@@ -34,6 +34,20 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         $e = new Empresa(1734,$con);
         
+        $tipos_tarefa = $e->getTiposTarefa($con);
+        
+        $faturamento = null;
+        
+        foreach($tipos_tarefa as $key=>$value){
+            if($value->nome==="Faturamento"){
+                $faturamento = $value;
+            }
+        }
+        
+        echo Utilidades::toJson($faturamento->cargos);
+        
+        return;
+        
         $usuario = $e->getUsuarios($con, 0, 1,'usuario.id=5249');
         $usuario = $usuario[0];
         

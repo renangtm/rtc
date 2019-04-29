@@ -227,7 +227,7 @@
                                                                         ------
                                                                     </span>
                                                                     <br>
-                                                                    <strong style="text-decoration: underline;font-size:18px">R$ {{v.valor}}</strong>
+                                                                    <strong style="text-decoration: underline;font-size:18px">R$ {{v.valor.toFixed(2).split('.').join(',')}}</strong>
                                                                 </div>
                                                             </td>
                                                             <td ng-if="produto.produtos.length >= 2" style="text-align:center">
@@ -331,7 +331,7 @@
                                                                         ------
                                                                     </span>
                                                                     <br>
-                                                                    <strong style="text-decoration: underline;font-size:18px">R$ {{v.valor}}</strong>
+                                                                    <strong style="text-decoration: underline;font-size:18px">R$ {{v.valor.toFixed(2).split('.').join(',')}}</strong>
                                                                 </div>
                                                             </td>
                                                             <td ng-if="produto.produtos.length >= 2" style="text-align:center">

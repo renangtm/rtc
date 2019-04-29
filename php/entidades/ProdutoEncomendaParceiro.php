@@ -58,30 +58,29 @@ class ProdutoEncomendaParceiro {
 
         if ($this->unidade === "Frc") {
 
-            $this->imagem_padrao = "";
+            $this->imagem_padrao = "assets/images/img_emb_padrao_FRC_1L.png";
         } else if ($this->unidade === "Pct") {
 
-            $this->imagem_padrao = "";
+            $this->imagem_padrao = "assets/images/img_emb_padrao_PCT.png";
         } else if ($this->unidade === "Gl") {
 
-            $this->imagem_padrao = "";
+            $this->imagem_padrao = "assets/images/img_emb_padrao_GL_5L.png";
         } else if ($this->unidade === "Bd") {
 
-            $this->imagem_padrao = "";
+            $this->imagem_padrao = "assets/images/img_emb_padrao_BD_20L.png";
         } else if ($this->unidade === "Sc") {
 
-            $this->imagem_padrao = "";
+            $this->imagem_padrao = "assets/images/img_emb_padrao_SC.png";
         } else if ($this->unidade === "Env") {
 
-            $this->imagem_padrao = "";
-        } else if ($this->unidade === "Bd") {
+            $this->imagem_padrao = "assets/images/img_emb_padrao_ENV.png";
+        } else if ($this->unidade === "Ob") {
 
-            $this->imagem_padrao = "";
+            $this->imagem_padrao = "assets/images/img_emb_padrao_ENV.png";
         } else if ($this->unidade === "Amp") {
 
             $this->imagem_padrao = "";
         }
-
     }
 
 }

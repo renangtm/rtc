@@ -28,8 +28,7 @@ class OBS_NFE {
                     . " perfuradas e com a triplice lavagem realizada, na unidade de recebimento: "
                     . "Agro-Fauna Com. Ins. Ltda. R.Coutinho Cavalcanti, 1171 - Jd Alto Alegre - S J Rio Preto-SP. "
                     . "ARIA - ASSOC DE REVENDEDORES DE INSUMOS AGROPECUARIOS Rua Gino Cecconi, 400 Distrito Industrial Carlos de Arnaldo Silva - Sao Jose do Rio Preto SP."
-                    . "CENTRAL DE RECEBIMENTOS DE EMBALAGENS VAZIAS DE AGROTOXICOS Av Jose Geraldo de Matos, "
-                    . "765A Distrito Industrial do Paracangua - Taubate SP . Pedido: " . $pedido->id;
+                    . ". Pedido: " . $pedido->id;
 
             if ($pedido->cliente->suframado) {
                 $this->obss .= ".Reducao da base de calculo conforme artigo 9 Anexo ll do Decreto 45.490 00 do RICMS SP. Isento conforme artigo 41 Item I do Anexo I do Decreto 45490 00 do RICMS-SP. Suframa: " . $pedido->cliente->inscricao_suframa;

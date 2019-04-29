@@ -38,11 +38,9 @@ class TipoTarefa {
         $this->observacao_padrao = "";
         $this->excluido = false;
         $this->cargos = array();
-        
     }
-    
-    public function init($tarefa){
-        
+
+    public function init($tarefa) {
         
     }
 
@@ -62,7 +60,16 @@ class TipoTarefa {
             }
             if (isset($obj->cargos)) {
                 foreach ($obj->cargos as $key => $value) {
-                    $this->cargos[] = $value;
+                    $k = false;
+                    foreach ($this->cargos as $key2 => $value) {
+                        if ($value->id === $cargo->id) {
+                            $this->cargos[$key2] = $value;
+                            $k = true;
+                        }
+                    }
+                    if (!$k) {
+                        $this->cargos[] = $cargo;
+                    }
                 }
             }
         } else {
@@ -99,8 +106,17 @@ class TipoTarefa {
                 $this->tempo_medio = $obj->tempo_medio;
             }
             if (isset($obj->cargos)) {
-                foreach ($obj->cargos as $key => $value) {
-                    $this->cargos[] = $value;
+                foreach ($obj->cargos as $key => $cargo) {
+                    $k = false;
+                    foreach ($this->cargos as $key2 => $value) {
+                        if ($value->id === $cargo->id) {
+                            $this->cargos[$key2] = $value;
+                            $k = true;
+                        }
+                    }
+                    if (!$k) {
+                        $this->cargos[] = $cargo;
+                    }
                 }
             }
 

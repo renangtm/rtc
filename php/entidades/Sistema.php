@@ -20,7 +20,6 @@ class Sistema {
      * titulo
      * valores
      */
-    
 
     public static function finalizarSeparacao($con, $pedido, $usuario) {
 
@@ -271,7 +270,7 @@ class Sistema {
         $cotacao_grupal = new CriadorCotacaoGrupalComBaseEncomenda();
         $cotacao_grupal->cronoExpression = "re(30m)";
         $trabalhos[] = $cotacao_grupal;
-        
+
         return $trabalhos;
     }
 
@@ -539,7 +538,7 @@ class Sistema {
     public static function P_ANALISE_COTACAO() {
         return new Permissao(54, "Analise Cotacao");
     }
-    
+
     public static function P_MOVIMENTO_PRODUTO() {
         return new Permissao(55, "Movimento de Produto");
     }
@@ -2070,7 +2069,7 @@ class Sistema {
                 $grupo->estoque = $value2->estoque;
                 $grupo->transito = $value2->transito;
                 $grupo->setImagemPadrao();
-                
+
                 $produtos[$hash] = $grupo;
             }
         }
@@ -2399,11 +2398,9 @@ class Sistema {
             if ($value->saida) {
 
                 $value->emitir($con);
-            
             } else {
 
                 $value->manifestar($con);
-            
             }
 
             if (isset($value->inverter)) {
@@ -2414,7 +2411,6 @@ class Sistema {
                 $nota->emitida = false;
                 $nota->cancelada = false;
                 $notas[] = $nota;
-                
             }
         }
     }
@@ -2603,6 +2599,7 @@ class Sistema {
             $vencimentos[] = $v;
         }
 
+
         $nota->vencimentos = $vencimentos;
 
         $pp = $pedido->getProdutos($con);
@@ -2683,16 +2680,48 @@ class Sistema {
             $value->calcularImpostosAutomaticamente();
             $value->inverter = $logs[$key]->id;
             $rl[] = $value;
-            $inv = $value->inverteOperacao($con, $logs[$key]);
-            $inv->calcularImpostosAutomaticamente();
-            $inv->cancelada = true;
-            $rl[] = $inv;
         }
 
         $nota->produtos = $produtos;
         $nota->calcularImpostosAutomaticamente();
         $pedido->nota = $nota;
         $pedido->notas_logisticas = $rl;
+
+        $notas = array($pedido->nota);
+
+        foreach ($pedido->notas_logisticas as $key => $value) {
+            $notas[] = $value;
+        }
+
+        //-------------------------------------------
+
+        foreach ($notas as $key2 => $nt) {
+
+            //-------------------
+
+            $total_vencimentos = 0;
+
+            foreach ($nt->vencimentos as $key => $value) {
+                $total_vencimentos += $value->valor;
+            }
+
+            $total_nota = 0;
+
+            foreach ($nt->produtos as $key => $value) {
+
+                $total_nota += $value->valor_total;
+            }
+
+            if ($total_vencimentos < $total_nota) {
+
+                $v = new Vencimento();
+                $v->valor = $total_nota - $total_vencimentos;
+                $v->nota = $nt;
+                $nt->vencimentos[] = $v;
+            }
+
+            //-------------------
+        }
 
 
         return array($pedido);
