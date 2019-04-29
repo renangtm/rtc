@@ -36,10 +36,66 @@ class CriadorCotacaoGrupalComBaseEncomenda {
         $this->segundo = intval($str[5]);
     }
 
-    public function executar($con) {
+    public static function getFornecedores($con, $empresa, $prod) {
+
+        $fornecedor_produto = array();
+
+        $grupo_empresarial = "($empresa->id";
+        $filiais = $empresa->getFiliais($con);
+        foreach ($filiais as $k => $v) {
+            $grupo_empresarial .= ",$v->id";
+        }
+        $grupo_empresarial .= ")";
+
+        $fornecedor_produto = array();
+
+        $ps = $con->getConexao()->prepare("SELECT MAX(f.id),MAX(f.cnpj),f.nome,p.codigo FROM cotacao_entrada c INNER JOIN fornecedor f ON c.id_fornecedor=f.id INNER JOIN produto_cotacao_entrada pc ON pc.id_cotacao=c.id INNER JOIN produto p ON pc.id_produto=p.id WHERE pc.quantidade>0 AND c.excluida=false AND f.habilitado AND c.id_empresa IN $grupo_empresarial GROUP BY f.nome,p.codigo");
+        $ps->execute();
+        $ps->bind_result($id, $cnpj, $nome, $codigo);
+        while ($ps->fetch()) {
+            $hash = $id . "_" . Utilidades::base64encodeSPEC($cnpj) . "_" . $nome;
+            if (!isset($fornecedor_produto[$hash])) {
+                $fornecedor_produto[$hash] = array();
+            }
+            $fornecedor_produto[$hash][$codigo] = $codigo;
+        }
+        $ps->close();
+
+        $ps = $con->getConexao()->prepare("SELECT MAX(f.id),MAX(f.cnpj),f.nome,c.codigo_produto FROM cnpj_produto c INNER JOIN fornecedor f ON f.cnpj=c.cnpj AND c.id_empresa=f.id_empresa WHERE f.habilitado AND c.id_empresa IN $grupo_empresarial GROUP BY f.nome,c.codigo_produto");
+        $ps->execute();
+        $ps->bind_result($id, $cnpj, $nome, $codigo);
+        while ($ps->fetch()) {
+            $hash = $id . "_" . Utilidades::base64encodeSPEC($cnpj) . "_" . $nome;
+            if (!isset($fornecedor_produto[$hash])) {
+                $fornecedor_produto[$hash] = array();
+            }
+            $fornecedor_produto[$hash][$codigo] = $codigo;
+        }
+        $ps->close();
+
+        $produto_fornecedor = array();
+
+        foreach ($fornecedor_produto as $f => $produtos) {
+            $forn = explode('_', $f, 3);
+            $fornecedor = new FornecedorReduzido();
+            $fornecedor->id = intval($forn[0]);
+            $fornecedor->cnpj = new CNPJ(Utilidades::base64decodeSPEC($forn[1]));
+            $fornecedor->nome = $forn[2];
+            foreach ($produtos as $key2 => $produto) {
+                if (!isset($produto_fornecedor[$produto])) {
+                    $produto_fornecedor[$produto] = array();
+                }
+                $produto_fornecedor[$produto][] = $fornecedor;
+            }
+        }
+
+        return $produto_fornecedor[$prod->codigo];
+    }
+
+    function executar($con) {
 
         $empresas = array();
-        $ps = $con->getConexao()->prepare("SELECT id FROM empresa WHERE rtc>=6");
+        $ps = $con->getConexao()->prepare("SELECT id FROM empresa WHERE id=1734");
         $ps->execute();
         $ps->bind_result($id);
         while ($ps->fetch()) {
@@ -64,39 +120,40 @@ class CriadorCotacaoGrupalComBaseEncomenda {
 
             $fornecedor_produto = array();
 
-            $ps = $con->getConexao()->prepare("SELECT f.id,f.nome,p.codigo FROM cotacao_entrada c INNER JOIN fornecedor f ON c.id_fornecedor=f.id INNER JOIN produto_cotacao_entrada pc ON pc.id_cotacao=c.id INNER JOIN produto p ON pc.id_produto=p.id WHERE pc.quantidade>0 AND c.excluida=false AND f.habilitado AND c.id_empresa IN $grupo_empresarial");
+            $ps = $con->getConexao()->prepare("SELECT MAX(f.id),MAX(f.cnpj),f.nome,p.codigo FROM cotacao_entrada c INNER JOIN fornecedor f ON c.id_fornecedor=f.id INNER JOIN produto_cotacao_entrada pc ON pc.id_cotacao=c.id INNER JOIN produto p ON pc.id_produto=p.id WHERE pc.quantidade>0 AND c.excluida=false AND f.habilitado AND c.id_empresa IN $grupo_empresarial GROUP BY f.nome,p.codigo");
             $ps->execute();
-            $ps->bind_result($id, $nome, $codigo);
+            $ps->bind_result($id, $cnpj, $nome, $codigo);
             while ($ps->fetch()) {
-                $hash = $id . "_" . $nome;
+                $hash = $id . "_" . Utilidades::base64encodeSPEC($cnpj) . "_" . $nome;
                 if (!isset($fornecedor_produto[$hash])) {
                     $fornecedor_produto[$hash] = array();
                 }
-                $fornecedor_produto[$hash][] = $codigo;
+                $fornecedor_produto[$hash][$codigo] = $codigo;
             }
             $ps->close();
 
-            $ps = $con->getConexao()->prepare("SELECT f.id,f.nome,c.codigo_produto FROM cnpj_produto c INNER JOIN fornecedor f ON f.cnpj=c.cnpj AND c.id_empresa=f.id_empresa WHERE f.habilitado AND c.id_empresa IN $grupo_empresarial");
+            $ps = $con->getConexao()->prepare("SELECT MAX(f.id),MAX(f.cnpj),f.nome,c.codigo_produto FROM cnpj_produto c INNER JOIN fornecedor f ON f.cnpj=c.cnpj AND c.id_empresa=f.id_empresa WHERE f.habilitado AND c.id_empresa IN $grupo_empresarial GROUP BY f.nome,c.codigo_produto");
             $ps->execute();
-            $ps->bind_result($id, $nome, $codigo);
+            $ps->bind_result($id, $cnpj, $nome, $codigo);
             while ($ps->fetch()) {
-                $hash = $id . "_" . $nome;
+                $hash = $id . "_" . Utilidades::base64encodeSPEC($cnpj) . "_" . $nome;
                 if (!isset($fornecedor_produto[$hash])) {
                     $fornecedor_produto[$hash] = array();
                 }
-                $fornecedor_produto[$hash][] = $codigo;
+                $fornecedor_produto[$hash][$codigo] = $codigo;
             }
             $ps->close();
 
             $produto_fornecedor = array();
 
             foreach ($fornecedor_produto as $f => $produtos) {
-                $forn = explode('_', $f, 2);
+                $forn = explode('_', $f, 3);
                 $fornecedor = new FornecedorReduzido();
                 $fornecedor->id = intval($forn[0]);
-                $fornecedor->nome = $forn[1];
+                $fornecedor->cnpj = new CNPJ(Utilidades::base64decodeSPEC($forn[1]));
+                $fornecedor->nome = $forn[2];
                 foreach ($produtos as $key2 => $produto) {
-                    if (!isset($produtos_fornecedor[$produto])) {
+                    if (!isset($produto_fornecedor[$produto])) {
                         $produto_fornecedor[$produto] = array();
                     }
                     $produto_fornecedor[$produto][] = $fornecedor;
@@ -158,7 +215,6 @@ class CriadorCotacaoGrupalComBaseEncomenda {
                     if ($a >= 0) {
 
                         $cotacao->produtos[$a]->quantidade += $pc->quantidade;
-                        
                     } else {
 
                         $cotacao->produtos[] = $pc;
@@ -173,7 +229,7 @@ class CriadorCotacaoGrupalComBaseEncomenda {
                             //----- colocando fornecedor se nao exite
 
                             foreach ($cotacao->fornecedores as $kf => $fff) {
-                                if ($fff->id === $ff->id) {
+                                if ($fff->id === $ff->id || $fff->cnpj->valor === $ff->cnpj->valor) {
                                     continue 2;
                                 }
                             }

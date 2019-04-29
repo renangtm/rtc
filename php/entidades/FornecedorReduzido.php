@@ -15,11 +15,13 @@ class FornecedorReduzido {
 
     public $id;
     public $nome;
+    public $cnpj;
 
     function __construct() {
 
         $this->id = 0;
         $this->nome = "";
+        $this->cnpj = new CNPJ("");
     }
 
 }

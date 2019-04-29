@@ -24,6 +24,288 @@ class Logistica extends Empresa {
             Sistema::P_RELATORIO_MAX_PALET());
     }
 
+    function getEmpresasClientes($con) {
+
+        $ids = "";
+
+        $ps = $con->getConexao()->prepare("SELECT id_empresa FROM produto WHERE id_logistica=$this->id GROUP BY id_empresa");
+        $ps->execute();
+        $ps->bind_result($id_empresa);
+        while ($ps->fetch()) {
+            $ids .= ",$id_empresa";
+        }
+        $ps->close();
+
+        $ids = substr($ids, 1);
+
+        $ps = $con->getConexao()->prepare("SELECT "
+                . "empresa.id,"
+                . "empresa.tipo_empresa,"
+                . "empresa.nome,"
+                . "empresa.inscricao_estadual,"
+                . "empresa.consigna,"
+                . "empresa.aceitou_contrato,"
+                . "empresa.juros_mensal,"
+                . "empresa.cnpj,"
+                . "endereco.numero,"
+                . "endereco.id,"
+                . "endereco.rua,"
+                . "endereco.bairro,"
+                . "endereco.cep,"
+                . "cidade.id,"
+                . "cidade.nome,"
+                . "estado.id,"
+                . "estado.sigla,"
+                . "email.id,"
+                . "email.endereco,"
+                . "email.senha,"
+                . "telefone.id,"
+                . "telefone.numero "
+                . "FROM empresa "
+                . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
+                . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
+                . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
+                . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
+                . "INNER JOIN estado ON cidade.id_estado = estado.id "
+                . "WHERE empresa.id IN ($ids) AND empresa.id <> $this->id");
+        $ps->execute();
+        $clientes = array();
+        $ps->bind_result($id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+
+        while ($ps->fetch()) {
+
+            $empresa = Sistema::getEmpresa($tipo_empresa);
+
+            $empresa->id = $id_empresa;
+            $empresa->cnpj = new CNPJ($cnpj);
+            $empresa->inscricao_estadual = $inscricao_empresa;
+            $empresa->nome = $nome_empresa;
+            $empresa->aceitou_contrato = $aceitou_contrato;
+            $empresa->juros_mensal = $juros_mensal;
+            $empresa->consigna = $consigna;
+
+            $endereco = new Endereco();
+            $endereco->id = $id_endereco;
+            $endereco->rua = $rua;
+            $endereco->bairro = $bairro;
+            $endereco->cep = new CEP($cep);
+            $endereco->numero = $numero_endereco;
+
+            $cidade = new Cidade();
+            $cidade->id = $id_cidade;
+            $cidade->nome = $nome_cidade;
+
+            $estado = new Estado();
+            $estado->id = $id_estado;
+            $estado->sigla = $nome_estado;
+
+            $cidade->estado = $estado;
+
+            $endereco->cidade = $cidade;
+
+            $empresa->endereco = $endereco;
+
+            $email = new Email($endereco_email);
+            $email->id = $id_email;
+            $email->senha = $senha_email;
+
+            $empresa->email = $email;
+
+            $telefone = new Telefone($numero_telefone);
+            $telefone->id = $id_telefone;
+
+            $empresa->telefone = $telefone;
+
+            $clientes[] = $empresa;
+        }
+
+        $ps->close();
+
+        return $clientes;
+    }
+
+    public function getMovimentosProduto($con, $filtro = "") {
+
+        $movimentos = array();
+
+
+        $f = $filtro;
+
+        $sql = "SELECT pr.id,pr.estoque,pr.disponivel,pr.nome,pp.influencia_estoque,pp.influencia_reserva,pp.valor_base,pp.juros,pp.base_calculo,pp.icms,pp.ipi,pp.frete,p.id,c.razao_social,UNIX_TIMESTAMP(IFNULL(n.data_emissao,p.data))*1000,n.ficha,n.numero,e.nome "
+                . "FROM produto_pedido_saida pp "
+                . "INNER JOIN pedido p ON p.id=pp.id_pedido "
+                . "LEFT JOIN nota n ON n.id_pedido=p.id AND n.cancelada=false AND n.excluida=false "
+                . "INNER JOIN cliente c ON c.id=p.id_cliente "
+                . "INNER JOIN produto pr ON pr.id=pp.id_produto "
+                . "LEFT JOIN empresa e ON e.id=pr.id_logistica "
+                . "WHERE (p.id_empresa=$this->id OR pr.id_logistica = $this->id) AND (n.id_empresa=p.id_empresa OR n.id IS NULL) AND (pp.influencia_estoque <> 0 OR pp.influencia_reserva <> 0)";
+
+
+        $filtro = str_replace(array('!data_emissao!'), array('IFNULL(n.data_emissao,p.data)'), $f);
+
+        if ($filtro !== "") {
+
+            $sql .= " AND $filtro";
+        }
+
+        $sql .= " GROUP BY pp.id";
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id_produto, $estoque, $disponivel, $nome_produto, $influencia_estoque, $influencia_reserva, $valor, $juros, $bc, $icms, $ipi, $frete, $id_pedido, $nome_cliente, $data, $ficha, $numero, $emp);
+
+        while ($ps->fetch()) {
+
+            $m = new MovimentoProduto();
+            $m->id_produto = $id_produto;
+            $m->nome_produto = $nome_produto;
+            $m->influencia_estoque = $influencia_estoque;
+            $m->influencia_reserva = $influencia_reserva;
+            $m->valor_base = $valor;
+            $m->juros = $juros;
+            $m->base_calculo = $bc;
+            $m->icms = $icms;
+            $m->ipi = $ipi;
+            $m->estoque_atual = $estoque;
+            $m->disponivel_atual = $disponivel;
+            $m->frete = $frete;
+            $m->id_pedido = $id_pedido;
+            $m->pessoa = $nome_cliente;
+            $m->momento = $data;
+            $m->ficha = $ficha;
+            $m->numero_nota = $numero;
+
+            if ($emp !== null) {
+
+                $m->armazen = $emp;
+            } else {
+
+                $m->armazen = $this->nome;
+            }
+
+            $movimentos[] = $m;
+        }
+
+        $ps->close();
+
+        $sql = "SELECT pr.id,pr.estoque,pr.disponivel,pr.nome,pn.influencia_estoque,pn.influencia_estoque,pn.valor_unitario,0,pn.base_calculo,pn.icms,pn.ipi,0,0,IFNULL(f.nome,c.razao_social),UNIX_TIMESTAMP(n.data_emissao)*1000,n.ficha,n.numero,e.nome "
+                . "FROM produto_nota pn "
+                . "INNER JOIN nota n ON n.id=pn.id_nota "
+                . "LEFT JOIN fornecedor f ON n.id_fornecedor=f.id "
+                . "LEFT JOIN cliente c ON n.id_cliente=c.id "
+                . "INNER JOIN produto pr ON pr.id=pn.id_produto "
+                . "LEFT JOIN empresa e ON pr.id_logistica=e.id "
+                . "WHERE (n.id_empresa=$this->id OR pr.id_logistica=$this->id) AND pn.influencia_estoque <> 0 ";
+
+        $filtro = str_replace(array('!data_emissao!'), array('n.data_emissao'), $f);
+
+        if ($filtro !== "") {
+
+            $sql .= "AND $filtro";
+        }
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id_produto, $estoque, $disponivel, $nome_produto, $influencia_estoque, $influencia_reserva, $valor, $juros, $bc, $icms, $ipi, $frete, $id_pedido, $nome_cliente, $data, $ficha, $numero, $emp);
+
+        while ($ps->fetch()) {
+
+            $m = new MovimentoProduto();
+            $m->id_produto = $id_produto;
+            $m->nome_produto = $nome_produto;
+            $m->influencia_estoque = $influencia_estoque;
+            $m->influencia_reserva = $influencia_reserva;
+            $m->valor_base = $valor;
+            $m->juros = $juros;
+            $m->base_calculo = $bc;
+            $m->icms = $icms;
+            $m->ipi = $ipi;
+            $m->frete = $frete;
+            $m->estoque_atual = $estoque;
+            $m->disponivel_atual = $disponivel;
+            $m->id_pedido = $id_pedido;
+            $m->pessoa = $nome_cliente;
+            $m->momento = $data;
+            $m->ficha = $ficha;
+            $m->numero_nota = $numero;
+
+            if ($emp !== null) {
+
+                $m->armazen = $emp;
+            } else {
+
+                $m->armazen = $this->nome;
+            }
+
+            $movimentos[] = $m;
+        }
+
+        $ps->close();
+
+        $sql = "SELECT pr.id,pr.estoque,pr.disponivel,pr.nome,pp.influencia_estoque,pp.influencia_estoque,pp.valor,0,0,0,0,0,0,f.nome,UNIX_TIMESTAMP(IFNULL(n.data_emissao,p.data))*1000,n.ficha,IFNULL(n.numero,0),e.nome "
+                . "FROM produto_pedido_entrada pp "
+                . "INNER JOIN pedido_entrada p ON pp.id_pedido=p.id "
+                . "LEFT JOIN nota n ON n.id=p.id_nota AND n.cancelada=false AND n.excluida=false "
+                . "LEFT JOIN fornecedor f ON p.id_fornecedor=f.id "
+                . "INNER JOIN produto pr ON pr.id=pp.id_produto "
+                . "LEFT JOIN empresa e ON pr.id_logistica=e.id "
+                . "WHERE (p.id_empresa=$this->id OR pr.id_logistica=$this->id) AND pp.influencia_estoque <> 0 AND (n.id_empresa=$this->id OR n.id_empresa IS NULL)";
+
+        $filtro = str_replace(array('!data_emissao!'), array('IFNULL(n.data_emissao,p.data)'), $f);
+
+        if ($filtro !== "") {
+
+            $sql .= "AND $filtro";
+        }
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id_produto, $estoque, $disponivel, $nome_produto, $influencia_estoque, $influencia_reserva, $valor, $juros, $bc, $icms, $ipi, $frete, $id_pedido, $nome_cliente, $data, $ficha, $numero, $emp);
+
+        while ($ps->fetch()) {
+
+            $m = new MovimentoProduto();
+            $m->id_produto = $id_produto;
+            $m->nome_produto = $nome_produto;
+            $m->influencia_estoque = $influencia_estoque;
+            $m->influencia_reserva = $influencia_reserva;
+            $m->valor_base = $valor;
+            $m->juros = $juros;
+            $m->base_calculo = $bc;
+            $m->estoque_atual = $estoque;
+            $m->disponivel_atual = $disponivel;
+            $m->icms = $icms;
+            $m->ipi = $ipi;
+            $m->frete = $frete;
+            $m->id_pedido = $id_pedido;
+            $m->pessoa = $nome_cliente;
+            $m->momento = $data;
+            $m->ficha = $ficha;
+            $m->numero_nota = $numero;
+
+            if ($emp !== null) {
+
+                $m->armazen = $emp;
+            } else {
+
+                $m->armazen = $this->nome;
+            }
+
+            $movimentos[] = $m;
+        }
+
+
+        for ($i = 1; $i < count($movimentos); $i++) {
+            for ($j = $i; $j > 0 && $movimentos[$j]->momento > $movimentos[$j - 1]->momento; $j--) {
+                $k = $movimentos[$j];
+                $movimentos[$j] = $movimentos[$j - 1];
+                $movimentos[$j - 1] = $k;
+            }
+        }
+
+        return $movimentos;
+    }
+
     public function getCountProdutoClienteLogistic($con, $filtro = "") {
 
         $categorias = "(-1";

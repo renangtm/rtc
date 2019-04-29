@@ -2,6 +2,17 @@ var debuger = function (l) {
     document.write(paraJson(l));
 }
 
+rtc.service('movimentosProdutoService', function ($http, $q) {
+    this.getMovimentos = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->movimentos=$empresa->getMovimentosProduto($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+
 rtc.service('cotacaoGrupalService', function ($http, $q) {
     this.getCount = function (filtro, fn) {
         baseService($http, $q, {
@@ -11,10 +22,56 @@ rtc.service('cotacaoGrupalService', function ($http, $q) {
             falha: fn
         });
     }
+    this.enviarEmails = function (cotacao,fn) {
+        baseService($http, $q, {
+            o:cotacao,
+            query: "$o->enviarEmails($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCotacaoGrupal = function (fn) {
+        baseService($http, $q, {
+            query: "$r->cotacao_grupal=new CotacaoGrupal();$r->cotacao_grupal->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getProdutoCotacaoGrupal = function (fn) {
+        baseService($http, $q, {
+            query: "$r->produto_cotacao_grupal=new ProdutoCotacaoGrupal();",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.responder = function (respostas, fn) {
+        baseService($http, $q, {
+            o: {respostas: respostas},
+            query: "foreach($o->respostas as $key=>$value){$value->merge($c);}",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getRespostasCotacaoGrupal = function (id_cotacao, id_fornecedor, id_empresa, fn) {
+        baseService($http, $q, {
+            o: {id_cotacao: id_cotacao, id_fornecedor: id_fornecedor, id_empresa: id_empresa},
+            query: "$e=new Empresa($o->id_empresa,$c);$f=new FornecedorReduzido();$f->id=$o->id_fornecedor;$cotacao=$e->getCotacoesGrupais($c,0,1,'c.id='.$o->id_cotacao);if(count($cotacao)===0){$r->respostas=array();}else{$r->cotacao=$cotacao[0];$r->respostas=$cotacao[0]->getRespostasFaltantes($f);}",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
         baseService($http, $q, {
             o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
             query: "$r->elementos=$empresa->getCotacoesGrupais($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getFornecedores = function (produto, fn) {
+        baseService($http, $q, {
+            o: produto,
+            query: "$r->fornecedores=CriadorCotacaoGrupalComBaseEncomenda::getFornecedores($c,$empresa,$o)",
             sucesso: fn,
             falha: fn
         });
@@ -2205,12 +2262,21 @@ rtc.service('produtoService', function ($http, $q) {
                 });
             }
         } else {
-            baseService($http, $q, {
-                o: {filtro: filtro, id_empresa: this["empresa"]},
-                query: "$e=new Empresa($o->id_empresa);$r->qtd=$e->getCountProdutos($c,$o->filtro)",
-                sucesso: fn,
-                falha: fn
-            });
+            if (typeof this["filtro_base"] === 'undefined') {
+                baseService($http, $q, {
+                    o: {filtro: filtro, id_empresa: this["empresa"]},
+                    query: "$e=new Empresa($o->id_empresa);$r->qtd=$e->getCountProdutos($c,$o->filtro)",
+                    sucesso: fn,
+                    falha: fn
+                });
+            } else {
+                baseService($http, $q, {
+                    o: {filtro: (filtro + (filtro !== "" ? "AND " : "") + this["filtro_base"] + " "), id_empresa: this["empresa"]},
+                    query: "$e=new Empresa($o->id_empresa);$r->qtd=$e->getCountProdutos($c,$o->filtro)",
+                    sucesso: fn,
+                    falha: fn
+                });
+            }
         }
     }
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
@@ -2231,12 +2297,21 @@ rtc.service('produtoService', function ($http, $q) {
                 });
             }
         } else {
-            baseService($http, $q, {
-                o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem, id_empresa: this["empresa"]},
-                query: "$e=new Empresa($o->id_empresa);$r->elementos=$e->getProdutos($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
-                sucesso: fn,
-                falha: fn
-            });
+            if (typeof this["filtro_base"] === 'undefined') {
+                baseService($http, $q, {
+                    o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem, id_empresa: this["empresa"]},
+                    query: "$e=new Empresa($o->id_empresa);$r->elementos=$e->getProdutos($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+                    sucesso: fn,
+                    falha: fn
+                });
+            } else {
+                baseService($http, $q, {
+                    o: {x0: x0, x1: x1, filtro: (filtro + (filtro !== "" ? "AND " : "") + this["filtro_base"] + " "), ordem: ordem, id_empresa: this["empresa"]},
+                    query: "$e=new Empresa($o->id_empresa);$r->elementos=$e->getProdutos($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+                    sucesso: fn,
+                    falha: fn
+                });
+            }
         }
     }
 })

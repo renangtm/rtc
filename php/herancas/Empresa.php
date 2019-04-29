@@ -189,16 +189,198 @@ class Empresa {
         }
     }
 
-    public function getCountCotacoesGrupais($con, $filtro = "") {
+    public function getMovimentosProduto($con, $filtro = "") {
 
-        $sql = "SELECT COUNT(*) FROM (SELECT * FROM (SELECT * FROM cotacao_grupal LIMIT $x1, " . ($x2 - $x1) . ") c INNER JOIN fornecedor_cotacao_grupal fp ON fp.id_cotacao=c.id INNER JOIN fornecedor f ON f.id=fp.id_fornecedor WHERE c.id_empresa=$this->id ";
+        $movimentos = array();
+
+
+        $f = $filtro;
+
+        $sql = "SELECT pr.id,pr.estoque,pr.disponivel,pr.nome,pp.influencia_estoque,pp.influencia_reserva,pp.valor_base,pp.juros,pp.base_calculo,pp.icms,pp.ipi,pp.frete,p.id,c.razao_social,UNIX_TIMESTAMP(IFNULL(n.data_emissao,p.data))*1000,n.ficha,n.numero,e.nome "
+                . "FROM produto_pedido_saida pp "
+                . "INNER JOIN pedido p ON p.id=pp.id_pedido "
+                . "LEFT JOIN nota n ON n.id_pedido=p.id AND n.cancelada=false AND n.excluida=false "
+                . "INNER JOIN cliente c ON c.id=p.id_cliente "
+                . "INNER JOIN produto pr ON pr.id=pp.id_produto "
+                . "LEFT JOIN empresa e ON e.id=pr.id_logistica "
+                . "WHERE p.id_empresa=$this->id AND (n.id_empresa=$this->id OR n.id IS NULL) AND (pp.influencia_estoque <> 0 OR pp.influencia_reserva <> 0)";
+
+
+        $filtro = str_replace(array('!data_emissao!'), array('IFNULL(n.data_emissao,p.data)'), $f);
+
+        if ($filtro !== "") {
+
+            $sql .= " AND $filtro";
+        }
+
+        $sql .= " GROUP BY pp.id";
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id_produto, $estoque, $disponivel, $nome_produto, $influencia_estoque, $influencia_reserva, $valor, $juros, $bc, $icms, $ipi, $frete, $id_pedido, $nome_cliente, $data, $ficha, $numero, $emp);
+
+        while ($ps->fetch()) {
+
+            $m = new MovimentoProduto();
+            $m->id_produto = $id_produto;
+            $m->nome_produto = $nome_produto;
+            $m->influencia_estoque = $influencia_estoque;
+            $m->influencia_reserva = $influencia_reserva;
+            $m->valor_base = $valor;
+            $m->juros = $juros;
+            $m->base_calculo = $bc;
+            $m->icms = $icms;
+            $m->ipi = $ipi;
+            $m->estoque_atual = $estoque;
+            $m->disponivel_atual = $disponivel;
+            $m->frete = $frete;
+            $m->id_pedido = $id_pedido;
+            $m->pessoa = $nome_cliente;
+            $m->momento = $data;
+            $m->ficha = $ficha;
+            $m->numero_nota = $numero;
+
+            if ($emp !== null) {
+
+                $m->armazen = $emp;
+            } else {
+
+                $m->armazen = $this->nome;
+            }
+
+            $movimentos[] = $m;
+        }
+
+        $ps->close();
+
+        $sql = "SELECT pr.id,pr.estoque,pr.disponivel,pr.nome,pn.influencia_estoque,pn.influencia_estoque,pn.valor_unitario,0,pn.base_calculo,pn.icms,pn.ipi,0,0,IFNULL(f.nome,c.razao_social),UNIX_TIMESTAMP(n.data_emissao)*1000,n.ficha,n.numero,e.nome "
+                . "FROM produto_nota pn "
+                . "INNER JOIN nota n ON n.id=pn.id_nota "
+                . "LEFT JOIN fornecedor f ON n.id_fornecedor=f.id "
+                . "LEFT JOIN cliente c ON n.id_cliente=c.id "
+                . "INNER JOIN produto pr ON pr.id=pn.id_produto "
+                . "LEFT JOIN empresa e ON pr.id_logistica=e.id "
+                . "WHERE n.id_empresa=$this->id AND pn.influencia_estoque <> 0 ";
+
+        $filtro = str_replace(array('!data_emissao!'), array('n.data_emissao'), $f);
 
         if ($filtro !== "") {
 
             $sql .= "AND $filtro";
         }
 
-        $sql .= " GROUP BY c.id)";
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id_produto, $estoque, $disponivel, $nome_produto, $influencia_estoque, $influencia_reserva, $valor, $juros, $bc, $icms, $ipi, $frete, $id_pedido, $nome_cliente, $data, $ficha, $numero, $emp);
+
+        while ($ps->fetch()) {
+
+            $m = new MovimentoProduto();
+            $m->id_produto = $id_produto;
+            $m->nome_produto = $nome_produto;
+            $m->influencia_estoque = $influencia_estoque;
+            $m->influencia_reserva = $influencia_reserva;
+            $m->valor_base = $valor;
+            $m->juros = $juros;
+            $m->base_calculo = $bc;
+            $m->icms = $icms;
+            $m->ipi = $ipi;
+            $m->frete = $frete;
+            $m->estoque_atual = $estoque;
+            $m->disponivel_atual = $disponivel;
+            $m->id_pedido = $id_pedido;
+            $m->pessoa = $nome_cliente;
+            $m->momento = $data;
+            $m->ficha = $ficha;
+            $m->numero_nota = $numero;
+
+            if ($emp !== null) {
+
+                $m->armazen = $emp;
+            } else {
+
+                $m->armazen = $this->nome;
+            }
+
+            $movimentos[] = $m;
+        }
+
+        $ps->close();
+
+        $sql = "SELECT pr.id,pr.estoque,pr.disponivel,pr.nome,pp.influencia_estoque,pp.influencia_estoque,pp.valor,0,0,0,0,0,0,f.nome,UNIX_TIMESTAMP(IFNULL(n.data_emissao,p.data))*1000,n.ficha,IFNULL(n.numero,0),e.nome "
+                . "FROM produto_pedido_entrada pp "
+                . "INNER JOIN pedido_entrada p ON pp.id_pedido=p.id "
+                . "LEFT JOIN nota n ON n.id=p.id_nota AND n.cancelada=false AND n.excluida=false "
+                . "LEFT JOIN fornecedor f ON p.id_fornecedor=f.id "
+                . "INNER JOIN produto pr ON pr.id=pp.id_produto "
+                . "LEFT JOIN empresa e ON pr.id_logistica=e.id "
+                . "WHERE p.id_empresa=$this->id AND pp.influencia_estoque <> 0 AND (n.id_empresa=$this->id OR n.id_empresa IS NULL)";
+
+        $filtro = str_replace(array('!data_emissao!'), array('IFNULL(n.data_emissao,p.data)'), $f);
+
+        if ($filtro !== "") {
+
+            $sql .= "AND $filtro";
+        }
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id_produto, $estoque, $disponivel, $nome_produto, $influencia_estoque, $influencia_reserva, $valor, $juros, $bc, $icms, $ipi, $frete, $id_pedido, $nome_cliente, $data, $ficha, $numero, $emp);
+
+        while ($ps->fetch()) {
+
+            $m = new MovimentoProduto();
+            $m->id_produto = $id_produto;
+            $m->nome_produto = $nome_produto;
+            $m->influencia_estoque = $influencia_estoque;
+            $m->influencia_reserva = $influencia_reserva;
+            $m->valor_base = $valor;
+            $m->juros = $juros;
+            $m->base_calculo = $bc;
+            $m->estoque_atual = $estoque;
+            $m->disponivel_atual = $disponivel;
+            $m->icms = $icms;
+            $m->ipi = $ipi;
+            $m->frete = $frete;
+            $m->id_pedido = $id_pedido;
+            $m->pessoa = $nome_cliente;
+            $m->momento = $data;
+            $m->ficha = $ficha;
+            $m->numero_nota = $numero;
+
+            if ($emp !== null) {
+
+                $m->armazen = $emp;
+            } else {
+
+                $m->armazen = $this->nome;
+            }
+
+            $movimentos[] = $m;
+        }
+
+
+        for ($i = 1; $i < count($movimentos); $i++) {
+            for ($j = $i; $j > 0 && $movimentos[$j]->momento > $movimentos[$j - 1]->momento; $j--) {
+                $k = $movimentos[$j];
+                $movimentos[$j] = $movimentos[$j - 1];
+                $movimentos[$j - 1] = $k;
+            }
+        }
+
+        return $movimentos;
+    }
+
+    public function getCountCotacoesGrupais($con, $filtro = "") {
+
+        $sql = "SELECT COUNT(*) FROM (SELECT c.id FROM (SELECT * FROM cotacao_grupal) c INNER JOIN fornecedor_cotacao_grupal fp ON fp.id_cotacao=c.id INNER JOIN fornecedor f ON f.id=fp.id_fornecedor WHERE c.id_empresa=$this->id AND c.excluida=false ";
+
+        if ($filtro !== "") {
+
+            $sql .= " AND $filtro";
+        }
+
+        $sql .= " GROUP BY c.id) k";
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
@@ -216,7 +398,7 @@ class Empresa {
 
         $cotacoes = array();
 
-        $sql = "SELECT f.id,f.nome,c.id,UNIX_TIMESTAMP(c.data)*1000,c.observacoes,c.enviada FROM (SELECT * FROM cotacao_grupal LIMIT $x1, " . ($x2 - $x1) . ") c INNER JOIN fornecedor_cotacao_grupal fp ON fp.id_cotacao=c.id INNER JOIN fornecedor f ON f.id=fp.id_fornecedor WHERE c.id_empresa=$this->id ";
+        $sql = "SELECT f.id,f.nome,f.cnpj,c.id,UNIX_TIMESTAMP(c.data)*1000,c.observacoes,c.enviada FROM (SELECT * FROM cotacao_grupal WHERE cotacao_grupal.excluida=false LIMIT $x1, " . ($x2 - $x1) . ") c INNER JOIN fornecedor_cotacao_grupal fp ON fp.id_cotacao=c.id INNER JOIN fornecedor f ON f.id=fp.id_fornecedor WHERE c.id_empresa=$this->id ";
         if ($filtro !== "") {
             $sql .= "AND $filtro ";
         }
@@ -226,7 +408,7 @@ class Empresa {
         $ids = "(-1";
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_forn, $nome_forn, $id_cot, $data_cot, $obs_cot, $env_cot);
+        $ps->bind_result($id_forn, $nome_forn, $cnpj_forn, $id_cot, $data_cot, $obs_cot, $env_cot);
         while ($ps->fetch()) {
 
             if (!isset($cotacoes[$id_cot])) {
@@ -246,6 +428,7 @@ class Empresa {
             $f = new FornecedorReduzido();
             $f->id = $id_forn;
             $f->nome = $nome_forn;
+            $f->cnpj = new CNPJ($cnpj_forn);
 
             $cot->fornecedores[] = $f;
         }
@@ -254,9 +437,9 @@ class Empresa {
 
         $ids .= ")";
 
-        $ps = $con->getConexao()->prepare("SELECT p.id,p.quantidade,p.id_cotacao,p.id_produto,r.id,UNIX_TIMESTAMP(r.momento)*1000,r.valor,r.quantidade,pp.id,pp.nome,pp.codigo,pp.imagem,f.id,f.nome FROM produto_cotacao_grupal p LEFT JOIN resposta_cotacao_grupal r ON p.id=r.id_produto_cotacao LEFT JOIN fornecedor f ON f.id=r.id_fornecedor INNER JOIN produto pp ON pp.id=p.id_produto WHERE p.id_cotacao IN $ids");
+        $ps = $con->getConexao()->prepare("SELECT p.id,p.quantidade,p.id_cotacao,p.id_produto,r.id,UNIX_TIMESTAMP(r.momento)*1000,r.valor,r.quantidade,pp.id,pp.nome,pp.codigo,pp.imagem,pp.quantidade_unidade,pp.unidade,f.id,f.nome,f.cnpj FROM produto_cotacao_grupal p LEFT JOIN resposta_cotacao_grupal r ON p.id=r.id_produto_cotacao LEFT JOIN fornecedor f ON f.id=r.id_fornecedor INNER JOIN produto pp ON pp.id=p.id_produto WHERE p.id_cotacao IN $ids");
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $id_cotacao, $id_produto, $id_resp, $momento_resp, $valor_resp, $quantidade_resp, $id_prod, $nom_prod, $cod_prod, $img_prod, $forn_id, $forn_nome);
+        $ps->bind_result($id, $quantidade, $id_cotacao, $id_produto, $id_resp, $momento_resp, $valor_resp, $quantidade_resp, $id_prod, $nom_prod, $cod_prod, $img_prod, $quantidade_unidade_prod, $unidade_prod, $forn_id, $forn_nome, $forn_cnpj);
         while ($ps->fetch()) {
 
             if (!isset($cotacoes[$id_cotacao]->produtos[$id])) {
@@ -271,6 +454,8 @@ class Empresa {
                 $pr->nome = $nom_prod;
                 $pr->codigo = $cod_prod;
                 $pr->imagem = $img_prod;
+                $pr->quantidade_unidade = $quantidade_unidade_prod;
+                $pr->unidade = $unidade_prod;
 
                 $p->produto = $pr;
 
@@ -289,6 +474,7 @@ class Empresa {
                 $fr = new FornecedorReduzido();
                 $fr->id = $forn_id;
                 $fr->nome = $forn_nome;
+                $fr->cnpj = new CNPJ($forn_cnpj);
 
                 $resp->fornecedor = $fr;
 

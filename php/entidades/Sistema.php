@@ -20,6 +20,7 @@ class Sistema {
      * titulo
      * valores
      */
+    
 
     public static function finalizarSeparacao($con, $pedido, $usuario) {
 
@@ -537,6 +538,10 @@ class Sistema {
 
     public static function P_ANALISE_COTACAO() {
         return new Permissao(54, "Analise Cotacao");
+    }
+    
+    public static function P_MOVIMENTO_PRODUTO() {
+        return new Permissao(55, "Movimento de Produto");
     }
 
     public static function TT_COMPRA($id_empresa) {
@@ -2041,7 +2046,7 @@ class Sistema {
 
         foreach ($empresas as $key => $value) {
 
-            $prods = $value->getProdutos($con, 0, 500000, 'produto.id_categoria IN ' . $categorias_loja, '');
+            $prods = $value->getProdutos($con, 0, 500000, '(produto.estoque*produto.quantidade_unidade) < 24 AND produto.id_categoria IN ' . $categorias_loja, '');
 
             foreach ($prods as $key2 => $value2) {
 
@@ -3835,7 +3840,8 @@ class Sistema {
                 Sistema::P_PEDIDO_SAIDA(),
                 Sistema::P_PEDIDO_ENTRADA(),
                 Sistema::P_LOGO(),
-                Sistema::P_PRODUTO())
+                Sistema::P_PRODUTO(),
+                Sistema::P_MOVIMENTO_PRODUTO())
             ), new RTC(2, array(
                 Sistema::P_CAMPANHA(),
                 Sistema::P_CATEGORIA_CLIENTE(),

@@ -735,9 +735,34 @@ class Pedido {
         if ($inicial) {
             $this->status->enviarEmails($this);
         }
-        if ($this->status->nota && $this->id_nota == 0 && $this->etapa_frete === 0) {
+        if ($this->status->nota && $this->id_nota == 0) {
 
             $nota = $this->gerarNotaPadrao();
+
+            if (count($this->fretes_intermediarios) > 0) {
+
+                $nota->transportadora = $this->fretes_intermediarios[count($this->fretes_intermediarios) - 1]->transportadora;
+
+                $redespacho = "";
+
+                for ($i = count($this->fretes_intermediarios) - 2; $i >= 0; $i--) {
+                    $f = $this->fretes_intermediarios[$i];
+                    $destino = Sistema::getEmpresas($con, "empresa.id=" . $f->id_empresa_destino);
+
+                    $ps = $con->getConexao()->prepare("SELECT inscricao_estadual,cnpj FROM transportadora WHERE id=" . $f->transportadora->id);
+                    $ps->execute();
+                    $ps->bind_result($ie, $cnpj);
+                    if ($ps->fetch()) {
+                        $redespacho .= "Redespacho por " . $f->transportadora->razao_social . " CNPJ: $cnpj, IE: $ie - para " . $destino->endereco->cidade->nome . " - " . $destino->endereco->cidade->estado->sigla . ", " . $destino->endereco->bairro . ", " . $destino->endereco->rua . ", " . $destino->endereco->numero . " CEP: " . $destino->endereco->cep->valor . "; ";
+                    }
+                    $ps->close();
+                }
+
+                $destino = $this->cliente;
+                $redespacho .= "Redespacho por " . $this->transportadora->razao_social . " CNPJ: " . $this->transportadora->cnpj->valor . ", IE: " . $this->transportadora->inscricao_estadual . " para " . $destino->endereco->cidade->nome . " - " . $destino->endereco->cidade->estado->sigla . ", " . $destino->endereco->bairro . ", " . $destino->endereco->rua . ", " . $destino->endereco->numero . " CEP: " . $destino->endereco->cep->valor . "; ";
+
+                $nota->observacao = $redespacho . ", " . $nota->observacao;
+            }
 
             $nota->merge($con);
 
@@ -786,55 +811,6 @@ class Pedido {
                 $ps->execute();
                 $ps->close();
             }
-            
-        } else if ($this->status->nota && $this->id_nota == 0) {
-
-            $etapa = null;
-
-            foreach ($this->fretes_intermediarios as $key => $value) {
-                if ($value->ordem === $this->etapa_frete) {
-                    $etapa = $value;
-                    break;
-                }
-            }
-
-            $destino = Sistema::getEmpresas($con, "empresa.id=" . $etapa->id_empresa_destino);
-            $destino = $destino[0];
-
-            $empresa = $this->logistica !== null ? $this->logistica : $this->empresa;
-
-            $transportadora = $etapa->transportadora->getTransportadora($con);
-            
-            $getter = new Getter($empresa);
-
-            $nota = $this->gerarNotaPadrao();
-
-            $t = $getter->getTransportadoraViaTransportadora($con, $transportadora);
-            
-            $nota->transportadora = $t;
-
-            foreach ($nota->produtos as $key => $value) {
-                $value->cfop = CFOP::$TRANSFERENCIA;
-            }
-            
-            $nota->observacao = new OBS_NFE($empresa, $this, OBS_NFE::$TRANSFERENCIA);
-            $nota->observacao = $nota->observacao->getObs();
-            $nota->empresa = $empresa;
-            $nota->cliente = $getter->getClienteViaEmpresa($con, $destino);
-
-            $nota->merge($con);
-            
-            $this->id_nota = $nota->id;
-
-            $ps = $con->getConexao()->prepare("UPDATE nota SET data_emissao=data_emissao,id_pedido=$this->id WHERE id=$nota->id");
-            $ps->execute();
-            $ps->close();
-            
-            $ps = $con->getConexao()->prepare("UPDATE pedido SET id_nota=$this->id_nota WHERE id=$this->id");
-            $ps->execute();
-            $ps->close();
-            
-            
         }
 
         if ($erro !== null) {

@@ -34,7 +34,7 @@ class RespostaCotacaoGrupal {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO resposta_cotacao_grupal(valor,quantidade,id_produto_cotacao,momento,id_fornecedor) VALUES($this->valor,$this->quantidadde," . $this->produto->id . ",FROM_UNIXTIME($this->momento/1000)," . $this->fornecedor->id . ")");
+            $ps = $con->getConexao()->prepare("INSERT INTO resposta_cotacao_grupal(valor,quantidade,id_produto_cotacao,momento,id_fornecedor) VALUES($this->valor,$this->quantidade," . $this->produto->id . ",FROM_UNIXTIME($this->momento/1000)," . $this->fornecedor->id . ")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();

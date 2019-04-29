@@ -314,14 +314,10 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>
-                                                    <div class="product-btn">
-                                                        <button style="float:left" class="btn btn-success" ng-click="inverterPrecos()"><i class="fas fa-random"></i></button>
-                                                        <a href="#" class="btn btn-outline-light btnaddprod" ng-disabled="!pedido.status.altera" ng-if="pedido.empresa.id === <?php echo $empresa->id; ?>" ng-click="produtos.attList()" data-title="addproduto" data-toggle="modal" data-target="#produtos"><i class="fas fa-plus-circle"></i></a>
+                                                <td colspan="5">
+                                                    <div class="product-btn" style="width:100%">
+                                                        <button style="float:left" class="btn btn-success" ng-click="inverterPrecos()"><i class="fas fa-random"></i> Transformar Preco Base em Final</button>
+                                                        <a style="float: right" href="#" class="btn btn-outline-light btnaddprod" ng-disabled="!pedido.status.altera" ng-if="pedido.empresa.id === <?php echo $empresa->id; ?>" ng-click="produtos.attList()" data-title="addproduto" data-toggle="modal" data-target="#produtos"><i class="fas fa-plus-circle"></i></a>
                                                     </div>
                                                 </td>
 

@@ -1,3 +1,246 @@
+rtc.controller("crtRespostaCotacaoGrupal", function ($scope, cotacaoGrupalService) {
+
+    $scope.respostas = [];
+    $scope.carregando = true;
+    $scope.cotacao = null;
+    $scope.respondida = false;
+
+    cotacaoGrupalService.getRespostasCotacaoGrupal(rtc["id_cotacao"], rtc["id_fornecedor"], rtc["id_empresa"], function (r) {
+
+        $scope.respostas = r.respostas;
+        $scope.cotacao = r.cotacao;
+        $scope.carregando = false;
+
+    })
+
+    $scope.excluirProduto = function (r) {
+
+        r.quantidade = -1;
+
+    }
+
+    $scope.getTotalCotacao = function () {
+
+        var valor = 0;
+
+        for (var i = 0; i < $scope.respostas.length; i++) {
+
+            var r = $scope.respostas[i];
+
+            if (r.quantidade < 0) {
+                continue;
+            }
+
+            valor += r.produto.produto.quantidade_unidade * r.quantidade * r.valor;
+
+        }
+
+        return valor;
+
+    }
+
+    $scope.responder = function () {
+
+        var resp = angular.copy($scope.respostas);
+
+        for (var i = 0; i < resp.length; i++) {
+
+            resp[i].valor *= resp[i].produto.produto.quantidade_unidade;
+
+            resp[i].valor = parseFloat(resp[i].valor.toFixed(2));
+
+
+        }
+
+        cotacaoGrupalService.responder(resp, function (r) {
+
+            if (r.sucesso) {
+
+                $scope.respondida = true;
+                msg.alerta("Resposta enviada com sucesso, o RTC agradece.");
+                window.location.reload();
+
+            } else {
+
+                msg.erro("Ocorreu um problema, tente mais tarde");
+
+            }
+
+        });
+
+    }
+
+})
+
+
+rtc.controller("crtMovimentoEstoque", function ($scope, $timeout, movimentosProdutoService, produtoService, empresaService) {
+
+    $scope.isLogistica = false;
+
+    $scope.estaEmpresa = null;
+    $scope.empresa = null;
+    $scope.empresas = [];
+
+    empresaService.getEmpresa(function (e) {
+
+        $scope.estaEmpresa = e.empresa;
+        $scope.empresa = e.empresa;
+        $scope.isLogistica = e.empresa._classe === "Logistica";
+
+        if ($scope.isLogistica) {
+            empresaService.getEmpresasClientes(function (es) {
+
+                $scope.empresas = es.clientes;
+                $scope.empresas[$scope.empresas.length] = $scope.empresa;
+
+            })
+        }
+
+    })
+
+    $scope.trocaEmpresa = function () {
+        produtoService["empresa"] = $scope.empresa.id;
+
+        if ($scope.empresa.id === $scope.estaEmpresa.id) {
+            produtoService["filtro_base"] = undefined;
+        } else {
+            produtoService["filtro_base"] = "produto.id_logistica=" + $scope.estaEmpresa.id;
+        }
+
+        $scope.produtos.attList();
+    }
+
+
+    $scope.gerando = false;
+
+    $scope.inicio = new Date().getTime() - (30 * 24 * 60 * 60 * 1000);
+    $scope.fim = new Date().getTime();
+
+    $scope.produtos_selecionados = [];
+    $scope.produtos = createAssinc(produtoService, 1, 3, 4);
+
+    $scope.relatorio = [];
+
+    assincFuncs(
+            $scope.produtos,
+            "produto",
+            ["codigo", "nome", "disponivel"], "filtroProdutos");
+
+    $scope.getCor = function (mov) {
+
+
+        var baixo = true;
+
+        if (mov.influencia_reserva > 0 || mov.influencia_estoque > 0) {
+            baixo = false;
+        }
+
+        if (baixo) {
+
+            if (mov.influencia_estoque !== mov.influencia_reserva) {
+                return 'Orange';
+            }
+            return 'Red';
+
+        } else {
+
+            if (mov.influencia_estoque !== mov.influencia_reserva) {
+                return 'Blue';
+            }
+            return 'Green';
+
+        }
+
+    }
+
+    $scope.gerarRelatorio = function () {
+
+        $scope.gerando = true;
+        $('#mdlRelatorio').modal('show');
+
+        var filtro = "UNIX_TIMESTAMP(!data_emissao!)*1000 > " + $scope.inicio + " AND UNIX_TIMESTAMP(!data_emissao!)*1000 < " + $scope.fim;
+
+        if ($scope.isLogistica && $scope.estaEmpresa.id === $scope.empresa.id) {
+            filtro += " AND pr.id_empresa=" + $scope.estaEmpresa.id;
+        }
+
+        var inn = "";
+
+        for (var i = 0; i < $scope.produtos_selecionados.length; i++) {
+            var p = $scope.produtos_selecionados[i];
+            if (inn === "") {
+                inn = "(" + p.id;
+            } else {
+                inn += "," + p.id;
+            }
+        }
+
+        if (inn !== "") {
+            inn += ")";
+            filtro += " AND pr.id IN " + inn;
+        }
+
+        $scope.relatorio = [];
+        movimentosProdutoService.getMovimentos(filtro, function (r) {
+
+            var m = r.movimentos;
+
+            lbl:
+                    for (var i = 0; i < m.length; i++) {
+                var mov = m[i];
+                for (var j = 0; j < $scope.relatorio.length; j++) {
+                    var item = $scope.relatorio[j];
+                    if (mov.id_produto === item.id_produto) {
+                        item.movimentos[item.movimentos.length] = mov;
+                        continue lbl;
+                    }
+                }
+                var item = {
+                    id_produto: mov.id_produto,
+                    nome_produto: mov.nome_produto,
+                    armazen: mov.armazen,
+                    movimentos: [mov],
+                    estoque_atual: mov.estoque_atual,
+                    disponivel_atual: mov.disponivel_atual
+                };
+                $scope.relatorio[$scope.relatorio.length] = item;
+            }
+
+            $scope.gerando = false;
+
+        })
+
+    }
+
+    $scope.addProduto = function (p) {
+
+        for (var i = 0; i < $scope.produtos_selecionados.length; i++) {
+            if ($scope.produtos_selecionados[i].id === p.id) {
+                msg.erro("Esse produto ja esta adicionado");
+                return;
+            }
+        }
+
+        $scope.produtos_selecionados[$scope.produtos_selecionados.length] = p;
+
+    }
+
+    $scope.removeProduto = function (p) {
+
+        var nv = [];
+
+        for (var i = 0; i < $scope.produtos_selecionados.length; i++) {
+            if ($scope.produtos_selecionados[i].id !== p.id) {
+                nv[nv.length] = $scope.produtos_selecionados[i];
+            }
+        }
+
+        $scope.produtos_selecionados = nv;
+
+    }
+
+})
+
 rtc.controller("crtAnaliseCotacao", function ($scope, $sce, analiseCotacaoService) {
 
     $scope.analises = {};
@@ -4830,7 +5073,75 @@ rtc.controller("crtBancos", function ($scope, bancoService, empresaService, base
     }
 
 })
-rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, transportadoraService, tabelaService, baseService, produtoService, sistemaService, statusCotacaoEntradaService, fornecedorService, produtoCotacaoEntradaService) {
+rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoGrupalService, cotacaoEntradaService, transportadoraService, tabelaService, baseService, produtoService, sistemaService, statusCotacaoEntradaService, fornecedorService, produtoCotacaoEntradaService) {
+
+    $scope.cotacoesGrupais = createAssinc(cotacaoGrupalService, 1, 10, 10);
+    $scope.cotacoesGrupais.attList();
+    assincFuncs(
+            $scope.cotacoesGrupais,
+            "c",
+            ["id"]);
+
+
+    $scope.getFornecedores = function (c) {
+
+        var forns = "";
+        for (var i = 0; i < c.fornecedores.length; i++) {
+
+            var f = c.fornecedores[i].nome;
+
+            if (i > 0 && forns.length + f.length > 40) {
+                var qtd = (c.fornecedores.length - i - 1);
+                if (qtd > 1) {
+                    forns += " E outros " + qtd + "...";
+                } else {
+                    forns += " Mais um..."
+                }
+                break;
+            }
+
+            forns += f + "; ";
+
+        }
+
+        return forns;
+
+    }
+
+    $scope.getQuantidadeRespostas = function (c) {
+
+        var f = angular.copy(c.fornecedores);
+        var qtd = 0;
+        for (var i = 0; i < c.produtos.length; i++) {
+            for (var j = 0; j < c.produtos[i].respostas.length; j++) {
+                var r = c.produtos[i].respostas[j];
+                for (var k = 0; k < f.length; k++) {
+                    if (f[k] === null) {
+                        continue;
+                    }
+                    if (f[k].id === r.fornecedor.id) {
+                        qtd++;
+                        f[k] = null;
+                    }
+                }
+            }
+        }
+
+        return qtd;
+
+    }
+
+    $scope.grupal1_normal0 = false;
+
+    $scope.cotacaoGrupal = {};
+
+
+    $scope.setCotacaoGrupal = function (c) {
+
+        $scope.cotacaoGrupal = c;
+        $scope.grupal1_normal0 = true;
+
+    }
 
     $scope.cotacoes = createAssinc(cotacaoEntradaService, 1, 10, 10);
     $scope.cotacoes.attList();
@@ -4927,6 +5238,29 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tr
 
     })
 
+    $scope.enviandoEmail = false;
+    $scope.enviarEmailsCotacaoGrupal = function () {
+        $scope.enviandoEmail = true;
+        cotacaoGrupalService.enviarEmails($scope.cotacaoGrupal, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Os emails foram enviados com sucesso");
+
+                $scope.cotacaoGrupal.enviada = true;
+
+            } else {
+
+                msg.erro("Ocorreu um problema, tente mais tarde");
+
+            }
+            $scope.enviandoEmail = false;
+
+        })
+
+
+    }
+
     $scope.getTotalCotacao = function () {
 
         var tot = 0;
@@ -4943,66 +5277,233 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tr
 
     }
 
-    $scope.addProduto = function (produto) {
+    $scope.produto_cotacao_grupal_novo = {};
+    $scope.cotacao_grupal_novo = {};
 
-        var pp = angular.copy($scope.produto_cotacao_novo);
-        pp.produto = produto;
-        pp.cotacao = $scope.cotacao;
-        pp.valor = $scope.valor;
-        pp.quantidade = $scope.qtd;
+    cotacaoGrupalService.getCotacaoGrupal(function (c) {
 
-        for (var j = 0; j < $scope.cotacao.produtos.length; j++) {
+        $scope.cotacao_grupal_novo = c.cotacao_grupal;
 
-            var pr = $scope.cotacao.produtos[j];
+    })
 
-            if (pr.produto.id === pp.produto.id) {
+    cotacaoGrupalService.getProdutoCotacaoGrupal(function (p) {
 
-                pr.quantidade += pp.quantidade;
-                return;
+        $scope.produto_cotacao_grupal_novo = p.produto_cotacao_grupal;
+
+    })
+
+    $scope.getTotalCotacaoGrupal = function () {
+
+        var totais = [];
+
+        for (var i = 0; i < $scope.cotacaoGrupal.produtos.length; i++) {
+
+            var p = $scope.cotacaoGrupal.produtos[i];
+            lbl:
+                    for (var j = 0; j < p.respostas.length; j++) {
+
+                var r = p.respostas[j];
+
+                var subTotal = r.valor * r.quantidade;
+
+                for (var k = 0; k < totais.length; k++) {
+
+                    if (totais[k].fornecedor.id === r.fornecedor.id) {
+
+                        totais[k].total += subTotal;
+                        continue lbl;
+                    }
+
+                }
+
+                var total = {
+                    fornecedor: r.fornecedor,
+                    total: subTotal
+                }
+
+                totais[totais.length] = total;
 
             }
 
         }
 
-        pp.valor_unitario = pp.valor / pp.produto.quantidade_unidade;
+        var str = "";
 
-        $scope.cotacao.produtos[$scope.cotacao.produtos.length] = pp;
+        if (totais.length === 0) {
+
+            str = "Ninguém respondeu ainda, não é possível calcular total";
+
+        } else {
+
+            for (var i = 0; i < totais.length; i++) {
+
+                str += totais[i].fornecedor.nome + ": R$ " + totais[i].total.toFixed(2).split('.').join(',') + ";   ";
+
+            }
+
+        }
+
+        return str;
 
     }
 
+    $scope.getRespostas = function (produto) {
+
+        var fornecedores = angular.copy(produto.cotacao.fornecedores);
+
+        lbl:
+                for (var i = 0; i < produto.respostas.length; i++) {
+            var f = produto.respostas[i].fornecedor;
+            for (var j = 0; j < fornecedores.length; j++) {
+                if (fornecedores[j].id === f.id) {
+                    continue lbl;
+                }
+            }
+            fornecedores[fornecedores.length] = f;
+        }
+
+        var respostas = [];
+
+        for (var i = 0; i < fornecedores.length; i++) {
+
+            var resp = null;
+            for (var j = 0; j < produto.respostas.length; j++) {
+                var resposta = produto.respostas[j];
+                if (resposta.fornecedor.id === fornecedores[i].id) {
+                    resp = resposta;
+                }
+            }
+
+            if (resp !== null) {
+                respostas[respostas.length] = resp;
+            } else {
+
+                var resp = {
+                    fornecedor: fornecedores[i],
+                    momento: 0
+                }
+
+                respostas[respostas.length] = resp;
+
+            }
+
+        }
+
+        return respostas;
+
+    }
+
+    $scope.novaCotacaoGrupal = function () {
+
+        $scope.cotacaoGrupal = angular.copy($scope.cotacao_grupal_novo);
+        $scope.grupal1_normal0 = true;
+
+    }
+
+    $scope.addProduto = function (produto) {
+
+        if ($scope.grupal1_normal0) {
+
+            var pp = angular.copy($scope.produto_cotacao_grupal_novo);
+            pp.produto = produto;
+            pp.cotacao = $scope.cotacaoGrupal;
+            pp.quantidade = $scope.qtd;
+
+            $scope.cotacaoGrupal.produtos[$scope.cotacaoGrupal.produtos.length] = pp;
+
+            msg.confirma("Deseja colocar os fornecedores que fornecem esse produto ?", function () {
+
+                cotacaoGrupalService.getFornecedores(produto, function (f) {
+
+                    lbl:
+                            for (var i = 0; i < f.fornecedores.length; i++) {
+
+                        for (var j = 0; j < $scope.cotacaoGrupal.fornecedores.length; j++) {
+                            if ($scope.cotacaoGrupal.fornecedores[j].id === f.fornecedores[i].id || $scope.cotacaoGrupal.fornecedores[j].cnpj.valor === f.fornecedores[i].cnpj.valor) {
+                                continue lbl;
+                            }
+                        }
+
+                        $scope.cotacaoGrupal.fornecedores[$scope.cotacaoGrupal.fornecedores.length] = f.fornecedores[i];
+
+                    }
+
+                })
+
+            })
+
+        } else {
+            var pp = angular.copy($scope.produto_cotacao_novo);
+            pp.produto = produto;
+            pp.cotacao = $scope.cotacao;
+            pp.valor = $scope.valor;
+            pp.quantidade = $scope.qtd;
+
+            for (var j = 0; j < $scope.cotacao.produtos.length; j++) {
+
+                var pr = $scope.cotacao.produtos[j];
+
+                if (pr.produto.id === pp.produto.id) {
+
+                    pr.quantidade += pp.quantidade;
+                    return;
+
+                }
+
+            }
+
+            pp.valor_unitario = pp.valor / pp.produto.quantidade_unidade;
+
+            $scope.cotacao.produtos[$scope.cotacao.produtos.length] = pp;
+        }
+    }
+
     $scope.removerProduto = function (produto) {
-
-        remove($scope.cotacao.produtos, produto);
-
+        if ($scope.grupal1_normal0) {
+            remove($scope.cotacaoGrupal.produtos, produto);
+        } else {
+            remove($scope.cotacao.produtos, produto);
+        }
     }
 
     $scope.mergeCotacao = function () {
 
-        var p = $scope.cotacao;
 
-        if (typeof rtc["id_cotacao"] !== 'undefined' && typeof rtc['id_empresa'] !== 'undefined') {
 
-            $scope.cotacao.status = $scope.status_cotacao[1];
+        if (!$scope.grupal1_normal0) {
+            var p = $scope.cotacao;
 
+            if (typeof rtc["id_cotacao"] !== 'undefined' && typeof rtc['id_empresa'] !== 'undefined') {
+
+                $scope.cotacao.status = $scope.status_cotacao[1];
+
+            }
+
+            if (p.fornecedor == null) {
+                msg.erro("Cotacao sem fornecedor.");
+                return;
+            }
+
+            if (p.status == null) {
+                msg.erro("Cotacao sem status.");
+                return;
+            }
+
+            p.observacao = formatTextArea(p.observacao);
+        } else {
+            $scope.cotacaoGrupal.observacoes = formatTextArea($scope.cotacaoGrupal.observacoes);
         }
 
-        if (p.fornecedor == null) {
-            msg.erro("Cotacao sem fornecedor.");
-            return;
-        }
-
-        if (p.status == null) {
-            msg.erro("Cotacao sem status.");
-            return;
-        }
-
-        p.observacao = formatTextArea(p.observacao);
-
-        baseService.merge(p, function (r) {
+        baseService.merge($scope.grupal1_normal0 ? $scope.cotacaoGrupal : $scope.cotacao, function (r) {
             if (r.sucesso) {
-                $scope.cotacao = r.o;
-                equalize($scope.cotacao, "status", $scope.status_cotacao);
-                $scope.cotacoes.attList();
+                if ($scope.grupal1_normal0) {
+                    $scope.cotacaoGrupal = r.o;
+                    $scope.cotacoesGrupais.attList();
+                } else {
+                    $scope.cotacao = r.o;
+                    equalize($scope.cotacao, "status", $scope.status_cotacao);
+                    $scope.cotacoes.attList();
+                }
                 msg.alerta("Operacao efetuada com sucesso");
             } else {
                 $scope.cotacao = r.o;
@@ -5088,6 +5589,7 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tr
     $scope.setCotacao = function (cotacao) {
 
         $scope.cotacao = cotacao;
+        $scope.grupal1_normal0 = false;
 
         if ($scope.cotacao.id === 0) {
 
@@ -5182,15 +5684,37 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoEntradaService, tr
     }
 
 
+
+    $scope.removeFornecedor = function (forn) {
+
+        var nf = [];
+
+        for (var i = 0; i < $scope.cotacaoGrupal.fornecedores.length; i++) {
+
+            var f = $scope.cotacaoGrupal.fornecedores[i];
+
+            if (f.id !== forn.id) {
+                nf[nf.length] = f;
+            }
+
+        }
+
+        $scope.cotacaoGrupal.fornecedores = nf;
+
+    }
+
     $scope.setFornecedor = function (forn) {
 
-        $scope.cotacao.fornecedor = forn;
-
+        if ($scope.grupal1_normal0) {
+            $scope.cotacaoGrupal.fornecedores[$scope.cotacaoGrupal.fornecedores.length] = forn;
+        } else {
+            $scope.cotacao.fornecedor = forn;
+        }
     }
 
     $scope.deleteCotacao = function () {
 
-        baseService.delete($scope.cotacao, function (r) {
+        baseService.delete($scope.grupal1_normal0 ? $scope.cotacaoGrupal : $scope.cotacao, function (r) {
             if (r.sucesso) {
                 msg.alerta("Operacao efetuada com sucesso");
                 $scope.cotacao = angular.copy($scope.novo_cotacao);
@@ -5841,26 +6365,26 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
 
             var perc = pro.quantidade * pro.valor_base / total;
 
-            var frete = pro.frete * perc;
+            var frete = (p.frete * perc) / pro.quantidade;
             vun -= frete;
 
-            var ipi = 1 + (pro.ipi / (vun-pro.ipi));
+            var ipi = 1 + (pro.ipi / (vun - pro.ipi));
 
             vun -= pro.ipi;
 
-            var icms = ((vun-pro.icms)/(vun));
+            var icms = ((vun - pro.icms) / (vun));
 
             vun -= pro.icms;
 
-            var juros = 1 + (pro.juros / (vun-pro.juros));
+            var juros = 1 + (pro.juros / (vun - pro.juros));
 
             var fat = juros / icms * ipi;
-            
+
             pro.valor_base = parseFloat(((pro.valor_base - frete) / fat).toFixed(3));
-          
+
 
         }
-        
+
         $scope.atualizaCustos();
 
     }

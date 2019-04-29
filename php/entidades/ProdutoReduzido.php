@@ -17,7 +17,9 @@ class ProdutoReduzido {
     public $nome;
     public $codigo;
     public $imagem;
-    
+    public $quantidade_unidade;
+    public $unidade;
+
     function __construct() {
 
         $this->id = 0;
@@ -25,7 +27,8 @@ class ProdutoReduzido {
         $this->codigo = 0;
         $this->imagem = "";
         $this->imagem_padrao = "";
-        
+        $this->quantidade_unidade = 1;
+        $this->unidade = "Gl";
     }
 
 }

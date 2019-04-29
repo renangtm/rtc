@@ -41,7 +41,14 @@
             <!-- ============================================================== -->
             <!-- left sidebar -->
             <!-- ============================================================== -->
-            <?php include("menu.php") ?>
+            <?php
+            include("menu.php");
+
+            if (!$usuario->temPermissao(Sistema::P_CFG()->m("C"))) {
+
+                exit;
+            }
+            ?>
             <!-- ============================================================== -->
             <!-- end left sidebar -->
             <!-- ============================================================== -->
@@ -73,7 +80,7 @@
                         <!-- ============================================================== -->
                         <!-- end pageheader  -->
                         <!-- ============================================================== -->
-                        <?php if ($empresa->tipo_empresa === 5) { ?>
+<?php if ($empresa->tipo_empresa === 5) { ?>
                             <select style="width:200px" class="form-control" ng-model="empresa_atual" ng-change="trocaEmpresa()">
                                 <option ng-repeat="e in empresas_clientes" ng-value="e">{{e.nome}}</option>
                             </select>
@@ -99,7 +106,7 @@
                             <!-- ============================================================== -->
                             <!-- basic table  -->
                             <!-- ============================================================== -->
-                            <?php if ($usuario->temPermissao(Sistema::P_CONTROLADOR_TAREFAS()->m('A'))) { ?>
+<?php if ($usuario->temPermissao(Sistema::P_CONTROLADOR_TAREFAS()->m('A'))) { ?>
                                 <div class="col-md-5">
                                     <div class="card">
                                         <div class="card-body row">
@@ -301,7 +308,7 @@
                                         </div>
                                     </div>    
                                 </div>
-                            <?php } ?>
+<?php } ?>
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="card">
                                     <div class="card-body row">
@@ -344,9 +351,9 @@
                                                                         <tr>
                                                                             <td>Senha:</td>
                                                                             <td><?php
-                                                                                $str = "?>{{usuari[0].senha}}<?php";
-                                                                                echo md5($str);
-                                                                                ?></td>
+$str = "?>{{usuari[0].senha}}<?php";
+echo md5($str);
+?></td>
                                                                         </tr>
                                                                         <tr>
                                                                             <td>CPF:</td>

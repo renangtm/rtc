@@ -573,12 +573,13 @@ class Usuario {
 
         foreach ($tmp as $key => $value) {
             if ($value->tipo_tarefa !== null) {
-                $value->tipo_tarefa->init($value);
+                //$value->tipo_tarefa->init($value);
             }
         }
 
         //--------------------------------------
-
+        
+        
         foreach ($cache->arr_associados as $key => $usuario) {
 
             $a = array();
@@ -616,7 +617,7 @@ class Usuario {
                 }
             }
         }
-
+        
         return $retorno;
     }
 
