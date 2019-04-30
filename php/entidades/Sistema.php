@@ -7,7 +7,7 @@
  */
 
 /**
- * Description of Sistema
+ * Description of Sistema3279
  *
  * @author Renan
  */
@@ -2566,7 +2566,7 @@ class Sistema {
 
         $e = new Empresa($id_empresa, new ConnectionFactory());
 
-
+        
         $pedido = $e->getPedidosEntrada($con, 0, 1, "pedido_entrada.id=$escolhido");
         $pedido = $pedido[0];
 
@@ -4364,7 +4364,7 @@ class Sistema {
                 . "LEFT JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
                 . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
                 . "INNER JOIN estado ON cidade.id_estado = estado.id "
-                . "WHERE " . $filtro;
+                . "WHERE usuario.excluido=false AND " . $filtro;
 
 
         $ps = $con->getConexao()->prepare($sql);

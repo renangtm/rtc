@@ -552,24 +552,22 @@ class Nota {
             foreach ($this->produtos as $key => $value) {
 
                 $volumes += ceil($value->quantidade / $value->produto->grade->gr[0]);
-                
             }
 
             $base->volumes = $volumes;
             $base->informacoes_adcionais = $this->observacao;
 
             if ($this->finalidade === Nota::$COMPLEMENTAR || $this->finalidade === Nota::$DEVOLUCAO) {
-               
+
                 $base->chave_devolucao = $this->chave_devolucao;
-                
             }
 
             $dest = new stdClass();
             $dest->id = $this->cliente->id;
             $dest->estado = $this->cliente->endereco->cidade->estado->sigla;
-            if(!$this->cliente->pessoa_fisica){
+            if (!$this->cliente->pessoa_fisica) {
                 $dest->cnpj = Utilidades::removeMask($this->cliente->cnpj->valor);
-            }else{
+            } else {
                 $dest->cnpj = Utilidades::removeMask($this->cliente->cpf->valor);
             }
             $dest->nome = Utilidades::ifn($this->cliente->razao_social, "sem nome");

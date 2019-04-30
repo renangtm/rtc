@@ -89,30 +89,20 @@ class Tarefa {
         $this->start = 1000;
     }
 
-    public function finish($con) {
-
-        $agora = round(microtime(true) * 1000);
-
-        $inicio = 0;
-        $ps = $con->getConexao()->prepare("SELECT UNIX_TIMESTAMP(ultima_execucao)*1000 FROM usuario WHERE id=$usuario->id");
-        $ps->execute();
-        $ps->bind_result($ue);
-        if ($ps->fetch()) {
-            if ($ue > 0) {
-                $inicio = $ue;
-            }
+    public function finish($con,$usuario) {
+        
+        $perc = 100;
+        
+        foreach($this->observacoes as $key=>$value){
+            $perc -= $value->porcentagem;
         }
-        $ps->close();
-
-        $intervalo = ($this->start === 1000 ? $inicio : $this->start) . "@" . $agora . ";";
-
-        $this->intervalos_execucao[] = array($this->start, $agora);
-
-        $ps = $con->getConexao()->prepare("UPDATE tarefa SET inicio_minimo=inicio_minimo,start_usuario=FROM_UNIXTIME(1),intervalos_execucao=CONCAT(intervalos_execucao,'$intervalo'),porcentagem_conclusao=100 WHERE id=$this->id");
-        $ps->execute();
-        $ps->close();
-
-        $this->start = 1000;
+        
+        $obs = new ObservacaoTarefa();
+        $obs->porcentagem = $perc;
+        $obs->observacao = "Finalizada";
+        
+        $this->addObservacao($con, $usuario, $obs);
+        
     }
 
     public function addObservacao($con, $usuario, $observacao) {
@@ -137,6 +127,10 @@ class Tarefa {
         }
         $ps->close();
 
+        if ($this->start !== 1000) {
+            $inicio = $this->start;
+        }
+
         $intervalo = array($inicio, $observacao->momento);
         $this->intervalos_execucao[] = $intervalo;
 
@@ -154,7 +148,7 @@ class Tarefa {
 
         $this->tipo_tarefa->init($this);
 
-        $ps = $con->getConexao()->prepare("UPDATE tarefa SET intervalos_execucao='$intervalos',inicio_minimo=inicio_minimo,start_usuario=start_usuario,porcentagem_conclusao=$porcentagem WHERE id=$this->id");
+        $ps = $con->getConexao()->prepare("UPDATE tarefa SET intervalos_execucao='$intervalos',inicio_minimo=inicio_minimo,start_usuario=FROM_UNIXTIME(1),porcentagem_conclusao=$porcentagem WHERE id=$this->id");
         $ps->execute();
         $ps->close();
 

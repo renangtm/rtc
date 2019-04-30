@@ -1829,6 +1829,7 @@ rtc.controller("crtTarefas", function ($scope, $sce, tarefaService, observacaoTa
     $scope.empresarial = false;
     $scope.tarefa_novo = null;
     $scope.tarefa = null;
+    $scope.lista_tarefas = [];
 
     $scope.tarefa_principal = null;
 
@@ -1843,24 +1844,39 @@ rtc.controller("crtTarefas", function ($scope, $sce, tarefaService, observacaoTa
 
     $scope.start = function (tarefa) {
 
-        tarefaService.start(tarefa, function () {
-
+        tarefaService.start(tarefa, function (r) {
+            tarefa.start = r.o.start;
+            tarefa.intervalos_execucao = r.o.intervalos_execucao;
         });
 
     }
 
     $scope.pause = function (tarefa) {
 
-        tarefaService.pause(tarefa, function () {
-
+        tarefaService.pause(tarefa, function (r) {
+            tarefa.start = r.o.start;
+            tarefa.intervalos_execucao = r.o.intervalos_execucao;
         });
 
     }
 
     $scope.finish = function (tarefa) {
 
-        tarefaService.finish(tarefa, function () {
-
+        tarefaService.finish(tarefa, function (r) {
+            
+            var ts = [];
+            
+            for(var i=0;i<$scope.lista_tarefas.length;i++){
+                var t = $scope.lista_tarefas[i];
+                if(t.id !== tarefa.id){
+                    ts[ts.length] = t;
+                }
+            }
+            
+            $scope.tarefas = createList(ts, 1, 7, "descricao");
+            $scope.tarefa_principal = ts[0];
+            $scope.lista_tarefas = ts;
+            
         });
 
     }
@@ -1986,10 +2002,10 @@ rtc.controller("crtTarefas", function ($scope, $sce, tarefaService, observacaoTa
     })
 
     tarefaService.getTarefasAtivas(function (t) {
-
-
+        
         $scope.tarefas = createList(t.tarefas, 1, 7, "descricao");
         $scope.tarefa_principal = t.tarefas[0];
+        $scope.lista_tarefas = t.tarefas;
 
     })
 

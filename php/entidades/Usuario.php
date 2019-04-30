@@ -628,7 +628,7 @@ class Usuario {
         $sql = "SELECT "
                 . "tarefa.id,"
                 . "UNIX_TIMESTAMP(tarefa.inicio_minimo)*1000,"
-                . "UNIX_TIMESTAMO(tarefa.start_usuario)*1000,"
+                . "UNIX_TIMESTAMP(tarefa.start_usuario)*1000,"
                 . "tarefa.ordem,"
                 . "tarefa.porcentagem_conclusao,"
                 . "tarefa.tipo_entidade_relacionada,"

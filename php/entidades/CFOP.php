@@ -23,6 +23,8 @@ class CFOP {
     public static $VENDA_FORA_ESTADO_2 = "5106";
     public static $TRANSFERENCIA = "6152";
     public static $TRANSFERENCIA_DENTRO_ESTADO = "5152";
+    public static $ANULACAO_DENTRO_ESTADO = "5206";
+    public static $ANULACAO_FORA_ESTADO = "6206";
     
     public static function descricao($cfop) {
 
@@ -48,6 +50,10 @@ class CFOP {
             return "Transferencia de mercadoria fora do estado";
         }else if ($cfop === self::$TRANSFERENCIA_DENTRO_ESTADO) {
             return "Transferencia de mercadoria dentro do estado";
+        }else if ($cfop === self::$ANULACAO_FORA_ESTADO) {
+            return "Anulacao de valor referente a prestacao de servico. fora do estado";
+        }else if ($cfop === self::$ANULACAO_DENTRO_ESTADO) {
+            return "Anulacao de valor referente a prestacao de servico. dentro do estado";
         }
 
         return "Indefinido";

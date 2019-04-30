@@ -82,7 +82,7 @@
                             .tarefa{
                                 display: inline-block;
                                 text-align: center;
-                                height:400px;
+                                height:540px;
                                 border:1px dashed;
                                 width:calc(33% - 20px) !important;
                                 margin-left:20px !important;
@@ -92,7 +92,7 @@
                             .tarefa_principal{
                                 display: inline-block;
                                 text-align: center;
-                                height:340px;
+                                height:480px;
                                 border:1px dashed;
                                 width:calc(70% - 20px) !important;
                                 margin-left:20px !important;
@@ -164,9 +164,11 @@
                                                             Controles
                                                         </td>
                                                         <td>
-                                                            <button class="fas fa-sucess" ng-disabled="t[0].start!==1000"><i class="fas fa-play"></i></button>
-                                                            <button class="fas fa-warning" ng-disabled="t[0].start===1000"><i class="fas fa-pause"></i></button>
-                                                            <button class="fas fa-danger" ng-disabled="t[0].start===1000"><i class="fas fa-stop"></i></button>
+                                                            <button ng-click="start(t[0])" class="btn btn-{{t[0].start!==1000?'default':'success'}}" style="width:120px;height:50px;padding:10px;margin-right:0px" ng-disabled="t[0].start!==1000"><i class="fas fa-play"></i></button>
+                                                            <hr>
+                                                            <button ng-click="pause(t[0])" class="btn btn-{{t[0].start===1000?'default':'warning'}}" style="width:120px;height:50px;padding:4px;display: inline;margin-right:0px" ng-disabled="t[0].start===1000"><i class="fas fa-pause"></i></button>
+                                                            <hr>
+                                                            <button ng-click="finish(t[0])" class="btn btn-{{t[0].start===1000?'default':'danger'}}" style="width:120px;height:50px;padding:4px;display: inline" ng-disabled="t[0].start===1000"><i class="fas fa-stop"></i></button>
                                                         </td>
                                                     </tr>
                                                     <tr>

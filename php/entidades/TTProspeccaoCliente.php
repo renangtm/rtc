@@ -85,6 +85,7 @@ class TTProspeccaoDeCliente extends TipoTarefa {
             $telefones .= "$numtel;";
         }
         $this->observacao_padrao .= "#Telefones: $telefones <br>";
+        $this->observacao_padrao .= "#Codigo: 4000 <br>";
         $this->observacao_padrao .= "#Observacao: --------";
         
         return $this->observacao_padrao;

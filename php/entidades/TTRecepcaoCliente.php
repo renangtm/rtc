@@ -60,13 +60,25 @@ class TTRecepcaoCliente extends TipoTarefa {
             $antigo = true;
         }
         $ps->close();
-
+        /*
+        $codigo_cliente = 0;
+        $nome_cliente = "";
+        $ps = $con->getConexao()->prepare("SELECT c.codigo,c.razao_social FROM cliente WHERE id=".$tarefa->id_entidade_relacionada);
+        $ps->execute();
+        $ps->bind_result($codigo,$nome);
+        if($ps->fetch()){
+            $codigo_cliente = $codigo;
+            $nome_cliente = $nome;
+        }
+        $ps->close();
+        */
+        
         $e = count($tarefa->observacoes);
 
         if (!$antigo) {
             if ($e === 0) {
 
-                $tarefa->descricao .= " Dirija-se ao cliente da seguinte forma <hr> ";
+                $tarefa->descricao .= "Dirija-se ao cliente da seguinte forma <hr> ";
                 $tarefa->descricao .= "<p><strong>Bom dia
                                 Sou Assistente aos clientes da Agro Fauna para apresentar a nossa nova plataforma de trabalho onde sua empresa podera obter vantagens de precos muitas vezes abaixo do preco de fabrica!
                                 Meu nome e..........,estarei a sua disposicao para auxilia-lo a entrar em nosso aplicativo chamado RTC.
@@ -76,7 +88,7 @@ class TTRecepcaoCliente extends TipoTarefa {
                                 </strong></p>";
             } else if ($e === 1) {
 
-                $tarefa->descricao = " <strong>Continue Falando com ele assim: <hr> </strong>";
+                $tarefa->descricao .= " <strong>Continue Falando com ele assim: <hr> </strong>";
 
                 $tarefa->descricao .= "<strong style='color:Red'><p>
                                 Como eu disse antes o Sr.tem 90 dias para experimentar e ainda ganha uma promocao de boas vindas dos produtos que pode estar precisando com precos ainda mais baratos que todas as nossas promocoes. 
@@ -87,7 +99,7 @@ class TTRecepcaoCliente extends TipoTarefa {
             } else if ($e === 2) {
 
 
-                $tarefa->descricao = " <strong>Continue Falando com ele assim: <hr> </strong>";
+                $tarefa->descricao .= " <strong>Continue Falando com ele assim: <hr> </strong>";
                 $tarefa->descricao .= "<strong style='color:Blue'><p>
                                 Gostaria que pudesse dar uma olhadinha no Rtc, o Sr vai perceber que e muito facil de comprar por la! 
                                 E muito repido e o senhor podera ver o valor dos produtos com os precos discriminados automaticamente onde vai aparecer os valores de Icms,se tiver,frete automatico com varias opcoes, custo financeiro quando for a prazo.
@@ -102,7 +114,7 @@ class TTRecepcaoCliente extends TipoTarefa {
                                 <p>
                                 Numa proxima ocasiao estaremos mostrando outras vantagens de usar o Rtc... Ate Breve</strong>";
             } else {
-                $tarefa->descricao = "Digite alguma observacao adicional sobre a conclusao da tarefa";
+                $tarefa->descricao .= "Digite alguma observacao adicional sobre a conclusao da tarefa";
             }
         } else {
             if ($e === 0) {
@@ -114,7 +126,7 @@ class TTRecepcaoCliente extends TipoTarefa {
                                 </p>";
             } else if ($e === 1) {
 
-                $tarefa->descricao = " <strong>Continue Falando com ele assim: <hr> </strong>";
+                $tarefa->descricao .= " <strong>Continue Falando com ele assim: <hr> </strong>";
 
                 $tarefa->descricao .= "<strong style='color:Red'><p>
                                 Desde o inicio neste modulo 1 o Sr ja poderia estar cadastrando seus 
@@ -122,7 +134,7 @@ class TTRecepcaoCliente extends TipoTarefa {
                                 </p></strong>";
             } else if ($e === 2) {
 
-                $tarefa->descricao = " <strong>Continue Falando com ele assim: <hr> </strong>";
+                $tarefa->descricao .= " <strong>Continue Falando com ele assim: <hr> </strong>";
 
                 $tarefa->descricao .= "<strong style='color:Blue'><p>
                                 Agora no modulo 2 o Sr. podera ter para sua empresa a mesma facilidade em obter seus fretes partindo de Guarlhos pelo Logistic Center ou ate mesmo de sua cidade. Apenas que para isso sua transportadora devera nos fornecer sua tabela de precos para cadastramento.
@@ -131,7 +143,7 @@ class TTRecepcaoCliente extends TipoTarefa {
                                 Com isso sua empresa podera usar o mesmo processo para calculo de frete que usamos para venda na Agro Fauna
                                 </p></strong>";
             } else {
-                $tarefa->descricao = "Digite alguma observacao adicional sobre a conclusao da tarefa";
+                $tarefa->descricao .= "Digite alguma observacao adicional sobre a conclusao da tarefa";
             }
         }
     }
