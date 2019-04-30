@@ -32,19 +32,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         $con = new ConnectionFactory();
 
-        $e = new Empresa(1735,$con);
-        
-        
-        $tarefa = Sistema::TT_FATURAMENTO($e->id);
-        
-        $t = new Tarefa();
-        $t->tipo_tarefa = $tarefa;
-        $t->descricao="teste";
-        $t->titulo = "teste";
-        
-        Sistema::novaTarefaEmpresa($con, $t, $e);
-        
-        return;
+        $e = new Empresa(1734,$con);
         
         $usuario = $e->getUsuarios($con, 0, 1,'usuario.id=5249');
         $usuario = $usuario[0];
