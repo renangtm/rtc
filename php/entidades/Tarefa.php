@@ -15,6 +15,7 @@ class Tarefa {
 
     public $id;
     public $inicio_minimo;
+    public $start;
     public $ordem;
     public $porcentagem_conclusao;
     public $tipo_entidade_relacionada;
@@ -35,7 +36,7 @@ class Tarefa {
     public $calculado_horas_reais_dispendidas; //calculado
     public $calculado_tempo_util_faltante; //calculado
     public $calculado_previsao_inicio; //calculado
-    
+
     public function __construct() {
 
         $this->id = 0;
@@ -54,14 +55,64 @@ class Tarefa {
         $this->realocavel = false;
         $this->excluida = false;
         $this->criada_por = 0;
-        
+        $this->start = 1000;
+
         $this->calculado_momento_conclusao = 0;
         $this->calculado_previsao_util_conclusao = 0;
         $this->calculado_horas_uteis_dispendidas = 0;
         $this->calculado_horas_reais_dispendidas = 0;
         $this->calculado_tempo_util_faltante = 0;
         $this->calculado_previsao_inicio = 0;
-        
+    }
+
+    public function start($con, $usuario) {
+
+        $this->start = round(microtime(true) * 1000);
+
+        $ps = $con->getConexao()->prepare("UPDATE tarefa SET inicio_minimo=inicio_minimo, start_usuario=FROM_UNIXTIME($this->start/1000) WHERE id=$this->id");
+        $ps->execute();
+        $ps->close();
+    }
+
+    public function pause($con) {
+
+        $agora = round(microtime(true) * 1000);
+
+        $intervalo = $this->start . "@" . $agora . ";";
+
+        $this->intervalos_execucao[] = array($this->start, $agora);
+
+        $ps = $con->getConexao()->prepare("UPDATE tarefa SET inicio_minimo=inicio_minimo,start_usuario=FROM_UNIXTIME(1),intervalos_execucao=CONCAT(intervalos_execucao,'$intervalo') WHERE id=$this->id");
+        $ps->execute();
+        $ps->close();
+
+        $this->start = 1000;
+    }
+
+    public function finish($con) {
+
+        $agora = round(microtime(true) * 1000);
+
+        $inicio = 0;
+        $ps = $con->getConexao()->prepare("SELECT UNIX_TIMESTAMP(ultima_execucao)*1000 FROM usuario WHERE id=$usuario->id");
+        $ps->execute();
+        $ps->bind_result($ue);
+        if ($ps->fetch()) {
+            if ($ue > 0) {
+                $inicio = $ue;
+            }
+        }
+        $ps->close();
+
+        $intervalo = ($this->start === 1000 ? $inicio : $this->start) . "@" . $agora . ";";
+
+        $this->intervalos_execucao[] = array($this->start, $agora);
+
+        $ps = $con->getConexao()->prepare("UPDATE tarefa SET inicio_minimo=inicio_minimo,start_usuario=FROM_UNIXTIME(1),intervalos_execucao=CONCAT(intervalos_execucao,'$intervalo'),porcentagem_conclusao=100 WHERE id=$this->id");
+        $ps->execute();
+        $ps->close();
+
+        $this->start = 1000;
     }
 
     public function addObservacao($con, $usuario, $observacao) {
@@ -98,23 +149,21 @@ class Tarefa {
         foreach ($this->intervalos_execucao as $key => $value) {
             $intervalos .= $value[0] . "@" . $value[1] . ";";
         }
-        
+
         $this->observacoes[] = $observacao;
-        
+
         $this->tipo_tarefa->init($this);
 
-        $ps = $con->getConexao()->prepare("UPDATE tarefa SET intervalos_execucao='$intervalos',inicio_minimo=inicio_minimo,porcentagem_conclusao=$porcentagem WHERE id=$this->id");
+        $ps = $con->getConexao()->prepare("UPDATE tarefa SET intervalos_execucao='$intervalos',inicio_minimo=inicio_minimo,start_usuario=start_usuario,porcentagem_conclusao=$porcentagem WHERE id=$this->id");
         $ps->execute();
         $ps->close();
-        
-        
-        
-        if($this->porcentagem_conclusao >= 100){
 
-            $this->tipo_tarefa->aoFinalizar($this,$usuario);
-            
+
+
+        if ($this->porcentagem_conclusao >= 100) {
+
+            $this->tipo_tarefa->aoFinalizar($this, $usuario);
         }
-        
     }
 
     public function merge($con) {
@@ -154,7 +203,7 @@ class Tarefa {
 
     public function delete($con) {
 
-        $ps = $con->getConexao()->prepare("UPDATE tarefa SET excluida=true,inicio_minimo=inicio_minimo WHERE id=$this->id");
+        $ps = $con->getConexao()->prepare("UPDATE tarefa SET excluida=true,inicio_minimo=inicio_minimo,start_usuario=start_usuario WHERE id=$this->id");
         $ps->execute();
         $ps->close();
     }

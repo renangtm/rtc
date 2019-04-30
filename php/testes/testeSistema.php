@@ -32,19 +32,17 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         $con = new ConnectionFactory();
 
-        $e = new Empresa(1734,$con);
+        $e = new Empresa(1735,$con);
         
-        $tipos_tarefa = $e->getTiposTarefa($con);
         
-        $faturamento = null;
+        $tarefa = Sistema::TT_FATURAMENTO($e->id);
         
-        foreach($tipos_tarefa as $key=>$value){
-            if($value->nome==="Faturamento"){
-                $faturamento = $value;
-            }
-        }
+        $t = new Tarefa();
+        $t->tipo_tarefa = $tarefa;
+        $t->descricao="teste";
+        $t->titulo = "teste";
         
-        echo Utilidades::toJson($faturamento->cargos);
+        Sistema::novaTarefaEmpresa($con, $t, $e);
         
         return;
         

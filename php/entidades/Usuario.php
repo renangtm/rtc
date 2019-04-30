@@ -628,6 +628,7 @@ class Usuario {
         $sql = "SELECT "
                 . "tarefa.id,"
                 . "UNIX_TIMESTAMP(tarefa.inicio_minimo)*1000,"
+                . "UNIX_TIMESTAMO(tarefa.start_usuario)*1000,"
                 . "tarefa.ordem,"
                 . "tarefa.porcentagem_conclusao,"
                 . "tarefa.tipo_entidade_relacionada,"
@@ -661,13 +662,14 @@ class Usuario {
         $tarefas = array();
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $inicio_minimo, $ordem, $porcentagem_conclusao, $tipo_entidade_relacionada, $id_entidade_relacionada, $titulo, $descricao, $intervalos_execucao, $realocavel, $id_tipo_tarefa, $prioridade, $id_observacao, $porcentagem_observacao, $momento_observacao, $observacao, $ass);
+        $ps->bind_result($id, $inicio_minimo,$start_usuario, $ordem, $porcentagem_conclusao, $tipo_entidade_relacionada, $id_entidade_relacionada, $titulo, $descricao, $intervalos_execucao, $realocavel, $id_tipo_tarefa, $prioridade, $id_observacao, $porcentagem_observacao, $momento_observacao, $observacao, $ass);
         while ($ps->fetch()) {
 
             if (!isset($tarefas[$id])) {
 
                 $t = new Tarefa();
                 $t->id = $id;
+                $t->start = $start_usuario;
                 $t->assinatura_solicitante = $ass;
                 $t->inicio_minimo = $inicio_minimo;
                 $t->ordem = $ordem;

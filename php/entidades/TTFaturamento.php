@@ -21,8 +21,7 @@ class TTFaturamento extends TipoTarefa {
         $this->tempo_medio = 0.2;
         $this->prioridade = 2;
         $this->cargos = array(
-            Empresa::CF_FATURISTA($id_empresa),
-            Empresa::CF_ENCARREGADO_LOGISTICA($id_empresa)
+            Empresa::CF_FATURISTA($id_empresa)
         );
         $this->carregarDados();
     }

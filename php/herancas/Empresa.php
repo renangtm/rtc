@@ -613,9 +613,10 @@ class Empresa {
             if ($id_cargo !== null) {
 
                 $cargo = Sistema::getCargo($con, $this, $id_cargo);
+                if($cargo === null)continue;
                 
                 $k = false;
-                foreach ($t->cargos as $key => $value) {
+                foreach ($t->cargos as $key => $value){
                     if ($value->id === $cargo->id) {
                         $t->cargos[$key] = $cargo;
                         $k = true;

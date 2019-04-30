@@ -61,14 +61,14 @@ class TipoTarefa {
             if (isset($obj->cargos)) {
                 foreach ($obj->cargos as $key => $value) {
                     $k = false;
-                    foreach ($this->cargos as $key2 => $value) {
+                    foreach ($this->cargos as $key2 => $cargo) {
                         if ($value->id === $cargo->id) {
                             $this->cargos[$key2] = $value;
                             $k = true;
                         }
                     }
                     if (!$k) {
-                        $this->cargos[] = $cargo;
+                        $this->cargos[] = $value;
                     }
                 }
             }
@@ -110,7 +110,7 @@ class TipoTarefa {
                     $k = false;
                     foreach ($this->cargos as $key2 => $value) {
                         if ($value->id === $cargo->id) {
-                            $this->cargos[$key2] = $value;
+                            $this->cargos[$key2] = $cargo;
                             $k = true;
                         }
                     }

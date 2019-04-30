@@ -226,6 +226,30 @@ rtc.service('tarefaService', function ($http, $q) {
             falha: fn
         });
     }
+    this.start = function (tarefa,fn) {
+        baseService($http, $q, {
+            o:tarefa,
+            query: "$o->start($c,$usuario)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.pause = function (tarefa,fn) {
+        baseService($http, $q, {
+            o:tarefa,
+            query: "$o->pause($c,$usuario)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.finish = function (tarefa,fn) {
+        baseService($http, $q, {
+            o:tarefa,
+            query: "$o->finish($c,$usuario)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.atribuirTarefaEmpresa = function (empresa, tarefa, fn) {
         baseService($http, $q, {
             o: {empresa: empresa, tarefa: tarefa},

@@ -1041,9 +1041,19 @@ class Sistema {
                 if ($value->id === $value2->id) {
 
                     $value->empresa = $value2->empresa;
+                    
+                    
                     foreach ($value2->cargos as $key3 => $value3) {
+                        foreach($value->cargos as $key4=>$value4){
+                            if($value3->id === $value4->id){
+                                $value->cargos[$key4] = $value3;
+                                continue 2;
+                            }
+                        }
                         $value->cargos[] = $value3;
                     }
+                    
+                    
                     $value->prioridade = $value2->prioridade;
                     $value->tempo_medio = $value2->tempo_medio;
 

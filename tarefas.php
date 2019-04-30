@@ -161,10 +161,12 @@
                                                             <h4 style="margin-top:12px">{{t[0].calculado_momento_conclusao| data}} </h4>
                                                         </td>
                                                         <td>
-                                                            Tempo Util previsto:
+                                                            Controles
                                                         </td>
                                                         <td>
-                                                            <h4 style="margin-top:12px">{{t[0].calculado_previsao_util_conclusao| tempo}} </h4>
+                                                            <button class="fas fa-sucess" ng-disabled="t[0].start!==1000"><i class="fas fa-play"></i></button>
+                                                            <button class="fas fa-warning" ng-disabled="t[0].start===1000"><i class="fas fa-pause"></i></button>
+                                                            <button class="fas fa-danger" ng-disabled="t[0].start===1000"><i class="fas fa-stop"></i></button>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -244,7 +246,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Nova tarefa para min</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Г?</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">пїЅ?</span></button>
                             </div>
                             <div class="modal-body">
                                 <table class="table table-borderless">
@@ -324,7 +326,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Nova tarefa para a equipe</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Г?</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">пїЅ?</span></button>
                             </div>
                             <div class="modal-body">
                                 <table class="table table-borderless">
@@ -437,7 +439,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-search-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Selecione o usuario</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Г?</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">пїЅ?</span></button>
                             </div>
                             <div class="modal-body">
                                 <input type="text" class="form-control" placeholder="Filtro" id="filtroUsuarios">
@@ -447,7 +449,7 @@
                                         <tr>
                                             <th data-ordem="usuario.id">Cod.</th>
                                             <th data-ordem="usuario.nome">Nome</th>
-                                            <th>Aзгo</th>
+                                            <th>AпїЅпїЅo</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -487,7 +489,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-eye fa-3x"></i>&nbsp;&nbsp;&nbsp;Detalhes da Tarefa</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Г?</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">пїЅ?</span></button>
                             </div>
                             <div class="modal-body">
 
@@ -550,7 +552,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Nova observacao para a tarefa</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Г?</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">пїЅ?</span></button>
                             </div>
 
                             <div class="modal-footer">
@@ -566,7 +568,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de seu Fornecedor</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Г?</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">пїЅ?</span></button>
                             </div>
                             <div class="modal-body">
                                 <p class="text-center"> Tem certeza de que deseja excluir este Fornecedor?</p>
@@ -586,7 +588,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-list-alt fa-3x"></i>&nbspManual do Assistente Virtual</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Г?</span></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">пїЅ?</span></button>
                             </div>
                             <div class="modal-body" style="color:#000000;font-size:16px">
                                 <h1>O assistente virtual de Recepcao deve se apresentar da seguinte forma:</h1>

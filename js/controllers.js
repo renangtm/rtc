@@ -1841,6 +1841,30 @@ rtc.controller("crtTarefas", function ($scope, $sce, tarefaService, observacaoTa
 
     }
 
+    $scope.start = function (tarefa) {
+
+        tarefaService.start(tarefa, function () {
+
+        });
+
+    }
+
+    $scope.pause = function (tarefa) {
+
+        tarefaService.pause(tarefa, function () {
+
+        });
+
+    }
+
+    $scope.finish = function (tarefa) {
+
+        tarefaService.finish(tarefa, function () {
+
+        });
+
+    }
+
     $scope.novaObservacaoTarefa = function () {
 
         observacaoTarefaService.getObservacaoTarefa(function (o) {
