@@ -10,7 +10,7 @@
         <script src="js/filters.js"></script>
         <script src="js/services.js"></script>
         <script src="js/controllers.js"></script>    
-
+        <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
@@ -122,10 +122,10 @@
                                                 <button class="btn btn-success" ng-click="novaTarefa()" data-toggle="modal" data-target="#nova_tarefa_usuario"><i class="fas fa-plus-circle"></i>&nbsp Criar Tarefa para a Min</button>
                                                 <button class="btn btn-success" ng-click="novaTarefa()" data-toggle="modal" data-target="#nova_tarefa_equipe"><i class="fas fa-plus-circle"></i>&nbsp Criar Tarefa para a Equipe</button>
 
-                                                <?php if($empresa->tipo_empresa===3){ ?>
-                                                <button class="btn btn-success" style="float:right" data-toggle="modal" data-target="#mdl_manual">
-                                                    <i class="fas fa-list"></i>&nbsp Manual do Assistente Virtual
-                                                </button>
+                                                <?php if ($empresa->tipo_empresa === 3) { ?>
+                                                    <button class="btn btn-success" style="float:right" data-toggle="modal" data-target="#mdl_manual">
+                                                        <i class="fas fa-list"></i>&nbsp Manual do Assistente Virtual
+                                                    </button>
                                                 <?php } ?>
                                             </div>
                                             <hr>
@@ -164,11 +164,11 @@
                                                             Controles
                                                         </td>
                                                         <td>
-                                                            <button ng-click="start(t[0])" class="btn btn-{{t[0].start!==1000?'default':'success'}}" style="width:120px;height:50px;padding:10px;margin-right:0px" ng-disabled="t[0].start!==1000"><i class="fas fa-play"></i></button>
+                                                            <button ng-click="start(t[0])" class="btn btn-{{t[0].start!==1000?'default':'success'}}" style="width:120px;height:50px;padding:10px;margin-right:0px" ng-disabled="t[0].start !== 1000"><i class="fas fa-play"></i></button>
                                                             <hr>
-                                                            <button ng-click="pause(t[0])" class="btn btn-{{t[0].start===1000?'default':'warning'}}" style="width:120px;height:50px;padding:4px;display: inline;margin-right:0px" ng-disabled="t[0].start===1000"><i class="fas fa-pause"></i></button>
+                                                            <button ng-click="pause(t[0])" class="btn btn-{{t[0].start===1000?'default':'warning'}}" style="width:120px;height:50px;padding:4px;display: inline;margin-right:0px" ng-disabled="t[0].start === 1000"><i class="fas fa-pause"></i></button>
                                                             <hr>
-                                                            <button ng-click="finish(t[0])" class="btn btn-{{t[0].start===1000?'default':'danger'}}" style="width:120px;height:50px;padding:4px;display: inline" ng-disabled="t[0].start===1000"><i class="fas fa-stop"></i></button>
+                                                            <button ng-click="finish(t[0])" class="btn btn-{{t[0].start===1000?'default':'danger'}}" style="width:120px;height:50px;padding:4px;display: inline" ng-disabled="t[0].start === 1000"><i class="fas fa-stop"></i></button>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -519,7 +519,7 @@
                                     Data: <strong>{{observacao_tarefa.momento| data}}</strong>
                                     <hr>
                                     Porcentagem: 
-                                    <input ng-disabled="pf(tarefa)>0" ng-value="pf(tarefa)" style="width:30%;text-align:center" type="number" class="form-control" ng-model="observacao_tarefa.porcentagem"></input>
+                                    <input ng-disabled="pf(tarefa) > 0" ng-value="pf(tarefa)" style="width:30%;text-align:center" type="number" class="form-control" ng-model="observacao_tarefa.porcentagem"></input>
                                     <hr>
                                     <textarea placeholder="Observacao" ng-model="observacao_tarefa.observacao" class="form-control" style="width:100%" rows="10">
                                     
@@ -558,7 +558,7 @@
                             </div>
 
                             <div class="modal-footer">
-                                
+
                             </div>
                         </div>
                     </div>
@@ -597,56 +597,56 @@
                                 <hr>
                                 <h2 style="font-style: italic;">1- Para clientes que recentemente foram Prospectados.</h2>
 
-                                    <p>Bom dia
-                                Sou Assistente aos clientes da Agro Fauna para apresentar a nossa nova plataforma de trabalho onde sua empresa podera obter vantagens de precos muitas vezes abaixo do preco de fabrica!
-                                Meu nome e..........,estarei a sua disposicao para auxilia-lo a entrar em nosso aplicativo chamado RTC.
-                                Nele alem de comprar barato em nossas promocoes diarias o Sr.a,podera tambem usar para outros servicos.
-                                Como sua empresa ja foi cadastrada recentemente podemos oferecer nossos servicos GRATUITAMENTE por 90 dias. 
-                                Ja foi enviado um e-mail explicativo de nosso servico de Informatica que mostra o passo a passo de tudo que eu estou falando.
+                                <p>Bom dia
+                                    Sou Assistente aos clientes da Agro Fauna para apresentar a nossa nova plataforma de trabalho onde sua empresa podera obter vantagens de precos muitas vezes abaixo do preco de fabrica!
+                                    Meu nome e..........,estarei a sua disposicao para auxilia-lo a entrar em nosso aplicativo chamado RTC.
+                                    Nele alem de comprar barato em nossas promocoes diarias o Sr.a,podera tambem usar para outros servicos.
+                                    Como sua empresa ja foi cadastrada recentemente podemos oferecer nossos servicos GRATUITAMENTE por 90 dias. 
+                                    Ja foi enviado um e-mail explicativo de nosso servico de Informatica que mostra o passo a passo de tudo que eu estou falando.
                                 </p>
                                 <p>
-                                Como eu disse antes o Sr.tem 90 dias para experimentar e ainda ganha uma promocao de boas vindas dos produtos que pode estar precisando com precos ainda mais baratos que todas as nossas promocoes. 
+                                    Como eu disse antes o Sr.tem 90 dias para experimentar e ainda ganha uma promocao de boas vindas dos produtos que pode estar precisando com precos ainda mais baratos que todas as nossas promocoes. 
                                 </p>
                                 <p>
-                                Nossas promocoes sao validas apenas para quem tem o Aplicativo Rtc. Pois nao  somos vendedores. Nos somos seu assistente para ajuda-lo a conhecer o Rtc.
+                                    Nossas promocoes sao validas apenas para quem tem o Aplicativo Rtc. Pois nao  somos vendedores. Nos somos seu assistente para ajuda-lo a conhecer o Rtc.
                                 </p>
                                 <p>
-                                Gostaria que pudesse dar uma olhadinha no Rtc, o Sr vai perceber que e muito facil de comprar por la! 
-                                E muito repido e o senhor podera ver o valor dos produtos com os precos discriminados automaticamente onde vai aparecer os valores de Icms,se tiver,frete automatico com varias opcoes, custo financeiro quando for a prazo.
-                                Independente de qualquer coisa que queira perguntar sobre nosso Rtc gostaria que o Sr. pudesse acompanhar nossas promocoes diarias atraves de seu e-mail e ou pelo Whats App(Zap).
+                                    Gostaria que pudesse dar uma olhadinha no Rtc, o Sr vai perceber que e muito facil de comprar por la! 
+                                    E muito repido e o senhor podera ver o valor dos produtos com os precos discriminados automaticamente onde vai aparecer os valores de Icms,se tiver,frete automatico com varias opcoes, custo financeiro quando for a prazo.
+                                    Independente de qualquer coisa que queira perguntar sobre nosso Rtc gostaria que o Sr. pudesse acompanhar nossas promocoes diarias atraves de seu e-mail e ou pelo Whats App(Zap).
                                 </p>
                                 <p>
-                                Por favor para qualquer duvida estamos passando novamente nosso passo a passo e o meu celular..
+                                    Por favor para qualquer duvida estamos passando novamente nosso passo a passo e o meu celular..
                                 </p>
                                 <p>
-                                Tenha uma otima experiencia com nosso Rtc, e lembre-se que nosso objetivo e de criar uma rede de clientes muito bem informados de todas as nossas promocoes e servicos ...
+                                    Tenha uma otima experiencia com nosso Rtc, e lembre-se que nosso objetivo e de criar uma rede de clientes muito bem informados de todas as nossas promocoes e servicos ...
                                 </p>
                                 <p>
-                                Numa proxima ocasiao estaremos mostrando outras vantagens de usar o Rtc...
+                                    Numa proxima ocasiao estaremos mostrando outras vantagens de usar o Rtc...
                                 </p>
                                 <p>
-                                Ate breve!
+                                    Ate breve!
                                 </p>
                                 <hr>
                                 <h2 style="font-style: italic;">
-                                2 - Essa apresentacao destina-se a clientes que ja estao usando o modulo 1 a mais de 60 dias ou ja fizeram acima de quatro compras.
+                                    2 - Essa apresentacao destina-se a clientes que ja estao usando o modulo 1 a mais de 60 dias ou ja fizeram acima de quatro compras.
                                 </h2>
                                 <hr>
                                 Bom dia!!  
                                 <br>
                                 <p>
-                                Sou seu novo Assistente Virtual,minha funcao sera de apresentar as opcoes do modulo 1 do RTC,que e esse mesmo que o Sr. Ja usa a algum tempo
-                                ja  de inicio quero adiantar que estaremos oferecendo gratuitamente todas as vantagens que o modulo 2 de nosso Rtc oferece. ..
+                                    Sou seu novo Assistente Virtual,minha funcao sera de apresentar as opcoes do modulo 1 do RTC,que e esse mesmo que o Sr. Ja usa a algum tempo
+                                    ja  de inicio quero adiantar que estaremos oferecendo gratuitamente todas as vantagens que o modulo 2 de nosso Rtc oferece. ..
                                 </p>
                                 <p>
-                                Desde o inicio neste modulo 1 o Sr ja poderia estar cadastrando seus 
-                                produtos, seus clientes e fornecedores. Com isso o Sr. poderia usar o servico destes cadastramento no Rtc para sua organizacao.
+                                    Desde o inicio neste modulo 1 o Sr ja poderia estar cadastrando seus 
+                                    produtos, seus clientes e fornecedores. Com isso o Sr. poderia usar o servico destes cadastramento no Rtc para sua organizacao.
                                 </p>
                                 <p>
-                                Agora no modulo 2 o Sr. podera ter para sua empresa a mesma facilidade em obter seus fretes partindo de Guarlhos pelo Logistic Center ou ate mesmo de sua cidade. Apenas que para isso sua transportadora devera nos fornecer sua tabela de precos para cadastramento.
+                                    Agora no modulo 2 o Sr. podera ter para sua empresa a mesma facilidade em obter seus fretes partindo de Guarlhos pelo Logistic Center ou ate mesmo de sua cidade. Apenas que para isso sua transportadora devera nos fornecer sua tabela de precos para cadastramento.
                                 </p>
                                 <p>
-                                Com isso sua empresa podera usar o mesmo processo para calculo de frete que usamos para venda na Agro Fauna
+                                    Com isso sua empresa podera usar o mesmo processo para calculo de frete que usamos para venda na Agro Fauna
                                 </p>
 
                             </div>
@@ -660,7 +660,7 @@
                 <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
                 <!-- jquery 3.3.1 -->
-                
+
                 <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
                 <script src="assets/libs/js/form-mask.js"></script>
                 <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
@@ -689,9 +689,9 @@
                 <!-- Optional JavaScript -->
                 <script>
 
-                    <?php if($empresa->tipo_empresa===3){ ?>
-                        $("#mdl_manual").modal('show');
-                    <?php } ?>
+<?php if ($empresa->tipo_empresa === 3) { ?>
+                                                $("#mdl_manual").modal('show');
+<?php } ?>
 
                                             var l = $('#loading');
                                             l.hide();
