@@ -507,7 +507,7 @@ class Empresa {
 
         $c = "(-1";
 
-        $ps = $con->getConexao()->prepare("SELECT p.codigo,p.nome,SUM(pc.quantidade),ROUND(SUM(pc.quantidade*pc.valor)/SUM(pc.quantidade),2),MAX(pc.valor),MIN(pc.valor),GROUP_CONCAT(pc.id separator ','),UNIX_TIMESTAMP(MAX(ce.data))*1000,p.custo,MAX(ce.id) FROM cotacao_entrada ce INNER JOIN produto_cotacao_entrada pc ON pc.id_cotacao=ce.id INNER JOIN produto p ON p.id=pc.id_produto WHERE ce.id_empresa=$this->id AND ce.data > DATE_SUB(CURRENT_DATE,INTERVAL 60 DAY) AND pc.checado = false GROUP BY p.codigo ORDER BY MAX(ce.data) DESC");
+        $ps = $con->getConexao()->prepare("SELECT p.codigo,p.nome,SUM(pc.quantidade),ROUND(SUM(pc.quantidade*pc.valor)/SUM(pc.quantidade),2),MAX(pc.valor),MIN(pc.valor),GROUP_CONCAT(pc.id separator ','),UNIX_TIMESTAMP(MAX(ce.data))*1000,p.custo,MAX(ce.id) FROM cotacao_entrada ce INNER JOIN produto_cotacao_entrada pc ON pc.id_cotacao=ce.id INNER JOIN produto p ON p.id=pc.id_produto WHERE ce.id_empresa=$this->id AND ce.data > DATE_SUB(CURRENT_DATE,INTERVAL 60 DAY) AND pc.checado = 0 GROUP BY p.codigo ORDER BY MAX(ce.data) DESC");
         $ps->execute();
         $ps->bind_result($codigo, $nome, $quantidade, $valor, $valor_maximo, $valor_minimo, $ids, $data, $custo, $mc);
 
@@ -613,19 +613,19 @@ class Empresa {
             if ($id_cargo !== null) {
 
                 $cargo = Sistema::getCargo($con, $this, $id_cargo);
-                if($cargo === null)continue;
-                
+                if ($cargo === null)
+                    continue;
+
                 $k = false;
-                foreach ($t->cargos as $key => $value){
+                foreach ($t->cargos as $key => $value) {
                     if ($value->id === $cargo->id) {
                         $t->cargos[$key] = $cargo;
                         $k = true;
                     }
                 }
-                if(!$k){
+                if (!$k) {
                     $t->cargos[] = $cargo;
                 }
-                
             }
         }
 
@@ -4305,6 +4305,172 @@ class Empresa {
         return 0;
     }
 
+    public function getCountProtocolos($con, $filtro = "") {
+
+        $empresas = "($this->id";
+
+        $filiais = $this->getFiliais($con);
+
+        foreach ($filiais as $key => $value) {
+            $empresas .= ",$value->id";
+        }
+
+        $empresas .= ")";
+
+        $sql = "SELECT COUNT(*) "
+                . "FROM protocolo p "
+                . "INNER JOIN tipo_protocolo tp ON p.id_tipo=tp.id "
+                . "INNER JOIN empresa e ON e.id=p.id_empresa "
+                . "WHERE e.id IN $empresas ";
+
+        if ($filtro !== "") {
+
+            $sql .= "AND $filtro ";
+        }
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($qtd);
+
+        if ($ps->fetch()) {
+            $ps->close();
+            return $qtd;
+        }
+
+        $ps->close();
+
+        return 0;
+    }
+
+    public function getProtocolos($con, $x1, $x2, $filtro = "", $ordem = "") {
+
+        $empresas = "($this->id";
+
+        $filiais = $this->getFiliais($con);
+
+        foreach ($filiais as $key => $value) {
+            $empresas .= ",$value->id";
+        }
+
+        $empresas .= ")";
+
+        $sql = "SELECT "
+                . "p.id,"
+                . "p.titulo,"
+                . "p.descricao,"
+                . "tp.id,"
+                . "tp.nome,"
+                . "tp.prioridade,"
+                . "UNIX_TIMESTAMP(p.inicio)*1000,"
+                . "UNIX_TIMESTAMP(p.fim)*1000,"
+                . "p.tipo_entidade,"
+                . "p.id_entidade,"
+                . "p.iniciado_por,"
+                . "e.id,"
+                . "e.nome "
+                . "FROM protocolo p "
+                . "INNER JOIN tipo_protocolo tp ON p.id_tipo=tp.id "
+                . "INNER JOIN empresa e ON e.id=p.id_empresa "
+                . "WHERE e.id IN $empresas ";
+
+        if ($filtro !== "") {
+
+            $sql .= "AND $filtro ";
+        }
+
+        if ($ordem !== "") {
+
+            $sql .= "ORDER BY $ordem ";
+        }
+
+        $sql .= "LIMIT $x1, " . ($x2 - $x1);
+
+        $ids_protocolos = "(-1";
+        $protocolos = array();
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id, $titulo, $descricao, $id_tipo, $nome_tipo, $prioridade_tipo, $inicio, $fim, $tipo_entidade, $id_entidade, $iniciado_por, $id_empresa, $nome_empresa);
+        while ($ps->fetch()) {
+
+            $t = new TipoProtocolo();
+            $t->id = $id_tipo;
+            $t->nome = $nome_tipo;
+            $t->prioridade = $prioridade_tipo;
+
+            $e = new Empresa();
+            $e->id = $id_empresa;
+            $e->nome = $nome_empresa;
+
+            $p = new Protocolo();
+            $p->id = $id;
+            $p->titulo = $titulo;
+            $p->descricao = $descricao;
+            $p->inicio = $inicio;
+            $p->fim = $fim;
+            $p->tipo_entidade = $tipo_entidade;
+            $p->id_entidade = $id_entidade;
+            $p->iniciado_por = $iniciado_por;
+            $p->empresa = $e;
+            $p->tipo = $t;
+
+            $protocolos[$id] = $p;
+
+            $ids_protocolos .= ",$id";
+        }
+
+        $ids_protocolos .= ")";
+
+        $ps->close();
+
+        $ps = $con->getConexao()->prepare("SELECT id,mensagem,UNIX_TIMESTAMP(momento)*1000,dados_usuario,id_protocolo FROM mensagem_protocolo WHERE id_protocolo IN $ids_protocolos");
+        $ps->execute();
+        $ps->bind_result($id, $mensagem, $momento, $dados_usuario, $id_protocolo);
+        while ($ps->fetch()) {
+
+            $m = new MensagemProtocolo();
+            $m->id = $id;
+            $m->mensagem = $mensagem;
+            $m->momento = $momento;
+            $m->dados_usuario = $dados_usuario;
+            $m->protocolo = $protocolos[$id_protocolo];
+
+            $protocolos[$id_protocolo]->chat[] = $m;
+        }
+
+        $ps->close();
+
+        $retorno = array();
+
+        foreach ($protocolos as $key => $value) {
+            $retorno[] = $value;
+        }
+
+        return $retorno;
+    }
+
+    public function getTiposProtocolo($con) {
+
+        $tipos = array();
+
+        $ps = $con->getConexao()->prepare("SELECT id,nome,prioridade FROM tipo_protocolo WHERE excluido = false");
+        $ps->execute();
+        $ps->bind_result($id, $nome, $prioridade);
+
+        while ($ps->fetch()) {
+
+            $tp = new TipoProtocolo();
+            $tp->id = $id;
+            $tp->nome = $nome;
+            $tp->prioridade = $prioridade;
+            $tipos[] = $tp;
+        }
+
+        $ps->close();
+
+        return $tipos;
+    }
+
     public function getCotacoesEntrada($con, $x1, $x2, $filtro = "", $ordem = "") {
 
         $sql = "SELECT "
@@ -4348,7 +4514,8 @@ class Empresa {
                 . "estado_fornecedor.sigla,"
                 . "email_fornecedor.id,"
                 . "email_fornecedor.endereco,"
-                . "email_fornecedor.senha "
+                . "email_fornecedor.senha,"
+                . "CASE WHEN recusa.recusada IS NULL THEN false ELSE true END "
                 . "FROM cotacao_entrada "
                 . "INNER JOIN fornecedor ON cotacao_entrada.id_fornecedor=fornecedor.id "
                 . "INNER JOIN endereco endereco_fornecedor ON endereco_fornecedor.id_entidade=fornecedor.id AND endereco_fornecedor.tipo_entidade='FOR' "
@@ -4360,6 +4527,7 @@ class Empresa {
                 . "INNER JOIN cidade cidade_usuario ON endereco_usuario.id_cidade=cidade_usuario.id "
                 . "INNER JOIN estado estado_usuario ON estado_usuario.id=cidade_usuario.id_estado "
                 . "INNER JOIN email email_usu ON email_usu.id_entidade=usuario.id AND email_usu.tipo_entidade='USU' "
+                . "LEFT JOIN (SELECT pc.id_cotacao as 'recusada' FROM produto_cotacao_entrada pc WHERE checado>1 GROUP BY pc.id_cotacao) recusa ON recusa.recusada=cotacao_entrada.id "
                 . "WHERE cotacao_entrada.id_empresa = $this->id AND cotacao_entrada.excluida = false ";
 
         if ($filtro != "") {
@@ -4367,9 +4535,11 @@ class Empresa {
             $sql .= "AND $filtro ";
         }
 
+        $sql .= "ORDER BY recusa.recusada DESC";
+
         if ($ordem != "") {
 
-            $sql .= "ORDER BY $ordem ";
+            $sql .= ",$ordem ";
         }
 
         $sql .= "LIMIT $x1, " . ($x2 - $x1);
@@ -4377,7 +4547,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_cotacao, $obs, $frete, $data, $em_litros, $id_status, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_for, $cod_for, $nom_for, $cnpj_for, $hab, $ie, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for);
+        $ps->bind_result($id_cotacao, $obs, $frete, $data, $em_litros, $id_status, $id_usu, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_for, $cod_for, $nom_for, $cnpj_for, $hab, $ie, $end_for_id, $end_for_rua, $end_for_numero, $end_for_bairro, $end_for_cep, $cid_for_id, $cid_for_nome, $est_for_id, $est_for_nome, $id_email_for, $end_email_for, $sen_email_for, $recusada);
 
         $cotacoes = array();
         $usuarios = array();
@@ -4467,6 +4637,7 @@ class Empresa {
             $cotacao->data = $data;
             $cotacao->empresa = $this;
             $cotacao->frete = $frete;
+            $cotacao->recusada = $recusada;
             $cotacao->tratar_em_litros = $em_litros;
 
             $status = Sistema::getStatusCotacaoEntrada();

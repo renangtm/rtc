@@ -759,7 +759,7 @@
 	
 
     <!-- jquery 3.3.1 -->
-    <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+    
     <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
 	<script src="assets/libs/js/form-mask.js"></script>
 	

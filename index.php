@@ -11,7 +11,7 @@
         <script src="js/rtc.js?4"></script>
         <script src="js/filters.js?4"></script>
         <script src="js/services.js?4"></script>
-        <script src="js/controllers.js?4"></script>       
+        <script src="js/controllers.js?4"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>       
 
         <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
         <link href="assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
@@ -219,7 +219,7 @@
         <!-- end login page  -->
         <!-- ============================================================== -->
         <!-- Optional JavaScript -->
-        <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+        
         <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
         <script type="text/javascript">

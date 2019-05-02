@@ -8,7 +8,7 @@
         <script src="js/rtc.js?4"></script>
         <script src="js/filters.js?4"></script>
         <script src="js/services.js?4"></script>
-        <script src="js/controllers.js?4"></script>    
+        <script src="js/controllers.js?4"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -143,7 +143,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr ng-repeat="pedid in cotacoes.elementos">
+                                                    <tr ng-repeat="pedid in cotacoes.elementos" style="{{pedid[0].recusada?'background-color:Red;color:#FFFFFF':''}}">
                                                         <td>{{pedid[0].id}}</td>
                                                         <td>{{pedid[0].fornecedor.nome}}</td>
                                                         <td style="{{pedid[0].status.id==2?'color:Green':''}}{{pedid[0].status.id==3?'color:Blue':''}}">{{pedid[0].status.nome}}</td>
@@ -280,7 +280,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr ng-repeat="prod in cotacao.produtos">
+                                            <tr ng-repeat="prod in cotacao.produtos" style="{{prod.recusado?'background-color:Red;color:#FFFFFF':''}}">
                                                 <td>{{prod.produto.codigo}}</td>
                                                 <td>{{prod.produto.nome}}</td>
                                                 <td>{{prod.produto.unidade}} / {{prod.produto.quantidade_unidade}}</td>
@@ -644,7 +644,7 @@
             <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
             <!-- jquery 3.3.1 -->
-            <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+            
             <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
             <script src="assets/libs/js/form-mask.js"></script>
             <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>

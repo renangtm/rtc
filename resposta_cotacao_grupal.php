@@ -38,7 +38,7 @@ $id_fornecedor = $codigo[2];
 
         <script src="js/filters.js?4"></script>
         <script src="js/services.js?4"></script>
-        <script src="js/controllers.js?4"></script>    
+        <script src="js/controllers.js?4"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -481,7 +481,7 @@ $id_fornecedor = $codigo[2];
         <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
         <!-- jquery 3.3.1 -->
-        <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+        
         <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
         <script src="assets/libs/js/form-mask.js"></script>
         <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>

@@ -18,6 +18,7 @@ class ProdutoCotacaoEntrada {
     public $quantidade;
     public $cotacao;
     public $valor;
+    public $recusado;
     
     function __construct() {
 
@@ -25,6 +26,7 @@ class ProdutoCotacaoEntrada {
         $this->produto = null;
         $this->cotacao = null;
         $this->valor=0;
+        $this->recusado = false;
     }
 
     public function merge($con) {

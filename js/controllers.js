@@ -1,3 +1,170 @@
+rtc.controller("crtProtocolos", function ($scope, protocoloService, tipoProtocoloService, baseService, pedidoService, clienteService, transportadoraService, cotacaoEntradaService, pedidoEntradaService) {
+
+    $scope.protocolos = createAssinc(protocoloService, 1, 3, 10);
+    assincFuncs(
+            $scope.protocolos,
+            "p",
+            ["id", "titulo", "inicio", "fim", "iniciado_por", "e.nome", "e.id", "tp.nome", "tp.prioridade"]);
+    $scope.protocolos.attList();
+
+    $scope.pedidos = createAssinc(pedidoService, 1, 3, 5);
+    assincFuncs(
+            $scope.pedidos,
+            "pedido",
+            ["id", "cliente.razao_social", "data"], "filtroPedido");
+
+
+    $scope.clientes = createAssinc(clienteService, 1, 3, 5);
+    assincFuncs(
+            $scope.clientes,
+            "cliente",
+            ["id", "razao_social"], "filtroCliente");
+
+    $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 5);
+    assincFuncs(
+            $scope.transportadoras,
+            "transportadora",
+            ["id", "razao_social"], "filtroTransportadora");
+
+    $scope.cotacoes = createAssinc(cotacaoEntradaService, 1, 3, 5);
+    assincFuncs(
+            $scope.cotacoes,
+            "cotacao_entrada",
+            ["id", "fornecedor.nome"], "filtroCotacao");
+
+    $scope.pedidosEntrada = createAssinc(pedidoEntradaService, 1, 3, 5);
+    assincFuncs(
+            $scope.pedidosEntrada,
+            "pedido_entrada",
+            ["id", "fornecedor.nome"], "filtroPedidoEntrada");
+
+
+    $scope.tipos_protocolo = [];
+
+    $scope.protocolo_novo = {};
+    $scope.protocolo = {};
+
+    $scope.mensagem_protocolo_novo = {};
+    $scope.mensagem_protocolo = {};
+
+    $scope.novaMensagem = function () {
+
+        $scope.mensagem = angular.copy($scope.mensagem_protocolo_novo);
+
+    }
+
+    $scope.setEntidade = function (entidade) {
+
+        $scope.protocolo.tipo_entidade = entidade._classe;
+        $scope.protocolo.id_entidade = entidade.id;
+
+    }
+
+    $scope.mergeMensagem = function (protocolo) {
+
+        var msgg = $scope.mensagem;
+        msgg.protocolo = protocolo;
+
+        baseService.merge(msgg, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Operacao efetuada com sucesso");
+                protocolo.chat[protocolo.chat.length] = r.o;
+
+            } else {
+
+                msg.erro("Ocorreu um problema");
+
+            }
+
+        })
+
+    }
+
+    $scope.novoProtocolo = function () {
+
+        $scope.protocolo = angular.copy($scope.protocolo_novo);
+        $scope.setProtocolo($scope.protocolo);
+
+    }
+
+    $scope.setProtocolo = function (protocolo) {
+
+        $scope.protocolo = protocolo;
+
+        if (protocolo.tipo === null) {
+
+            protocolo.tipo = $scope.tipos_protocolo[0];
+
+        } else {
+
+            equalize($scope.protocolo, "tipo", $scope.tipos_protocolo);
+
+        }
+
+    }
+
+    $scope.mergeProtocolo = function () {
+
+        baseService.merge($scope.protocolo, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.protocolo = r.o;
+                $scope.protocolos.attList();
+
+            } else {
+
+                msg.erro("Falha ao executar operacao");
+
+            }
+
+        });
+
+    }
+
+    $scope.deleteProtocolo = function () {
+
+        baseService.delete($scope.protocolo, function (t) {
+
+            if (t.sucesso) {
+
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.protocolos.attList();
+
+            } else {
+
+                msg.erro("Falha ao executar operacao");
+
+            }
+
+        })
+
+    }
+
+    protocoloService.getMensagemProtocolo(function (m) {
+
+        $scope.mensagem_protocolo_novo = m.mensagem;
+
+    })
+
+    protocoloService.getProtocolo(function (p) {
+
+        $scope.protocolo_novo = p.protocolo;
+
+    })
+
+    tipoProtocoloService.getTiposProtocolo(function (t) {
+
+        $scope.tipos_protocolo = t.tipos;
+
+    })
+
+
+})
+
 rtc.controller("crtRespostaCotacaoGrupal", function ($scope, cotacaoGrupalService) {
 
     $scope.respostas = [];
@@ -71,8 +238,6 @@ rtc.controller("crtRespostaCotacaoGrupal", function ($scope, cotacaoGrupalServic
     }
 
 })
-
-
 rtc.controller("crtMovimentoEstoque", function ($scope, $timeout, movimentosProdutoService, produtoService, empresaService) {
 
     $scope.isLogistica = false;
@@ -240,7 +405,6 @@ rtc.controller("crtMovimentoEstoque", function ($scope, $timeout, movimentosProd
     }
 
 })
-
 rtc.controller("crtAnaliseCotacao", function ($scope, $sce, analiseCotacaoService) {
 
     $scope.analises = {};
@@ -361,9 +525,6 @@ rtc.controller("crtAnaliseCotacao", function ($scope, $sce, analiseCotacaoServic
     }
 
 })
-
-
-
 rtc.controller("crtCarrinhoEncomendaFinal", function ($scope, sistemaService, carrinhoEncomendaService, encomendaService) {
 
     $scope.possibilidades = [
@@ -532,7 +693,6 @@ rtc.controller("crtCarrinhoEncomendaFinal", function ($scope, sistemaService, ca
 
 
 })
-
 rtc.controller("crtEncomendaParceiros", function ($scope, produtoService, encomendaParceiroService, sistemaService, carrinhoEncomendaService) {
 
     $scope.locais = [];
@@ -665,7 +825,6 @@ rtc.controller("crtEncomendaParceiros", function ($scope, produtoService, encome
     }
 
 })
-
 rtc.controller("crtEncomendas", function ($scope, cotacaoGrupalService, encomendaService, logService, baseService, produtoService, sistemaService, statusEncomendaService, clienteService, produtoEncomendaService) {
 
     $scope.encomendas = createAssinc(encomendaService, 1, 10, 10);
@@ -982,7 +1141,6 @@ rtc.controller("crtEncomendas", function ($scope, cotacaoGrupalService, encomend
 
 
 })
-
 rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) {
 
 
@@ -1123,7 +1281,6 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
 
 
 })
-
 rtc.controller("crtAnaliseCredito", function ($scope, clienteService, sistemaService) {
 
     $scope.cliente = null;
@@ -1544,7 +1701,6 @@ rtc.controller("crtAcompanharAtividades", function ($scope, usuarioService) {
     })
 
 })
-
 rtc.controller("crtFechamentoCaixa", function ($scope, movimentoService, notaService, baseService, fechamentoCaixaService, bancoService, movimentosFechamentoService) {
 
     $scope.fechamentos = createAssinc(fechamentoCaixaService, 1, 5, 10);
@@ -1863,20 +2019,20 @@ rtc.controller("crtTarefas", function ($scope, $sce, tarefaService, observacaoTa
     $scope.finish = function (tarefa) {
 
         tarefaService.finish(tarefa, function (r) {
-            
+
             var ts = [];
-            
-            for(var i=0;i<$scope.lista_tarefas.length;i++){
+
+            for (var i = 0; i < $scope.lista_tarefas.length; i++) {
                 var t = $scope.lista_tarefas[i];
-                if(t.id !== tarefa.id){
+                if (t.id !== tarefa.id) {
                     ts[ts.length] = t;
                 }
             }
-            
+
             $scope.tarefas = createList(ts, 1, 7, "descricao");
             $scope.tarefa_principal = ts[0];
             $scope.lista_tarefas = ts;
-            
+
         });
 
     }
@@ -2002,7 +2158,7 @@ rtc.controller("crtTarefas", function ($scope, $sce, tarefaService, observacaoTa
     })
 
     tarefaService.getTarefasAtivas(function (t) {
-        
+
         $scope.tarefas = createList(t.tarefas, 1, 7, "descricao");
         $scope.tarefa_principal = t.tarefas[0];
         $scope.lista_tarefas = t.tarefas;
@@ -2363,8 +2519,6 @@ rtc.controller("crtGerenciador", function ($scope, $interval, gerenciadorService
 
 
 });
-
-
 rtc.controller("crtAtividade", function ($scope, $timeout, $interval, atividadeService) {
 
     atividadeService.sinal();
@@ -2392,7 +2546,6 @@ rtc.controller("crtAtividade", function ($scope, $timeout, $interval, atividadeS
 
 
 });
-
 rtc.controller("crtBanners", function ($scope, bannerService, campanhaService, uploadService, empresaService, baseService) {
 
     $scope.banners = createAssinc(bannerService, 1, 5, 10);
@@ -3081,7 +3234,6 @@ rtc.controller("crtEmpresaConfig", function ($scope, empresaService, sistemaServ
     })
 
 })
-
 rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaService, carrinhoService, pedidoService, formaPagamentoService, transportadoraService) {
 
     $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 4);
@@ -3417,7 +3569,6 @@ rtc.controller("crtCarrinhoFinal", function ($scope, sistemaService, tabelaServi
 
 
 })
-
 rtc.controller("crtCarrinho", function ($scope, sistemaService, carrinhoService) {
 
     $scope.carrinho = [];
@@ -3455,11 +3606,80 @@ rtc.controller("crtCarrinho", function ($scope, sistemaService, carrinhoService)
     }
 
 })
-rtc.controller("crtEmpresa", function ($scope, $timeout, empresaService) {
+rtc.controller("crtEmpresa", function ($scope, $timeout, $interval, empresaService, protocoloService, baseService) {
 
     $scope.empresa = null;
     $scope.filiais = [];
     $scope.carregando_empresa = true;
+
+    $scope.protocolos_ativos = [];
+
+    $scope.mensagem_protocolo = {};
+
+    protocoloService.getMensagemProtocolo(function (m) {
+
+        $scope.mensagem_protocolo = m.mensagem;
+
+    })
+
+    $scope.enviar = function (protocolo) {
+
+        var m = angular.copy($scope.mensagem_protocolo);
+        m.mensagem = protocolo.obs;
+        m.protocolo = protocolo;
+        baseService.merge(m, function (r) {
+
+            if (r.sucesso) {
+
+                protocolo.obs = "";
+
+            } else {
+
+                msg.erro("Ocorreu um problema");
+
+            }
+
+        })
+
+    }
+
+    protocoloService.getProtocolosAtivos(function (p) {
+
+        $scope.protocolos_ativos = p.protocolos;
+
+
+    })
+
+    var attProtocolo = function (p) {
+
+        protocoloService.getMensagensProtocolo(p, function (m) {
+
+            var m = m.mensagens;
+
+            for (var j = 0; j < m.length; j++) {
+
+                p.chat[p.chat.length] = m[j];
+
+            }
+
+        })
+
+    }
+
+    var attProtocolos = function () {
+
+        for (var i = 0; i < $scope.protocolos_ativos.length; i++) {
+
+            var p = $scope.protocolos_ativos[i];
+
+            attProtocolo(p);
+
+
+        }
+
+    }
+
+    $interval(attProtocolos, 10000);
 
     empresaService.getEmpresa(function (r) {
 
@@ -3499,7 +3719,6 @@ rtc.controller("crtEmpresa", function ($scope, $timeout, empresaService) {
     }
 
 })
-
 rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraParceiroService, sistemaService, carrinhoService) {
 
     $scope.tv = function (produto) {
@@ -3727,7 +3946,6 @@ rtc.controller("crtCompraParceiros", function ($scope, produtoService, compraPar
     }
 
 })
-
 rtc.controller("crtExpediente", function ($scope, $timeout, usuarioService, ausenciaService, expedienteService) {
 
     $scope.usuarios = createAssinc(usuarioService, 1, 3, 10);
@@ -3886,7 +4104,6 @@ rtc.controller("crtExpediente", function ($scope, $timeout, usuarioService, ause
 
 
 })
-
 rtc.controller("crtOrganograma", function ($scope, usuarioService) {
 
     $scope.usuarios = createAssinc(usuarioService, 1, 3, 10);
@@ -3897,9 +4114,7 @@ rtc.controller("crtOrganograma", function ($scope, usuarioService) {
             ["id", "email_usu.endereco", "nome", "cpf", "rg", "login"], "filtroUsuarios");
 
 })
-
-
-rtc.controller("crtUsuarios", function ($scope, $timeout, empresaService, usuarioService, permissaoService, cidadeService, baseService, telefoneService, cargoService, tipoTarefaService) {
+rtc.controller("crtUsuarios", function ($scope, $timeout, tipoProtocoloService, empresaService, usuarioService, permissaoService, cidadeService, baseService, telefoneService, cargoService, tipoTarefaService) {
 
     $scope.empresa_atual = null;
     $scope.empresas_clientes = [];
@@ -3956,6 +4171,18 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, empresaService, usuari
 
     $scope.tipos_tarefa = [];
 
+    $scope.tipo_protocolo = {};
+
+    $scope.tipos_protocolo = [];
+
+    var attTiposTarefa = function () {
+
+    }
+
+    var attTiposProtocolo = function () {
+
+    }
+
     $scope.init = function () {
 
         tipoTarefaService.getTipoTarefa(function (t) {
@@ -3964,7 +4191,7 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, empresaService, usuari
 
         })
 
-        var attTiposTarefa = function () {
+        attTiposTarefa = function () {
             tipoTarefaService.getTiposTarefa(function (t) {
 
                 if ($scope.tipo_tarefa === null) {
@@ -3980,7 +4207,24 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, empresaService, usuari
             })
         }
 
+        attTiposProtocolo = function () {
+            tipoProtocoloService.getTiposProtocolo(function (t) {
+
+                if ($scope.tipo_protocolo === null) {
+                    if (t.tipos_protocolo.length > 0) {
+                        $scope.setTipoProtocolo(t.tipos[0]);
+                    } else {
+                        $scope.tipo_protocolo = {};
+                    }
+                }
+
+                $scope.tipos_protocolo = createList(t.tipos, 1, 5, "nome");
+
+            })
+        }
+
         attTiposTarefa();
+        attTiposProtocolo();
 
         cargoService.getCargo(function (c) {
 
@@ -4079,7 +4323,11 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, empresaService, usuari
 
     }
 
+    $scope.setTipoProtocolo = function (tt) {
 
+        $scope.tipo_protocolo = tt;
+
+    }
 
 
 
@@ -4150,6 +4398,44 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, empresaService, usuari
 
     }
 
+    $scope.novoTipoProtocolo = function () {
+
+        if ($scope.tipo_protocolo === null) {
+
+            msg.erro("Preencha corretamente os dados");
+            return;
+
+        }
+
+        $scope.tipo_protocolo.id = 0;
+        $scope.tipo_protocolo._classe = "TipoProtocolo";
+
+        $scope.mergeTipoProtocolo($scope.tipo_protocolo);
+
+        attTiposProtocolo();
+
+    }
+
+    $scope.mergeTipoProtocolo = function (tt) {
+        if (tt.nome === "") {
+            msg.erro("Digite o nome");
+            return;
+        }
+
+        if (isNaN(tt.prioridade) || tt.prioridade === 0) {
+            msg.erro("Digite a prioridade correta");
+            return;
+        }
+
+        baseService.merge(tt, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+            } else {
+                msg.erro("Problema ao efetuar operacao. " + r.mensagem);
+            }
+        });
+    }
+
     $scope.mergeTipoTarefa = function (tt) {
         if (tt.nome === "") {
             msg.erro("Digite o nome");
@@ -4162,6 +4448,17 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, empresaService, usuari
                 attTiposTarefa();
             } else {
                 msg.erro("Problema ao efetuar operacao. " + r.mensagem);
+            }
+        });
+    }
+
+    $scope.deleteTipoProtocolo = function (tt) {
+        baseService.delete(tt, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                attTiposProtocolo();
+            } else {
+                msg.erro("Problema ao efetuar operacao");
             }
         });
     }

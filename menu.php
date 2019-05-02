@@ -108,6 +108,47 @@ $possiveis[0] = $rtc;
             <div class="progress mb-1" ng-if="carregando_empresa" style="width:150px">
                 <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
             </div>
+
+            <div style="position:absolute;cursor:pointer;padding:10px;background-color: #FFFFFF;z-index: 99999;border-radius:5px;border:1px solid;visibility: {{protocolos_ativos.length===0?'hidden':'initial'}}" id="drag_protocolos" >
+                <button class="btn btn-warning" id="btnEsconde"><i class="fas fa-list"></i>&nbsp Esconder {{protocolos_ativos.length}} protocolos</button>
+                <hr>
+                <div id="chat_protocolos">
+                    <div style="width:500px;height:500px;border:1px dashed;border-radius: 5px;background-color: #FFFFFF;display: inline-block;margin-left:10px;margin-bottom:10px" ng-repeat="p in protocolos_ativos">
+                        <div style="height:10%;width:100%;background-color: darkred;color:#FFFFFF !important;text-align: center;padding-top:5px">
+                            <h4 style="color:#FFFFFF"><i class="fas fa-fire"></i> - {{p.tipo.nome}}</h4>
+                        </div>
+                        <hr>
+                        <div style="margin:15px;overflow-y: scroll;width:calc(100% - 25px);height:300px">
+                            <span>
+                                Inicio {{p.inicio | data}} por {{p.iniciado_por}}
+                                <hr>
+                                Precedente: <strong>{{p.descricao}}</strong>
+                            </span>
+                            <hr>
+                            <span ng-repeat="men in p.chat">
+                                {{men.momento | data}} por {{men.dados_usuario}}
+                                <br>
+                                {{men.mensagem}}
+                                <hr>
+                            </span>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-7">
+                                <textarea ng-model="p.obs" style="margin-left:10px" rows="3" class="form-control">
+                            
+                                </textarea>
+                            </div>
+                            <div class="col-md-4 btn btn-success" ng-click="enviar(p)">
+                                
+                                    <i class="fas fa-paper-plane"></i>&nbsp Enviar Andamento
+                                
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+            </div>
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -457,6 +498,11 @@ $possiveis[0] = $rtc;
                             <a class="nav-link" href="transportadoras.php" ><button class="btn btn-warning" onmousedown="tutorial('Transportadoras', 'Aqui � onde ficam cadastradas todas as suas transportadoras, � poss�vel tamb�m alterar e excluir, al�m disso o RTC conta com um sistema de calculo de frete bastante interessante onde voc� pode cadastrar sua tabela atrav�s de express�es matem�ticas, e o sistema ent�o passa a calcular seu frete automaticamente, nos seus pedidos para os seus clientes, al�m disso a consulta de tabela fica disponivel aqui mesmo para fazer uma simula��o de frete')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-truck"></i>Transportadoras</a>
                         </li>
                     <?php } ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_PROTOCOLOS()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="protocolos.php" ><button class="btn btn-warning" onmousedown="tutorial('Protocolos', 'Aqui voce pode iniciar protocolos')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-fire"></i>Protocolos</a>
+                        </li>
+                    <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_PEDIDO_ENTRADA()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="visualizar-pedidos-compra.php"><button class="btn btn-warning" onmousedown="tutorial('Pedido de compra', 'Aqui � onde ficam seus pedidos de compra, com o seu fornecedor, tamb�m � enviado um email de confirma��o de pedido ap�s a conclus�o do mesmo, o pedido gera interfer�ncia no estoque e � a partir dele que a entrada de NFe vai acontecer')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks"></i>Pedidos de Compra</a>
@@ -511,11 +557,49 @@ $possiveis[0] = $rtc;
 
 <script>
 
-    function tutorial(titulo, conteudo){
+    var mx = 0;
+    var my = 0;
+    var drg = false;
+    $("#drag_protocolos").mousedown(function(e){
 
-    $('#tituloTutorial').html(titulo);
-    $("#conteudoTutorial").html(conteudo);
-    $("#tutorial").modal("show");
+    mx = e.clientX - $(this).offset().left;
+    my = e.clientY - $(this).offset().top;
+    drg = true;
+    })
+
+            $(document).mousemove(function(e){
+    if (drg){
+    $("#drag_protocolos").css('left', (e.clientX - mx) + "px").css('top', (e.clientY - my) + "px");
     }
+    })
+
+            $(document).mouseup(function(){
+
+    drg = false;
+    })
+    
+    
+    var hd = false
+    $("#btnEsconde").click(function(){
+        
+        if(!hd){
+            
+            $("#chat_protocolos").hide(100);
+            hd = true;
+        }else{
+            
+            $("#chat_protocolos").show(100);
+            hd = false;
+        }
+        
+        
+    })
+
+            function tutorial(titulo, conteudo){
+
+            $('#tituloTutorial').html(titulo);
+            $("#conteudoTutorial").html(conteudo);
+            $("#tutorial").modal("show");
+            }
 
 </script>

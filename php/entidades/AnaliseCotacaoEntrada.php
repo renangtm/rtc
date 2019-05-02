@@ -25,6 +25,7 @@ class AnaliseCotacaoEntrada {
     public $id_cotacao;
     public $nome_fornecedor;
     public $ultimo_custo;
+    public $recusada;
     
     function __construct() {
 
@@ -40,17 +41,23 @@ class AnaliseCotacaoEntrada {
         $this->id_cotacao = 0;
         $this->nome_fornecedor = "";
         $this->ultimo_custo = 0;
-        
+       
     }
 
     public function recusar($con, $empresa) {
 
+        $in = "(-1";
         foreach ($this->ids_produtos as $key => $value) {
 
-            $ps = $con->getConexao()->prepare("UPDATE produto_cotacao_entrada SET checado=true WHERE id=$value");
+            $ps = $con->getConexao()->prepare("UPDATE produto_cotacao_entrada SET checado=2 WHERE id=$value");
             $ps->execute();
             $ps->close();
+
+            $in .= ",$value";
         }
+
+        $in .= ")";
+
 
         $adm = $empresa->getAdm($con);
         if ($adm !== null) {
@@ -69,13 +76,35 @@ class AnaliseCotacaoEntrada {
         } catch (Exception $e) {
             
         }
+
+        $cargo = Empresa::CF_ASSISTENTE_COMPRAS($empresa);
+        $usuario = $empresa->getUsuarios($con, 0, 10000, "usuario.id_cargo=$cargo->id");
+
+
+        $email = "Produtos recusados, cotar novamente: <hr> <ul>";
+
+        $ps = $con->getConexao()->prepare("SELECT p.nome,cp.valor,f.nome FROM produto p INNER JOIN produto_cotacao_entrada cp ON cp.id_produto=p.id INNER JOIN cotacao_entrada c ON cp.id_cotacao=c.id INNER JOIN fornecedor f ON f.id=c.id_fornecedor WHERE cp.id IN $in");
+        $ps->execute();
+        $ps->bind_result($nome_produto, $valor, $nome_fornecedor);
+
+        while ($ps->fetch()) {
+
+            $email .= "<li>Produto: $nome_produto, Valor: R$ " . round($valor, 2) . ", Fornecedor: $nome_fornecedor </li>";
+        }
+
+        $email .= "</ul>";
+
+        foreach ($usuario as $key => $value) {
+
+            $empresa->email->enviarEmail($value->email, "Recusa de valor da cotacao", $email);
+        }
     }
 
     public function passar($con) {
 
         foreach ($this->ids_produtos as $key => $value) {
 
-            $ps = $con->getConexao()->prepare("UPDATE produto_cotacao_entrada SET checado=true WHERE id=$value");
+            $ps = $con->getConexao()->prepare("UPDATE produto_cotacao_entrada SET checado=1 WHERE id=$value");
             $ps->execute();
             $ps->close();
         }
@@ -93,7 +122,7 @@ class AnaliseCotacaoEntrada {
 
         $ids .= ")";
 
-        $ps = $con->getConexao()->prepare("UPDATE produto SET custo=$this->valor,valor_base=$this->valor/0.821 WHERE codigo=$this->id AND id_empresa IN $ids");
+        $ps = $con->getConexao()->prepare("UPDATE produto SET custo=$this->valor,valor_base=ROUND($this->valor/0.821,2) WHERE codigo=$this->id AND id_empresa IN $ids");
         $ps->execute();
         $ps->close();
     }

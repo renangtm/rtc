@@ -479,6 +479,10 @@ class Sistema {
         return new Permissao(38, "RelatorioProdutoLogistica");
     }
 
+    public static function P_RELATORIO_PRODUTO() {
+        return new Permissao(382, "RelatorioProduto");
+    }
+
     public static function P_CONTROLADOR_TAREFAS() {
         return new Permissao(39, "Controlador de tarefas");
     }
@@ -541,6 +545,10 @@ class Sistema {
 
     public static function P_MOVIMENTO_PRODUTO() {
         return new Permissao(55, "Movimento de Produto");
+    }
+
+    public static function P_PROTOCOLOS() {
+        return new Permissao(56, "Protocolos");
     }
 
     public static function TT_COMPRA($id_empresa) {
@@ -1041,19 +1049,19 @@ class Sistema {
                 if ($value->id === $value2->id) {
 
                     $value->empresa = $value2->empresa;
-                    
-                    
+
+
                     foreach ($value2->cargos as $key3 => $value3) {
-                        foreach($value->cargos as $key4=>$value4){
-                            if($value3->id === $value4->id){
+                        foreach ($value->cargos as $key4 => $value4) {
+                            if ($value3->id === $value4->id) {
                                 $value->cargos[$key4] = $value3;
                                 continue 2;
                             }
                         }
                         $value->cargos[] = $value3;
                     }
-                    
-                    
+
+
                     $value->prioridade = $value2->prioridade;
                     $value->tempo_medio = $value2->tempo_medio;
 
@@ -2084,7 +2092,7 @@ class Sistema {
             }
         }
 
-        $ps = $con->getConexao()->prepare("SELECT p.id_empresa,p.codigo,ROUND(SUM(pc.quantidade*pc.valor)/SUM(pc.quantidade),2) FROM cotacao_entrada c INNER JOIN produto_cotacao_entrada pc ON pc.id_cotacao=c.id INNER JOIN produto p ON pc.id_produto=p.id WHERE c.data>DATE_SUB(CURRENT_DATE,INTERVAL 60 DAY) GROUP BY p.codigo,p.id_empresa");
+        $ps = $con->getConexao()->prepare("SELECT p.id_empresa,p.codigo,ROUND(SUM(pc.quantidade*pc.valor)/SUM(pc.quantidade),2) FROM cotacao_entrada c INNER JOIN produto_cotacao_entrada pc ON pc.id_cotacao=c.id INNER JOIN produto p ON pc.id_produto=p.id WHERE c.data>DATE_SUB(CURRENT_DATE,INTERVAL 60 DAY) AND pc.checado<2 GROUP BY p.codigo,p.id_empresa");
         $ps->execute();
         $ps->bind_result($id_empresa, $codigo, $valor);
         while ($ps->fetch()) {
@@ -2566,7 +2574,7 @@ class Sistema {
 
         $e = new Empresa($id_empresa, new ConnectionFactory());
 
-        
+
         $pedido = $e->getPedidosEntrada($con, 0, 1, "pedido_entrada.id=$escolhido");
         $pedido = $pedido[0];
 
@@ -3902,7 +3910,8 @@ class Sistema {
                 Sistema::P_MOVIMENTO(),
                 Sistema::P_FECHAMENTO_CAIXA(),
                 Sistema::P_VISTO_MOVIMENTO(),
-                Sistema::P_RELATORIO_FINANCEIRO_RECEBER()
+                Sistema::P_RELATORIO_FINANCEIRO_RECEBER(),
+                Sistema::P_RELATORIO_PRODUTO()
                     )), new RTC(6, array(
                 Sistema::P_LOTE(),
                 Sistema::P_SEPARACAO(),
@@ -3912,7 +3921,8 @@ class Sistema {
                 Sistema::P_ORGANOGRAMA_TOTAL(),
                 Sistema::P_EXPEDIENTE(),
                 Sistema::P_TAREFAS(),
-                Sistema::P_ACOMPANHA_TAREFAS()
+                Sistema::P_ACOMPANHA_TAREFAS(),
+                Sistema::P_PROTOCOLOS()
                     )), new RTC(7, array(
                 Sistema::P_GERENCIADOR(),
                 Sistema::P_ENCOMENDA(),

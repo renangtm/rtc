@@ -2,6 +2,53 @@ var debuger = function (l) {
     document.write(paraJson(l));
 }
 
+rtc.service('protocoloService', function ($http, $q) {
+    this.getProtocolo = function (fn) {
+        baseService($http, $q, {
+            query: "$r->protocolo=new Protocolo();$r->protocolo->empresa=$empresa;$r->protocolo->iniciado_por=$usuario->id.' - '.$usuario->nome;",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getMensagemProtocolo = function (fn) {
+        baseService($http, $q, {
+            query: "$r->mensagem=new MensagemProtocolo();$r->mensagem->dados_usuario=$usuario->id.' - '.$usuario->nome;",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountProtocolos($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getMensagensProtocolo = function (protocolo, fn) {
+        baseService($http, $q, {
+            o: protocolo,
+            query: "$r->mensagens=$o->getMensagensPosteriores($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getProtocolosAtivos = function (fn) {
+        baseService($http, $q, {
+            query: "$r->protocolos=$empresa->getProtocolos($c,0,2,'p.fim IS NULL','tp.prioridade DESC')",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getProtocolos($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('movimentosProdutoService', function ($http, $q) {
     this.getMovimentos = function (filtro, fn) {
         baseService($http, $q, {
@@ -22,9 +69,9 @@ rtc.service('cotacaoGrupalService', function ($http, $q) {
             falha: fn
         });
     }
-    this.enviarEmails = function (cotacao,fn) {
+    this.enviarEmails = function (cotacao, fn) {
         baseService($http, $q, {
-            o:cotacao,
+            o: cotacao,
             query: "$o->enviarEmails($c)",
             sucesso: fn,
             falha: fn
@@ -194,6 +241,16 @@ rtc.service('fechamentoCaixaService', function ($http, $q) {
         });
     }
 })
+
+rtc.service('tipoProtocoloService', function ($http, $q) {
+    this.getTiposProtocolo = function (fn) {
+        baseService($http, $q, {
+            query: "$r->tipos=$empresa->getTiposProtocolo($c);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('observacaoTarefaService', function ($http, $q) {
     this.getObservacaoTarefa = function (fn) {
         baseService($http, $q, {
@@ -226,25 +283,25 @@ rtc.service('tarefaService', function ($http, $q) {
             falha: fn
         });
     }
-    this.start = function (tarefa,fn) {
+    this.start = function (tarefa, fn) {
         baseService($http, $q, {
-            o:tarefa,
+            o: tarefa,
             query: "$o->start($c,$usuario)",
             sucesso: fn,
             falha: fn
         });
     }
-    this.pause = function (tarefa,fn) {
+    this.pause = function (tarefa, fn) {
         baseService($http, $q, {
-            o:tarefa,
+            o: tarefa,
             query: "$o->pause($c,$usuario)",
             sucesso: fn,
             falha: fn
         });
     }
-    this.finish = function (tarefa,fn) {
+    this.finish = function (tarefa, fn) {
         baseService($http, $q, {
-            o:tarefa,
+            o: tarefa,
             query: "$o->finish($c,$usuario)",
             sucesso: fn,
             falha: fn

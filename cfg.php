@@ -9,7 +9,7 @@
         <script src="js/rtc.js?4"></script>
         <script src="js/filters.js?4"></script>
         <script src="js/services.js?4"></script>
-        <script src="js/controllers.js?4"></script>    
+        <script src="js/controllers.js?4"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -80,7 +80,7 @@
                         <!-- ============================================================== -->
                         <!-- end pageheader  -->
                         <!-- ============================================================== -->
-<?php if ($empresa->tipo_empresa === 5) { ?>
+                        <?php if ($empresa->tipo_empresa === 5) { ?>
                             <select style="width:200px" class="form-control" ng-model="empresa_atual" ng-change="trocaEmpresa()">
                                 <option ng-repeat="e in empresas_clientes" ng-value="e">{{e.nome}}</option>
                             </select>
@@ -106,7 +106,7 @@
                             <!-- ============================================================== -->
                             <!-- basic table  -->
                             <!-- ============================================================== -->
-<?php if ($usuario->temPermissao(Sistema::P_CONTROLADOR_TAREFAS()->m('A'))) { ?>
+                            <?php if ($usuario->temPermissao(Sistema::P_CONTROLADOR_TAREFAS()->m('A'))) { ?>
                                 <div class="col-md-5">
                                     <div class="card">
                                         <div class="card-body row">
@@ -303,12 +303,63 @@
                                                         </ul>
                                                     </nav>
                                                 </div>
+
+                                            </div>
+                                            <div style="border-top:1px solid;maring-top:10px;padding: 10px;width:100%">
+
+                                                <h3><i class="fas fa-warning"></i>&nbsp;Tipos de Protocolo</h3>
+                                                <br>
+                                                <input type="number" class="form-control" ng-model="tipo_protocolo.prioridade" class="form-control" placeholder="prioridade" style="width:10%;display:inline;margin-right:10px">
+                                                
+                                                <input type="text" placeholder="nomenclatura do protocolo" class="form-control" ng-model="tipo_protocolo.nome" style="width:50%;display:inline;margin-right:10px">
+                                                
+                                                <button class="btn btn-success" ng-click="novoTipoProtocolo()"><i class="fas fa-plus-circle"></i></button>
+                                                <hr>
+                                                <table id="tipo_protocolo" class="table table-striped table-bordered first">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Cod</th>
+                                                            <th>Nome</th>
+                                                            <th>Prioridade</th>
+                                                            <th>Acoes</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="t in tipos_protocolo.elementos">
+                                                            <td>{{t[0].id}}</td>
+                                                            <td><input type="text" class="form-control" ng-model="t[0].nome"></td>
+                                                            <td><input type="number" class="form-control" ng-model="t[0].prioridade"></td>
+                                                            <td><button class="btn btn-edit" ng-click="mergeTipoProtocolo(t[0])"><i class="fas fa-edit"></i></button>&nbsp<button class="btn btn-danger" ng-click="deleteTipoProtocolo(t[0])"><i class="fas fa-trash"></i></button></td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>Cod</th>
+                                                            <th>Nome</th>
+                                                            <th>Prioridade</th>
+                                                            <th><i class="fas fa-trash"></i></th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                                
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                                    <nav aria-label="Page navigation example">
+                                                        <ul class="pagination justify-content-end">
+                                                            <li class="page-item" ng-click="tipos_protocolo.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                            <li class="page-item" ng-repeat="pg in tipos_protocolo.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                            <li class="page-item" ng-click="tipos_protocolo.next()"><a class="page-link" href="">Próximo</a></li>
+                                                        </ul>
+                                                    </nav>
+                                                </div>
                                             </div>
 
                                         </div>
                                     </div>    
                                 </div>
-<?php } ?>
+
+
+
+                            <?php } ?>
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="card">
                                     <div class="card-body row">
@@ -351,9 +402,9 @@
                                                                         <tr>
                                                                             <td>Senha:</td>
                                                                             <td><?php
-$str = "?>{{usuari[0].senha}}<?php";
-echo md5($str);
-?></td>
+                                                                                $str = "?>{{usuari[0].senha}}<?php";
+                                                                                echo md5($str);
+                                                                                ?></td>
                                                                         </tr>
                                                                         <tr>
                                                                             <td>CPF:</td>
@@ -688,7 +739,7 @@ echo md5($str);
                 <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
                 <!-- jquery 3.3.1 -->
-                <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+                
                 <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
                 <script src="assets/libs/js/form-mask.js"></script>
                 <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>

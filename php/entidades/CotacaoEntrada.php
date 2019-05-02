@@ -25,6 +25,7 @@ class CotacaoEntrada {
     public $tratar_em_litros;
     public $observacao;
     public $enviar_email;
+    public $recusada;
     
     function __construct() {
 
@@ -39,6 +40,7 @@ class CotacaoEntrada {
         $this->data = round(microtime(true) * 1000);
         $this->produtos = null;
         $this->enviar_email = true;
+        $this->recusada = false;
         
     }
 
@@ -178,6 +180,7 @@ class CotacaoEntrada {
         $ps = $con->getConexao()->prepare("SELECT produto_cotacao_entrada.id,"
                 . "produto_cotacao_entrada.quantidade,"
                 . "produto_cotacao_entrada.valor,"
+                . "produto_cotacao_entrada.checado>=2,"
                 . "produto.id,"
                 . "produto.codigo,"
                 . "produto.id_logistica,"
@@ -238,7 +241,7 @@ class CotacaoEntrada {
                 . " WHERE produto_cotacao_entrada.id_cotacao=$this->id");
 
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $valor, $id_pro,$cod_pro,$id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc,$sistema_lotes,$nota_usuario, $cat_id, $id_empresa,$tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $quantidade, $valor,$recusado, $id_pro,$cod_pro,$id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc,$sistema_lotes,$nota_usuario, $cat_id, $id_empresa,$tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
@@ -331,6 +334,7 @@ class CotacaoEntrada {
             $pp->id = $id;
             $pp->quantidade = $quantidade;
             $pp->valor = $valor;
+            $pp->recusado = $recusado;
             $pp->cotacao = $this;
             $pp->produto = $p;
 
