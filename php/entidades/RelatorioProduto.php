@@ -32,7 +32,7 @@ class RelatorioProduto extends Relatorio {
         
         $categoria .= " END as 'categoria'";
 
-        parent::__construct("SELECT p.codigo as 'codigo',$categoria,p.nome as 'nome',p.unidade as 'unidade',CASE WHEN p.liquido THEN 'Liquido' ELSE 'Solido' END as 'estado',p.estoque as 'estoque',p.disponivel as 'disponivel', p.transito as 'transito', p.grade as 'grade', e.nome as 'empresa'  FROM produto p INNER JOIN empresa e ON p.id_empresa=e.id WHERE p.id_empresa=$empresa->id", 30);
+        parent::__construct("SELECT p.codigo as 'codigo',$categoria,p.nome as 'nome',p.unidade as 'unidade',CASE WHEN p.liquido THEN 'Liquido' ELSE 'Solido' END as 'estado',p.estoque as 'estoque',p.disponivel as 'disponivel', p.transito as 'transito', p.grade as 'grade', e.nome as 'empresa'  FROM produto p INNER JOIN empresa e ON p.id_empresa=e.id WHERE p.id_empresa=$empresa->id AND p.id_logistica=0", 30);
 
         $this->nome = "Relatorio Produtos";
 

@@ -1243,6 +1243,7 @@ class Sistema {
         $relatorios[] = new RelatorioExportaLancamento($empresa);
         $relatorios[] = new RelatorioProdutoLogistica($empresa);
         $relatorios[] = new RelatorioMaxPalet($empresa);
+        $relatorios[] = new RelatorioProduto($empresa);
 
         $permitidos = array();
 
