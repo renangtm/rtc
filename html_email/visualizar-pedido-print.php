@@ -164,12 +164,12 @@
                                                                         
                                                                         ?></td>
                                                                         <td align="center" data-tipo="quantidade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo $value->quantidade; ?></td>
-                                                                        <td align="center" data-tipo="valor" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo ($value->valor_base); ?></td>
-                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo $value->frete; ?></td>
-                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo $value->icms; ?></td>
-                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo $value->juros; ?></td>
-                                                                        <td align="center" data-tipo="valor" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete); ?></td>
-                                                                        <td align="center" data-tipo="total" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo $value->quantidade * ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete); ?></td>
+                                                                        <td align="center" data-tipo="valor" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo round($value->valor_base,2); ?></td>
+                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo round($value->frete,2); ?></td>
+                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo round($value->icms,2); ?></td>
+                                                                        <td align="center" data-tipo="quantidade" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo round($value->juros,2); ?></td>
+                                                                        <td align="center" data-tipo="valor" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo round($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete,2); ?></td>
+                                                                        <td align="center" data-tipo="total" class="text-center" style="font-size: 12px;padding:10px; border: 1px solid black;"><?php echo round($value->quantidade * ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete),2); ?></td>
                                                                     </tr>
 
                                                                     <?php
@@ -187,7 +187,7 @@
                                                                 <tfoot style=""> 
                                                                     <tr style=""> 
                                                                         <th align="left" colspan="8" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">VALOR TOTAL</th>
-                                                                        <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;"><?php echo $valor_total; ?></th>
+                                                                        <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;"><?php echo round($valor_total,2); ?></th>
                                                                     </tr>
                                                                 </tfoot>   
 
@@ -197,8 +197,8 @@
                                                             <table style="width:100%;">
                                                                 <tr>
                                                                     <td width="33,3%" class="text-center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px;">Prazo: <strong id="prazo"><?php echo $p->prazo; ?></strong></td>
-                                                                    <td width="33,3%" class="text-center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px;">Alicota ICMS: <strong id="alicota"><?php echo $alicota; ?></strong></td>
-                                                                    <td width="33,3%" class="text-center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px;">Valor ICMS: <strong id="icms"><?php echo $valor_icms; ?></strong></td>
+                                                                    <td width="33,3%" class="text-center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px;">Alicota ICMS: <strong id="alicota"><?php echo round($alicota,2); ?></strong></td>
+                                                                    <td width="33,3%" class="text-center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px;">Valor ICMS: <strong id="icms"><?php echo round($valor_icms,2); ?></strong></td>
                                                                 </tr>
                                                             </table>
                                                             <table style="width:100%;border: 1px solid black;" cellspacing="0" cellpadding="0">

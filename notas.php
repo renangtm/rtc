@@ -165,14 +165,19 @@
                                                                     </div>
                                                                     <div class="col" style="margin-top:10px" ng-if="operacao_sefaz===0">
                                                                         <div ng-if="notaa[0].saida && notaa[0].emitida">
-                                                                            <button class="btn btn-outline-danger" ng-click="cancelar(notaa[0])"> 
+                                                                            <button class="btn btn-outline-danger" ng-click="cancelar(notaa[0])" ng-if="!notaa[0].cancelada"> 
                                                                                 <i class="fas fa-times"></i>
                                                                                 &nbsp Cancelar NF {{notaa[0].numero}}  
+                                                                            </button>
+                                                                            <button class="btn btn-outline-primary" ng-click="emitir(notaa[0])" ng-if="notaa[0].cancelada"> 
+                                                                                <i class="fas fa-check"></i>
+                                                                                &nbsp Reemitir NF
                                                                             </button>
                                                                             <button class="btn btn-outline-warning" ng-click="corrigir(notaa[0])"> 
                                                                                 <i class="fas fa-list"></i>
                                                                                 &nbsp Corrigir NF {{notaa[0].numero}}  
                                                                             </button>
+                                                                            
                                                                                 <hr>                        
                                                                                 <textarea rows="5" ng-model="notaa[0].observacao_sefaz" class="form-control" style="width:100%">
                                                                                     
