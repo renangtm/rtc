@@ -10,6 +10,14 @@ rtc.service('protocoloService', function ($http, $q) {
             falha: fn
         });
     }
+    this.terminar = function (protocolo,fn) {
+        baseService($http, $q, {
+            o:protocolo,
+            query: "$o->terminar($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getMensagemProtocolo = function (fn) {
         baseService($http, $q, {
             query: "$r->mensagem=new MensagemProtocolo();$r->mensagem->dados_usuario=$usuario->id.' - '.$usuario->nome;",

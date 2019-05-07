@@ -114,6 +114,7 @@
                                                             <div class="product-btn">
                                                                 <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setProtocolo(p[0])" data-target="#demo{{p[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
                                                                 <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setProtocolo(p[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
+                                                                <a ng-if="p[0].fim===null" href="#" class="btn btn-outline-danger" data-title="Stop" ng-click="terminar(p[0])"><i class="fas fa-stop"></i></a>
                                                                 <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setProtocolo(p[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
                                                             </div>
                                                         </th>

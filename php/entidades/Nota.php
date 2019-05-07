@@ -647,14 +647,14 @@ class Nota {
                 $produto->pesoL = $p->produto->peso_liquido;
                 $produto->ipi = $p->ipi;
 
-                $produto->reducao_base_calculo = 100 - $p->produto->categoria->base_calculo;
+                $produto->reducao_base_calculo = 100 - ceil($p->base_calculo*100/($p->valor_unitario*$p->quantidade));
                 $produto->icms = floor(($p->base_calculo == 0) ? 0 : (($p->icms / $p->base_calculo) * 100));
 
                 if (!$p->produto->categoria->icms_normal) {
                     $produto->cst200 = true;
                 }
 
-                if ($this->cliente->endereco->cidade->estado->id === $this->empresa->endereco->cidade->estado->id || $this->cliente->suframado) {
+                if ($this->cliente->suframado) {
                     $produto->sem_icms = true;
                 }
 

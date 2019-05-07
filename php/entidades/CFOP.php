@@ -51,9 +51,9 @@ class CFOP {
         }else if ($cfop === self::$TRANSFERENCIA_DENTRO_ESTADO) {
             return "Transferencia de mercadoria dentro do estado";
         }else if ($cfop === self::$ANULACAO_FORA_ESTADO) {
-            return "Anulacao de valor referente a prestacao de servico. fora do estado";
+            return "Anulacao de valor referente a prestacao de servico";
         }else if ($cfop === self::$ANULACAO_DENTRO_ESTADO) {
-            return "Anulacao de valor referente a prestacao de servico. dentro do estado";
+            return "Anulacao de valor referente a prestacao de servico";
         }
 
         return "Indefinido";

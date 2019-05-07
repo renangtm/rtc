@@ -38,7 +38,7 @@ class RelatorioFinanceiroReceber extends Relatorio {
         
         $valor = 0;
         
-        $sql = "SELECT SUM(k.valor) FROM (SELECT (GREATEST(ROUND((vencimento.valor-(SUM(IFNULL(movimento.valor,0)))),2),0)) as 'valor' FROM nota INNER JOIN vencimento ON vencimento.id_nota = nota.id LEFT JOIN cliente ON cliente.id=nota.id_cliente LEFT JOIN fornecedor ON fornecedor.id=nota.id_fornecedor LEFT JOIN movimento ON movimento.id_vencimento=vencimento.id WHERE nota.id_empresa=$empresa->id AND nota.cancelada=false AND nota.saida=true AND nota.excluida=false ";
+        $sql = "SELECT SUM(k.valor) FROM (SELECT (GREATEST(ROUND((vencimento.valor-(SUM(IFNULL(movimento.valor,0)))),2),0)) as 'valor' FROM nota INNER JOIN vencimento ON vencimento.id_nota = nota.id LEFT JOIN cliente ON cliente.id=nota.id_cliente LEFT JOIN fornecedor ON fornecedor.id=nota.id_fornecedor LEFT JOIN movimento ON movimento.id_vencimento=vencimento.id AND movimento.data<=FROM_UNIXTIME(".$this->campos[0]->fim."/1000) WHERE nota.id_empresa=$empresa->id AND nota.cancelada=false AND nota.saida=true AND nota.excluida=false ";
         
         $sql .= "AND vencimento.data>=FROM_UNIXTIME(".$this->campos[0]->inicio."/1000) AND vencimento.data<=FROM_UNIXTIME(".$this->campos[0]->fim."/1000) AND (CASE WHEN nota.saida THEN cliente.cnpj NOT IN $f ELSE fornecedor.cnpj NOT IN $f END) ";
         

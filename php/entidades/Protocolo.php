@@ -73,6 +73,14 @@ class Protocolo {
         return $retorno;
     }
 
+    public function terminar($con){
+        
+        $ps = $con->getConexao()->prepare("UPDATE protocolo SET inicio=inicio,fim=CURRENT_TIMESTAMP WHERE id=$this->id");
+        $ps->execute();
+        $ps->close();
+        
+    }
+    
     public function delete($con) {
 
         $ps = $con->getConexao()->prepare("DELETE FROM protocolo WHERE id=$this->id");

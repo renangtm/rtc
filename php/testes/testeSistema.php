@@ -31,6 +31,11 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         date_default_timezone_set("America/Sao_Paulo");
 
         $con = new ConnectionFactory();
+        
+        $r = new RoboVirtual();
+        $r->executar($con);
+        
+        return;
 
         $e = new Empresa(1735, $con);
 

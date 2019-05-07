@@ -47,6 +47,25 @@ rtc.controller("crtProtocolos", function ($scope, protocoloService, tipoProtocol
     $scope.mensagem_protocolo_novo = {};
     $scope.mensagem_protocolo = {};
 
+    $scope.terminar = function(protocolo){
+        
+        protocoloService.terminar(protocolo,function(t){
+            
+            if(t.sucesso){
+                
+                msg.alerta("Terminado com sucesso");
+                $scope.protocolos.attList();
+                
+            }else{
+                
+                msg.erro("Ocorreu um problema");
+                
+            }
+            
+        })
+        
+    }
+
     $scope.novaMensagem = function () {
 
         $scope.mensagem = angular.copy($scope.mensagem_protocolo_novo);
