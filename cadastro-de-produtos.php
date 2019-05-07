@@ -328,7 +328,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group row" ng-if="!produto.categoria.abstrato">
+                                            <div class="form-group row">
                                                 <label for="txtfab" class="col-3 col-lg-2 col-form-label text-left">Fabricante</label>
                                                 <div class="col-9 col-lg-10">
                                                     <select ng-model="produto.fabricante" class="form-control" >
@@ -393,7 +393,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group row" ng-if="!produto.categoria.abstrato">
+                                            <div class="form-group row" ng-if="produto.categoria.abstrato">
                                                 <label for="txtval" class="col-3 col-lg-2 col-form-label text-left">Custo (U$)</label>
                                                 <div class="col-9 col-lg-10">
                                                     <decimal model="produto.custo"></decimal>
@@ -402,6 +402,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <?php if ($usuario->temPermissao(Sistema::P_CONFIGURACAO_EMPRESA()->m("C"))) { ?>
                                             <div class="form-group row">
                                                 <label for="txtval" class="col-3 col-lg-2 col-form-label text-left">Valor (R$)</label>
                                                 <div class="col-9 col-lg-10">
@@ -411,6 +412,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <?php } ?>
                                             <?php if ($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))) { ?>
                                                 <div class="form-group row" ng-if="produto.categoria.parametros_agricolas">
                                                     <label for="txtpativo" class="col-4 col-lg-3 col-form-label text-left">Princ&iacute;pio ativo</label>

@@ -520,14 +520,16 @@ class Nota {
             throw new Exception("Nao e possivel emitir nota de entrada.");
         }
 
-        if ($this->emitida) {
-
-            throw new Exception("A nota ja foi emitida");
-        }
 
 
         if ($this->produtos === null) {
             $this->produtos = $this->getProdutos($con);
+        }
+
+        if ($this->id_pedido > 0) {
+
+            $this->calcularImpostosAutomaticamente();
+            
         }
 
         if (count($this->produtos) > 0) {
@@ -647,14 +649,15 @@ class Nota {
                 $produto->pesoL = $p->produto->peso_liquido;
                 $produto->ipi = $p->ipi;
 
-                $produto->reducao_base_calculo = 100 - ceil($p->base_calculo*100/($p->valor_unitario*$p->quantidade));
-                $produto->icms = floor(($p->base_calculo == 0) ? 0 : (($p->icms / $p->base_calculo) * 100));
-
+                $produto->reducao_base_calculo = 100 - ceil($p->base_calculo * 100 / ($p->valor_unitario));
+                $produto->icms = round(($p->base_calculo == 0) ? 0 : (($p->icms / $p->base_calculo) * 100));
+                
+                
                 if (!$p->produto->categoria->icms_normal) {
                     $produto->cst200 = true;
                 }
 
-                if ($this->cliente->suframado) {
+                if ($this->cliente->suframado || $p->icms==0) {
                     $produto->sem_icms = true;
                 }
 
@@ -707,6 +710,7 @@ class Nota {
         if ($ret->sucesso) {
 
             $this->emitida = true;
+            $this->cancelada = false;
             $this->danfe = Sistema::$ENDERECO . "php/controler/" . $ret->danfe;
             $this->xml = Sistema::$ENDERECO . "php/controler/" . $ret->xml;
             $this->numero = $ret->nf;
@@ -729,6 +733,7 @@ class Nota {
         }
 
         return $ret->mensagem;
+        
     }
 
     public function cancelar($con, $motivo = "Nota emitida indevidamente") {
@@ -737,17 +742,6 @@ class Nota {
 
             throw new Exception("Nota nao esta emitida para cancelar");
         }
-
-        $ps = $con->getConexao()->prepare("SELECT movimento.id FROM movimento "
-                . "INNER JOIN vencimento ON vencimento.id_movimento=movimento.id AND vencimento.id_nota=$this->id "
-                . "LEFT JOIN movimento est ON est.estorno=movimento.id WHERE est.id IS NULL");
-        $ps->execute();
-        $ps->bind_result($idm);
-        if ($ps->fetch()) {
-            $ps->close();
-            throw new Exception('O movimento bancario ' . $idm . ', esta relacionado com a nota, e necessario que seja estornado ou excluido');
-        }
-        $ps->close();
 
         $base = $this->empresa->getParametrosEmissao($con)->getComandoBase($con);
         $base->acao = "CANCELAR";
@@ -762,7 +756,7 @@ class Nota {
         $comando = Utilidades::toJson($base);
         Sistema::mergeArquivo($arquivo, $comando, false);
         $endereco = Sistema::$ENDERECO . "php/uploads/" . $arquivo;
-
+        
         $ret = Utilidades::fromJson(Sistema::getMicroServicoJava('EmissorRTC', $endereco));
 
         if ($ret->sucesso) {

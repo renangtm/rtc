@@ -13,7 +13,7 @@
  */
 class Sistema {
 
-    public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
+    public static $ENDERECO = "https://www.rtcagro.com.br/";
 
     /*
      * porcentagem
@@ -726,11 +726,17 @@ class Sistema {
 
         $email = new Email("renan.miranda@agrofauna.com.br");
         $email->senha = "5hynespt";
+
+
         $destino = new Email("renan_goncalves@outlook.com.br");
+        $destino2 = new Email("maylon.pires@logc.com.br");
+        $destino3 = new Email("elias.gomes@logc.com.br");
 
         try {
 
             $email->enviarEmail($destino, 'Aviso', $aviso);
+            $email->enviarEmail($destino2, 'Aviso', $aviso);
+            $email->enviarEmail($destino3, 'Aviso', $aviso);
         } catch (Exception $ex) {
             
         }
@@ -1243,6 +1249,7 @@ class Sistema {
         $relatorios[] = new RelatorioExportaLancamento($empresa);
         $relatorios[] = new RelatorioProdutoLogistica($empresa);
         $relatorios[] = new RelatorioMaxPalet($empresa);
+        $relatorios[] = new RelatorioProduto($empresa);
 
         $permitidos = array();
 
@@ -4008,6 +4015,19 @@ class Sistema {
         return $cat;
     }
 
+    public static function CATP_LEILAO() {
+
+        $cat = new CategoriaProduto();
+        $cat->nome = "Leilao";
+        $cat->id = 101;
+        $cat->base_calculo = 100;
+        $cat->parametros_agricolas = false;
+        $cat->loja = false;
+        $cat->abstrato = true;
+        $cat->desconta_estoque = true;
+        return $cat;
+    }
+
     public static function CATP_ACESSORIOS() {
 
         $cat = new CategoriaProduto();
@@ -4279,6 +4299,10 @@ class Sistema {
             $ret[] = Sistema::CATP_INFORMATICA();
             $ret[] = Sistema::CATP_ADUBOS_FOLIARES();
             $ret[] = Sistema::CATP_AGRICOLA_SUSP();
+
+            if ($empresa->tipo_empresa === 4) {
+                $ret[] = Sistema::CATP_LEILAO();
+            }
         }
         if ($id < 0) {
             return $ret;

@@ -562,14 +562,15 @@ $possiveis[0] = $rtc;
     var drg = false;
     $("#drag_protocolos").mousedown(function(e){
 
-    mx = e.clientX - $(this).offset().left;
-    my = e.clientY - $(this).offset().top;
-    drg = true;
+        mx = e.clientX - $(this).offset().left;
+        my = e.clientY - $(this).offset().top;
+        drg = true;
+
     })
 
             $(document).mousemove(function(e){
     if (drg){
-    $("#drag_protocolos").css('left', (e.clientX - mx) + "px").css('top', (e.clientY - my) + "px");
+    $("#drag_protocolos").css('left', (e.clientX - mx) + "px").css('top', (e.clientY - my + $(document).scrollTop()) + "px");
     }
     })
 
