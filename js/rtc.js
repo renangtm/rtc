@@ -1819,17 +1819,23 @@ rtc.directive('calendario', function ($timeout) {
 
                 scope.horas = [];
                 scope.minutos = [];
-
+                
+                
+                scope.dia_i = 0;
+                scope.mes_i = 0;
+                scope.ano_i = 0;
+                
+                scope.dia_f = 0;
+                scope.mes_f = 0;
+                scope.ano_f = 0;
                 if (typeof scope.maxWidth === 'undefined') {
 
                     scope.maxWidth = 800;
 
                 }
-
                 scope.botao = (typeof scope["botao"] === 'undefined') ? false : scope.botao;
                 scope.tem_confirma = scope.confirma !== undefined;
                 scope.dsp = !scope.botao;
-
                 scope.trocar = function () {
 
                     scope.dsp = !scope.dsp;
@@ -1840,19 +1846,16 @@ rtc.directive('calendario', function ($timeout) {
                     scope.$apply();
 
                 }
-
                 scope.foco = function () {
 
                     return focoAtual === scope.idUnico;
 
                 }
-
                 $(window).resize(function () {
 
                     scope.$apply();
 
                 })
-
                 scope.responsividade = function () {
 
                     var w = $(window).width();
@@ -1864,30 +1867,24 @@ rtc.directive('calendario', function ($timeout) {
                     return true;
 
                 }
-
                 scope.hora_model = {hora: 12};
                 scope.minuto_model = {minuto: 10};
                 scope.hora_inicio = {hora: 12};
                 scope.minuto_inicio = {minuto: 10};
                 scope.hora_fim = {hora: 12};
                 scope.minuto_fim = {minuto: 10};
-
                 if (typeof scope["model"] !== 'undefined') {
                     scope.hora_model.hora = new Date(scope.model).getHours();
                     scope.minuto_model.minuto = new Date(scope.model).getMinutes();
                 }
-
                 if (typeof scope["inicio"] !== 'undefined') {
                     scope.hora_inicio.hora = new Date(scope.inicio).getHours();
                     scope.minuto_inicio.minuto = new Date(scope.inicio).getMinutes();
                 }
-
                 if (typeof scope["fim"] !== 'undefined') {
                     scope.hora_fim.hora = new Date(scope.fim).getHours();
                     scope.minuto_fim.minuto = new Date(scope.fim).getMinutes();
                 }
-
-
                 if (!scope.intervalo) {
                     scope.initDate = angular.copy(scope.model);
                 } else {
@@ -2015,6 +2012,25 @@ rtc.directive('calendario', function ($timeout) {
                     var fim = new Date(parseFloat(scope.fim + ""));
                     var data = new Date(parseFloat(scope.initDate + ""));
                     var clone = new Date(parseFloat(scope.initDate + ""));
+                    
+                    if(scope.intervalo){
+                        
+                        scope.dia_i = inicio.getDate();
+                        scope.mes_i = inicio.getMonth()+1;
+                        scope.ano_i = inicio.getFullYear();
+                        
+                        scope.fim_i = inicio.getDate();
+                        scope.fim_i = inicio.getMonth()+1;
+                        scope.fim_i = inicio.getFullYear();
+                        
+                    }else{
+                        
+                        scope.dia_i = cmp.getDate();
+                        scope.mes_i = cmp.getMonth()+1;
+                        scope.ano_i = cmp.getFullYear();
+                        
+                    }
+                    
                     for (var i = 0; i < scope.quantidade_meses; i++) {
                         data.setDate(1);
                         var mes = data.getMonth();
