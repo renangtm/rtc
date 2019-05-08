@@ -1,4 +1,4 @@
-var projeto = "http://192.168.18.121:888/novo_rtc_web";
+var projeto = "https://www.rtcagro.com.br";
 
 function mtlCharAt(str, idx) {
     str += '';
@@ -1805,7 +1805,7 @@ rtc.directive('calendario', function ($timeout) {
             maxWidth: '@?'
         },
         transclude: true,
-        templateUrl: 'calendario.html',
+        templateUrl: 'calendario5.html',
         link: function (scope, element, attrs) {
 
             var lk = function () {
@@ -1819,15 +1819,17 @@ rtc.directive('calendario', function ($timeout) {
 
                 scope.horas = [];
                 scope.minutos = [];
-                
-                
-                scope.dia_i = 0;
-                scope.mes_i = 0;
-                scope.ano_i = 0;
-                
-                scope.dia_f = 0;
-                scope.mes_f = 0;
-                scope.ano_f = 0;
+
+
+                scope.dia_i = {dia:0};
+                scope.mes_i = {mes:0};
+                scope.ano_i = {ano:0};
+
+                scope.dia_f = {dia:0};
+                scope.mes_f = {mes:0};
+                scope.ano_f = {ano:0};
+
+
                 if (typeof scope.maxWidth === 'undefined') {
 
                     scope.maxWidth = 800;
@@ -1998,6 +2000,46 @@ rtc.directive('calendario', function ($timeout) {
 
                 }
 
+                scope.trocaData = function () {
+
+                    if (scope.intervalo) {
+
+                        var dt = new Date();
+                        dt.setDate(scope.dia_i.dia);
+                        dt.setMonth(scope.mes_i.mes - 1);
+                        dt.setYear(scope.ano_i.ano);
+
+                        scope.inicio = dt.getTime();
+
+                        dt = new Date();
+                        dt.setDate(scope.dia_f.dia);
+                        dt.setMonth(scope.mes_f.mes - 1);
+                        dt.setYear(scope.ano_f.ano);
+
+                        scope.fim = dt.getTime();
+
+                    } else {
+
+                        var dt = new Date();
+                        dt.setDate(scope.dia_i.dia);
+                        dt.setMonth(scope.mes_i.mes - 1);
+                        dt.setYear(scope.ano_i.ano);
+
+                        scope.model = dt.getTime();
+
+                    }
+
+
+                    scope.attCalendario();
+
+                    $timeout(function () {
+
+                        scope.change();
+
+                    }, 100)
+
+                }
+
                 scope.attCalendario = function () {
 
                     if (typeof scope["model"] === 'undefined') {
@@ -2012,25 +2054,26 @@ rtc.directive('calendario', function ($timeout) {
                     var fim = new Date(parseFloat(scope.fim + ""));
                     var data = new Date(parseFloat(scope.initDate + ""));
                     var clone = new Date(parseFloat(scope.initDate + ""));
-                    
-                    if(scope.intervalo){
-                        
-                        scope.dia_i = inicio.getDate();
-                        scope.mes_i = inicio.getMonth()+1;
-                        scope.ano_i = inicio.getFullYear();
-                        
-                        scope.fim_i = inicio.getDate();
-                        scope.fim_i = inicio.getMonth()+1;
-                        scope.fim_i = inicio.getFullYear();
-                        
-                    }else{
-                        
-                        scope.dia_i = cmp.getDate();
-                        scope.mes_i = cmp.getMonth()+1;
-                        scope.ano_i = cmp.getFullYear();
-                        
+
+                    if (scope.intervalo) {
+
+                        scope.dia_i.dia = inicio.getDate();
+                        scope.mes_i.mes = inicio.getMonth() + 1;
+                        scope.ano_i.ano = inicio.getFullYear();
+
+
+                        scope.dia_f.dia = fim.getDate();
+                        scope.mes_f.mes = fim.getMonth() + 1;
+                        scope.ano_f.ano = fim.getFullYear();
+
+                    } else {
+
+                        scope.dia_i.dia = cmp.getDate();
+                        scope.mes_i.mes = cmp.getMonth() + 1;
+                        scope.ano_i.ano = cmp.getFullYear();
+
                     }
-                    
+
                     for (var i = 0; i < scope.quantidade_meses; i++) {
                         data.setDate(1);
                         var mes = data.getMonth();

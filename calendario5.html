@@ -132,25 +132,51 @@
         <hr>
         
         <div ng-if="intervalo && tempo" style="margin: 15px;">
-            Inicio: &nbsp <strong>{{inicio| data}}</strong>&nbsp
-            <input type="number" max="24" ng-change="trocaPeriodo()" ng-model="hora_inicio.hora" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            Inicio: &nbsp 
+            
+            <input type="number" max="31" ng-change="trocaData()" ng-model="dia_i.dia" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            /
+            <input type="number" max="12" ng-change="trocaData()" ng-model="mes_i.mes" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            /
+            <input type="number" ng-change="trocaData()" ng-model="ano_i.ano" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            <br>
+            <input type="number" max="24" ng-change="trocaPeriodo()" ng-model="hora_inicio.hora" class="form-control" style="height:27px;width:50px;padding:2px;display:inline;margin-top:10px">
             &nbsp;
             :
             &nbsp;
-            <input type="number" max="60" ng-change="trocaPeriodo()" ng-model="minuto_inicio.minuto" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            <input type="number" max="60" ng-change="trocaPeriodo()" ng-model="minuto_inicio.minuto" class="form-control" style="height:27px;width:50px;padding:2px;display:inline;margin-top:10px">
             <br>
         </div>
+        <hr>
         <div ng-if="intervalo && tempo" style="margin: 15px;">
-            Fim: &nbsp <strong>{{fim | data}}</strong>&nbsp
-            <input type="number" max="24" ng-change="trocaPeriodo()" ng-model="hora_fim.hora" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            Fim: &nbsp 
+            
+            <input type="number" max="31" ng-change="trocaData()" ng-model="dia_f.dia" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            /
+            <input type="number" max="12" ng-change="trocaData()" ng-model="mes_f.mes" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            /
+            <input type="number" ng-change="trocaData()" ng-model="ano_f.ano" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            <br>
+            <input type="number" max="24" ng-change="trocaPeriodo()" ng-model="hora_fim.hora" class="form-control" style="height:27px;width:50px;padding:2px;display:inline;margin-top:10px">
             &nbsp;
             :
             &nbsp;
-            <input type="number" max="60" ng-change="trocaPeriodo()" ng-model="minuto_fim.minuto" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            <input type="number" max="60" ng-change="trocaPeriodo()" ng-model="minuto_fim.minuto" class="form-control" style="height:27px;width:50px;padding:2px;display:inline;margin-top:10px">
             <br>
         </div>
         <div ng-if="!intervalo && tempo" style="margin: 15px;">
-            Data: &nbsp <strong>{{model| data}}</strong>&nbsp
+            Data: &nbsp
+            
+            <input type="number" max="31" ng-change="trocaData()" ng-model="dia_i.dia" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            /
+            <input type="number" max="12" ng-change="trocaData()" ng-model="mes_i.mes" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            /
+            <input type="number" ng-change="trocaData()" ng-model="ano_i.ano" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            &nbsp;
+            &nbsp;
+            
+            
+            
             <input type="number" max="24" ng-change="trocaPeriodo()" ng-model="hora_model.hora" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
             &nbsp;
             :
