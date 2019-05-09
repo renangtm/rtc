@@ -2096,8 +2096,6 @@ rtc.controller("crtTarefas", function ($scope, $sce, tarefaService, observacaoTa
         var dif = $scope.observacao_tarefa.porcentagem - c;
         $scope.observacao_tarefa.porcentagem = dif;
 
-
-
         tarefaService.addObservacao($scope.tarefa, $scope.observacao_tarefa, function (f) {
 
             if (f.sucesso) {
@@ -6641,6 +6639,7 @@ rtc.controller("crtAcompanharPedidos", function ($scope, acompanharPedidoService
                 total += (pro.valor_base + pro.frete + pro.juros + pro.ipi + pro.icms) * pro.quantidade;
 
             }
+            
             var alicota = (icms * 100 / base).toFixed(2);
 
             ic.find("#prazo").html(pedido.prazo);
@@ -6657,9 +6656,8 @@ rtc.controller("crtAcompanharPedidos", function ($scope, acompanharPedidoService
 
         })
 
-
     }
-
+    
     $scope.deletePedido = function () {
 
         baseService.delete($scope.pedido, function (r) {
@@ -6685,7 +6683,8 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
             $scope.pedidos,
             "pedido",
             ["id", "cliente.razao_social", "data", "frete", "id_status", "usuario.nome"]);
-
+    
+    produtoService.vencidos = false;
     $scope.produtos = createAssinc(produtoService, 1, 3, 4);
 
     assincFuncs(

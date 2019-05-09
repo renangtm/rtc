@@ -2036,8 +2036,9 @@ rtc.service('produtoService', function ($http, $q) {
             falha: fn
         });
     }
+    this.vencidos = false;
     this.remessaGetValidades = function (meses_validade_curta, produtos, fn) {
-        this.remessaGetLotes(produtos, 'lote.quantidade_real>0 AND lote.validade>CURRENT_DATE', 'lote.validade', function (l) {
+        this.remessaGetLotes(produtos, 'lote.quantidade_real>0' + (!vencidos?' AND lote.validade>CURRENT_DATE':''), 'lote.validade', function (l) {
 
             for (var qq = 0; qq < produtos.length; qq++) {
 
@@ -2215,7 +2216,7 @@ rtc.service('produtoService', function ($http, $q) {
 
         }
 
-        this.getLotes(produto, 'lote.quantidade_real>0 AND lote.validade > CURRENT_DATE', 'lote.validade', function (l) {
+        this.getLotes(produto, 'lote.quantidade_real>0'+ (!vencidos?' AND lote.validade>CURRENT_DATE':''), 'lote.validade', function (l) {
 
             var lotes = l.lotes;
 

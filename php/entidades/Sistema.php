@@ -780,7 +780,7 @@ class Sistema {
 
 
         $usuarios = array();
-        $ps = $con->getConexao()->prepare("SELECT usuario.id FROM usuario WHERE id_empresa=$empresa->id AND id_cargo IN $cargos");
+        $ps = $con->getConexao()->prepare("SELECT usuario.id FROM usuario WHERE id_empresa=$empresa->id AND excluido=false AND id_cargo IN $cargos");
         $ps->execute();
         $ps->bind_result($id);
         while ($ps->fetch()) {
@@ -2070,7 +2070,7 @@ class Sistema {
 
         foreach ($empresas as $key => $value) {
 
-            $prods = $value->getProdutos($con, 0, 500000, '(produto.estoque*produto.quantidade_unidade) < 24 AND produto.id_categoria IN ' . $categorias_loja, '');
+            $prods = $value->getProdutos($con, 0, 500000, 'produto.estoque=0 AND produto.id_categoria IN ' . $categorias_loja, '');
 
             foreach ($prods as $key2 => $value2) {
 
@@ -3383,7 +3383,8 @@ class Sistema {
     public static function getStatusCanceladoPedidoEntrada() {
 
         $st = Sistema::getStatusPedidoEntrada();
-        return $st[3];
+        return $st[4];
+        
     }
 
     public static function relacionarFilial($empresa1, $empresa2) {

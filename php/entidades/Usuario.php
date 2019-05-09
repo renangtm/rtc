@@ -647,7 +647,7 @@ class Usuario {
                 . "FROM tarefa "
                 . "LEFT JOIN (SELECT * FROM observacao WHERE observacao.excluida = false) observacao ON tarefa.id=observacao.id_tarefa "
                 . "LEFT JOIN usuario u ON u.id=tarefa.criada_por "
-                . "WHERE tarefa.excluida=false AND tarefa.id_usuario=$this->id";
+                . "WHERE tarefa.excluida=false AND (tarefa.agendamento IS NULL OR tarefa.agendamento<CURRENT_TIMESTAMP) AND tarefa.id_usuario=$this->id";
 
         if ($filtro !== "") {
 

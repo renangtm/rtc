@@ -13,6 +13,23 @@
  */
 class Utilidades {
 
+    public static function has($string, $vetor, $qtd = 1) {
+
+        $qtd = min(count($vetor), $qtd);
+
+        $mach = 0;
+
+        foreach ($vetor as $key => $value) {
+            
+            if (strpos(strtolower($string), strtolower($value)) !== false) {
+
+                $mach++;
+            }
+        }
+
+        return $mach >= $qtd;
+    }
+
     public static function removeAcentos($string, $slug = false) {
 
         if (is_string($string)) {

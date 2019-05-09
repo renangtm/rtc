@@ -32,8 +32,38 @@ class testeSistema extends PHPUnit_Framework_TestCase {
 
         $con = new ConnectionFactory();
         
-        $r = new RoboVirtual();
-        $r->executar($con);
+        $tarefa = new stdClass();
+        $obs = new stdClass();
+        $obs->observacao = "#AGENDAR_PROXIMA_PARA: 09/05/2019 19:30<br>#OBSERVACOES: _____ 12344321423";
+        $obs->cadastrada_agora=true;
+        $tarefa->observacoes = array($obs);
+        
+        
+        foreach ($tarefa->observacoes as $key => $value) {
+            if (!$value->cadastrada_agora) {
+                continue;
+            }
+          
+            $o = str_replace(array("<br>"), array(" "), $value->observacao);
+            $o = explode("#", $o);
+            foreach ($o as $k => $d) {
+                $val = explode(":", $d, 2);
+                if (count($val) < 2) {
+                    continue;
+                }
+                $val2 = $val[1];
+                $val = $val[0];
+                if (strlen($val) === 0 || strlen($val2) === 0) {
+                    continue;
+                }
+                while ($val2{0} === " ") {
+                    $val2 = substr($val2, 1);
+                }
+                $dados[strtolower($val)] = $val2;
+            }
+        }
+        
+        echo print_r($dados);
         
         return;
 

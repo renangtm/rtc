@@ -18,6 +18,7 @@ class ObservacaoTarefa {
     public $observacao;
     public $momento;
     public $excluida;
+    public $cadastrada_agora;
     
     public function __construct() {
 
@@ -26,6 +27,7 @@ class ObservacaoTarefa {
         $this->observacao = '';
         $this->momento = round(microtime(true)*1000);
         $this->excluida = false;
+        $this->cadastrada_agora = false;
         
     }
     

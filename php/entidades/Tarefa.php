@@ -68,6 +68,29 @@ class Tarefa {
     public function start($con, $usuario) {
 
         $this->start = round(microtime(true) * 1000);
+        
+        $af = array();
+        $ps = $con->getConexao()->prepare("SELECT id,UNIX_TIMESTAMP(start_usuario)*1000 FROM tarefa WHERE id_usuario=$usuario->id AND start_usuario > FROM_UNIXTIME(1)");
+        $ps->execute();
+        $ps->bind_result($id,$start);
+        while($ps->fetch()){
+            $af[] = array($id,$start);
+        }
+        $ps->close();
+        
+        foreach($af as $key=>$value){
+            
+            $id_tarefa = $value[0];
+            $inicio_tarefa = $value[1];
+            
+            $intervalo = $inicio_tarefa."@".round(microtime(true)*1000).";";
+            
+            
+            $ps = $con->getConexao()->prepare("UPDATE tarefa SET start_usuario=FROM_UNIXTIME(1),intervalos_execucao=CONCAT(intervalos_execucao,$intervalo) WHERE id=$id_tarefa");
+            $ps->execute();
+            $ps->close();
+            
+        }
 
         $ps = $con->getConexao()->prepare("UPDATE tarefa SET inicio_minimo=inicio_minimo, start_usuario=FROM_UNIXTIME($this->start/1000) WHERE id=$this->id");
         $ps->execute();
@@ -106,7 +129,7 @@ class Tarefa {
     }
 
     public function addObservacao($con, $usuario, $observacao) {
-
+       
         $observacao->merge($con);
 
         $ps = $con->getConexao()->prepare("UPDATE observacao SET id_tarefa=$this->id,momento=momento WHERE id=$observacao->id");
@@ -130,7 +153,7 @@ class Tarefa {
         if ($this->start !== 1000) {
             $inicio = $this->start;
         }
-
+       
         $intervalo = array($inicio, $observacao->momento);
         $this->intervalos_execucao[] = $intervalo;
 
@@ -139,15 +162,21 @@ class Tarefa {
         $ps->close();
 
         $intervalos = "";
-
+  
         foreach ($this->intervalos_execucao as $key => $value) {
-            $intervalos .= $value[0] . "@" . $value[1] . ";";
+            if(count($value)==2){
+                $intervalos .= $value[0] . "@" . $value[1] . ";";
+            }
         }
-
+        
+ 
+        $observacao->cadastrada_agora = true;
+ 
         $this->observacoes[] = $observacao;
-
+ 
         $this->tipo_tarefa->init($this);
-
+        
+        
         $ps = $con->getConexao()->prepare("UPDATE tarefa SET intervalos_execucao='$intervalos',inicio_minimo=inicio_minimo,start_usuario=FROM_UNIXTIME(1),porcentagem_conclusao=$porcentagem WHERE id=$this->id");
         $ps->execute();
         $ps->close();
