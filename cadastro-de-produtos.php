@@ -522,8 +522,19 @@
                                             <div class="col">
                                                 <label class=newbtn>
                                                     <img id="blah" width="50%" src="{{produto.imagem}}" >
-                                                    <input id="uploaderImagemProduto" style="display: none" type="file" >
+                                                    <input id="uploaderImagemProduto" style="display: none" type="file" multiple="true">
+                                                    <input id="uploaderImagemProdutoSecundario" style="display: none" type="file" multiple="true">
                                                 </label>
+                                                <hr>
+                                                <button type="button" class="btn btn-success" onclick="$('#uploaderImagemProdutoSecundario').click()"><i class="fas fa-plus-circle"></i> Nova foto secundaria</button>
+                                                <hr ng-if="produto.mais_fotos.length>0">
+                                                    <div ng-repeat="foto in produto.mais_fotos" style="display: inline">
+                                                        <img id="blah" width="50%" src="{{foto}}">
+                                                        <button type="button" class="btn btn-danger" ng-click="removerFoto(foto,produto)" style="padding:5px;width:25px;height:25px">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                        <hr>
+                                                    </div>
                                             </div>
                                         </div>
 

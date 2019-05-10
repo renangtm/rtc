@@ -294,7 +294,7 @@
                                                 <td class="text-center" width="100px">{{prod.quantidade}}</td>
                                                 <td ng-if="prod.validade_minima > 0 && prod.validade_minima !== 1000" class="text-center">{{prod.validade_minima| data}}</td>
                                                 <td ng-if="prod.validade_minima === 1000" class="text-center">-------</td>
-                                                <td class="text-center"><input ng-disabled="!pedido.status.altera || pedido.empresa.id !== <?php echo $empresa->id ?>" type="number" steep="0.01" ng-confirm="atualizaCustos()" class="form-control" ng-model="prod.valor_base"></td>
+                                                <td class="text-center"><input type="number" steep="0.01" ng-confirm="atualizaCustos()" class="form-control" ng-model="prod.valor_base"></td>
                                                 <td class="text-center">{{prod.juros}}</td>
                                                 <td class="text-center">{{prod.frete}}</td>
                                                 <td class="text-center">{{prod.icms}}</td>
@@ -317,7 +317,7 @@
                                                 <td colspan="5">
                                                     <div class="product-btn" style="width:100%">
                                                         <button style="float:left" class="btn btn-success" ng-click="inverterPrecos()"><i class="fas fa-random"></i> Transformar Preco Base em Final</button>
-                                                        <a style="float: right" href="#" class="btn btn-outline-light btnaddprod" ng-disabled="!pedido.status.altera" ng-if="pedido.empresa.id === <?php echo $empresa->id; ?>" ng-click="produtos.attList()" data-title="addproduto" data-toggle="modal" data-target="#produtos"><i class="fas fa-plus-circle"></i></a>
+                                                        <a style="float: right" href="#" class="btn btn-outline-light btnaddprod" ng-if="pedido.empresa.id === <?php echo $empresa->id; ?>" ng-click="produtos.attList()" data-title="addproduto" data-toggle="modal" data-target="#produtos"><i class="fas fa-plus-circle"></i></a>
                                                     </div>
                                                 </td>
 
@@ -338,15 +338,15 @@
                                                 <label for="">Frete</label>
                                             </div>
                                             <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
-                                                <input ng-disabled="!pedido.status.altera" type="radio" id="customRadioInline1" name="customRadioInline1" ng-value="true" ng-change="atualizaCustos()" ng-model="pedido.frete_incluso" class="custom-control-input" checked>
+                                                <input type="radio" id="customRadioInline1" name="customRadioInline1" ng-value="true" ng-change="atualizaCustos()" ng-model="pedido.frete_incluso" class="custom-control-input" checked>
                                                 <label class="custom-control-label" for="customRadioInline1">CIF</label>
                                             </div>
                                             <div class="custom-control custom-radio custom-control-inline" style="margin-top: 5px;">
-                                                <input ng-disabled="!pedido.status.altera" type="radio" id="customRadioInline2" name="customRadioInline1" ng-value="false" ng-change="atualizaCustos()" ng-model="pedido.frete_incluso" class="custom-control-input">
+                                                <input type="radio" id="customRadioInline2" name="customRadioInline1" ng-value="false" ng-change="atualizaCustos()" ng-model="pedido.frete_incluso" class="custom-control-input">
                                                 <label class="custom-control-label" for="customRadioInline2">FOB</label>
                                             </div>
                                             <div class="form-inline col-3" style="margin-left: 40px;">
-                                                <a href="#" ng-disabled="!pedido.status.altera" class="btn btn-primary" data-title="calcFrete" data-toggle="modal" ng-click="getFretes()" data-target="#calcFrete" ng-if="calculoPronto()">Calcular Frete</a>
+                                                <a href="#" class="btn btn-primary" data-title="calcFrete" data-toggle="modal" ng-click="getFretes()" data-target="#calcFrete" ng-if="calculoPronto()">Calcular Frete</a>
                                             </div>
 
                                         </div>
@@ -358,7 +358,7 @@
                                                 <label for="">Forma de pagamento</label>
                                             </div>
                                             <div class="form-inline" style="margin-left: 40px;">
-                                                <select ng-disabled="!pedido.status.altera || pedido.empresa.id !== <?php echo $empresa->id; ?>" class="form-control" id="ped" ng-model="pedido.forma_pagamento">    
+                                                <select class="form-control" id="ped" ng-model="pedido.forma_pagamento">    
                                                     <option ng-value="forma_pagamento" ng-repeat="forma_pagamento in formas_pagamento">{{forma_pagamento.nome}}</option>
                                                 </select>
                                             </div>
@@ -368,7 +368,7 @@
                                             </div>
                                             <div class="form-inline">
                                                 <label for="" style="margin-left: 25px;margin-right: 10px;">Parcelas:</label>
-                                                <input ng-disabled="!pedido.status.altera" type="number" class="form-control col-5" ng-model="pedido.parcelas" ng-confirm="atualizaCustos()" placeholder="1" min="0" max="90" value="1">
+                                                <input type="number" class="form-control col-5" ng-model="pedido.parcelas" ng-confirm="atualizaCustos()" placeholder="1" min="0" max="90" value="1">
                                             </div>
 
                                         </div>
@@ -400,7 +400,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                                <button class="btn btn-{{pedido.revisar?'warning':'danger'}}" ng-disabled="carregando" data-toggle="modal" data-target="#observacoes">
+                                <button class="btn btn-{{pedido.revisar?'warning':'success'}}" ng-disabled="carregando" data-toggle="modal" data-target="#observacoes">
                                     <i class="fas fa-save"></i> &nbsp; {{pedido.revisar?'Revisar':'Salvar'}}. {{carregando?'Aguarde... Algumas operacoes podem demorar alguns segundos':''}}
                                 </button>
                             </div>

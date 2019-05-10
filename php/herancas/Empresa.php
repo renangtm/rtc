@@ -5253,7 +5253,39 @@ class Empresa {
 
             $value->logistica = Sistema::getLogisticaById($con, $value->logistica);
         }
-
+        
+        $ids_produtos = "(-1";
+        
+        foreach($produtos as $key=>$value){
+            $ids_produtos.= ",$value->id";
+        }
+        
+        $ids_produtos .= ")";
+        
+        $imagens = array();
+        
+        $ps = $con->getConexao()->prepare("SELECT imagem,id_produto FROM mais_fotos_produto WHERE id_produto IN $ids_produtos");
+        $ps->execute();
+        
+        $ps->bind_result($imagem,$id_produto);
+        while($ps->fetch()){
+            if(!isset($imagens[$id_produto])){
+                $imagens[$id_produto] = array();
+            }
+            $imagens[$id_produto][] = $imagem;
+        }
+        $ps->close();
+        
+        foreach($produtos as $key=>$value){
+            
+            if(isset($imagens[$value->id])){
+                
+                $value->mais_fotos = $imagens[$value->id];
+                
+            }
+            
+        }
+        
         return $produtos;
     }
 

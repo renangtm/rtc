@@ -1,4 +1,4 @@
-var projeto = "https://www.rtcagro.com.br";
+var projeto = "http://192.168.18.121:888/novo_rtc_web";
 
 function mtlCharAt(str, idx) {
     str += '';

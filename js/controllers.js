@@ -47,23 +47,23 @@ rtc.controller("crtProtocolos", function ($scope, protocoloService, tipoProtocol
     $scope.mensagem_protocolo_novo = {};
     $scope.mensagem_protocolo = {};
 
-    $scope.terminar = function(protocolo){
-        
-        protocoloService.terminar(protocolo,function(t){
-            
-            if(t.sucesso){
-                
+    $scope.terminar = function (protocolo) {
+
+        protocoloService.terminar(protocolo, function (t) {
+
+            if (t.sucesso) {
+
                 msg.alerta("Terminado com sucesso");
                 $scope.protocolos.attList();
-                
-            }else{
-                
+
+            } else {
+
                 msg.erro("Ocorreu um problema");
-                
+
             }
-            
+
         })
-        
+
     }
 
     $scope.novaMensagem = function () {
@@ -6639,7 +6639,7 @@ rtc.controller("crtAcompanharPedidos", function ($scope, acompanharPedidoService
                 total += (pro.valor_base + pro.frete + pro.juros + pro.ipi + pro.icms) * pro.quantidade;
 
             }
-            
+
             var alicota = (icms * 100 / base).toFixed(2);
 
             ic.find("#prazo").html(pedido.prazo);
@@ -6657,7 +6657,7 @@ rtc.controller("crtAcompanharPedidos", function ($scope, acompanharPedidoService
         })
 
     }
-    
+
     $scope.deletePedido = function () {
 
         baseService.delete($scope.pedido, function (r) {
@@ -6683,7 +6683,7 @@ rtc.controller("crtPedidos", function ($scope, pedidoService, logService, tabela
             $scope.pedidos,
             "pedido",
             ["id", "cliente.razao_social", "data", "frete", "id_status", "usuario.nome"]);
-    
+
     produtoService.vencidos = false;
     $scope.produtos = createAssinc(produtoService, 1, 3, 4);
 
@@ -9069,6 +9069,74 @@ rtc.controller("crtProdutos", function ($scope, fabricanteService, ativoService,
 
     })
 
+    $scope.removerFoto = function (foto, produto) {
+
+        var nf = [];
+
+        for (var i = 0; i < produto.mais_fotos.length; i++) {
+
+            if (produto.mais_fotos[i] !== foto) {
+
+                nf[nf.length] = produto.mais_fotos[i];
+
+            }
+
+        }
+
+        produto.mais_fotos = nf;
+
+        produtoService.setMaisFotos(produto, produto.mais_fotos, function (rr) {
+
+            if (rr.sucesso) {
+
+                msg.alerta("Upload feito com sucesso");
+
+            } else {
+
+                msg.erro("Ocorreu um problema no servidor");
+
+            }
+
+        })
+
+    }
+    
+    $("#uploaderImagemProdutoSecundario").change(function () {
+
+        uploadService.upload($(this).prop("files"), function (arquivos, sucesso) {
+
+            if (!sucesso) {
+
+                msg.erro("Falha ao subir arquivo de imagem");
+
+            } else {
+
+                var mais_fotos = $scope.produto.mais_fotos;
+                for (var i = 0; i < arquivos.length; i++) {
+                    mais_fotos[mais_fotos.length] = arquivos[i];
+                }
+                $scope.produto.mais_fotos = mais_fotos;
+                produtoService.setMaisFotos($scope.produto, mais_fotos, function (rr) {
+
+                    if (rr.sucesso) {
+
+                        msg.alerta("Upload feito com sucesso");
+
+                    } else {
+
+                        msg.erro("Ocorreu um problema no servidor");
+
+                    }
+
+                })
+
+
+            }
+
+        })
+
+    })
+
     $("#uploaderImagemProduto").change(function () {
 
         uploadService.upload($(this).prop("files"), function (arquivos, sucesso) {
@@ -9081,7 +9149,26 @@ rtc.controller("crtProdutos", function ($scope, fabricanteService, ativoService,
 
                 $scope.produto.imagem = arquivos[0];
 
-                msg.alerta("Upload feito com sucesso");
+                var mais_fotos = $scope.produto.mais_fotos;
+                for (var i = 1; i < arquivos.length; i++) {
+                    mais_fotos[mais_fotos.length] = arquivos[i];
+                }
+                $scope.produto.mais_fotos = mais_fotos;
+                produtoService.setMaisFotos($scope.produto, mais_fotos, function (rr) {
+
+                    if (rr.sucesso) {
+
+                        msg.alerta("Upload feito com sucesso");
+
+                    } else {
+
+                        msg.erro("Ocorreu um problema no servidor");
+
+                    }
+
+                })
+
+
             }
 
         })

@@ -43,6 +43,7 @@ class Produto {
     public $sistema_lotes;
     public $nota_usuario;
     public $codigo;
+    public $mais_fotos;
 
     function __construct() {
 
@@ -73,6 +74,21 @@ class Produto {
         $this->ncm = "000000";
         $this->unidade = "Ob";
         $this->codigo = 0;
+        $this->mais_fotos = array();
+    }
+
+    public function setMaisFotos($con, $fotos) {
+
+        $ps = $con->getConexao()->prepare("DELETE FROM mais_fotos_produto WHERE id_produto=$this->id");
+        $ps->execute();
+        $ps->close();
+
+        foreach ($fotos as $key => $value) {
+
+            $ps = $con->getConexao()->prepare("INSERT INTO mais_fotos_produto(id_produto,imagem) VALUES($this->id,'$value')");
+            $ps->execute();
+            $ps->close();
+        }
     }
 
     public function getReduzido() {

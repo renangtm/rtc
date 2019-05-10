@@ -752,6 +752,8 @@ class Pedido {
             try {
 
                 $value->delete($con);
+                Sistema::avisoDEVS_MASTER($value->produto->nome.", Retirado do pedido $this->id");
+                
             } catch (Exception $ex) {
 
                 $erro = $ex->getMessage();
@@ -865,6 +867,7 @@ class Pedido {
 
                 foreach ($merged as $key => $value) {
                     $value->delete($con);
+                    Sistema::avisoDEVS_MASTER($value->produto->nome.", Retirado do pedido $this->id");
                 }
 
                 $ps = $con->getConexao()->prepare("DELETE FROM pedido WHERE id=$this->id");

@@ -13,7 +13,7 @@
  */
 class Sistema {
 
-    public static $ENDERECO = "https://www.rtcagro.com.br/";
+    public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
 
     /*
      * porcentagem
@@ -550,7 +550,7 @@ class Sistema {
     public static function P_PROTOCOLOS() {
         return new Permissao(56, "Protocolos");
     }
-    
+
     public static function P_ALTERAR_SEM_REVISAR() {
         return new Permissao(77, "Alterar Pedido sem Revisar");
     }
@@ -604,7 +604,7 @@ class Sistema {
 
         return new TTAtividadeComum($id_empresa);
     }
-    
+
     public static function TT_REVISAO_PEDIDO($id_empresa) {
 
         return new TTRevisaoPedido($id_empresa);
@@ -731,6 +731,21 @@ class Sistema {
         
     }
 
+    public static function avisoDEVS_MASTER($aviso) {
+
+        $email = new Email("renan.miranda@agrofauna.com.br");
+        $email->senha = "5hynespt";
+
+        $destino = new Email("renan_goncalves@outlook.com.br");
+
+        try {
+
+            $email->enviarEmail($destino, 'Aviso', $aviso);
+        } catch (Exception $ex) {
+            
+        }
+    }
+
     public static function avisoDEVS($aviso) {
 
         $email = new Email("renan.miranda@agrofauna.com.br");
@@ -780,7 +795,7 @@ class Sistema {
             }
             $cargos .= "$value->id";
         }
-        
+
         if (!$pelo_menos_um) {
             throw new Exception("Sem cargos");
         }
@@ -3392,7 +3407,6 @@ class Sistema {
 
         $st = Sistema::getStatusPedidoEntrada();
         return $st[4];
-        
     }
 
     public static function relacionarFilial($empresa1, $empresa2) {
