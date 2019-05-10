@@ -131,7 +131,8 @@ class Empresa {
             "TT_RASTREIO",
             "TT_SEPARACAO",
             "TT_SOLICITACAO_COLETA",
-            "TT_COTACAO"
+            "TT_COTACAO",
+            "TT_REVISAO_PEDIDO"
         );
 
         if ($id > 0 && $cf !== null) {

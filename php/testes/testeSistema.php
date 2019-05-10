@@ -29,8 +29,18 @@ class testeSistema extends PHPUnit_Framework_TestCase {
     public function testSimple() {
 
         date_default_timezone_set("America/Sao_Paulo");
-
+        
         $con = new ConnectionFactory();
+        
+        $ps = $con->getConexao()->prepare("SELECT dado FROM dados WHERE id=10");
+        $ps->execute();
+        $ps->bind_result($dado);
+        if($ps->fetch()){
+            echo $dado;
+        }
+        $ps->close();
+        
+        return;
         
         $tarefa = new stdClass();
         $obs = new stdClass();

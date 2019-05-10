@@ -157,11 +157,36 @@ class TTProspeccaoDeCliente extends TipoTarefa {
             $ps->close();
         }
         
+        $telefones = array();
+        $emails = array();
+        $nome = "";
+        $cnpj = "";
+        
+        $ps = $con->getConexao()->prepare("SELECT c.razao_social, c.cnpj, t.numero, e.endereco FROM cliente c LEFT JOIN email e ON e.id_entidade=c.id AND e.tipo_entidade='CLI' LEFT JOIN telefone t ON t.id_entidade=c.id AND t.tipo_entidade='CLI' WHERE c.id=$tarefa->id_entidade_relacionada");
+        $ps->execute();
+        $ps->bind_result($nome_cliente,$cnpj_cliente,$telefone_cliente,$email_cliente);
+        while($ps->fetch()){
+            $nome = $nome_cliente;
+            $cnpj = $cnpj_cliente;
+            $telefones[$telefone_cliente] = "";
+            $emails[$email_cliente] = "";
+        }
+        $ps->close();
+        
+        $str_telefones = "";
+        foreach($telefones as $key=>$value){
+            $str_telefones .= "$key<br>";
+        }
+        
+        $str_emails = "";
+        foreach($emails as $key=>$value){
+            $str_emails .= "$key<br>";
+        }
         
         $tarefa_ = new Tarefa();
         $tarefa_->tipo_tarefa = Sistema::TT_RECEPCAO_CLIENTE($this->id_empresa);
-        $tarefa_->titulo = "Recepcao de Cliente";
-        $tarefa_->descricao = "Recepcione o cliente ".$tarefa->id_entidade_relacionada." para o RTC ";
+        $tarefa_->titulo = "Recepcao de Cliente $nome";
+        $tarefa_->descricao = "Recepcione o cliente ".$tarefa->id_entidade_relacionada." -$nome para o RTC CNPJ: $cnpj<hr>Telefones:<br>$str_telefones<hr>Emails:<br>$str_emails<hr>";
         $tarefa_->id_entidade_relacionada = $tarefa->id_entidade_relacionada;
         $tarefa_->tipo_entidade_relacionada = $tarefa->tipo_entidade_relacionada;
         

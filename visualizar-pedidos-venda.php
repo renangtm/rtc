@@ -400,8 +400,8 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                                <button class="btn btn-primary" ng-disabled="carregando" data-toggle="modal" data-target="#observacoes">
-                                    <i class="fas fa-save"></i> &nbsp; Salvar. {{carregando?'Aguarde... Algumas operacoes podem demorar alguns segundos':''}}
+                                <button class="btn btn-{{pedido.revisar?'warning':'danger'}}" ng-disabled="carregando" data-toggle="modal" data-target="#observacoes">
+                                    <i class="fas fa-save"></i> &nbsp; {{pedido.revisar?'Revisar':'Salvar'}}. {{carregando?'Aguarde... Algumas operacoes podem demorar alguns segundos':''}}
                                 </button>
                             </div>
                         </div>

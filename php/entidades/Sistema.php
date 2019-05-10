@@ -550,6 +550,10 @@ class Sistema {
     public static function P_PROTOCOLOS() {
         return new Permissao(56, "Protocolos");
     }
+    
+    public static function P_ALTERAR_SEM_REVISAR() {
+        return new Permissao(77, "Alterar Pedido sem Revisar");
+    }
 
     public static function TT_COMPRA($id_empresa) {
 
@@ -599,6 +603,11 @@ class Sistema {
     public static function TT_ATIVIDADE_COMUM($id_empresa) {
 
         return new TTAtividadeComum($id_empresa);
+    }
+    
+    public static function TT_REVISAO_PEDIDO($id_empresa) {
+
+        return new TTRevisaoPedido($id_empresa);
     }
 
     public static function TT_PROSPECCAO_CLIENTE($id_empresa) {
@@ -771,9 +780,9 @@ class Sistema {
             }
             $cargos .= "$value->id";
         }
-
+        
         if (!$pelo_menos_um) {
-            return;
+            throw new Exception("Sem cargos");
         }
 
         $cargos .= ")";
@@ -787,7 +796,6 @@ class Sistema {
             $usuarios[] = $id;
         }
         $ps->close();
-
 
         $in = "(0";
 
@@ -3896,7 +3904,8 @@ class Sistema {
                 Sistema::P_PEDIDO_ENTRADA(),
                 Sistema::P_LOGO(),
                 Sistema::P_PRODUTO(),
-                Sistema::P_MOVIMENTO_PRODUTO())
+                Sistema::P_MOVIMENTO_PRODUTO(),
+                Sistema::P_ALTERAR_SEM_REVISAR())
             ), new RTC(2, array(
                 Sistema::P_CAMPANHA(),
                 Sistema::P_CATEGORIA_CLIENTE(),

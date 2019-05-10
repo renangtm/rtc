@@ -184,7 +184,6 @@ class Tarefa {
 
 
         if ($this->porcentagem_conclusao >= 100) {
-
             $this->tipo_tarefa->aoFinalizar($this, $usuario);
         }
     }

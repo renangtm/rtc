@@ -44,6 +44,36 @@ class TipoTarefa {
         
     }
 
+    public function getDados($tarefa,$nova = true) {
+
+        $dados = array();
+
+        foreach ($tarefa->observacoes as $key => $value) {
+            if (!$value->cadastrada_agora && $nova) {
+                continue;
+            }
+            $o = str_replace(array("<br>"), array(" "), $value->observacao);
+            $o = explode("#", $o);
+            foreach ($o as $k => $d) {
+                $val = explode(":", $d, 2);
+                if (count($val) < 2) {
+                    continue;
+                }
+                $val2 = $val[1];
+                $val = $val[0];
+                if (strlen($val) === 0 || strlen($val2) === 0) {
+                    continue;
+                }
+                while ($val2{0} === " ") {
+                    $val2 = substr($val2, 1);
+                }
+                $dados[strtolower($val)] = $val2;
+            }
+        }
+
+        return $dados;
+    }
+
     protected function carregarDados() {
 
         $ses = new SessionManager();

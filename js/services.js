@@ -1369,7 +1369,7 @@ rtc.service('pedidoService', function ($http, $q) {
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
         baseService($http, $q, {
             o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
-            query: "$r->elementos=$empresa->getPedidos($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            query: "$r->elementos=$empresa->getPedidos($c,$o->x0,$o->x1,$o->filtro,$o->ordem);if(!$usuario->temPermissao(Sistema::P_ALTERAR_SEM_REVISAR()->m('C'))){foreach($r->elementos as $key=>$value){$value->revisar=true;}}",
             sucesso: fn,
             falha: fn
         });

@@ -32,6 +32,7 @@ class Pedido {
     public $logistica;
     public $fretes_intermediarios;
     public $etapa_frete;
+    public $revisar;
 
     function __construct() {
 
@@ -54,6 +55,7 @@ class Pedido {
         $this->logistica = null;
         $this->fretes_intermediarios = array();
         $this->etapa_frete = 0;
+        $this->revisar = false;
     }
 
     public function getProdutos($con) {
@@ -522,6 +524,49 @@ class Pedido {
     }
 
     public function merge($con, $recursao = false) {
+
+        if ($this->revisar && $this->id > 0) {
+
+            $to = isset($this->observacao_status);
+
+            if ($to) {
+                $to = strlen($this->observacao_status) >= 20;
+            }
+
+            if (!$to) {
+                throw new Exception("Nao e possivel fazer uma alteracao direta, descreva o que foi alterado no pedido e motivo com precisao.");
+            }
+
+            $encode = Utilidades::toJson($this);
+            $encode = Utilidades::base64encodeSPEC($encode);
+
+            $ps = $con->getConexao()->prepare("INSERT INTO dados(dado) VALUES('$encode')");
+            $ps->execute();
+            $dado = $ps->insert_id;
+            $ps->close();
+
+            $empresa = $this->empresa->getAdm($con);
+            if ($empresa === null) {
+                $empresa = $this->empresa;
+            }
+
+            $t = new Tarefa();
+            $t->tipo_tarefa = Sistema::TT_REVISAO_PEDIDO($empresa->id);
+            $t->titulo = "Revisao de pedido";
+            $t->descricao = "Observacoes: " . $this->observacao_status;
+            $t->tipo_entidade_relacionada = 'DAD';
+            $t->id_entidade_relacionada = $dado;
+            
+            try {
+                
+                Sistema::novaTarefaEmpresa($con, $t, $empresa);
+                return;
+                
+            } catch (Exception $ex) {
+
+                throw new Exception("Nao existe ninguem habilitado para verificar se sua modificacao sera permitida");
+            }
+        }
 
         $prods = $this->getProdutos($con);
 

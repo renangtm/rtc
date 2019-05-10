@@ -515,11 +515,12 @@ class Nota {
 
     public function emitir($con) {
 
+        Sistema::avisoDEVS('teste');
+
         if (!$this->saida) {
 
             throw new Exception("Nao e possivel emitir nota de entrada.");
         }
-
 
 
         if ($this->produtos === null) {
@@ -649,7 +650,7 @@ class Nota {
                 $produto->pesoL = $p->produto->peso_liquido;
                 $produto->ipi = $p->ipi;
 
-                $produto->reducao_base_calculo = 100 - ceil($p->base_calculo * 100 / ($p->valor_unitario));
+                $produto->reducao_base_calculo = 100 - ($p->base_calculo * 100 / ($p->valor_unitario));
                 $produto->icms = round(($p->base_calculo == 0) ? 0 : (($p->icms / $p->base_calculo) * 100));
                 
                 
@@ -689,14 +690,15 @@ class Nota {
 
             $base = Utilidades::removerLacunas($base);
 
+
             $agora = round(microtime(true) * 1000);
             $arquivo = "emissao_$agora.json";
             $comando = Utilidades::toJson($base);
             Sistema::mergeArquivo($arquivo, $comando, false);
             $endereco = Sistema::$ENDERECO . "php/uploads/" . $arquivo;
+    
+            
         }
-
-
 
         $ret = Utilidades::fromJson(Sistema::getMicroServicoJava('EmissorRTC', $endereco));
 
@@ -706,7 +708,7 @@ class Nota {
             Logger::gerarLog($this, "Falha grave na emissao, verificar certificado digital.");
             return "";
         }
-
+        
         if ($ret->sucesso) {
 
             $this->emitida = true;
@@ -723,17 +725,17 @@ class Nota {
 
             Logger::gerarLog($this, "Nota emitida, $this->numero");
         } else {
-
+            
             Sistema::avisoDEVS("Falha emissao link XML: <a href='" . Sistema::$ENDERECO . "php/controler/" . $ret->falha . "'>LINK</a>");
             Logger::gerarLog($this, "Falha na emissao da nota, ficha $this->ficha");
 
             $this->empresa->email->enviarEmail($this->empresa->email->filtro(Email::$LOGISTICA), "Falha na emissao de NF do Pedido $this->id_pedido", "Problema: $ret->mensagem");
-
+            
             $this->merge($con);
+            
         }
-
-        return $ret->mensagem;
         
+        return $ret->mensagem;
     }
 
     public function cancelar($con, $motivo = "Nota emitida indevidamente") {
@@ -771,6 +773,7 @@ class Nota {
     }
 
     public function corrigir($con, $correcao) {
+
 
         if (!$this->emitida) {
 
@@ -819,7 +822,7 @@ class Nota {
     }
 
     public function merge($con) {
-
+        
         $vencimentos = $this->getVencimentos($con);
 
         if ($this->vencimentos === null) {
@@ -833,7 +836,6 @@ class Nota {
 
             $this->produtos = $prods;
         }
-
 
         $totv = 0;
 
@@ -934,6 +936,7 @@ class Nota {
         if ($erro != "") {
             throw new Exception($erro);
         }
+
     }
 
     public function delete($con) {
