@@ -116,9 +116,6 @@
                                                                 <th>Descr</th>
                                                                 <th>Prioridade</th>
                                                                 <th>Por</th>
-                                                                <th>Inicio em</th>
-                                                                <th>Tempo faltante</th>
-                                                                <th>Momento conclusao</th>
                                                                 <th>Acao</th>
                                                             </tr>
                                                         </thead>
@@ -130,9 +127,6 @@
                                                                 <td>{{tarefa[0].descricao_resumida}}</td>
                                                                 <td>{{tarefa[0].prioridade}}</td>
                                                                 <td>{{tarefa[0].assinatura_solicitante}}</td>
-                                                                <td>{{tarefa[0].calculado_previsao_inicio| data}}</td>
-                                                                <td>{{tarefa[0].calculado_tempo_util_faltante| tempo}}</td>
-                                                                <td>{{tarefa[0].calculado_momento_conclusao| data}}</td>
                                                                 <td>
                                                                     <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" data-target="#demo{{tarefa[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
                                                                 </td>
@@ -180,9 +174,6 @@
                                                         <th>Descr</th>
                                                         <th>Prioridade</th>
                                                         <th>Por</th>
-                                                        <th>Inicio em</th>
-                                                        <th>Tempo faltante</th>
-                                                        <th>Momento conclusao</th>
                                                         <th>Acao</th>
                                                         </tfoot>
                                                     </table>

@@ -26,6 +26,7 @@ class Usuario {
     public $rg;
     public $permissoes;
     public $cargo;
+    public $faixa_salarial;
 
     function __construct() {
 
@@ -40,6 +41,8 @@ class Usuario {
         $this->empresa = null;
         $this->permissoes = array();
         $this->cargo = null;
+        $this->faixa_salarial = 0;
+        
     }
 
     public function getCountClientes($con, $filtro = "") {
@@ -365,11 +368,13 @@ class Usuario {
     }
 
     public function getTarefasSolicitadas($con) {
-
+       
         $cm = new CacheManager(3600000);
-
+        
         $cache = $cm->getCache("tarefas_solicitadas_$this->id", false, true);
-
+        
+        
+        
         if ($cache === null) {
             $cache = new stdClass();
 
@@ -462,8 +467,7 @@ class Usuario {
             $cm->setCache("tarefas_solicitadas_$this->id", $cache, false, true);
         }
         //---------------------------------------
-
-
+     
         $tarefas = array();
 
         $sql = "SELECT "
@@ -496,6 +500,8 @@ class Usuario {
                 . "LEFT JOIN usuario u2 ON tarefa.criada_por=u2.id "
                 . "WHERE tarefa.excluida=false AND (tarefa.id_usuario IN $cache->usuarios OR tarefa.criada_por=$this->id) AND tarefa.porcentagem_conclusao<100 ORDER BY tarefa.id DESC";
 
+        
+        
         $tmp = array();
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
@@ -570,36 +576,17 @@ class Usuario {
         }
 
         $ps->close();
-
+        
         foreach ($tmp as $key => $value) {
             if ($value->tipo_tarefa !== null) {
                 //$value->tipo_tarefa->init($value);
             }
         }
-
+        
+        
+        
         //--------------------------------------
         
-        
-        foreach ($cache->arr_associados as $key => $usuario) {
-
-            $a = array();
-            $e = array();
-            $t = array();
-
-            if (isset($cache->ausencias[$usuario])) {
-                $a = $cache->ausencias[$usuario];
-            }
-
-            if (isset($cache->expedientes[$usuario])) {
-                $e = $cache->expedientes[$usuario];
-            }
-
-            if (isset($tarefas[$usuario])) {
-                $t = $tarefas[$usuario];
-            }
-
-            $tarefas[$usuario] = IATarefas::aplicar($e, $a, $t);
-        }
 
         $retorno = array();
 
@@ -854,12 +841,12 @@ class Usuario {
 
 
         if ($this->id == 0) {
-            $ps = $con->getConexao()->prepare("INSERT INTO usuario(login,senha,nome,cpf,excluido,id_empresa,rg) VALUES('" . addslashes($this->login) . "','" . addslashes($this->senha) . "','" . addslashes($this->nome) . "','" . $this->cpf->valor . "',false," . $this->empresa->id . ",'" . addslashes($this->rg->valor) . "')");
+            $ps = $con->getConexao()->prepare("INSERT INTO usuario(login,senha,nome,cpf,excluido,id_empresa,rg,faixa_salarial) VALUES('" . addslashes($this->login) . "','" . addslashes($this->senha) . "','" . addslashes($this->nome) . "','" . $this->cpf->valor . "',false," . $this->empresa->id . ",'" . addslashes($this->rg->valor) . "',$this->faixa_salarial)");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
-            $ps = $con->getConexao()->prepare("UPDATE usuario SET login='" . addslashes($this->login) . "',senha='" . addslashes($this->senha) . "', nome = '" . addslashes($this->nome) . "', cpf='" . $this->cpf->valor . "',excluido=false, id_empresa=" . $this->empresa->id . ",rg='" . addslashes($this->rg->valor) . "' WHERE id = " . $this->id);
+            $ps = $con->getConexao()->prepare("UPDATE usuario SET login='" . addslashes($this->login) . "',senha='" . addslashes($this->senha) . "', nome = '" . addslashes($this->nome) . "', cpf='" . $this->cpf->valor . "',excluido=false, id_empresa=" . $this->empresa->id . ",rg='" . addslashes($this->rg->valor) . "',faixa_salarial=$this->faixa_salarial WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
         }

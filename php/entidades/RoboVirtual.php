@@ -21,7 +21,8 @@ class RoboVirtual {
     public $minuto;
     public $segundo;
     public $momento;
-
+    public $dia_semana;
+    
     public function __construct() {
 
         date_default_timezone_set("America/Sao_Paulo");
@@ -35,9 +36,15 @@ class RoboVirtual {
         $this->hora = intval($str[3]);
         $this->minuto = intval($str[4]);
         $this->segundo = intval($str[5]);
+        $this->dia_semana = intval(date('w',$this->momento/1000));
+        
     }
 
     public function executar($con) {
+        
+        if($this->dia_semana === 0 || $this->dia_semana === 6){
+            return;
+        }
 
         $virtuais = array();
         $ps = $con->getConexao()->prepare("SELECT id FROM empresa WHERE tipo_empresa=3");

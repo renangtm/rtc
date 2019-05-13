@@ -7,7 +7,7 @@ class ConnectionFactory {
     public function getConexao() {
 
         if (self::$conexao == null) {
-            self::$conexao = new mysqli("192.168.0.43", "root", "4gft3cm4st3r", "novo_rtc", 3306);
+            self::$conexao = new mysqli("rtcd.rtcagro.com.br", "root", "4gft3cm4st3r", "novo_rtc", 45853);
         }
         
         return self::$conexao;

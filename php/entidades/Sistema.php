@@ -554,6 +554,14 @@ class Sistema {
     public static function P_ALTERAR_SEM_REVISAR() {
         return new Permissao(77, "Alterar Pedido sem Revisar");
     }
+    
+    public static function P_CARGOS() {
+        return new Permissao(78, "Cargos");
+    }
+    
+    public static function P_TIPOS_ATIVIDADE() {
+        return new Permissao(79, "Tipos de Atividade");
+    }
 
     public static function TT_COMPRA($id_empresa) {
 
@@ -3930,7 +3938,9 @@ class Sistema {
             ), new RTC(3, array(
                 Sistema::P_GRUPO_CIDADE(),
                 Sistema::P_CFG(),
-                Sistema::P_TABELA())
+                Sistema::P_TABELA(),
+                Sistema::P_CARGOS(),
+                Sistema::P_TIPOS_ATIVIDADE())
             ), new RTC(4, array(
                 Sistema::P_NOTA(),
                 Sistema::P_ENTRADA_NFE()

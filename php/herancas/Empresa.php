@@ -656,7 +656,8 @@ class Empresa {
         $ps->execute();
         $ps->bind_result($id, $nome);
 
-        $cargos = Utilidades::copy($this->cargos_fixos);
+        $cf = Utilidades::copy($this->cargos_fixos);
+        $cargos = array();
 
         while ($ps->fetch()) {
 
@@ -666,6 +667,10 @@ class Empresa {
             $cargo->nome = $nome;
 
             $cargos[] = $cargo;
+        }
+        
+        foreach($cf as $key=>$value){
+            $cargos[] = $value;
         }
 
         $ps->close();
@@ -6040,6 +6045,7 @@ class Empresa {
 
         $sql = "SELECT "
                 . "usuario.id,"
+                . "usuario.faixa_salarial,"
                 . "usuario.id_cargo,"
                 . " usuario.nome,"
                 . " usuario.login,"
@@ -6078,7 +6084,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_usu, $id_cargo, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha);
+        $ps->bind_result($id_usu,$faixa, $id_cargo, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha);
 
         $usuarios = array();
 
@@ -6086,6 +6092,7 @@ class Empresa {
 
             $usuario = new Usuario();
 
+            $usuario->faixa_salarial = $faixa;
             $usuario->cpf = new CPF($cpf_usu);
             $usuario->cargo = Sistema::getCargo($con, $this, $id_cargo);
             $usuario->email = new Email($email_usu_end);

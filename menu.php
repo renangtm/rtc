@@ -371,6 +371,16 @@ $possiveis[0] = $rtc;
                             <a class="nav-link" href="banners.php" ><button class="btn btn-warning" onmousedown="tutorial('Banners', 'Aqui voc� consegue confeccionar banners din�micos para entrar no RTC da sua empresa e serem enviados por email, esses banners tem que estar em formato HTML, e talvez precise de um profissional de marketing para criar esse HTML para voc�, mas depois que � criado o pr�prio sistema faz adapta��es nele para servir para qualquer situa��o')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-image"></i>Banners</a>
                         </li>
                     <?php } ?>
+                        <?php if ($usuario->temPermissao(Sistema::P_CARGOS()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="cargos.php" ><button class="btn btn-warning" onmousedown="tutorial('Cargos', 'Aqui voce consegue gerenciar os cargos')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-adjust"></i>Cargos</a>
+                        </li>
+                    <?php } ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_TIPOS_ATIVIDADE()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="tipos_atividade.php" ><button class="btn btn-warning" onmousedown="tutorial('Tipos Atividade', 'Aqui voce consegue gerenciar os tipos de atividade')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-random"></i>Tipos de Atividade</a>
+                        </li>
+                    <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_ENCOMENDA()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="encomenda.php" ><button class="btn btn-warning" onmousedown="tutorial('Encomenda', 'Aqui voc� pode gerenciar as encomendas realizadas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-clock"></i>Encomendas</a>

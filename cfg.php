@@ -586,6 +586,15 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
+                                        <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Salr. (R$)</label>
+                                        <div class="col-9 col-lg-10">
+                                            <input id="txtname" type="number" ng-model="usuario.faixa_salarial" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
                                         <div class="col-9 col-lg-10">
                                             <email entidade="usu&aacute;rio" atributo="usuario.email" senha="true" alterar="true"></email>
                                         </div>
