@@ -113,7 +113,7 @@ class ProdutoPedidoSaida {
 
             $this->retiradas = array();
 
-            $lotes = $this->produto->getLotes($con, "lote.validade = FROM_UNIXTIME($this->validade_minima/1000) AND lote.quantidade_real > 0", "lote.quantidade_real DESC");
+            $lotes = $this->produto->getLotes($con, "MONTH(lote.validade) = MONTH(FROM_UNIXTIME($this->validade_minima/1000)) AND YEAR(lote.validade) = YEAR(FROM_UNIXTIME($this->validade_minima/1000)) AND lote.quantidade_real > 0", "lote.quantidade_real DESC");
 
             $qtd = max(abs($this->influencia_estoque), abs($this->influencia_reserva));
 
