@@ -562,6 +562,10 @@ class Sistema {
     public static function P_TIPOS_ATIVIDADE() {
         return new Permissao(79, "Tipos de Atividade");
     }
+    
+    public static function P_IA_CHAT() {
+        return new Permissao(80, "Arvore de chat");
+    }
 
     public static function TT_COMPRA($id_empresa) {
 
@@ -3943,7 +3947,8 @@ class Sistema {
                 Sistema::P_TIPOS_ATIVIDADE())
             ), new RTC(4, array(
                 Sistema::P_NOTA(),
-                Sistema::P_ENTRADA_NFE()
+                Sistema::P_ENTRADA_NFE(),
+                Sistema::P_IA_CHAT()
                     )), new RTC(5, array(
                 Sistema::P_BANCO(),
                 Sistema::P_RELATORIO_FINANCEIRO(),
