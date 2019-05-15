@@ -676,7 +676,6 @@ class Usuario {
                 }
 
                 if ($t->tipo_tarefa === null) {
-                    echo $t->id . ",";
                     continue;
                 }
 

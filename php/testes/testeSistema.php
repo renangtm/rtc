@@ -32,20 +32,17 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         $con = new ConnectionFactory();
         
-        $e = new Empresa(1734,$con);
         
-        $usuario = $e->getUsuarios($con, 0, 1,"usuario.nome like '%Elias%'");
-        $usuario = $usuario[0];
-        
-        $tarefas = $usuario->getTarefasSolicitadas($con);
-        
-        return;
-        
-        $ps = $con->getConexao()->prepare("SELECT dado FROM dados WHERE id=10");
+        $ps = $con->getConexao()->prepare("SELECT dado FROM dados WHERE id=(SELECT MAX(id) FROM dados)");
         $ps->execute();
         $ps->bind_result($dado);
         if($ps->fetch()){
-            echo $dado;
+            
+           $json = Utilidades::base64decodeSPEC($dado);
+            
+           
+           echo Utilidades::toJson($json);
+            
         }
         $ps->close();
         

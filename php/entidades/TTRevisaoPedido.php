@@ -21,11 +21,7 @@ class TTRevisaoPedido extends TipoTarefa {
         $this->tempo_medio = 0.1;
         $this->prioridade = 100;
         $this->cargos = array(
-            Empresa::CF_DIRETOR($id_empresa),
-            Empresa::CF_ENCARREGADO_LOGISTICA($id_empresa),
-            Empresa::CF_AUXILIAR_ADM($id_empresa),
-            Empresa::CF_SUPERVISOR_LOGISTICA($id_empresa),
-            Administracao::CF_ASSISTENTE_COMPRAS($id_empresa)
+            Empresa::CF_DIRETOR($id_empresa)
         );
         $this->carregarDados();
     }
@@ -45,17 +41,23 @@ class TTRevisaoPedido extends TipoTarefa {
         $str = strtolower($dados['aprovado_sim_ou_nao']);
 
         if (strpos($str, "s") !== false) {
+            
             $ps = $con->getConexao()->prepare("SELECT dado FROM dados WHERE id=" . $tarefa->id_entidade_relacionada);
             $ps->execute();
+            
             $ps->bind_result($dado);
             if ($ps->fetch()) {
+                $ps->close();
+                
                 $json = Utilidades::base64decodeSPEC($dado);
                 $pedido = Utilidades::fromJson($json);
-                $ps->close();
+                $pedido->revisar = false;
                 $pedido->observacoes .= ". Revisao de pedido aprovada por $usuario->nome sobre o motivo de $tarefa->descricao";
                 $pedido->merge($con);
+                 
+            }else{
+                $ps->close();
             }
-            $ps->close();
         }
     }
 
