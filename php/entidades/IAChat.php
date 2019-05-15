@@ -63,6 +63,14 @@ class IAChat {
                 return $value;
             }
         }
+        
+        $nodo = new NodoChat();
+        $nodo->expressao = "";
+        $nodo->id_empresa = $this->empresa->id;
+        $nodo->pai = null;
+        
+        return $nodo;
+        
     }
 
     public function alterar($con, $raiz) {
