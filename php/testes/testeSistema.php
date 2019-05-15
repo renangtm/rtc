@@ -34,10 +34,11 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         $e = new Empresa(1734,$con);
         
-        $usuario = $e->getUsuarios($con, 0, 1,"usuario.nome like '%Elias%'");
-        $usuario = $usuario[0];
+        $ia = new IAChat($e);
         
-        $tarefas = $usuario->getTarefasSolicitadas($con);
+        $raiz = $ia->getRaiz($con);
+        
+        echo Utilidades::toJson($raiz);
         
         return;
         

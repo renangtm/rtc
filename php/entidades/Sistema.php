@@ -265,7 +265,7 @@ class Sistema {
 
         $emissor = new RoboFaturista();
         $emissor->cronoExpression = "re(10m)";
-        $trabalhos[] = $emissor;
+        //$trabalhos[] = $emissor;
 
         $cotacao_grupal = new CriadorCotacaoGrupalComBaseEncomenda();
         $cotacao_grupal->cronoExpression = "re(30m)";
