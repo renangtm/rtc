@@ -174,6 +174,12 @@ class ProdutoPedidoSaida {
 
                 $this->retiradas = array();
 
+                if ($this->id > 0) {
+                    $ps = $con->getConexao()->prepare("UPDATE produto_pedido_saida SET influencia_estoque=0,influencia_reserva=0,validade_minima=validade_minima WHERE id=$this->id");
+                    $ps->execute();
+                    $ps->close();
+                }
+
                 throw new Exception('Nao existem lotes suficientes para essa quantidade');
             } else if ($qtd > 0) {
 
@@ -252,6 +258,12 @@ class ProdutoPedidoSaida {
                             $ps->close();
 
                             $this->retiradas = array();
+
+                            if ($this->id > 0) {
+                                $ps = $con->getConexao()->prepare("UPDATE produto_pedido_saida SET influencia_estoque=0,influencia_reserva=0,validade_minima=validade_minima WHERE id=$this->id");
+                                $ps->execute();
+                                $ps->close();
+                            }
 
                             throw new Exception('Nao e possivel separar essa quantidade');
                         }
@@ -378,14 +390,14 @@ class ProdutoPedidoSaida {
             }
         }
 
-        if($this->pedido->cliente !== null){
+        if ($this->pedido->cliente !== null) {
             $con = new ConnectionFactory();
             $pe = $this->pedido->cliente->getPrecoEspecial($con);
             if ($pe > 0) {
-                $this->valor_base = round($this->produto->custo / $pe,2);
+                $this->valor_base = round($this->produto->custo / $pe, 2);
             }
         }
-        
+
         $cat = $this->produto->categoria;
 
         $emp = $this->pedido->empresa;

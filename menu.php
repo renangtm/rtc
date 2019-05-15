@@ -376,6 +376,11 @@ $possiveis[0] = $rtc;
                             <a class="nav-link" href="cargos.php" ><button class="btn btn-warning" onmousedown="tutorial('Cargos', 'Aqui voce consegue gerenciar os cargos')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-adjust"></i>Cargos</a>
                         </li>
                     <?php } ?>
+                        <?php if ($usuario->temPermissao(Sistema::P_IA_CHAT()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="ia_chat.php" ><button class="btn btn-warning" onmousedown="tutorial('Ia Chat', 'Aqui voce consegue alterar a inteligencia artificial do chat')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-sitemap"></i>Arvore Chat</a>
+                        </li>
+                    <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_TIPOS_ATIVIDADE()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="tipos_atividade.php" ><button class="btn btn-warning" onmousedown="tutorial('Tipos Atividade', 'Aqui voce consegue gerenciar os tipos de atividade')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-random"></i>Tipos de Atividade</a>

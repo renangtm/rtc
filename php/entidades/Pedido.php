@@ -845,6 +845,7 @@ class Pedido {
 
                 foreach ($nota_logistica_empresa->produtos as $key => $value) {
                     $value->cfop = CFOP::$RETORNO_DEPOSITO;
+                    $value->valor_unitario=$value->produto->custo;
                 }
 
                 $nota_logistica_empresa->observacao = new OBS_NFE($this->logistica, $this, OBS_NFE::$RETORNO_REMESSA);

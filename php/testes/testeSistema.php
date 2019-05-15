@@ -32,8 +32,41 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         $con = new ConnectionFactory();
         
+        $e = new Empresa(1734,$con);
         
-        $ps = $con->getConexao()->prepare("SELECT dado FROM dados WHERE id=(SELECT MAX(id) FROM dados)");
+        $produtos = array();
+        
+        $resultados = array();
+        $movimentos = $e->getMovimentosProduto($con,"!data_emissao!>='2019-04-30'");
+        
+        $ps = $con->getConexao()->prepare("SELECT id,estoque,disponivel,nome,codigo,id_logistica FROM produto WHERE id_empresa=1734");
+        $ps->execute();
+        $ps->bind_result($id,$estoque,$disponivel,$nome,$codigo,$l);
+        while($ps->fetch()){
+            
+            $produtos[$id] = array($id,$estoque,$disponivel,$nome,$codigo,$l);
+            
+        }
+        $ps->close();
+        
+        foreach($movimentos as $key=>$value){
+            
+            if($produtos[$value->id_produto][5] === 0){
+                continue;
+            }
+            
+            $produtos[$value->id_produto][1] -= $value->influencia_estoque;
+            $produtos[$value->id_produto][2] -= $value->influencia_reserva;
+            
+            $resultados[$value->id_produto] = $produtos[$value->id_produto];
+            
+        }
+        
+        echo Utilidades::toJson($resultados);
+        
+        return;
+        
+        $ps = $con->getConexao()->prepare("SELECT dado FROM dados WHERE id=10");
         $ps->execute();
         $ps->bind_result($dado);
         if($ps->fetch()){

@@ -193,8 +193,7 @@ class Empresa {
     public function getMovimentosProduto($con, $filtro = "") {
 
         $movimentos = array();
-
-
+        
         $f = $filtro;
 
         $sql = "SELECT pr.id,pr.estoque,pr.disponivel,pr.nome,pp.influencia_estoque,pp.influencia_reserva,pp.valor_base,pp.juros,pp.base_calculo,pp.icms,pp.ipi,pp.frete,p.id,c.razao_social,UNIX_TIMESTAMP(IFNULL(n.data_emissao,p.data))*1000,n.ficha,n.numero,e.nome "
