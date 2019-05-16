@@ -556,7 +556,7 @@ $possiveis[0] = $rtc;
 
             $(document).mousemove(function(e){
     if (drg){
-    $("#drag_protocolos").css('left', (e.clientX - mx) + "px").css('top', (e.clientY - my + $(document).scrollTop()) + "px");
+    $("#drag_protocolos").css('left', (e.clientX - mx) + "px").css('top', (e.clientY - my - $(document).scrollTop()) + "px");
     }
     })
 
@@ -581,7 +581,11 @@ $possiveis[0] = $rtc;
         
         
     })
-
+    
+    var data = new Date();
+    if(data.getHours()>11){
+        $("#btnEsconde").click();
+    }
 
 
             function tutorial(titulo, conteudo){

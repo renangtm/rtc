@@ -59,7 +59,7 @@ class RoboDetona {
                 $p->quantidade = $quantidade;
                 $p->situacao = ($criado == 1) ? "CRIADO RECENTEMENTE" : "ATUALIZADO";
 
-                if ($p->quantidade === 0)
+                if ($p->quantidade <= 0)
                     continue;
 
                 $produtos[] = $p;
