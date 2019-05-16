@@ -7,10 +7,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?4"></script>
-        <script src="js/filters.js?4"></script>
-        <script src="js/services.js?4"></script>
-        <script src="js/controllers.js?4"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
+        <script src="js/rtc.js?5"></script>
+        <script src="js/filters.js?5"></script>
+        <script src="js/services.js?5"></script>
+        <script src="js/controllers.js?5"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
