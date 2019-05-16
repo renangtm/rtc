@@ -32,19 +32,56 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         $con = new ConnectionFactory();
         
-        $e = new Empresa(1734,$con);
+        $rd = new RoboDetona();
+        $rd->executar($con);
         
-        $ic = new IAChat($e);
+        return;
         
-        $arvore = $ic->getRaiz($con);
-        
-        
-        
-        $chat = new Chat($arvore,$e);
-        
-        $chat->analisar('oi');
+        $tarefas = array();
         
         
+        $ps = $con->getConexao()->prepare("SELECT t.id,t.id_entidade_relacionada,o.observacao FROM tarefa t INNER JOIN observacao o ON o.id_tarefa=t.id WHERE t.tipo_entidade_relacionada='CLI'");
+        $ps->execute();
+        $ps->bind_result($id,$id_entidade,$obs);
+        while($ps->fetch()){
+            
+            if(!isset($tarefas[$id_entidade])){
+                $tarefas[$id_entidade] = array();
+            }
+            
+            if(!isset($tarefas[$id_entidade][$id])){
+                
+                $t = new stdClass();
+                $t->id = $id;
+                $t->obs = array();
+                
+                $tarefas[$id_entidade][$id] = $t;
+                
+            }
+            
+            $tarefas[$id_entidade][$id]->obs[] = $obs;
+            
+        }
+        $ps->close();
+        
+        foreach($tarefas as $id_cliente=>$grupo){
+            
+            foreach($grupo as $key=>$tarefa){
+                
+                foreach($grupo as $key2=>$tarefa2){
+                    if($tarefa->id===$tarefa2->id){
+                        continue;
+                    }
+                    foreach($tarefa2->obs as $key3=>$value3){
+                        $tarefa->obs[] = $value3;
+                        $ps = $con->getConexao()->prepare("INSERT INTO observacao(porcentagem,observacao,momento,id_tarefa) VALUES(3,'$value3',CURRENT_DATE,$tarefa->id)");
+                        $ps->execute();
+                        $ps->close();
+                    }
+                }
+                
+            }
+        }
         
         return;
         

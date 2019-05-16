@@ -24,6 +24,7 @@ class Protocolo {
     public $inicio;
     public $fim;
     public $iniciado_por;
+    public $precedente;
 
     public function __construct() {
 
@@ -39,6 +40,32 @@ class Protocolo {
         $this->id_entidade = 0;
         $this->tipo_entidade = 0;
         $this->iniciado_por = "";
+    }
+    
+    public function init($con){
+        
+        if($this->tipo_entidade === "Cliente"){
+            
+            $ps = $con->getConexao()->prepare("SELECT razao_social FROM cliente WHERE id=$this->id_entidade");
+            $ps->execute();
+            $ps->bind_result($razao_social);
+            if($ps->fetch()){
+                $this->precedente = $razao_social;
+            }
+            $ps->close();
+            
+        }else if($this->tipo_entidade === "Pedido"){
+            
+            $ps = $con->getConexao()->prepare("SELECT p.id,c.razao_social FROM pedido p INNER JOIN cliente c ON c.id=p.id_cliente WHERE p.id=$this->id_entidade");
+            $ps->execute();
+            $ps->bind_result($pedido,$razao_social);
+            if($ps->fetch()){
+                $this->precedente = "Pedido: $pedido, do cliente: $razao_social";
+            }
+            $ps->close();
+            
+        }
+        
     }
 
     public function getMensagensPosteriores($con, $ultimo_id = 0) {

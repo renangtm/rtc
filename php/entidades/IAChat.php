@@ -73,13 +73,19 @@ class IAChat {
         
     }
 
-    public function alterar($con, $raiz) {
+    public function alterar($con, $raiz,$n=0) {
 
+        $ids = array();
+        
         $conexoes = "";
         foreach($raiz->filhos as $key=>$value){
             
-            $this->alterar($con, $value);
+            $ids_otr = $this->alterar($con, $value,$n+1);
             $conexoes .= ",$value->id";
+            
+            foreach($ids_otr as $key2=>$value2){
+                $ids[]=$value2;
+            }
             
         }
         
@@ -99,6 +105,25 @@ class IAChat {
             $ps->close();
             
         }
+        
+        $ids[] = $raiz->id;
+        
+        if($n===0){
+            
+            $part = "";
+            
+            foreach($ids as $key=>$value){
+                $part .= ",$value";
+            }
+            
+            $part = substr($part,1);
+            $ps = $con->getConexao()->prepare("DELETE FROM ia_chat WHERE id NOT IN ($part) AND id_empresa=".$this->empresa->id);
+            $ps->execute();
+            $ps->close();
+            
+        }
+        
+        return $ids;
         
     }
 

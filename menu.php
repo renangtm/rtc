@@ -120,6 +120,11 @@ $possiveis[0] = $rtc;
                         <hr>
                         <div style="margin:15px;overflow-y: scroll;width:calc(100% - 25px);height:300px">
                             <span>
+                                <h4 style="color:#FF0000">{{p.precedente}}</h4>
+                                <hr>
+                                Titulo: <h4>{{p.titulo}}</h4>
+                            </span>
+                            <span>
                                 Inicio {{p.inicio | data}} por {{p.iniciado_por}}
                                 <hr>
                                 Precedente: <strong>{{p.descricao}}</strong>

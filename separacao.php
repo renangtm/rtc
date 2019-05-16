@@ -83,6 +83,9 @@ $id_pedido = $_GET['pedido'];
                                     <button class="btn btn-primary" style="float:right;margin-right:10px" ng-if="pedido !== null && itens.length > 0" ng-click="gerarRelatorio()">
                                         <i class="fas fa-paperclip"></i> &nbsp; Imprimir
                                     </button>
+                                    <button class="btn btn-primary" style="float:right;margin-right:10px" ng-if="pedido !== null && itens.length > 0" ng-click="imprimirItens()">
+                                        <i class="fas fa-paperclip"></i> &nbsp; Imprimir Etiquetas
+                                    </button>
                                     <hr>
 
                                     <div class="modal-body">

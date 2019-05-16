@@ -1205,14 +1205,15 @@ rtc.controller("crtEncomendas", function ($scope, cotacaoGrupalService, encomend
 
 
 })
-rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) {
+rtc.controller("crtSeparacao", function ($scope, pedidoService,loteService, sistemaService) {
 
 
     var formatar = function (valor, digitos) {
-        while (valor.length < digitos) {
-            valor = "0" + valor;
+        var v = valor;
+        while (v.length < digitos) {
+            v = "0" + v;
         }
-        return valor;
+        return v;
     }
 
     var descrever = function (retirada) {
@@ -1255,6 +1256,50 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
 
     }
 
+     $scope.imprimirItens = function () {
+        
+        var etiquetas = [];
+        for (var i = 0; i < $scope.itens.length; i++) {
+            var item = $scope.itens[i];
+            
+            var etiqueta = {
+                id: item.id_lote,
+                id_produto: item.id_produto,
+                nome_produto: item.nome_produto,
+                validade: item.validade,
+                codigo: item.codigo,
+                empresa: "Agro Fauna Tecnologia"
+            };
+            etiquetas[etiquetas.length] = etiqueta;
+        }
+
+        var buffer = 20;
+        var buff = [];
+
+        for (var i = 0; i < etiquetas.length; i++) {
+            var k = parseInt(i / buffer);
+            if (i % buffer === 0) {
+                buff[k] = [];
+            }
+            buff[k][buff[k].length] = etiquetas[i];
+        }
+
+        for (var i = 0; i < buff.length; i++) {
+            loteService.getEtiquetas(buff[i], function (a) {
+                if (a.sucesso) {
+
+                    window.open(projeto + "/php/uploads/" + a.arquivo);
+                } else {
+
+                    msg.erro("Ocorreu um problema de servidor, tente mais tarde");
+                }
+            });
+        }
+
+    }
+
+
+
     pedidoService.getPedidoEspecifico(rtc.id_empresa, rtc.id_pedido, function (pedido) {
 
         $scope.pedido = pedido.pedido;
@@ -1268,10 +1313,14 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
             }
             for (var j = 0; j < p.retiradas.length; j++) {
                 var r = p.retiradas[j];
-                var codigo = formatar(r[0], 7);
-                for (var k = 2; k < r.length; k++) {
+                var codigo = formatar(r[0]+"", 8);
+                for (var k = 3; k < r.length; k++) {
                     codigo += formatar(r[k] + "", 4);
                 }
+                
+                var validade = new Date(parseFloat(p.validade_minima+"")).toLocaleString();
+                validade = validade.split(" ")[0];
+                
                 var item = {
                     id_produto: p.produto.id,
                     id_pedido_produto: p.id,
@@ -1279,6 +1328,7 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
                     nome_produto: p.produto.nome,
                     quantidade: r[1],
                     codigo: codigo,
+                    validade:validade,
                     descricao: descrever(r),
                     codigo_bipado: ""
                 }
@@ -1297,12 +1347,25 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService, sistemaService) 
 
     $scope.bipe = function () {
 
+        var achou = false;
         for (var i = 0; i < $scope.itens.length; i++) {
             if ($scope.itens[i].codigo === $scope.codigo) {
                 $scope.itens[i].codigo_bipado = $scope.codigo;
+                achou = true;
                 break;
             }
         }
+        
+        if(!achou){
+            for (var i = 0; i < $scope.itens.length; i++) {
+                if ($scope.itens[i].codigo === $scope.codigo) {
+                    $scope.itens[i].codigo_bipado = $scope.codigo;
+                    achou = true;
+                    break;
+                }
+            }
+        }
+        
         $scope.codigo = "";
 
     }
@@ -8128,7 +8191,7 @@ rtc.controller("crtLotes", function ($scope, loteService, baseService) {
                 id_produto: lote.produto.id,
                 nome_produto: lote.produto.nome,
                 validade: toDate(lote.validade),
-                codigo: "*" + cod + "*",
+                codigo: cod,
                 empresa: lote.produto.empresa.nome
             };
             etiquetas[etiquetas.length] = etiqueta;
