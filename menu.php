@@ -198,50 +198,17 @@ $possiveis[0] = $rtc;
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item dropdown notification">
-                    <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="far fa-fw fa-comments"></i></span></a>
+                <li class="nav-item dropdown notification" ng-controller="crtPardal">
+                    <a class="nav-link nav-icons" href="#" id="pardal" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="far fa-fw fa-comments"></i></span></a>
                     <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
                         <li>
                             <div class="notification-title bg-primary"> Chat <i class="far fa-comments m-l-10"></i></div>
                             <div class="notification-list">
                                 <div class="list-group">
-                                    <a href="#" class="list-group-item list-group-item-action bg-chat-pardal">
+                                    <a href="#" class="list-group-item list-group-item-action {{c.tipo===0?'bg-chat-pardal':''}}" ng-repeat="c in conversa">
                                         <div class="notification-info">
-                                            <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal:</span>Quer fazer uma simula��o pre�os com produtos que tenham algum ativo, ou cultura?
-                                                <div class="notification-date">2 min ago</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="notification-info">
-                                            <div class="notification-list-user-img"><img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Voc�:</span>teste
-                                                <div class="notification-date">2 days ago</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action bg-chat-pardal">
-                                        <div class="notification-info">
-                                            <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal:</span> Como posso ajud�-lo? Serei seu vendedor virtual!
-                                                <div class="notification-date text-right">2 min ago</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="notification-info">
-                                            <div class="notification-list-user-img"><img src="assets/images/avatar-1.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Voc�:</span>teste
-                                                <div class="notification-date">2 days ago</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action bg-chat-pardal">
-                                        <div class="notification-info">
-                                            <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
-                                            <div class="notification-list-user-block"><span class="notification-list-user-name">Pardal: </span>Sou o Pardal!! N�o sou professor, mas inventei o RTC para atend�-lo!
-                                                <div class="notification-date">2 min ago</div>
+                                            <div class="notification-list-user-img"><img ng-if="c.tipo===0" src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
+                                            <div class="notification-list-user-block"><span class="notification-list-user-name">{{c.tipo===0?'Pardal':'Você'}}:</span><span ng-bind-html="c.texto"></span>
                                             </div>
                                         </div>
                                     </a>
@@ -251,12 +218,11 @@ $possiveis[0] = $rtc;
                         </li>
                         <li>
                             <div class="list-footer bg-light"> 
-                                <form class="form-inline justify-content-center">
-                                    <div class="form-group mx-sm-3 mb-2">
-                                        <input type="text" class="form-control" style="width: 100%" placeholder="Digite sua mensagem" id="txtFala">
-                                    </div>	
-                                    <button class="btn btn-sm btn-primary mb-2">Enviar</button>
-                                </form>
+                                <div class="form-inline justify-content-center">
+                                    <div class="form-group" style="width: 100%">
+                                        <input type="text" class="form-control" ng-confirm="enviar()" style="width: 100%;margin:5px" id="txtEp" placeholder="Digite sua mensagem" ng-model="texto">
+                                    </div>
+                                </div>
                             </div>
                         </li>
                     </ul>
@@ -610,6 +576,8 @@ $possiveis[0] = $rtc;
         
         
     })
+
+
 
             function tutorial(titulo, conteudo){
 

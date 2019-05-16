@@ -13,8 +13,8 @@
  */
 class NodoChat {
     
-    public static $FALA_CHAT = 0;
-    public static $CAPTURA_USUARIO = 1;
+    public static $FALA_CHAT = 1;
+    public static $CAPTURA_USUARIO = 0;
     
     public $id;
     public $tipo;

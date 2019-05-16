@@ -1,3 +1,49 @@
+rtc.controller("crtPardal", function ($scope, $sce, $timeout, pardalService) {
+
+    $scope.texto = "";
+    $scope.conversa = [];
+
+
+
+
+    $scope.enviar = function () {
+
+        if ($scope.texto !== "") {
+            $scope.conversa[$scope.conversa.length] = {
+                tipo: 1,
+                texto: $sce.trustAsHtml($scope.texto)
+            };
+        }
+
+        pardalService.enviar($scope.texto, function (r) {
+
+            if (r.sucesso) {
+
+                $scope.conversa[$scope.conversa.length] = {
+                    tipo: 0,
+                    texto: $sce.trustAsHtml(r.fala)
+                };
+
+            }
+
+        })
+
+        $scope.texto = "";
+
+    }
+
+
+    $("#pardal").dropdown('toggle');
+
+
+
+
+    pardalService.reset(function () {
+        $scope.enviar();
+        $("#txtEp").focus();
+    });
+
+})
 rtc.controller("crtProtocolos", function ($scope, protocoloService, tipoProtocoloService, baseService, pedidoService, clienteService, transportadoraService, cotacaoEntradaService, pedidoEntradaService) {
 
     $scope.protocolos = createAssinc(protocoloService, 1, 3, 10);
@@ -183,7 +229,6 @@ rtc.controller("crtProtocolos", function ($scope, protocoloService, tipoProtocol
 
 
 })
-
 rtc.controller("crtRespostaCotacaoGrupal", function ($scope, cotacaoGrupalService) {
 
     $scope.respostas = [];
@@ -9100,7 +9145,7 @@ rtc.controller("crtProdutos", function ($scope, fabricanteService, ativoService,
         })
 
     }
-    
+
     $("#uploaderImagemProdutoSecundario").change(function () {
 
         uploadService.upload($(this).prop("files"), function (arquivos, sucesso) {

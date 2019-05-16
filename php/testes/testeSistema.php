@@ -34,6 +34,20 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         $e = new Empresa(1734,$con);
         
+        $ic = new IAChat($e);
+        
+        $arvore = $ic->getRaiz($con);
+        
+        
+        
+        $chat = new Chat($arvore,$e);
+        
+        $chat->analisar('oi');
+        
+        
+        
+        return;
+        
         $produtos = array();
         
         $resultados = array();

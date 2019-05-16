@@ -20,6 +20,41 @@ class Sistema {
      * titulo
      * valores
      */
+    
+    
+    public function setPardal($pardal){
+        
+        $ses = new SessionManager();
+        $ses->set('pardal', $pardal);
+        
+    }
+    
+    public function getPardal(){
+        
+        $con = new ConnectionFactory();
+        
+        $ses = new SessionManager();
+        
+        if($ses->get('pardal') === null){
+        
+            $empresa = new Empresa(1734,$con);
+
+            $ia = new IAChat($empresa);
+            $raiz = $ia->getRaiz($con);
+
+            $pardal = new Chat($raiz, $empresa);
+
+            $ses->set('pardal', $pardal);
+        
+        }
+        
+        
+        $pardal = $ses->get('pardal');
+
+        return $pardal;
+
+    }
+    
 
     public static function finalizarSeparacao($con, $pedido, $usuario) {
 

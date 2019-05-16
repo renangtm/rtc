@@ -1,7 +1,30 @@
 var debuger = function (l) {
     document.write(paraJson(l));
 }
-
+rtc.service('pardalService', function ($http, $q) {
+    this.reset = function (fn) {
+        baseService($http, $q, {
+            query: "Sistema::setPardal(null)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getFala = function (fn) {
+        baseService($http, $q, {
+            query: "$pardal=Sistema::getPardal();$r->fala=$pardal->getFala();Sistema::setPardal($pardal);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.enviar = function (texto,fn) {
+        baseService($http, $q, {
+            o:{texto:texto},
+            query: "$pardal=Sistema::getPardal();$pardal->analisar($o->texto);$r->fala=$pardal->getFala();Sistema::setPardal($pardal);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('protocoloService', function ($http, $q) {
     this.getProtocolo = function (fn) {
         baseService($http, $q, {
