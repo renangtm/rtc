@@ -97,8 +97,6 @@ class TTRecepcaoCliente extends TipoTarefa {
 
         foreach ($tarefa->observacoes as $key => $obs) {
 
-            $obs = new ObservacaoTarefa();
-
             $str .= $obs->observacao;
         }
 

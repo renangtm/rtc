@@ -702,6 +702,12 @@ class Sistema {
 
         return new TTConfirmacaoPagamento($id_empresa);
     }
+    
+    
+    public static function TT_RECEPCAO_CLIENTE_M2($id_empresa) {
+
+        return new TTRecepcaoCliente2($id_empresa);
+    }
 
     public static function TT_VERIFICA_SUFRAMA($id_empresa) {
 

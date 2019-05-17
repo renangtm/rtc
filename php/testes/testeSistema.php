@@ -31,7 +31,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         date_default_timezone_set("America/Sao_Paulo");
         
         $con = new ConnectionFactory();
-        
+        /*
         $rd = new RoboDetona();
         $rd->executar($con);
         
@@ -84,6 +84,9 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         }
         
         return;
+        */
+        
+        $e = new Empresa(1734,$con);
         
         $produtos = array();
         
@@ -101,6 +104,10 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         $ps->close();
         
         foreach($movimentos as $key=>$value){
+        
+            if(!isset($produtos[$value->id_produto])){
+                continue;
+            }
             
             if($produtos[$value->id_produto][5] === 0){
                 continue;
@@ -113,7 +120,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
             
         }
         
-        echo Utilidades::toJson($resultados);
+        echo print_r($resultados);
         
         return;
         

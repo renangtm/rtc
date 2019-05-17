@@ -47,7 +47,7 @@ class RoboDetona {
             $relatorio->data = round(microtime(true) * 1000);
 
             $produtos = array();
-            $ps = $con->getConexao()->prepare("SELECT p.codigo,p.nome,UNIX_TIMESTAMP(l.validade)*1000,CASE WHEN SUM(l.quantidade_real)>p.disponivel THEN p.disponivel ELSE SUM(l.quantidade_real) END,ABS(UNIX_TIMESTAMP(l.validade)-UNIX_TIMESTAMP(CURRENT_TIMESTAMP))<60*60*24*2,IFNULL(e.nome,'$empresa->nome') FROM produto p INNER JOIN lote l ON l.id_produto=p.id LEFT JOIN empresa e ON e.id=p.id_logistica WHERE p.id_empresa=$empresa->id AND l.validade<=DATE_ADD(CURRENT_DATE,INTERVAL " . Sistema::getMesesValidadeCurta() . " MONTH) GROUP BY p.codigo,l.validade,p.id_logistica");
+            $ps = $con->getConexao()->prepare("SELECT p.codigo,p.nome,UNIX_TIMESTAMP(l.validade)*1000,CASE WHEN SUM(l.quantidade_real)>p.disponivel THEN p.disponivel ELSE SUM(l.quantidade_real) END,ABS(UNIX_TIMESTAMP(l.validade)-UNIX_TIMESTAMP(CURRENT_TIMESTAMP))<60*60*24*2,IFNULL(e.nome,'$empresa->nome') FROM produto p INNER JOIN lote l ON l.id_produto=p.id LEFT JOIN empresa e ON e.id=p.id_logistica WHERE p.id_empresa=$empresa->id AND l.validade<=DATE_ADD(CURRENT_DATE,INTERVAL " . Sistema::getMesesValidadeCurta() . " MONTH) AND l.excluido=false GROUP BY p.codigo,l.validade,p.id_logistica");
             $ps->execute();
             $ps->bind_result($codigo, $nome, $validade, $quantidade, $criado, $armazem);
             while ($ps->fetch()) {
@@ -59,7 +59,7 @@ class RoboDetona {
                 $p->quantidade = $quantidade;
                 $p->situacao = ($criado == 1) ? "CRIADO RECENTEMENTE" : "ATUALIZADO";
 
-                if ($p->quantidade === 0)
+                if ($p->quantidade == 0)
                     continue;
 
                 $produtos[] = $p;
@@ -71,7 +71,7 @@ class RoboDetona {
             $relatorio->produtos = $produtos;
 
             $html = Sistema::getHtml('relatorio_detona', $relatorio);
-
+            //Sistema::avisoDEVS($html);
             $empresa->email->enviarEmail($empresa->email->filtro(Email::$LOGISTICA), "RELATORIO DETONA RTC $empresa->nome", $html);
         }
     }

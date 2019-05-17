@@ -42,16 +42,16 @@ class TarefaReduzida {
         $this->inicio_minimo = $tarefa->inicio_minimo;
         $this->porcentagem_conclusao = $tarefa->porcentagem_conclusao;
         $this->titulo = $tarefa->titulo . "...";
-        
+
         $this->descricao_resumida = substr($tarefa->descricao, 0, 50) . "...";
-        
+
 
         $this->descricao = $tarefa->descricao;
 
         $this->intervalos_execucao = $tarefa->intervalos_execucao;
-        
+
         $this->observacoes = $tarefa->observacoes;
-        
+
         $this->prioridade = $tarefa->prioridade;
         $this->tipo_tarefa = $tarefa->tipo_tarefa->nome;
         $this->criada_por = $tarefa->criada_por;
@@ -77,6 +77,16 @@ class TarefaReduzida {
         if (isset($tarefa->nome_usuario)) {
             $this->nome_usuario = $tarefa->nome_usuario;
         }
+    }
+
+    public function addObservacao($con, $usuario, $observacao) {
+
+        $observacao->porcentagem = 0;
+        $observacao->merge($con);
+
+        $ps = $con->getConexao()->prepare("UPDATE observacao SET id_tarefa=$this->id,momento=momento WHERE id=$observacao->id");
+        $ps->execute();
+        $ps->close();
     }
 
 }

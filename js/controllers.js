@@ -1789,10 +1789,47 @@ rtc.controller("crtAnaliseCredito", function ($scope, clienteService, sistemaSer
     });
 
 })
-rtc.controller("crtAcompanharAtividades", function ($scope, usuarioService) {
+rtc.controller("crtAcompanharAtividades", function ($scope, usuarioService,tarefaService) {
 
     $scope.tarefas = [];
     $scope.carregando = true;
+    
+    $scope.observacao_tarefa = {observacao:"",porcentagem:1,_classe:"ObservacaoTarefa"};
+    
+    $scope.addObservacao = function (tarefa) {
+        
+        if ($scope.observacao_tarefa.observacao === "") {
+            msg.alerta("Digite uma observacao");
+            return;
+        }
+
+        $scope.observacao_tarefa.observacao = formatTextArea($scope.observacao_tarefa.observacao);
+
+        var c = tarefa.porcentagem_conclusao;
+        var dif = $scope.observacao_tarefa.porcentagem - c;
+        $scope.observacao_tarefa.porcentagem = dif;
+        var tar = angular.copy(tarefa);
+        tarefaService.addObservacao(tar, $scope.observacao_tarefa, function (f) {
+
+            if (f.sucesso) {
+
+                tarefa.id = f.o.tarefa.id;
+                tarefa.observacoes[tarefa.observacoes.length] = $scope.observacao_tarefa;
+
+                msg.alerta("Operacao efetuada com sucesso");
+
+                $scope.observacao_tarefa = {observacao:"",porcentagem:1,_classe:"ObservacaoTarefa"};
+
+            } else {
+
+                msg.erro("Falha ao efetuar operacao");
+
+            }
+
+
+        })
+
+    }
 
     usuarioService.getTarefasSolicitadas(function (tt) {
 
