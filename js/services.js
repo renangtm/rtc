@@ -16,9 +16,9 @@ rtc.service('pardalService', function ($http, $q) {
             falha: fn
         });
     }
-    this.enviar = function (texto,fn) {
+    this.enviar = function (texto, fn) {
         baseService($http, $q, {
-            o:{texto:texto},
+            o: {texto: texto},
             query: "$pardal=Sistema::getPardal();$pardal->analisar($o->texto);$r->fala=$pardal->getFala();Sistema::setPardal($pardal);",
             sucesso: fn,
             falha: fn
@@ -33,9 +33,9 @@ rtc.service('protocoloService', function ($http, $q) {
             falha: fn
         });
     }
-    this.terminar = function (protocolo,fn) {
+    this.terminar = function (protocolo, fn) {
         baseService($http, $q, {
-            o:protocolo,
+            o: protocolo,
             query: "$o->terminar($c)",
             sucesso: fn,
             falha: fn
@@ -2039,9 +2039,9 @@ rtc.service('produtoService', function ($http, $q) {
             falha: fn
         });
     }
-    this.setMaisFotos = function (produto,fotos, fn) {
+    this.setMaisFotos = function (produto, fotos, fn) {
         baseService($http, $q, {
-            o: {produto: produto, fotos:fotos},
+            o: {produto: produto, fotos: fotos},
             query: "$o->produto->setMaisFotos($c,$o->fotos)",
             sucesso: fn,
             falha: fn
@@ -2400,6 +2400,14 @@ rtc.service('produtoService', function ($http, $q) {
             }
         }
     }
+    this.getProdutosFiltro = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro:filtro},
+            query: "$r->produtos=Sistema::getProdutos($c,0,5,$o->filtro,'produto.nome ASC')",
+            sucesso: fn,
+            falha: fn
+        },null,true);
+    }
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
         if (typeof this["empresa"] === 'undefined') {
             if (typeof this["filtro_base"] === 'undefined') {
@@ -2495,6 +2503,14 @@ rtc.service('sistemaService', function ($http, $q) {
         baseService($http, $q, {
             o: pedido,
             query: "Sistema::finalizarCompraParceiros($c,$o,$empresa);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.addCarrinhoEncomendaCadastrando = function(produto,quantidade,fn){
+        baseService($http, $q, {
+            o: {produto:produto,quantidade:quantidade},
+            query: "Sistema::addCarrinhoEncomendaCadastrando($c,$o->produto,$o->quantidade,$empresa);",
             sucesso: fn,
             falha: fn
         });

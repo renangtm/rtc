@@ -75,10 +75,11 @@
             <!-- wrapper  -->
             <!-- ============================================================== -->
             <div style="width:400px;height:100px;padding:10px;border:1px dashed;border-bottom-left-radius: 10px;position:fixed;right:0px;top:66px;z-index:9999;background-color: #FFFFFF">
-                <button class="btn btn-primary" style="width:100%;height:100%">
-                    <i class="fas fa-search"></i>&nbsp Nao encontrei o que procuro.
+                <button class="btn btn-primary" data-toggle="modal" data-target="#encomenda_avancada" style="width:100%;height:100%">
+                    <i class="fas fa-search"></i>&nbsp Encomenda avancada.
                 </button>
             </div>
+
             <div class="dashboard-wrapper">
                 <div class="dashboard-ecommerce">
                     <div class="container-fluid dashboard-content ">
@@ -109,7 +110,7 @@
                         <!-- banner  -->
                         <!-- ============================================================== -->
                         <div class="row">
-                            
+
                             <div class="col-xl-9 col-lg-8 col-md-8 col-sm-12 col-12">
                                 <div class="row">
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -183,15 +184,15 @@
 
                                                     <table class="table table-striped">
                                                         <thead>
-                                                            <th>
-                                                                De (R$)
-                                                            </th>
-                                                            <th>
-                                                                Ate (R$)
-                                                            </th>
-                                                            <th>
-                                                                <i class="fas fa-plus-circle"></i>
-                                                            </th>
+                                                        <th>
+                                                            De (R$)
+                                                        </th>
+                                                        <th>
+                                                            Ate (R$)
+                                                        </th>
+                                                        <th>
+                                                            <i class="fas fa-plus-circle"></i>
+                                                        </th>
                                                         </thead>
                                                         <tr>
                                                             <th>
@@ -205,9 +206,9 @@
                                                             </th>
                                                         </tr>
                                                         <tfoot>
-                                                            <th style="{{produto.custo_atualizado?'color:Green;font-size:16px':'color:Red;font-size:11px'}}">
-                                                                {{produto.custo_atualizado?'Custos Atualizados':'Custo Desatualizado. Podera sofrer variações'}}
-                                                            </th>
+                                                        <th style="{{produto.custo_atualizado?'color:Green;font-size:16px':'color:Red;font-size:11px'}}">
+                                                            {{produto.custo_atualizado?'Custos Atualizados':'Custo Desatualizado. Podera sofrer variações'}}
+                                                        </th>
                                                         </tfoot>
                                                     </table>
                                                     <hr>
@@ -268,15 +269,15 @@
 
                                                     <table class="table table-striped">
                                                         <thead>
-                                                            <th>
-                                                                De (R$)
-                                                            </th>
-                                                            <th>
-                                                                Ate (R$)
-                                                            </th>
-                                                            <th>
-                                                                <i class="fas fa-plus-circle"></i>
-                                                            </th>
+                                                        <th>
+                                                            De (R$)
+                                                        </th>
+                                                        <th>
+                                                            Ate (R$)
+                                                        </th>
+                                                        <th>
+                                                            <i class="fas fa-plus-circle"></i>
+                                                        </th>
                                                         </thead>
                                                         <tr>
                                                             <th>
@@ -290,9 +291,9 @@
                                                             </th>
                                                         </tr>
                                                         <tfoot>
-                                                            <th style="{{produto.custo_atualizado?'color:Green;font-size:16px':'color:Red;font-size:11px'}}">
-                                                                {{produto.custo_atualizado?'Custos Atualizados':'Custo Desatualizado. Podera sofrer variações'}}
-                                                            </th>
+                                                        <th style="{{produto.custo_atualizado?'color:Green;font-size:16px':'color:Red;font-size:11px'}}">
+                                                            {{produto.custo_atualizado?'Custos Atualizados':'Custo Desatualizado. Podera sofrer variações'}}
+                                                        </th>
                                                         </tfoot>
                                                     </table>
                                                     <hr>
@@ -471,10 +472,157 @@
         <!-- end main wrapper  -->
         <!-- ============================================================== -->
 
+        <style>
+            .search_line{
+                padding:10px;
+                border-bottom:1px solid;
+                cursor:pointer;
+            }
+            .search_line:hover{
+                padding:10px;
+                border-bottom:1px solid;
+                cursor:pointer;
+                color:#FFFFFF;
+                background-color:SteelBlue
+            }
+            .pdt td{
+                 padding:5px
+            }
+        </style>
+        <div ng-controller="crtProdutoEncomenda" class="modal fade" id="encomenda_avancada" tabindex="99" role="dialog" aria-labelledby="encomenda_avancada" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-search fa-3x"></i>&nbsp;&nbsp;&nbsp;Encomenda Avancada</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>
+                    </div>
+                    <div class="modal-body">
+                        
+                        <div class="row">
+                            <div class="col-md-5">
+                                <i class="fas fa-box" style="display: inline"></i>&nbsp <h4 style="display: inline">Seus produtos</h4>
+                                <hr>
+                                <input type="text" class="form-control col-md-8" id="filtroProdutos2" placeholder="Filtro">
+                                <br>
+                                <table class="table table-striped table-bordered first">
+                                    <thead>
+                                        <th data-ordem="produto.codigo">Cod.</th>
+                                        <th data-ordem="produto.nome">Produto</th>
+                                        <th><i class="fas fa-mouse-pointer"></i></th>
+                                    </thead>
+                                    <tr ng-repeat="produt in produtos_av.elementos" style="cursor:pointer;" ng-click="selecionarPossibilidade(produt[0])">
+                                        <th style="{{produt[0].id===produto_av.id?'background-color:SteelBlue;color:#FFFFFF':''}}">{{produt[0].codigo}}</th>
+                                        <th style="{{produt[0].id===produto_av.id?'background-color:SteelBlue;color:#FFFFFF':''}}">{{produt[0].nome}}</th>
+                                        <th style="{{produt[0].id===produto_av.id?'background-color:SteelBlue;color:#FFFFFF':''}}"><i class="fas fa-square"></i></th>
+                                    </tr>
+                                </table>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-end">
+                                            <li class="page-item" ng-click="produtos_av.prev()"><a class="page-link" href="">Anterior</a></li>
+                                            <li class="page-item" ng-repeat="pg in produtos_av.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                            <li class="page-item" ng-click="produtos_av.next()"><a class="page-link" href="">Próximo</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <i class="fas fa-truck" style="display: inline"></i>&nbsp <h4 style="display: inline">Produto a ser encomendado</h4>
+                                <hr>
+                                <div ng-if="travado_av">
+                                    <button class="btn btn-danger" ng-click="destravar()">
+                                        <i class="fas fa-times"></i>
+                                        &nbsp;
+                                        Alterar produto
+                                    </button>
+                                    <hr>
+                                </div>
+                                <table style="width:100%" class="pdt">
+                                    <tr>
+                                        <td>
+                                            Nome:
+                                        </td>
+                                        <td style="position:relative">
+                                            <input ng-change="atualizarPossibilidades()" ng-disabled="travado_av" type="text" placeholder="Nome do produto" class="form-control" style="width:100%" ng-model="produto_av.nome">
+                                            <div ng-if="produtos_possiveis_av.length>0 && !travado_av" style="width:100%;top:40px;background-color:#FAFAFA;border:3px solid SteelBlue">
+                                                Foram encontrados produtos semelhantes no RTC, seria algum destes ?<br>
+                                                <div ng-repeat="pos in produtos_possiveis_av" ng-click="selecionarPossibilidadeSemEstoque(pos)" class="search_line">
+                                                    <img style="height:40px" src="{{pos.imagem}}"></img>
+                                                    &nbsp;
+                                                    <strong>{{pos.nome}}</strong>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Fabricante:
+                                        </td>
+                                        <td>
+                                            <input ng-disabled="travado_av" type="text" placeholder="Nome do fabricante" class="form-control" style="width:90%" ng-model="produto_av.fabricante">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Custo Medio (R$):
+                                        </td>
+                                        <td>
+                                            <input ng-disabled="travado_av" type="number" placeholder="Custo Medio" class="form-control" style="width:40%" ng-model="produto_av.custo">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Classe de Risco:
+                                        </td>
+                                        <td>
+                                            <input ng-disabled="travado_av" type="number" placeholder="Classe Risco" class="form-control" style="width:40%" ng-model="produto_av.classe_risco">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Ativo:
+                                        </td>
+                                        <td>
+                                            <input ng-disabled="travado_av" type="text" placeholder="Ativo" class="form-control" style="width:80%" ng-model="produto_av.ativo">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Quantidade:
+                                        </td>
+                                        <td>
+                                            <input type="number" placeholder="Quantidade a encomendar" class="form-control" style="width:40%" ng-model="quantidade_av">
+                                        </td>
+                                    </tr>
+                                </table>
+                                <hr>
+                                <button class="btn btn-success" ng-disabled="!liberado()" ng-click="finalizar()">
+                                    <i class="fas fa-truck"></i>
+                                    &nbsp;
+                                    {{(!liberado())?"Digite as informacoes corretamente para encomendar":"Encomendar produto"}}
+                                </button>
+                                
+                                <button onclick="window.open('carrinho_encomenda.php')" class="btn btn-success" style="margin-left:10px">
+                                    <i class="fas fa-cart-plus"></i>
+                                    &nbsp;
+                                    Carrinho de encomenda
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
         <!-- jquery 3.3.1 -->
-        
+
         <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
         <script src="assets/libs/js/form-mask.js"></script>
         <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
@@ -570,12 +718,12 @@
 
                                                                             }
                                                                             function altImg(img) {
-                                                                                
+
                                                                                 var im = $(img);
                                                                                 var num = im.attr('id').split('_')[1];
 
                                                                                 $("#sp_" + num).hide();
-                                                                                im.attr('src',im.data('padrao'));
+                                                                                im.attr('src', im.data('padrao'));
                                                                             }
 
 

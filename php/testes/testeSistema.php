@@ -32,15 +32,16 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         $con = new ConnectionFactory();
         
-        $rd = new RoboDetona();
-        $rd->executar($con);
+        $produtos = Sistema::getProdutos($con, 0,10);
+        
+        echo Utilidades::toJson($produtos);
         
         return;
         
         $tarefas = array();
         
         
-        $ps = $con->getConexao()->prepare("SELECT t.id,t.id_entidade_relacionada,o.observacao FROM tarefa t INNER JOIN observacao o ON o.id_tarefa=t.id WHERE t.tipo_entidade_relacionada='CLI'");
+        $ps = $con->getConexao()->prepare("SELECT t.id,t.id_entidade_relacionada,IFNULL(o.observacao,'') FROM tarefa t LEFT JOIN observacao o ON o.id_tarefa=t.id WHERE t.tipo_entidade_relacionada='CLI' AND (t.titulo like '%[REVISAO]%' OR t.titulo like '%Recepcao%')");
         $ps->execute();
         $ps->bind_result($id,$id_entidade,$obs);
         while($ps->fetch()){
@@ -51,6 +52,8 @@ class testeSistema extends PHPUnit_Framework_TestCase {
             
             if(!isset($tarefas[$id_entidade][$id])){
                 
+                
+                
                 $t = new stdClass();
                 $t->id = $id;
                 $t->obs = array();
@@ -58,23 +61,25 @@ class testeSistema extends PHPUnit_Framework_TestCase {
                 $tarefas[$id_entidade][$id] = $t;
                 
             }
-            
-            $tarefas[$id_entidade][$id]->obs[] = $obs;
-            
+            if($obs !== ""){
+                $tarefas[$id_entidade][$id]->obs[] = $obs;
+            }
         }
         $ps->close();
         
         foreach($tarefas as $id_cliente=>$grupo){
             
             foreach($grupo as $key=>$tarefa){
-                
+                if(count($tarefa->obs)>6){
+                    continue;
+                }
                 foreach($grupo as $key2=>$tarefa2){
                     if($tarefa->id===$tarefa2->id){
                         continue;
                     }
                     foreach($tarefa2->obs as $key3=>$value3){
                         $tarefa->obs[] = $value3;
-                        $ps = $con->getConexao()->prepare("INSERT INTO observacao(porcentagem,observacao,momento,id_tarefa) VALUES(3,'$value3',CURRENT_DATE,$tarefa->id)");
+                        $ps = $con->getConexao()->prepare("INSERT INTO observacao(porcentagem,observacao,momento,id_tarefa,excluida) VALUES(3,'$value3',CURRENT_DATE,$tarefa->id,false)");
                         $ps->execute();
                         $ps->close();
                     }
@@ -84,6 +89,9 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         }
         
         return;
+        
+        
+        $e = new Empresa(1734,$con);
         
         $produtos = array();
         
@@ -101,6 +109,10 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         $ps->close();
         
         foreach($movimentos as $key=>$value){
+        
+            if(!isset($produtos[$value->id_produto])){
+                continue;
+            }
             
             if($produtos[$value->id_produto][5] === 0){
                 continue;
@@ -113,7 +125,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
             
         }
         
-        echo Utilidades::toJson($resultados);
+        echo print_r($resultados);
         
         return;
         

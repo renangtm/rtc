@@ -20,24 +20,231 @@ class Sistema {
      * titulo
      * valores
      */
-    
-    
-    public function setPardal($pardal){
-        
+
+    public static function addCarrinhoEncomendaCadastrando($con, $produto, $quantidade) {
+
+
+        if ($produto->id === 0) {
+
+            $produto->disponivel = 0;
+            $produto->estoque = 0;
+            $produto->transito = 0;
+            $produto->valor_base = round($produto->custo / 0.821, 2);
+
+            $cat = Sistema::getCategoriaProduto(null);
+            $produto->categoria = $cat[0];
+            $produto->sistema_lotes = false;
+        }
+
+        $produto->merge($con);
+
+        $empresas = Sistema::getEmpresas($con, "empresa.vende_para_fora=true");
+        $produtos = array();
+
+        foreach ($empresas as $key => $empresa) {
+
+            $tmp = $empresa->getProdutos($con, 0, 1, "produto.id_universal=$produto->id_universal AND produto.nome like '%$produto->nome%'");
+
+            if (count($tmp) === 0) {
+
+                $copia = Utilidades::copyId0($produto);
+                $copia->empresa = $empresa;
+                $copia->estoque = 0;
+                $copia->disponivel = 0;
+                $copia->transito = 0;
+
+                $copia->merge($con);
+
+                $tmp = $copia;
+            } else {
+
+                $tmp = $tmp[0];
+            }
+
+            $produtos[$empresa->id] = $tmp;
+        }
+
+        $ses = new SessionManager();
+
+        $carrinho = $ses->get('carrinho_encomenda');
+        if ($carrinho === null) {
+            $carrinho = array();
+        }
+
+        foreach ($empresas as $key => $value) {
+
+            $p = $produtos[$value->id];
+
+
+            $grupo = new ProdutoEncomendaParceiro();
+            $grupo->id = $p->codigo;
+            $grupo->categoria = $p->categoria;
+            $grupo->ativo = $p->ativo;
+            $grupo->unidade = $p->unidade;
+            $grupo->empresa = $p->empresa;
+            $grupo->fabricante = $p->fabricante;
+            $grupo->nome = $p->nome;
+            $grupo->valor_base = $p->valor_base;
+            $grupo->valor_base_inicial = $p->valor_base * 0.95;
+            $grupo->valor_base_final = $p->valor_base * 1.05;
+            $grupo->imagem = $p->imagem;
+            $grupo->grade = $p->grade;
+            $grupo->disponivel = $p->disponivel;
+            $grupo->estoque = $p->estoque;
+            $grupo->transito = $p->transito;
+
+            $grupo->quantidade_comprada = $quantidade;
+
+            $carrinho[] = $grupo;
+        }
+
+        $ses->set('carrinho_encomenda', $carrinho);
+    }
+
+    public static function getProdutos($con, $x1, $x2, $filtro = "", $ordem = "") {
+
+        $sql = "SELECT "
+                . "produto.codigo,"
+                . "produto.classe_risco,"
+                . "produto.fabricante,"
+                . "MAX(produto.imagem),"
+                . "produto.id_universal,"
+                . "produto.liquido,"
+                . "produto.quantidade_unidade,"
+                . "produto.habilitado,"
+                . "produto.valor_base,"
+                . "produto.custo,"
+                . "produto.peso_bruto,"
+                . "produto.peso_liquido,"
+                . "MAX(produto.estoque),"
+                . "MAX(produto.disponivel),"
+                . "MAX(produto.transito),"
+                . "produto.grade,"
+                . "produto.unidade,"
+                . "produto.ncm,"
+                . "produto.nome,"
+                . "produto.lucro_consignado,"
+                . "produto.ativo,"
+                . "produto.concentracao,"
+                . "produto.sistema_lotes,"
+                . "produto.nota_usuario,"
+                . "produto.id_categoria "
+                . "FROM produto "
+                . "WHERE produto.excluido = false ";
+
+
+        if ($filtro != "") {
+
+            $sql .= "AND $filtro ";
+        }
+
+        $sql .= "GROUP BY produto.nome ";
+
+        if ($ordem != "") {
+
+            $sql .= "ORDER BY $ordem ";
+        }
+
+        $produtos = array();
+
+        $sql .= "LIMIT $x1, " . ($x2 - $x1);
+
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($cod_pro, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id);
+
+        while ($ps->fetch()) {
+
+            $p = new Produto();
+
+            $p->id = 0;
+            $p->codigo = $cod_pro;
+            $p->classe_risco = $classe_risco;
+            $p->fabricante = $fabricante;
+            $p->imagem = $imagem;
+            $p->nome = $nome;
+            $p->id_universal = $id_uni;
+            $p->sistema_lotes = $sistema_lotes == 1;
+            $p->nota_usuario = $nota_usuario;
+            $p->liquido = $liq == 1;
+            $p->quantidade_unidade = $qtd_un;
+            $p->habilitado = $hab;
+            $p->valor_base = $vb;
+            $p->custo = $cus;
+            $p->peso_bruto = $pb;
+            $p->peso_liquido = $pl;
+            $p->estoque = $est;
+            $p->disponivel = $disp;
+            $p->ativo = $ativo;
+            $p->concentracao = $conc;
+            $p->transito = $tr;
+            $p->grade = new Grade($gr);
+            $p->unidade = $uni;
+            $p->ncm = $ncm;
+            $p->lucro_consignado = $lucro;
+            $p->ofertas = (!isset($ofertas[$p->codigo]) ? array() : $ofertas[$p->codigo]);
+
+            foreach ($p->ofertas as $key => $oferta) {
+
+                $oferta->produto = $p->getReduzido();
+            }
+
+            $p->categoria = Sistema::getCategoriaProduto(null, $cat_id);
+
+            $produtos[] = $p;
+        }
+
+        $ps->close();
+
+        $ids_produtos = "(-1";
+
+        foreach ($produtos as $key => $value) {
+            $ids_produtos .= ",$value->id";
+        }
+
+        $ids_produtos .= ")";
+
+        $imagens = array();
+
+        $ps = $con->getConexao()->prepare("SELECT imagem,id_produto FROM mais_fotos_produto WHERE id_produto IN $ids_produtos");
+        $ps->execute();
+
+        $ps->bind_result($imagem, $id_produto);
+        while ($ps->fetch()) {
+            if (!isset($imagens[$id_produto])) {
+                $imagens[$id_produto] = array();
+            }
+            $imagens[$id_produto][] = $imagem;
+        }
+        $ps->close();
+
+        foreach ($produtos as $key => $value) {
+
+            if (isset($imagens[$value->id])) {
+
+                $value->mais_fotos = $imagens[$value->id];
+            }
+        }
+
+        return $produtos;
+    }
+
+    public function setPardal($pardal) {
+
         $ses = new SessionManager();
         $ses->set('pardal', $pardal);
-        
     }
-    
-    public function getPardal(){
-        
+
+    public function getPardal() {
+
         $con = new ConnectionFactory();
-        
+
         $ses = new SessionManager();
-        
-        if($ses->get('pardal') === null){
-        
-            $empresa = new Empresa(1734,$con);
+
+        if ($ses->get('pardal') === null) {
+
+            $empresa = new Empresa(1734, $con);
 
             $ia = new IAChat($empresa);
             $raiz = $ia->getRaiz($con);
@@ -45,16 +252,13 @@ class Sistema {
             $pardal = new Chat($raiz, $empresa);
 
             $ses->set('pardal', $pardal);
-        
         }
-        
-        
+
+
         $pardal = $ses->get('pardal');
 
         return $pardal;
-
     }
-    
 
     public static function finalizarSeparacao($con, $pedido, $usuario) {
 
@@ -269,7 +473,6 @@ class Sistema {
         return Sistema::$ENDERECO . "php/uploads/relatorio_$id.pdf";
     }
 
-    
     public static function popularEnderecamento($con, $itens) {
 
         $lotes = "(0";
@@ -680,15 +883,15 @@ class Sistema {
     public static function P_ALTERAR_SEM_REVISAR() {
         return new Permissao(77, "Alterar Pedido sem Revisar");
     }
-    
+
     public static function P_CARGOS() {
         return new Permissao(78, "Cargos");
     }
-    
+
     public static function P_TIPOS_ATIVIDADE() {
         return new Permissao(79, "Tipos de Atividade");
     }
-    
+
     public static function P_IA_CHAT() {
         return new Permissao(80, "Arvore de chat");
     }
@@ -701,6 +904,11 @@ class Sistema {
     public static function TT_CONFIRMACAO_PAGAMENTO($id_empresa) {
 
         return new TTConfirmacaoPagamento($id_empresa);
+    }
+
+    public static function TT_RECEPCAO_CLIENTE_M2($id_empresa) {
+
+        return new TTRecepcaoCliente2($id_empresa);
     }
 
     public static function TT_VERIFICA_SUFRAMA($id_empresa) {
@@ -3492,7 +3700,6 @@ class Sistema {
 
             return $arquivo;
         }
-        
     }
 
     public static function getHistorico($con) {

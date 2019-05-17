@@ -1,3 +1,130 @@
+rtc.controller("crtProdutoEncomenda", function ($scope, produtoService, empresaService, sistemaService) {
+
+    $scope.produtos_av = createAssinc(produtoService, 1, 7, 4);
+    assincFuncs(
+            $scope.produtos_av,
+            "produto",
+            ["codigo", "nome"], "filtroProdutos2");
+    $scope.produtos_av.attList();
+
+    $scope.empresa_av = null;
+    $scope.produto_novo_av = null;
+    $scope.produto_av = null;
+
+    $scope.carregando_av = false;
+    $scope.produtos_possiveis_av = [];
+
+    $scope.travado_av = false;
+
+    $scope.quantidade_av = 0;
+
+    empresaService.getEmpresa(function (e) {
+
+        $scope.empresa_av = e.empresa;
+
+        produtoService.getProduto(function (p) {
+
+            $scope.produto_novo_av = p.produto;
+            $scope.novoProduto();
+
+        })
+
+    });
+
+    $scope.novoProduto = function () {
+
+        $scope.produto_av = angular.copy($scope.produto_novo_av);
+        $scope.produto_av.empresa = $scope.empresa_av;
+    }
+
+    $scope.atualizarPossibilidades = function () {
+
+        $scope.carregando_av = true;
+        produtoService.getProdutosFiltro("produto.nome like '%" + $scope.produto_av.nome + "%'", function (p) {
+
+            $scope.produtos_possiveis_av = p.produtos;
+            $scope.carregando_av = false;
+
+        })
+
+    }
+
+    $scope.liberado = function () {
+
+        if ($scope.travado_av) {
+
+            return true;
+
+        } else {
+
+            if($scope.produto_av.nome == null || $scope.produto_av.fabricante == null || $scope.produto_av.ativo == null){
+                
+                return false;
+                
+            }
+
+            if ($scope.produto_av.nome.length > 2 && $scope.produto_av.fabricante.length > 2 && $scope.produto_av.ativo.length > 2) {
+
+                return true;
+
+            }
+
+        }
+
+        return false;
+
+    }
+
+    $scope.selecionarPossibilidade = function (p) {
+
+        $scope.produto_av = p;
+        $scope.produto_av.empresa = $scope.empresa_av;
+        $scope.travado_av = true;
+
+    }
+    
+    $scope.selecionarPossibilidadeSemEstoque = function (p) {
+        
+        if(p.disponivel > 0){
+            
+            msg.erro("Existe o produto em estoque nao e possivel encomenda-lo");
+            window.open("comprar.php");
+            
+        }
+    
+        $scope.produto_av = p;
+        $scope.produto_av.empresa = $scope.empresa_av;
+        $scope.travado_av = true;
+
+    }
+
+    $scope.destravar = function () {
+
+        $scope.novoProduto();
+        $scope.travado_av = false;
+
+    }
+
+    $scope.finalizar = function () {
+
+        sistemaService.addCarrinhoEncomendaCadastrando($scope.produto_av, $scope.quantidade_av, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Operacao efetuada com sucesso. O produto ja se encontra no seu carrinho");
+                $scope.destravar();
+                
+            } else {
+
+                msg.erro("Ocorreu um problema ao efetuar essa operacao");
+
+            }
+
+        })
+
+    }
+
+})
 rtc.controller("crtPardal", function ($scope, $sce, $timeout, pardalService) {
 
     $scope.texto = "";
@@ -1205,7 +1332,7 @@ rtc.controller("crtEncomendas", function ($scope, cotacaoGrupalService, encomend
 
 
 })
-rtc.controller("crtSeparacao", function ($scope, pedidoService,loteService, sistemaService) {
+rtc.controller("crtSeparacao", function ($scope, pedidoService, loteService, sistemaService) {
 
 
     var formatar = function (valor, digitos) {
@@ -1256,12 +1383,12 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService,loteService, sist
 
     }
 
-     $scope.imprimirItens = function () {
-        
+    $scope.imprimirItens = function () {
+
         var etiquetas = [];
         for (var i = 0; i < $scope.itens.length; i++) {
             var item = $scope.itens[i];
-            
+
             var etiqueta = {
                 id: item.id_lote,
                 id_produto: item.id_produto,
@@ -1313,14 +1440,14 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService,loteService, sist
             }
             for (var j = 0; j < p.retiradas.length; j++) {
                 var r = p.retiradas[j];
-                var codigo = formatar(r[0]+"", 8);
+                var codigo = formatar(r[0] + "", 8);
                 for (var k = 3; k < r.length; k++) {
                     codigo += formatar(r[k] + "", 4);
                 }
-                
-                var validade = new Date(parseFloat(p.validade_minima+"")).toLocaleString();
+
+                var validade = new Date(parseFloat(p.validade_minima + "")).toLocaleString();
                 validade = validade.split(" ")[0];
-                
+
                 var item = {
                     id_produto: p.produto.id,
                     id_pedido_produto: p.id,
@@ -1328,7 +1455,7 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService,loteService, sist
                     nome_produto: p.produto.nome,
                     quantidade: r[1],
                     codigo: codigo,
-                    validade:validade,
+                    validade: validade,
                     descricao: descrever(r),
                     codigo_bipado: ""
                 }
@@ -1355,8 +1482,8 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService,loteService, sist
                 break;
             }
         }
-        
-        if(!achou){
+
+        if (!achou) {
             for (var i = 0; i < $scope.itens.length; i++) {
                 if ($scope.itens[i].codigo === $scope.codigo) {
                     $scope.itens[i].codigo_bipado = $scope.codigo;
@@ -1365,7 +1492,7 @@ rtc.controller("crtSeparacao", function ($scope, pedidoService,loteService, sist
                 }
             }
         }
-        
+
         $scope.codigo = "";
 
     }
@@ -1789,10 +1916,47 @@ rtc.controller("crtAnaliseCredito", function ($scope, clienteService, sistemaSer
     });
 
 })
-rtc.controller("crtAcompanharAtividades", function ($scope, usuarioService) {
+rtc.controller("crtAcompanharAtividades", function ($scope, usuarioService, tarefaService) {
 
     $scope.tarefas = [];
     $scope.carregando = true;
+
+    $scope.observacao_tarefa = {observacao: "", porcentagem: 1, _classe: "ObservacaoTarefa"};
+
+    $scope.addObservacao = function (tarefa) {
+
+        if ($scope.observacao_tarefa.observacao === "") {
+            msg.alerta("Digite uma observacao");
+            return;
+        }
+
+        $scope.observacao_tarefa.observacao = formatTextArea($scope.observacao_tarefa.observacao);
+
+        var c = tarefa.porcentagem_conclusao;
+        var dif = $scope.observacao_tarefa.porcentagem - c;
+        $scope.observacao_tarefa.porcentagem = dif;
+        var tar = angular.copy(tarefa);
+        tarefaService.addObservacao(tar, $scope.observacao_tarefa, function (f) {
+
+            if (f.sucesso) {
+
+                tarefa.id = f.o.tarefa.id;
+                tarefa.observacoes[tarefa.observacoes.length] = $scope.observacao_tarefa;
+
+                msg.alerta("Operacao efetuada com sucesso");
+
+                $scope.observacao_tarefa = {observacao: "", porcentagem: 1, _classe: "ObservacaoTarefa"};
+
+            } else {
+
+                msg.erro("Falha ao efetuar operacao");
+
+            }
+
+
+        })
+
+    }
 
     usuarioService.getTarefasSolicitadas(function (tt) {
 

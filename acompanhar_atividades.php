@@ -161,6 +161,14 @@
                                                                                         </td>
                                                                                     </tr>
                                                                                 </table>
+                                                                                <hr>
+                                                                                <textarea style="width:60%" ng-model="observacao_tarefa.observacao" class="form-control">
+                                                                                    
+                                                                                </textarea>
+                                                                                <br>
+                                                                                <button class="btn btn-success" ng-click="addObservacao(tarefa[0])">
+                                                                                    <i class="fas fa-plane"></i> &nbsp Enviar observacao
+                                                                                </button>
                                                                             </div>																
                                                                         </div>	
                                                                     </div> 
