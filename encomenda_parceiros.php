@@ -74,6 +74,11 @@
             <!-- ============================================================== -->
             <!-- wrapper  -->
             <!-- ============================================================== -->
+            <div style="width:400px;height:100px;padding:10px;border:1px dashed;border-bottom-left-radius: 10px;position:fixed;right:0px;top:66px;z-index:9999;background-color: #FFFFFF">
+                <button class="btn btn-primary" style="width:100%;height:100%">
+                    <i class="fas fa-search"></i>&nbsp Nao encontrei o que procuro.
+                </button>
+            </div>
             <div class="dashboard-wrapper">
                 <div class="dashboard-ecommerce">
                     <div class="container-fluid dashboard-content ">
@@ -104,6 +109,7 @@
                         <!-- banner  -->
                         <!-- ============================================================== -->
                         <div class="row">
+                            
                             <div class="col-xl-9 col-lg-8 col-md-8 col-sm-12 col-12">
                                 <div class="row">
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
