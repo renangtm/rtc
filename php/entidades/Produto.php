@@ -147,7 +147,7 @@ class Produto {
                 if ($ps->fetch()) {
                     $ps->close();
                     if ($this->disponivel < $quantidade) {
-                        throw new Exception("Estoque invalido, nao pode ser menor que a quantidade de lotes cadastrada $quantidade");
+                        //throw new Exception("Estoque invalido, nao pode ser menor que a quantidade de lotes cadastrada $quantidade");
                     }
                 } else {
                     $ps->close();
@@ -160,7 +160,7 @@ class Produto {
                 if ($ps->fetch()) {
                     $ps->close();
                     if ($this->disponivel !== $this->estoque + $d) {
-                        throw new Exception("Existem " . (-1 * $d) . " produtos reservados, portanto o estoque($this->estoque) e disponivel($this->disponivel) nao batem");
+                        //throw new Exception("Existem " . (-1 * $d) . " produtos reservados, portanto o estoque($this->estoque) e disponivel($this->disponivel) nao batem");
                     }
                 } else {
                     $ps->close();
@@ -168,7 +168,7 @@ class Produto {
             }
 
             if ($this->estoque < $this->disponivel) {
-                throw new Exception("O estoque nao pode ser menor que o disponivel");
+                //throw new Exception("O estoque nao pode ser menor que o disponivel");
             }
 
             $ps = $con->getConexao()->prepare("UPDATE produto SET nome = '" . addslashes($this->nome) . "', id_universal=$this->id_universal, id_categoria=" . $this->categoria->id . ",liquido=" . ($this->liquido ? "true" : "false") . ", valor_base=" . $this->valor_base . ",custo=$this->custo,peso_bruto=$this->peso_bruto,peso_liquido=$this->peso_liquido,grade='" . $this->grade->str . "',unidade='" . addslashes($this->unidade) . "',ncm='" . addslashes($this->ncm) . "',quantidade_unidade=$this->quantidade_unidade,lucro_consignado=$this->lucro_consignado, ativo='$this->ativo', concentracao='$this->concentracao',classe_risco='$this->classe_risco',fabricante='$this->fabricante',imagem='$this->imagem',sistema_lotes=" . ($this->sistema_lotes ? "true" : "false") . ",nota_usuario=$this->nota_usuario, codigo=$this->codigo WHERE codigo = " . $this->codigo . " AND id_empresa=" . $this->empresa->id);

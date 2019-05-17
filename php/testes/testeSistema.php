@@ -32,18 +32,13 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         $con = new ConnectionFactory();
         
-        $produtos = Sistema::getProdutos($con, 0,10);
-        
-        echo Utilidades::toJson($produtos);
-        
-        return;
         
         $tarefas = array();
         
         
-        $ps = $con->getConexao()->prepare("SELECT t.id,t.id_entidade_relacionada,IFNULL(o.observacao,'') FROM tarefa t LEFT JOIN observacao o ON o.id_tarefa=t.id WHERE t.tipo_entidade_relacionada='CLI' AND (t.titulo like '%[REVISAO]%' OR t.titulo like '%Recepcao%')");
+        $ps = $con->getConexao()->prepare("SELECT t.id,t.titulo,t.id_entidade_relacionada,IFNULL(o.observacao,'') FROM tarefa t LEFT JOIN observacao o ON o.id_tarefa=t.id WHERE t.tipo_entidade_relacionada='CLI' AND (t.titulo like '%[REVISAO]%' OR t.titulo like '%Recepcao%')");
         $ps->execute();
-        $ps->bind_result($id,$id_entidade,$obs);
+        $ps->bind_result($id,$titulo,$id_entidade,$obs);
         while($ps->fetch()){
             
             if(!isset($tarefas[$id_entidade])){
@@ -57,6 +52,7 @@ class testeSistema extends PHPUnit_Framework_TestCase {
                 $t = new stdClass();
                 $t->id = $id;
                 $t->obs = array();
+                $t->titulo = $titulo;
                 
                 $tarefas[$id_entidade][$id] = $t;
                 
@@ -70,6 +66,9 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         foreach($tarefas as $id_cliente=>$grupo){
             
             foreach($grupo as $key=>$tarefa){
+                if(strpos($tarefa->titulo, '[REVISAO]') === false){
+                    continue;
+                }
                 if(count($tarefa->obs)>6){
                     continue;
                 }
