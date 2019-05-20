@@ -6,10 +6,10 @@
         <meta charset="utf-8">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?5"></script>
-        <script src="js/filters.js?5"></script>
-        <script src="js/services.js?5"></script>
-        <script src="js/controllers.js?5"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
+        <script src="js/rtc.js?125"></script>
+        <script src="js/filters.js?125"></script>
+        <script src="js/services.js?125"></script>
+        <script src="js/controllers.js?125"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -24,13 +24,10 @@
         <!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">-->
         <title>RTC (Reltrab Cliente) - WEB</title>
         <style>
-            .page-link:hover {
-                color:#fff !important;
-            }
         </style>
     </head>
 
-    <body ng-controller="crtClientes">
+    <body ng-controller="crtAprovacaoConsignado">
         <!-- ============================================================== -->
         <!-- main wrapper -->
         <!-- ============================================================== -->
@@ -60,13 +57,13 @@
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="page-header">
-                                    <h2 class="pageheader-title">Clientes</h2>
+                                    <h2 class="pageheader-title">Aprovacao de consignado</h2>
                                     <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
                                     <div class="page-breadcrumb">
                                         <nav aria-label="breadcrumb">
                                             <ol class="breadcrumb">      
                                                 <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">RTC</a></li>
-                                                <li class="breadcrumb-item active" aria-current="page">Clientes</li>
+                                                <li class="breadcrumb-item active" aria-current="page">crtAprovacaoConsignado</li>
                                             </ol>
                                         </nav>
                                     </div>
@@ -80,154 +77,49 @@
                             <!-- ============================================================== -->
                             <!-- basic table  -->
                             <!-- ============================================================== -->
-                         
-                            <style>
-
-                                .c0 td{
-                                    color:#000000 !important;
-                                }
-
-                                .c1 td{
-                                    color:Green !important;
-                                }
-
-                                .c2 td{
-                                    color:Blue !important;
-                                }
-
-                                .c3 td{
-                                    color:Red !important;
-                                }
-
-                                .c4 td{
-                                    color:Purple !important;
-                                }
-
-
-                            </style>
-                           
-
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="card">
                                     <div class="card-body">
-                                        <div class="table-responsive">
-                                            <div class="product-btn m-b-20">
-                                                <a href="#" class="btn btn-primary" data-title="Add" data-toggle="modal" data-target="#add" ng-click="novoCliente()"><i class="fas fa-plus-circle m-r-10"></i>Adicionar Cliente</a>
-                                            </div>
+                                        <div class="table-responsive" style="overflow:visible">
                                             <table id="clientes" class="table table-striped table-bordered first">
                                                 <thead>
                                                     <tr>
-                                                        <th data-ordem="cliente.codigo">Cod.</th>
-                                                        <th data-ordem="cliente.razao_social">Raz Soc.</th>
-                                                        <th data-ordem="cliente.nome_fantasia">Nom Fant</th>
-                                                        <th data-ordem="cliente.inscricao_estadual">IE</th>
-                                                        <th data-ordem="cliente.cnpj">CNPJ</th>
-                                                        <th data-ordem="cliente.cpf">CPF</th>
-                                                        <th data-ordem="cliente.limite_credito">Lim Cre</th>
-                                                        <th data-ordem="cliente.termino_limite">Fim Lim</th>
-                                                        <?php if ($usuario->temPermissao(Sistema::P_EMPRESA_CLIENTE()->m("C"))) { ?>
-                                                        <th data-ordem="cliente.empresa.nome">Empresa</th>
-                                                        <?php } ?>
-                                                        <th width="150px">Ação</th>
+                                                        <th data-ordem="empresa.id">Cod Emp.</th>
+                                                        <th data-ordem="empresa.nome">Nome Emp.</th>
+                                                        <th data-ordem="empresa.cnpj">CNPJ Emp.</th>
+                                                        <th>Pedir Reaprovacao Em</th>
+                                                        <th data-ordem="empresa.produto.nome">Nome do Produto</th>
+                                                        <th data-ordem="empresa.produto.valor_base">Valor do Cliente</th>
+                                                        <th data-ordem="empresa.produto.disponivel">Qtd Disponivel</th>
+                                                        <th>Valor Aprovado</th>
+                                                        <th width="180px">Ação</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr ng-repeat-start="cliente in clientes.elementos" class="c{{cliente[0].classe_virtual}}">
-                                                        <td class="text-center">{{cliente[0].codigo}}</td>
-                                                        <td>{{cliente[0].razao_social}}</td>
-                                                        <td>{{cliente[0].nome_fantasia}}</td>
-                                                        <td>{{cliente[0].inscricao_estadual}}</td>
-                                                        <td>{{cliente[0].pessoa_fisica?'------':cliente[0].cnpj.valor}}</td>
-                                                        <td>{{cliente[0].pessoa_fisica?cliente[0].cpf.valor:'------'}}</td>
-                                                        <td>{{cliente[0].limite_credito}}</td>
-                                                        <td style="{{(cliente[0].inicio_limite > data_atual|| cliente[0].termino_limite<data_atual)?'background-color:#71748d;color:#FFFFFF':'' }}">{{cliente[0].termino_limite| data}}<button class="btn btn-default" style="float:right" ng-if="cliente[0].inicio_limite > data_atual || cliente[0].termino_limite < data_atual" ng-click="analisaCredito(cliente[0])" ><i class="fa fa-address-card"></i></button></td>
-                                                        <?php if ($usuario->temPermissao(Sistema::P_EMPRESA_CLIENTE()->m("C"))) { ?>
-                                                        <td>{{cliente[0].empresa.nome}}</td>
-                                                        <?php } ?>
+                                                    <tr ng-repeat="ap in aprovacoes.elementos">
+                                                        <td>{{ap[0].empresa.id}}</td>
+                                                        <td>{{ap[0].empresa.nome}}</td>
+                                                        <td>{{ap[0].empresa.cnpj.valor}}</td>
+                                                        <td><calendario meses="1" model="ap[0].ate" botao="true"></calendario></td>
+                                                        <td>{{ap[0].produto.nome}}</td>
+                                                        <td>{{ap[0].produto.valor_base}}</td>
+                                                        <td>{{ap[0].produto.disponivel}}</td>
+                                                        <td><input type="number" step="0.01" ng-model="ap[0].valor" class="form-control" style="width:100px"></input></td>
                                                         <th>
-                                                            <div class="product-btn">
-                                                                <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setCliente(cliente[0])" data-target="#demo{{cliente[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setCliente(cliente[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
-                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setCliente(cliente[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
-                                                            </div>
+                                                            <button class="btn btn-success" ng-click="aprovar(ap[0])"><i class="fas fa-check"></i></button>
                                                         </th>
-                                                    </tr>
-                                                    <tr ng-repeat-end>
-                                                        <td colspan="9" class="hiddenRow">
-                                                            <div class="accordian-body collapse" id="demo{{cliente[0].id}}">
-                                                                <div class="row mx-auto m-b-30">
-                                                                    <div class="col">
-                                                                        <table class="table table-bordered w-100">
-                                                                            <tr>
-                                                                                <td>IE:</td>
-                                                                                <td>{{cliente[0].inscricao_estadual}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>CPF / CNPJ:</td>
-                                                                                <td>{{cliente[0].pessoa_fisica?cliente[0].cpf.valor:cliente[0].cnpj.valor}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>suframa:</td>
-                                                                                <td>{{cliente[0].inscricao_suframa}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Email:</td>
-                                                                                <td><email entidade="Cliente" atributo="cliente[0].email" senha="false" alterar="false"></email></td>
-                                                                            </tr>
-                                                                            <?php if($empresa->tipo_empresa===3){?>
-                                                                            <tr>
-                                                                                <td>Link Consignar:</td>
-                                                                                <td><textarea style="width:100%" rows="4" class="form-control">{{getLinkConsignadoCliente(cliente[0])}}</textarea></td>
-                                                                            </tr>
-                                                                            <?php } ?>
-                                                                        </table>
-                                                                    </div>	
-                                                                    <div class="col">
-                                                                        <table class="table-bordered w-100">
-                                                                            <tr>
-                                                                                <td>Endereço:</td>
-                                                                                <td>{{cliente[0].endereco.rua}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Número:</td>
-                                                                                <td>{{cliente[0].endereco.numero}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Bairro</td>
-                                                                                <td>{{cliente[0].endereco.bairro}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Cidade</td>
-                                                                                <td>{{cliente[0].endereco.cidade.nome}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Estado</td>
-                                                                                <td>{{cliente[0].endereco.cidade.estado.sigla}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>CEP</td>
-                                                                                <td>{{cliente[0].endereco.cep.valor}}</td>
-                                                                            </tr>
-                                                                        </table>
-                                                                    </div>																
-                                                                </div>	
-                                                            </div> 
-                                                        </td>
-                                                    </tr>
+                                                </tr>
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <th>Cod.</th>
-                                                        <th>Raz Soc.</th>
-                                                        <th>Nom Fant</th>
-                                                        <th>IE</th>
-                                                        <th>CNPJ</th>
-                                                        <th>CPF</th>
-                                                        <th>Lim Cre</th>
-                                                        <th>Fim Lim</th>
-                                                        <?php if ($usuario->temPermissao(Sistema::P_EMPRESA_CLIENTE()->m("C"))) { ?>
-                                                        <th>Empresa</th>
-                                                        <?php } ?>
+                                                        <th>Cod Emp.</th>
+                                                        <th>Nome Emp.</th>
+                                                        <th>CNPJ Emp.</th>
+                                                        <th>Pedir Reaprovacao Em</th>
+                                                        <th>Nome do Produto</th>
+                                                        <th>Valor do Cliente</th>
+                                                        <th>Qtd Disponivel</th>
+                                                        <th>Valor Aprovado</th>
                                                         <th width="180px">Ação</th>
                                                     </tr>
                                                 </tfoot>
@@ -237,9 +129,9 @@
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
                                                 <nav aria-label="Page navigation example">
                                                     <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="clientes.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in clientes.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="clientes.next()"><a class="page-link" href="">Próximo</a></li>
+                                                        <li class="page-item" ng-click="aprovacoes.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                        <li class="page-item" ng-repeat="pg in aprovacoes.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                        <li class="page-item" ng-click="aprovacoes.next()"><a class="page-link" href="">Próximo</a></li>
                                                     </ul>
                                                 </nav>
                                             </div>
@@ -280,66 +172,35 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Adicione os dados de seu Cliente</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-plus-circle fa-3x"></i>&nbsp;&nbsp;&nbsp;Altere os dados de seu Fornecedor</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">×</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form id="add-form" ng-submit="mergeCliente()" parsley-validate>
-                                    <?php if ($usuario->temPermissao(Sistema::P_EMPRESA_CLIENTE()->m("C"))) { ?>
+                                <form id="add-form" ng-submit="mergeFornecedor()" parsley-validate>
                                     <div class="form-group row">
-                                        <label  class="col-3 col-lg-4 col-form-label text-left">Empresa</label>
-                                        <div class="col-9 col-lg-8">
-                                            <select ng-model="cliente.empresa" class="form-control">
-                                                <option ng-repeat="e in empresas_clientes" ng-value="e">{{e.nome}}</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <?php } ?>
-                                    <div class="form-group row">
-                                        <label for="txtname" class="col-3 col-lg-3 col-form-label text-left">Codigo</label>
-                                        <div class="col-9 col-lg-9">
-                                            <input id="txtname" type="number" ng-model="cliente.codigo">
+                                        <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Codigo</label>
+                                        <div class="col-9 col-lg-10">
+                                            <input id="txtname" type="number" ng-model="fornecedor.codigo">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtname" class="col-3 col-lg-3 col-form-label text-left">Codigo Contimatic</label>
-                                        <div class="col-9 col-lg-9">
-                                            <input id="txtname" type="number" ng-model="cliente.codigo_contimatic">
+                                        <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Codigo Contimatic</label>
+                                        <div class="col-9 col-lg-10">
+                                            <input id="txtname" type="number" ng-model="fornecedor.codigo_contimatic">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="txtname" class="col-3 col-lg-3 col-form-label text-left">Razão social</label>
-                                        <div class="col-9 col-lg-9">
-                                            <input id="txtname" type="text" ng-model="cliente.razao_social" required data-parsley-type="email" placeholder="" class="form-control">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="txtnamef" class="col-3 col-lg-3 col-form-label text-left">Nome Fantasia</label>
-                                        <div class="col-9 col-lg-9">
-                                            <input id="txtnamef" type="text" ng-model="cliente.nome_fantasia" required data-parsley-type="email" placeholder="" class="form-control">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="txtnamef" class="col-3 col-lg-3 col-form-label text-left">Limite de Credito</label>
-                                        <div class="col-9 col-lg-9">
-                                            <input id="txtnamef" type="text" ng-model="cliente.limite_credito" required data-parsley-type="email" placeholder="" class="form-control">
+                                        <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Nome</label>
+                                        <div class="col-9 col-lg-10">
+                                            <input id="txtname" type="text" ng-model="fornecedor.nome" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -347,67 +208,31 @@
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-9 col-lg-10">
-                                            <email entidade="Cliente" atributo="cliente.email" senha="false" alterar="true"></email>
+                                            <email entidade="Fornecedor" atributo="fornecedor.email" senha="false" alterar="true"></email>
                                         </div>
                                     </div>
-                                    <div class="col" style="padding-top: 5px;">
-                                        <div class="row">
-                                            <div class="col-md-6" style="text-align:center">
-                                                <label class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" name="radio-inline" data-ng-value="false" data-ng-model="cliente.pessoa_fisica" class="custom-control-input"><span class="custom-control-label">Pessoa Jurídica</span>
-                                                </label>
-                                            </div>
-                                            <div class="col-md-6" style="text-align:center">
-                                                <label class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" name="radio-inline" data-ng-value="true" data-ng-model="cliente.pessoa_fisica" checked="" class="custom-control-input"><span class="custom-control-label">Pessoa Física</span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="invalid-feedback">
-                                            Please provide a valid text.
-                                        </div>
-                                    </div>
-                                    <div class="form-group row" ng-if="!cliente.pessoa_fisica">
+                                    <div class="form-group row">
                                         <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">CNPJ</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="cliente.cnpj.valor" required placeholder="00.000.000/0000-00" class="form-control cnpj">
+                                            <input id="txtcnpj" type="text" ng-model="fornecedor.cnpj.valor" required placeholder="00.000.000/0000-00" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row" ng-if="!cliente.pessoa_fisica">
+                                    <div class="form-group row">
                                         <label for="txtcnpj" class="col-3 col-lg-2 col-form-label text-left">Insc. Est</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcnpj" type="text" ng-model="cliente.inscricao_estadual" required placeholder="000.000.000.000" class="form-control ie">
+                                            <input id="txtcnpj" type="text" ng-model="fornecedor.inscricao_estadual" required placeholder="00.000.000/0000-00" class="form-control ie">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row" ng-if="cliente.pessoa_fisica">
-                                        <label for="txtcpf" class="col-3 col-lg-2 col-form-label text-left">CPF</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtcpf" type="text" ng-model="cliente.cpf.valor" required placeholder="000.000.000-00" class="form-control cpf">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row" ng-if="cliente.pessoa_fisica">
-                                        <label for="txtrg" class="col-3 col-lg-2 col-form-label text-left">RG</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtrg" type="text" ng-model="cliente.rg.valor" required placeholder="000.000.000-00" class="form-control rg">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     <div class="form-group row">
                                         <label for="txtend" class="col-3 col-lg-2 col-form-label text-left">Endereço</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtend" type="text" ng-model="cliente.endereco.rua" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <input id="txtend" type="text" ng-model="fornecedor.endereco.rua" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -416,7 +241,7 @@
                                     <div class="form-group row">
                                         <label for="txtendnum" class="col-3 col-lg-2 col-form-label text-left">Número</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtendnum" type="text" ng-model="cliente.endereco.numero" required data-parsley-type="email" placeholder="" class="form-control">
+                                            <input id="txtendnum" type="text" ng-model="fornecedor.endereco.numero" required data-parsley-type="email" placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -425,29 +250,7 @@
                                     <div class="form-group row">
                                         <label for="txtbairro" class="col-3 col-lg-2 col-form-label text-left">Bairro</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtbairro" ng-model="cliente.endereco.bairro" type="text" required placeholder="" class="form-control">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label  class="col-3 col-lg-4 col-form-label text-left">Classe Cliente</label>
-                                        <div class="col-9 col-lg-8">
-                                            <select ng-model="cliente.classe_virtual" class="form-control">
-                                                <option ng-repeat="classe in classes" ng-value="classe.id">{{classe.nome}}</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label  class="col-3 col-lg-4 col-form-label text-left">Categoria Cliente</label>
-                                        <div class="col-9 col-lg-8">
-                                            <select ng-model="cliente.categoria" class="form-control">
-                                                <option ng-repeat="categoria in categorias_cliente" ng-value="categoria">{{categoria.nome}}</option>
-                                            </select>
+                                            <input id="txtbairro" ng-model="fornecedor.endereco.bairro" type="text" required placeholder="" class="form-control">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
@@ -467,7 +270,7 @@
                                     <div class="form-group row">
                                         <label  class="col-3 col-lg-2 col-form-label text-left">Cidade</label>
                                         <div class="col-9 col-lg-10">
-                                            <select ng-model="cliente.endereco.cidade" class="form-control">
+                                            <select ng-model="fornecedor.endereco.cidade" class="form-control">
                                                 <option ng-repeat="cidade in estado.cidades" ng-value="cidade">{{cidade.nome}}</option>
                                             </select>
                                             <div class="invalid-feedback">
@@ -478,70 +281,38 @@
                                     <div class="form-group row">
                                         <label for="txtcep" class="col-3 col-lg-2 col-form-label text-left">CEP</label>
                                         <div class="col-9 col-lg-10">
-                                            <input id="txtcep" type="text" ng-model="cliente.endereco.cep.valor" required placeholder="" class="form-control cep" maxlength="9">
+                                            <input id="txtcep" type="text" ng-model="fornecedor.endereco.cep.valor" required placeholder="" class="form-control cep" maxlength="9">
                                             <div class="invalid-feedback">
                                                 Please provide a valid text.
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label for="txtsuf" class="col-3 col-form-label text-left">Tem Suframa ?</label>
-                                        <div class="col-9">
-                                            <label class="custom-control custom-radio custom-control-inline">
-                                                <input type="radio" name="radio-inline2" data-ng-value="true" data-ng-model="cliente.suframado" class="custom-control-input"><span class="custom-control-label">Sim</span>
-                                            </label>
-                                            <label class="custom-control custom-radio custom-control-inline">
-                                                <input type="radio" name="radio-inline2" data-ng-value="false" data-ng-model="cliente.suframado" checked="" class="custom-control-input"><span class="custom-control-label">Nao</span>
-                                            </label>
-
+                                    <div class="form-group row" ng-if="fornecedor.suframado">
+                                        <label for="txtsuf" class="col-3 col-lg-2 col-form-label text-left">Suframa</label>
+                                        <div class="col-9 col-lg-10">
+                                            <input id="txtsuf" type="text" ng-model="cliente.inscricao_suframa" placeholder="" class="form-control cep" maxlength="9">
+                                            <div class="invalid-feedback">
+                                                Please provide a valid text.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col" style="padding-top: 5px;">
+                                        <div class="row">
+                                            <div class="col-md-3" style="text-align:center">
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="radio-inline" data-ng-value="true" data-ng-model="fornecedor.habilitado" class="custom-control-input"><span class="custom-control-label">Habilitado</span>
+                                                </label>
+                                            </div>
+                                            <div class="col-md-3" style="text-align:center">
+                                                <label class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" name="radio-inline" data-ng-value="false" data-ng-model="fornecedor.habilitado" checked="" class="custom-control-input"><span class="custom-control-label">Desabilitado</span>
+                                                </label>
+                                            </div>
                                         </div>
                                         <div class="invalid-feedback">
                                             Please provide a valid text.
                                         </div>
                                     </div>
-                                    <div class="form-group row" ng-if="cliente.suframado">
-                                        <label for="txtsuf" class="col-3 col-lg-2 col-form-label text-left">Suframa</label>
-                                        <div class="col-9 col-lg-10">
-                                            <input id="txtsuf" type="text" ng-model="cliente.inscricao_suframa" placeholder="000000000" class="form-control txtsuf" maxlength="9">
-                                            <div class="invalid-feedback">
-                                                Please provide a valid text.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr style="margin: 5px 0px;">
-                                    <div class="form-group row">
-
-                                        <div class="col-md-10">
-                                            Categorias
-                                            <hr>
-                                            <select ng-model="categoria_prospeccao" class="form-control">
-                                                <option ng-repeat="categoria in categorias_prospeccao" ng-value="categoria">{{categoria.nome}}</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="col-md-2">
-                                            Adc
-                                            <hr>
-                                            <button class="btn btn-primary" ng-click="addCategoriaProspeccao()" type="button"><i class="fa fa-plus"></i></button>
-                                            <input id="uploaderDocumentoCliente" style="display: none" type="file" multiple>
-                                        </div>
-
-                                    </div>
-                                    <div class="form-group row">
-                                        <table class="table table-striped table-bordered first">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nome</th>
-                                                    <th><i class="fa fa-times"></i></th>
-                                                </tr>
-                                            </thead>
-                                            <tr ng-repeat="cat in categorias_prospeccao_cliente">
-                                                <td>{{cat.nome}}</td>
-                                                <td class="product"><button type="button" class="btn remove-product" ng-click="removeCategoriaProspeccao(cat)"><i class="fa fa-times"></i></button></td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                    <hr style="margin: 30px 0px;">
                                     <div class="form-group row">
 
                                         <div class="col-md-10">
@@ -553,7 +324,7 @@
                                         <div class="col-md-2">
                                             Adc
                                             <hr>
-                                            <button class="btn btn-primary" ng-click="addTelefone()" type="button"><i class="fa fa-plus"></i></button>
+                                            <button class="btn btn-success" ng-click="addTelefone()" type="button"><i class="fa fa-plus"></i></button>
                                         </div>
 
                                     </div>
@@ -561,18 +332,16 @@
                                         <table class="table table-striped table-bordered first">
                                             <thead>
                                                 <tr>
-                                                    <th>Número</th>
+                                                    <th>Numero</th>
                                                     <th><i class="fa fa-times"></i></th>
                                                 </tr>
                                             </thead>
-                                            <tr ng-repeat="t in cliente.telefones">
+                                            <tr ng-repeat="t in fornecedor.telefones">
                                                 <td>{{t.numero}}</td>
-                                                <td class="product"><button type="button" class="btn remove-product" ng-click="removeTelefone(t)"><i class="fa fa-times"></i></button></td>
+                                                <td><button type="button" class="btn btn-danger" ng-click="removeTelefone(t)"><i class="fa fa-times"></i></button></td>
                                             </tr>
                                         </table>
                                     </div>
-                                    
-                                    <hr style="margin: 30px 0px;">
                                     <div class="form-group row">
 
                                         <div class="col-md-10">
@@ -586,8 +355,8 @@
                                         <div class="col-md-2">
                                             Adc
                                             <hr>
-                                            <button class="btn btn-primary" onclick="$('#uploaderDocumentoCliente').click()" type="button"><i class="fa fa-plus"></i></button>
-                                            <input id="uploaderDocumentoCliente" style="display: none" type="file" multiple>
+                                            <button class="btn btn-success" onclick="$('#uploaderDocumentoFornecedor').click()" type="button"><i class="fa fa-plus"></i></button>
+                                            <input id="uploaderDocumentoFornecedor" style="display: none" type="file" multiple>
                                         </div>
 
                                     </div>
@@ -600,10 +369,10 @@
                                                     <th><i class="fa fa-times"></i></th>
                                                 </tr>
                                             </thead>
-                                            <tr ng-repeat="doc in cliente.documentos">
+                                            <tr ng-repeat="doc in fornecedor.documentos">
                                                 <td>{{doc.categoria.nome}}</td>
-                                                <td><a class="btn btn-primary" target="_blank" ng-href="{{doc.link}}"><i class="fas fa-folder-open"></i></a></td>
-                                                <td class="product"><button type="button" class="btn remove-product" ng-click="removeDocumento(doc)"><i class="fa fa-times"></i></button></td>
+                                                <td><a class="btn btn-primary" target="_blank" ng-href="{{doc.link}}"><i class="fa fa-random"></i></a></td>
+                                                <td><button type="button" class="btn btn-danger" ng-click="removeDocumento(doc)"><i class="fa fa-times"></i></button></td>
                                             </tr>
                                         </table>
                                     </div>
@@ -626,7 +395,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Edite os dados de seu Cliente</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-pencil-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Edite os dados de seu Fornecedor</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">×</span>
                                 </button>
@@ -801,21 +570,20 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de seu Cliente</h5>
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Delete os dados de seu Fornecedor</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                             </div>
                             <div class="modal-body">
-                                <p class="text-center"> Tem certeza de que deseja excluir este Cliente?</p>
+                                <p class="text-center"> Tem certeza de que deseja excluir este Fornecedor?</p>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary" ng-click="deleteCliente(cliente)">Sim</button>
+                                <button class="btn btn-primary" ng-click="deleteFornecedor(fornecedor)">Sim</button>
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Não</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- /.modal-content --> 
-
 
                 <!-- /.modal-content LOADING --> 
                 <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
@@ -850,7 +618,7 @@
                 <!-- Optional JavaScript -->
                 <script>
 
-                                           var l = $('#loading');
+                                                var l = $('#loading');
                                                             l.hide();
 
                                                             
@@ -883,27 +651,35 @@
                                                                 l.hide();
                                                             }
 
-                                            $(document).on('keyup', '.txtsuf', function () {
-                                                $(this).mask('000000000');
-                                            });
-                                            $(document).on('keyup', '.cnpj', function () {
-                                                $(this).mask('00.000.000/0000-00', {reverse: true});
-                                            });
-                                            $(document).on('keyup', '.cpf', function () {
-                                                $(this).mask('000.000.000-00', {reverse: true});
-                                            });
-                                            $(document).on('keyup', '.rg', function () {
-                                                $(this).mask('99.999.999-A', {reverse: true});
-                                            });
-                                            $(document).on('keyup', '.ie_', function () {
-                                                $(this).mask('000000000000000', {reverse: true});
-                                            });
 
-                                            $(document).ready(function () {
-                                                $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
-                                                $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                                                $('.btndel').tooltip({title: "Deletar", placement: "top"});
-                                            });
+
+                                                $(document).ready(function () {
+                                                    $(document).on({
+                                                        'show.bs.modal': function () {
+                                                            var zIndex = 1040 + (10 * $('.modal:visible').length);
+                                                            $(this).css('z-index', zIndex);
+                                                            setTimeout(function () {
+                                                                $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+                                                            }, 0);
+                                                        },
+                                                        'hidden.bs.modal': function () {
+                                                            if ($('.modal:visible').length > 0) {
+                                                                // restore the modal-open class to the body element, so that scrolling works
+                                                                // properly after de-stacking a modal.
+                                                                setTimeout(function () {
+                                                                    $(document.body).addClass('modal-open');
+                                                                }, 0);
+                                                            }
+                                                        }
+                                                    }, '.modal');
+                                                });
+
+
+                                                $(document).ready(function () {
+                                                    $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                                                    $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                                                    $('.btndel').tooltip({title: "Deletar", placement: "top"});
+                                                });
 
 
                 </script>

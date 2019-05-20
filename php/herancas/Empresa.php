@@ -5024,6 +5024,103 @@ class Empresa {
         return $produtos;
     }
 
+    public function getCountAprovacoesConsignado($con,$filtro=""){
+
+
+        $sql = "SELECT COUNT(*) FROM 
+        produto 
+        LEFT JOIN aprovacao_consignado 
+        ON aprovacao_consignado.id_produto=produto.id 
+        AND aprovacao_consignado.ate>CURRENT_TIMESTAMP 
+        AND aprovacao_consignado.aprovado_sob=produto.valor_base 
+        INNER JOIN empresa ON empresa.id=produto.id_empresa 
+        WHERE produto.empresa_vendas=$this->id AND aprovacao_consignado.id IS NULL ";
+
+        if($filtro !== ""){
+
+            $sql .= "AND $filtro ";
+
+        }
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($qtd);
+        if($ps->fetch()){
+            $ps->close();
+            return $qtd;
+        }
+        $ps->close();
+ 
+        return 0;
+
+    }
+
+    public function getAprovacoesConsignado($con,$x1,$x2,$filtro="",$ordem=""){
+
+
+        $sql = "SELECT empresa.id,empresa.nome,empresa.cnpj,produto.id,produto.nome,produto.valor_base,produto.disponivel,produto.estoque FROM 
+        produto 
+        LEFT JOIN aprovacao_consignado 
+        ON aprovacao_consignado.id_produto=produto.id 
+        AND aprovacao_consignado.ate>CURRENT_TIMESTAMP 
+        AND aprovacao_consignado.aprovado_sob=produto.valor_base 
+        INNER JOIN empresa ON empresa.id=produto.id_empresa 
+        WHERE produto.empresa_vendas=$this->id AND aprovacao_consignado.id IS NULL ";
+
+        if($filtro !== ""){
+
+            $sql .= "AND $filtro ";
+
+        }
+
+        if($ordem !== ""){
+
+            $sql .= "ORDER BY $ordem ";
+
+        }
+
+        $sql .= "LIMIT $x1,".($x2-$x1);
+
+        
+
+
+        $aprovacoes = array();
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id_empresa,$nome_empresa,$cnpj_empresa,$id_produto,$nome_produto,$valor_produto,$disponivel_produto,$estoque_produto);
+
+        while($ps->fetch()){
+
+            $emp = new Empresa();
+            $emp->id = $id_empresa;
+            $emp->nome = $nome_empresa;
+            $emp->cnpj = new CNPJ($cnpj_empresa);
+
+            $prod = new Produto();
+            $prod->id = $id_produto;
+            $prod->nome = $nome_produto;
+            $prod->valor_base = $valor_produto;
+            $prod->disponivel = $disponivel_produto;
+            $prod->estoque = $estoque_produto;
+
+            $ap = new AprovacaoConsignado();
+            $ap->empresa = $emp;
+            $ap->produto = $prod;
+            $ap->aprovado_sob = $prod->valor_base;
+            $ap->valor = round($prod->valor_base*1.01,2);
+
+            $aprovacoes[] = $ap;
+
+        }
+
+        $ps->close();
+
+        return $aprovacoes;
+
+
+    }
+
     public function getProdutos($con, $x1, $x2, $filtro = "", $ordem = "") {
 
         $campanhas = array();
@@ -5182,7 +5279,8 @@ class Empresa {
                 . "produto.concentracao,"
                 . "produto.sistema_lotes,"
                 . "produto.nota_usuario,"
-                . "produto.id_categoria "
+                . "produto.id_categoria, "
+                . "produto.empresa_vendas "
                 . "FROM produto "
                 . "WHERE produto.id_empresa = $this->id AND produto.excluido = false ";
 
@@ -5204,7 +5302,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id);
+        $ps->bind_result($id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id,$id_empresa_vendas);
 
         while ($ps->fetch()) {
 
@@ -5230,6 +5328,7 @@ class Empresa {
             $p->peso_liquido = $pl;
             $p->estoque = $est;
             $p->disponivel = $disp;
+            $p->id_empresa_vendas = $id_empresa_vendas;
             $p->ativo = $ativo;
             $p->concentracao = $conc;
             $p->transito = $tr;
@@ -5782,6 +5881,7 @@ class Empresa {
 
         $sql = "SELECT "
                 . "cliente.id,"
+                . "cliente.classe_virtual,"
                 . "cliente.codigo_contimatic,"
                 . "cliente.codigo,"
                 . "cliente.razao_social, "
@@ -5834,7 +5934,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_cliente, $cod_ctm, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $email_cli_id, $email_cli_end, $email_cli_senha);
+        $ps->bind_result($id_cliente,$classe_virtual, $cod_ctm, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $email_cli_id, $email_cli_end, $email_cli_senha);
 
         $clientes = array();
 
@@ -5842,6 +5942,7 @@ class Empresa {
 
             $cliente = new Cliente();
             $cliente->id = $id_cliente;
+            $cliente->classe_virtual = $classe_virtual;
             $cliente->codigo_contimatic = $cod_ctm;
             $cliente->codigo = $cod_cli;
             $cliente->cnpj = new CNPJ($cnpj);

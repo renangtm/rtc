@@ -521,6 +521,12 @@
                                     Porcentagem: 
                                     <input ng-disabled="pf(tarefa) > 0" ng-value="pf(tarefa)" style="width:30%;text-align:center" type="number" class="form-control" ng-model="observacao_tarefa.porcentagem"></input>
                                     <hr>
+                                    <div ng-repeat="nc in num(tarefa.tipo_tarefa.classes)">
+                                        <div class="form-control" style="width:100%">
+                                            <div ng-click="tarefa.opcoes[nc]=it" style="cursor:pointer;display:block;width:100%;padding:5px;margin:2px;{{tarefa.opcoes[nc]===it?'background-color:LightGreen':''}}" ng-repeat="it in num(tarefa.tipo_tarefa.classes[nc])" ng-value="it"><span ng-bind-html="toHTML(tarefa.tipo_tarefa.classes[nc][it])"></span>&nbsp<i ng-if="tarefa.opcoes[nc]===it" class="fas fa-check" style="color:Green"></i></div>
+                                        </div>
+                                    </div>
+                                     <hr>
                                     <textarea placeholder="Observacao" ng-model="observacao_tarefa.observacao" class="form-control" style="width:100%" rows="10">
                                     
                                     </textarea>

@@ -39,7 +39,8 @@ class Virtual extends Empresa {
 
         $this->permissoes_especiais[] = array(
             Sistema::P_EMPRESA_CLIENTE(),
-            Sistema::P_RELACAO_CLIENTE());
+            Sistema::P_RELACAO_CLIENTE(),
+            Sistema::P_GERENCIAR_CONSIGNADOS());
 
         $this->cargos_fixos[] = Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO($this);
         $this->cargos_fixos[] = Virtual::CF_ASSISTENTE_VIRTUAL_RECEPCAO($this);
@@ -151,6 +152,7 @@ class Virtual extends Empresa {
 
         $sql = "SELECT "
                 . "cliente.id,"
+                . "cliente.classe_virtual,"
                 . "cliente.codigo_contimatic,"
                 . "cliente.codigo,"
                 . "cliente.razao_social, "
@@ -230,7 +232,7 @@ class Virtual extends Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_cliente, $cod_ctm, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $email_cli_id, $email_cli_end, $email_cli_senha, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj_empresa, $numero_endereco_empresa, $id_endereco_empresa, $rua_empresa, $bairro_empresa, $cep_empresa, $id_cidade_empresa, $nome_cidade_empresa, $id_estado_empresa, $nome_estado_empresa, $id_email_empresa, $endereco_email_empresa, $senha_email_empresa, $id_telefone_empresa, $numero_telefone_empresa);
+        $ps->bind_result($id_cliente,$classe_virtual, $cod_ctm, $cod_cli, $nome_cliente, $nome_fantasia_cliente, $limite, $inicio, $fim, $pessoa_fisica, $cpf, $cnpj, $rg, $ie, $suf, $i_suf, $cat_id, $cat_nome, $end_cli_id, $end_cli_rua, $end_cli_numero, $end_cli_bairro, $end_cli_cep, $cid_cli_id, $cid_cli_nome, $est_cli_id, $est_cli_nome, $email_cli_id, $email_cli_end, $email_cli_senha, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj_empresa, $numero_endereco_empresa, $id_endereco_empresa, $rua_empresa, $bairro_empresa, $cep_empresa, $id_cidade_empresa, $nome_cidade_empresa, $id_estado_empresa, $nome_estado_empresa, $id_email_empresa, $endereco_email_empresa, $senha_email_empresa, $id_telefone_empresa, $numero_telefone_empresa);
 
         $empresas = array();
 
@@ -287,6 +289,7 @@ class Virtual extends Empresa {
 
             $cliente = new Cliente();
             $cliente->id = $id_cliente;
+            $cliente->classe_virtual = $classe_virtual;
             $cliente->codigo_contimatic = $cod_ctm;
             $cliente->codigo = $cod_cli;
             $cliente->cnpj = new CNPJ($cnpj);

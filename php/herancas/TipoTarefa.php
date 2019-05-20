@@ -21,6 +21,8 @@ class TipoTarefa {
     public $empresa;
     public $excluido;
     public $observacao_padrao;
+    
+    public $classes;
 
     function __construct($id = 0, $id_empresa = 0) {
 
@@ -29,7 +31,7 @@ class TipoTarefa {
 
             $id = -1 * (($id_empresa * 1000) + $id);
         }
-
+        $this->classes = array();
         $this->id = $id;
         $this->nome = "";
         $this->tempo_medio = 1;
@@ -41,6 +43,12 @@ class TipoTarefa {
     }
 
     public function init($tarefa) {
+        
+    }
+    
+    public function getOpcoes($con,$tarefa){
+        
+        return array();
         
     }
 

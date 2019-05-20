@@ -6,8 +6,54 @@ $empresa = $ses->get('empresa');
 $usuario = $ses->get('usuario');
 
 
-if ($usuario == null || $empresa == null) {
+if(isset($_GET['idc'])){
+        
+        $idc = Utilidades::base64decodeSPEC($_GET['idc']);
+        
+        $idc = explode('_',$idc);
+        
+        $con = new ConnectionFactory();
+        $ps = $con->getConexao()->prepare("SELECT id_empresa FROM cliente WHERE id=".$idc[0]);
+        $ps->execute();
+        $ps->bind_result($id_empresa);
+        if($ps->fetch()){
+            $ps->close();
+            
+            $emp = new Empresa($id_empresa,$con);
+            
+            $cliente = $emp->getClientes($con,0,1,'cliente.id='.$idc[0]);
+            
+            
+            if(count($cliente)===1){
+               
+                $usuario = Sistema::getUsuario("empresa.cnpj='".$cliente[0]->cnpj->valor."'");
+                
+                if($usuario === null){
+                    
+                    $cliente[0]->login = str_replace(array(".","/","-"), array("","",""), $cliente[0]->cnpj->valor);
+                    $cliente[0]->senha = str_replace(array(".","/","-"), array("","",""), $cliente[0]->cnpj->valor);
+                    
+                    Sistema::inserirClienteRTC($con,$cliente[0],true);
+                    header('Location: '.$_SERVER['REQUEST_URI']);
+                    exit;
+                    
+                }else{
+                    
+                   $empresa = $ses->get('empresa');
+                   $usuario = $ses->get('usuario');
+                    
+                }
+                
+            }
+            
+        }else{
+            $ps->close();
+        }
+        
+    }
 
+if ($usuario == null || $empresa == null) {
+    
     header('location:index.php');
 }
 
@@ -109,10 +155,10 @@ $possiveis[0] = $rtc;
                 <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
             </div>
 
-            <div style="position:absolute;cursor:pointer;padding:10px;background-color: #FFFFFF;z-index: 99999;border-radius:5px;border:1px solid;visibility: {{protocolos_ativos.length===0?'hidden':'initial'}}" id="drag_protocolos" >
-                <button class="btn btn-warning" id="btnEsconde"><i class="fas fa-list"></i>&nbsp Esconder {{protocolos_ativos.length}} protocolos</button>
-                <hr>
+            <div style="position:absolute;cursor:pointer;padding:10px;top:80px;background-color: #FFFFFF;z-index: 99999;border-radius:5px;border:1px solid;visibility: {{protocolos_ativos.length===0?'hidden':'initial'}}" id="drag_protocolos" >
+                <button class="btn btn-warning" id="btnEsconde"><i class="fas fa-list"></i>&nbsp PROTOCOLOS</button>
                 <div id="chat_protocolos">
+                    <hr>
                     <div style="width:500px;height:500px;border:1px dashed;border-radius: 5px;background-color: #FFFFFF;display: inline-block;margin-left:10px;margin-bottom:10px" ng-repeat="p in protocolos_ativos">
                         <div style="height:10%;width:100%;background-color: darkred;color:#FFFFFF !important;text-align: center;padding-top:5px">
                             <h4 style="color:#FFFFFF"><i class="fas fa-fire"></i> - {{p.tipo.nome}}</h4>
@@ -342,6 +388,11 @@ $possiveis[0] = $rtc;
                             <a class="nav-link" href="banners.php" ><button class="btn btn-warning" onmousedown="tutorial('Banners', 'Aqui voc� consegue confeccionar banners din�micos para entrar no RTC da sua empresa e serem enviados por email, esses banners tem que estar em formato HTML, e talvez precise de um profissional de marketing para criar esse HTML para voc�, mas depois que � criado o pr�prio sistema faz adapta��es nele para servir para qualquer situa��o')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-image"></i>Banners</a>
                         </li>
                     <?php } ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_GERENCIAR_CONSIGNADOS()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="gerenciar_consignados.php" ><button class="btn btn-warning" onmousedown="tutorial('Gerenciar Consignados', 'Aqui voce consegue gerenciar os produtos consignados de terceiros para aparecer no encomenda do RTC')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-list"></i>Gerenciar Consignados</a>
+                        </li>
+                    <?php } ?>
                         <?php if ($usuario->temPermissao(Sistema::P_CARGOS()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="cargos.php" ><button class="btn btn-warning" onmousedown="tutorial('Cargos', 'Aqui voce consegue gerenciar os cargos')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-adjust"></i>Cargos</a>
@@ -360,6 +411,11 @@ $possiveis[0] = $rtc;
                     <?php if ($usuario->temPermissao(Sistema::P_ENCOMENDA()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="encomenda.php" ><button class="btn btn-warning" onmousedown="tutorial('Encomenda', 'Aqui voc� pode gerenciar as encomendas realizadas')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-clock"></i>Encomendas</a>
+                        </li>
+                    <?php } ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_CONSIGNACAO_PRODUTO()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="consigna_produto.php" ><button class="btn btn-warning" onmousedown="tutorial('Consignar produto', 'Aqui voce pode consignar seus produtos para venda, atravez de um contrato')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-camera"></i>Consignar produtos</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_MOVIMENTO_PRODUTO()->m("C"))) { ?>
@@ -575,17 +631,30 @@ $possiveis[0] = $rtc;
             hd = true;
         }else{
             
-            $("#chat_protocolos").show(100);
+            $("#chat_protocolos").show();
             hd = false;
+
+            var k = $(window).width();
+            var l = $("#drag_protocolos").offset().left + $("#drag_protocolos").width(); 
+
+            if(l>k){
+
+                $("#drag_protocolos").css('left',(($(window).width()-20)-$("#drag_protocolos").width())+"px");
+
+
+            }
+
         }
         
         
     })
     
     var data = new Date();
-    if(data.getHours()>11){
+    //if(data.getHours()>11){
         $("#btnEsconde").click();
-    }
+    //}
+
+    $("#drag_protocolos").css('left',($(window).width()-180)+"px");
 
 
             function tutorial(titulo, conteudo){

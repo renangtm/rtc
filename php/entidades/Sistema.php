@@ -13,13 +13,38 @@
  */
 class Sistema {
 
-    public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
+    public static $ENDERECO = "http://192.168.0.121:888/novo_rtc_web/";
 
     /*
      * porcentagem
      * titulo
      * valores
      */
+
+    public static function deconsignarProduto($con,$produto){
+
+        $ps = $con->getConexao()->prepare("UPDATE produto SET empresa_vendas=0 WHERE id=$produto->id");
+        $ps->execute();
+        $ps->close();
+
+    }
+
+    public static function consignarProduto($con,$produto,$empresa){
+
+    	if ($produto->id === 0) {
+
+            $cat = Sistema::getCategoriaProduto(null);
+            $produto->categoria = $cat[0];
+            $produto->sistema_lotes = false;
+        }
+
+        $produto->merge($con);
+
+        $ps = $con->getConexao()->prepare("UPDATE produto SET empresa_vendas=$empresa->id WHERE id=$produto->id");
+        $ps->execute();
+        $ps->close();
+
+    }
 
     public static function addCarrinhoEncomendaCadastrando($con, $produto, $quantidade) {
 
@@ -894,6 +919,14 @@ class Sistema {
 
     public static function P_IA_CHAT() {
         return new Permissao(80, "Arvore de chat");
+    }
+    
+    public static function P_CONSIGNACAO_PRODUTO() {
+        return new Permissao(87, "Consignacao de Produto");
+    }
+    
+    public static function P_GERENCIAR_CONSIGNADOS() {
+        return new Permissao(88, "Gerenciar consignacao");
     }
 
     public static function TT_COMPRA($id_empresa) {
@@ -2436,6 +2469,7 @@ class Sistema {
         $categorias_loja .= ")";
 
         $produtos = array();
+        $produtos_universal = array();
 
         foreach ($empresas as $key => $value) {
 
@@ -2447,7 +2481,8 @@ class Sistema {
 
 
                 $grupo = new ProdutoEncomendaParceiro();
-                $grupo->id = $value2->codigo;
+                $grupo->id = $value2->id;
+                $grupo->id_universal = $value2->id_universal;
                 $grupo->categoria = $value2->categoria;
                 $grupo->ativo = $value2->ativo;
                 $grupo->unidade = $value2->unidade;
@@ -2465,6 +2500,8 @@ class Sistema {
                 $grupo->setImagemPadrao();
 
                 $produtos[$hash] = $grupo;
+                $produtos_universal[$value2->id_universal] = $grupo;
+
             }
         }
 
@@ -2509,6 +2546,7 @@ class Sistema {
         foreach ($produtos as $key => $value) {
             if ($value->ofertas === 0) {
                 unset($produtos[$key]);
+                unset($produtos_universal[$value->id_universal]);
             }
         }
 
@@ -2534,20 +2572,95 @@ class Sistema {
         foreach ($produtos as $key => $value) {
             if ($value->ofertas === 0) {
                 unset($produtos[$key]);
+                unset($produtos_universal[$value->id_universal]);
             }
         }
 
+
+        $virtuais = Sistema::getEmpresas($con,"empresa.tipo_empresa=3");
+        foreach($virtuais as $key=>$virtual){
+
+        	$ps = $con->getConexao()->prepare("SELECT p.id_universal,p.id,p.imagem,p.nome,p.id_categoria,p.ativo,p.unidade,p.fabricante,a.valor,p.grade,p.disponivel,p.id_empresa FROM produto p INNER JOIN aprovacao_consignado a ON a.id_produto=p.id AND a.ate>CURRENT_TIMESTAMP AND a.aprovado_sob=p.valor_base AND p.disponivel>0 WHERE p.empresa_vendas=$virtual->id");
+        	$ps->execute();
+        	$ps->bind_result($id_universal,$id,$imagem,$nome,$id_categoria,$ativo,$unidade,$fabricante,$valor,$grade,$disponivel,$empresa);
+        	while($ps->fetch()){
+
+        		if(!isset($produtos_universal[$id_universal])){
+
+        			$g = new ProdutoEncomendaParceiro();
+        			$g->id = $id;
+        			$g->id_universal = $id_universal;
+        			$g->categoria = Sistema::getCategoriaProduto(null, $id_categoria);
+        			$g->ativo = $ativo;
+        			$g->unidade = $unidade;
+        			$g->empresa = $virtual;
+        			$g->fabricante = $fabricante;
+        			$g->nome = $nome;
+        			$g->valor_base = $valor;
+        			$g->valor_base_inicial = $valor;
+        			$g->valor_base_final = $valor;
+        			$g->imagem = $imagem;
+        			$g->grade = new Grade($grade);
+        			$g->disponivel = $disponivel;
+        			$g->estoque = $disponivel;
+        			$g->transito = $disponivel;
+
+        			$g->valor_fixo = $valor;
+        			$g->id_empresa = $empresa;
+        			$g->limite = $disponivel;
+
+        			$g->setImagemPadrao();
+
+        			$produtos[] = $g;
+        			$produtos_universal[$id_universal] = $g;
+
+        		}else{
+
+        			$g = $produtos_universal[$id_universal];
+
+        			if($valor>$g->valor_fixo && $g->valor_fixo !== 0){
+        				continue;
+        			}
+        			
+        			$g->id = $id;
+        			$g->valor_fixo = $valor;
+        			$g->id_empresa = $empresa;
+        			$g->limite = $disponivel;
+        			$g->imagem = $imagem;
+        			$g->grade = new Grade($grade);
+        			$g->fabricante = $fabricante;
+
+        		}
+
+        	}
+        	$ps->close();
+
+
+
+        }
+
+
         $resultado = array();
+        $resultado2 = array();
 
         foreach ($produtos as $key => $value) {
             if ($value !== -1) {
-                $resultado[] = $value;
+            	if($value->valor_fixo===0){
+                	$resultado[] = $value;
+            	}else{
+            		$resultado2[] = $value;
+            	}
             }
         }
 
-        $cm->setCache('encomenda_parceiros', $resultado);
 
-        return $resultado;
+        foreach($resultado as $key=>$value){
+        	$resultado2[] = $value;
+        }
+
+        $cm->setCache('encomenda_parceiros', $resultado2);
+
+        return $resultado2;
     }
 
     public static function getCompraParceiros($con) {
@@ -3762,7 +3875,7 @@ class Sistema {
         $ps->close();
     }
 
-    public static function inserirClienteRTC($con, $cliente) {
+    public static function inserirClienteRTC($con, $cliente,$consignado=false) {
 
         $ps = $con->getConexao()->prepare("SELECT id FROM empresa WHERE cnpj='" . $cliente->cnpj->valor . "'");
         $ps->execute();
@@ -3802,6 +3915,11 @@ class Sistema {
 
         $rtc = Sistema::getRTCS();
         $rtc = $rtc[0];
+        
+        if($consigna){
+            $rtc=$rtc[5];
+        }
+        
         $empresa->setRTC($con, $rtc);
 
         $u = new Usuario();
@@ -3816,6 +3934,15 @@ class Sistema {
         $u->permissoes = $rtc->permissoes;
 
         foreach ($u->permissoes as $key => $value) {
+            
+            if($consignado){
+                if($value->id!==Sistema::P_PRODUTO()->id &&
+                        $value->id !== Sistema::P_CONSIGNACAO_PRODUTO()->id &&
+                        $value->id !== Sistema::P_CONFIGURACAO_EMPRESA()->id){
+                    continue;
+                }
+            }
+            
             $value->in = true;
             $value->alt = true;
             $value->del = true;
@@ -4255,6 +4382,7 @@ class Sistema {
     public static function getRTCS() {
         RTC::$RTCS = array();
         return array(new RTC(1, array(
+                Sistema::P_CONSIGNACAO_PRODUTO(),
                 Sistema::P_CLIENTE(),
                 Sistema::P_FORNECEDOR(),
                 Sistema::P_TRANSPORTADORA(),
@@ -5069,6 +5197,7 @@ class Sistema {
 
         return Sistema::getUsuario("usuario.login='$login' AND usuario.senha='$senha'");
     }
+    
 
     public static function getCidades($con) {
 

@@ -21,6 +21,16 @@ class TTRecepcaoCliente extends TipoTarefa {
 
         $this->id_empresa = $id_empresa;
 
+        $this->classes = array(
+            array(
+                "<strong style='color:black'>Indefinido, jogar para o suporte</strong>"
+                ,"<strong style='color:green'>Aderiu ao RTC, jogar para o suporte</strong>",
+                "<strong style='color:Orange'>Nao quer trabalhar momentaneamente com a agrofauna</strong>",
+                "<strong style='color:Red'>Nao quer trabalhar com a Agro Fauna</strong>",
+                "<strong style='color:Purple'>Faliu ou morreu</strong>",
+                "<strong style='color:Gray'>Nao atende</strong>",
+                "<strong style='color:Brown'>Nao se encontra</strong>"));
+        
         $this->nome = "Recepcao de Cliente";
         $this->tempo_medio = 0.2;
         $this->prioridade = 10;
@@ -28,6 +38,19 @@ class TTRecepcaoCliente extends TipoTarefa {
             Virtual::CF_ASSISTENTE_VIRTUAL_RECEPCAO(new Empresa($id_empresa))
         );
         $this->carregarDados();
+    }
+    
+    public function getOpcoes($con,$tarefa) {
+        
+        $ps = $con->getConexao()->prepare("SELECT classe_virtual FROM cliente WHERE id=$tarefa->id_entidade_relacionada");
+        $ps->execute();
+        $ps->bind_result($classe_virtual);
+        if($ps->fetch()){
+            return array($classe_virtual);
+        }
+        $ps->close();
+        return array(0);
+        
     }
 
     public function getObservacaoPadrao($tarefa) {
@@ -45,9 +68,6 @@ class TTRecepcaoCliente extends TipoTarefa {
         $relacionamento->cliente->id = $tarefa->id_entidade_relacionada;
         $relacionamento->merge($con);
 
-        $ps = $con->getConexao()->prepare("UPDATE usuario_cliente SET id_usuario=$id_usuario,data_inicio=data_inicio,data_fim=data_fim WHERE id=$relacionamento->id");
-        $ps->execute();
-        $ps->close();
     }
 
     public function init($tarefa) {
@@ -89,6 +109,13 @@ class TTRecepcaoCliente extends TipoTarefa {
             $ps->execute();
             $ps->close();
         }
+        
+        $con = new ConnectionFactory();
+        
+        $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".$tarefa->opcoes[0]." WHERE id=".$tarefa->id_entidade_relacionada);
+        $ps->execute();
+        $ps->close();
+        
     }
 
     public function aoFinalizar($tarefa, $usuario) {
@@ -99,9 +126,12 @@ class TTRecepcaoCliente extends TipoTarefa {
 
             $str .= $obs->observacao;
         }
-
-
-        if (Utilidades::has($str, array("nao trabalha", "sem sucesso", "xingou", "desligou"))) {
+        
+        $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".$tarefa->opcoes[0]." WHERE id=".$tarefa->id_entidade_relacionada);
+        $ps->execute();
+        $ps->close();
+        
+        if ($tarefa->opcoes[0] !== 0) {
 
             return;
         }

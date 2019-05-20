@@ -33,6 +33,7 @@ class Cliente {
     public $categoria;
     public $codigo;
     public $codigo_contimatic;
+    public $classe_virtual;
 
     function __construct() {
 
@@ -50,6 +51,7 @@ class Cliente {
         $this->suframado = false;
         $this->limite_credito = 0;
         $this->codigo_contimatic = 0;
+        $this->classe_virtual = 0;
 
         $this->inicio_limite = round(microtime(true) * 1000);
         $this->termino_limite = round(microtime(true) * 1000);
@@ -160,13 +162,13 @@ class Cliente {
         }
 
         if ($this->id == 0) {
-            $ps = $con->getConexao()->prepare("INSERT INTO cliente(razao_social,nome_fantasia,limite_credito,inicio_limite,termino_limite,pessoa_fisica,cpf,rg,cnpj,excluido,id_categoria,id_empresa,inscricao_estadual,suframado,inscricao_suframa,codigo) VALUES('" . addslashes($this->razao_social) . "','" . addslashes($this->nome_fantasia) . "','$this->limite_credito',FROM_UNIXTIME($this->inicio_limite/1000),FROM_UNIXTIME($this->termino_limite/1000)," . ($this->pessoa_fisica ? "true" : "false") . ",'" . addslashes($this->cpf->valor) . "','" . addslashes($this->rg->valor) . "','" . $this->cnpj->valor . "',false," . $this->categoria->id . "," . $this->empresa->id . ",'$this->inscricao_estadual'," . ($this->suframado ? "true" : "false") . ",'" . addslashes($this->inscricao_suframa) . "',$this->codigo)");
+            $ps = $con->getConexao()->prepare("INSERT INTO cliente(razao_social,nome_fantasia,limite_credito,inicio_limite,termino_limite,pessoa_fisica,cpf,rg,cnpj,excluido,id_categoria,id_empresa,inscricao_estadual,suframado,inscricao_suframa,codigo,classe_virtual) VALUES('" . addslashes($this->razao_social) . "','" . addslashes($this->nome_fantasia) . "','$this->limite_credito',FROM_UNIXTIME($this->inicio_limite/1000),FROM_UNIXTIME($this->termino_limite/1000)," . ($this->pessoa_fisica ? "true" : "false") . ",'" . addslashes($this->cpf->valor) . "','" . addslashes($this->rg->valor) . "','" . $this->cnpj->valor . "',false," . $this->categoria->id . "," . $this->empresa->id . ",'$this->inscricao_estadual'," . ($this->suframado ? "true" : "false") . ",'" . addslashes($this->inscricao_suframa) . "',$this->codigo,$this->classe_virtual)");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE cliente SET razao_social='" . addslashes($this->razao_social) . "', nome_fantasia='" . addslashes($this->nome_fantasia) . "', limite_credito=$this->limite_credito, inicio_limite=FROM_UNIXTIME($this->inicio_limite/1000), termino_limite=FROM_UNIXTIME($this->termino_limite/1000), pessoa_fisica=" . ($this->pessoa_fisica ? "true" : "false") . ", cpf='" . addslashes($this->cpf->valor) . "', rg='" . addslashes($this->rg->valor) . "', cnpj='" . addslashes($this->cnpj->valor) . "', excluido= false, id_categoria=" . $this->categoria->id . ", id_empresa=" . $this->empresa->id . ", inscricao_estadual='" . addslashes($this->inscricao_estadual) . "',suframado=" . ($this->suframado ? "true" : "false") . ", inscricao_suframa='$this->inscricao_suframa', codigo=$this->codigo WHERE id = " . $this->id);
+            $ps = $con->getConexao()->prepare("UPDATE cliente SET razao_social='" . addslashes($this->razao_social) . "', nome_fantasia='" . addslashes($this->nome_fantasia) . "', limite_credito=$this->limite_credito, inicio_limite=FROM_UNIXTIME($this->inicio_limite/1000), termino_limite=FROM_UNIXTIME($this->termino_limite/1000), pessoa_fisica=" . ($this->pessoa_fisica ? "true" : "false") . ", cpf='" . addslashes($this->cpf->valor) . "', rg='" . addslashes($this->rg->valor) . "', cnpj='" . addslashes($this->cnpj->valor) . "', excluido= false, id_categoria=" . $this->categoria->id . ", id_empresa=" . $this->empresa->id . ", inscricao_estadual='" . addslashes($this->inscricao_estadual) . "',suframado=" . ($this->suframado ? "true" : "false") . ", inscricao_suframa='$this->inscricao_suframa', codigo=$this->codigo,classe_virtual=$this->classe_virtual WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
 

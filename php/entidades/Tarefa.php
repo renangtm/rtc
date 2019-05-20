@@ -37,6 +37,8 @@ class Tarefa {
     public $calculado_tempo_util_faltante; //calculado
     public $calculado_previsao_inicio; //calculado
 
+    public $opcoes;
+    
     public function __construct() {
 
         $this->id = 0;

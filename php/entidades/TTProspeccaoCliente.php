@@ -20,6 +20,14 @@ class TTProspeccaoDeCliente extends TipoTarefa {
         parent::__construct(9, $id_empresa);
 
         $this->id_empresa = $id_empresa;
+        
+        $this->classes = array(
+            array(
+                "<strong style='color:Black'>Aprovar para recepcao</strong>"
+                ,"<strong style='color:Orange'>Cliente nao quer trabalhar momentaneamente com a Agro Fauna</strong>"
+                ,"<strong style='color:Red'>Cliente nao quer trabalhar com a Agro Fauna</strong>"
+                ,"<strong style='color:Purple'>Faleceu, fechou, nao trabalha mais, etc..</strong>"));
+        
         $this->nome = "Prospeccao de Cliente";
         $this->tempo_medio = 0.3;
         $this->prioridade = 100;
@@ -27,6 +35,19 @@ class TTProspeccaoDeCliente extends TipoTarefa {
             Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO(new Empresa($id_empresa))
         );
         $this->carregarDados();
+    }
+    
+    public function getOpcoes($con,$tarefa){
+        
+        $ps = $con->getConexao()->prepare("SELECT classe_virtual FROM cliente WHERE id=$tarefa->id_entidade_relacionada");
+        $ps->execute();
+        $ps->bind_result($classe_virtual);
+        if($ps->fetch()){
+            return array($classe_virtual);
+        }
+        $ps->close();
+        return array(0);
+        
     }
     
     public function getObservacaoPadrao($tarefa){
@@ -105,9 +126,36 @@ class TTProspeccaoDeCliente extends TipoTarefa {
         $ps->execute();
         $ps->close();
         
+       
+        
     }
-
+    
+    public function init($tarefa){
+        
+         $con = new ConnectionFactory();
+        
+         if($tarefa->opcoes[0] > 0){
+            
+            $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".$tarefa->opcoes[0]." WHERE id=$tarefa->id_entidade_relacionada");
+            $ps->execute();
+            $ps->close();
+            
+        }else{
+            
+            $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".($tarefa->opcoes[0]+1)." WHERE id=$tarefa->id_entidade_relacionada");
+            $ps->execute();
+            $ps->close();
+            
+            
+        }
+        
+    }
+    
     public function aoFinalizar($tarefa,$usuario) {
+        
+        $con = new ConnectionFactory();
+        
+        
         
         $dados = array();
         
@@ -131,7 +179,7 @@ class TTProspeccaoDeCliente extends TipoTarefa {
             }
         }
         
-        $con = new ConnectionFactory();
+        
         
         if(isset($dados['nome'])){
             $ps = $con->getConexao()->prepare("UPDATE cliente SET razao_social='".$dados['nome']."' WHERE id=$tarefa->id_entidade_relacionada");
@@ -175,6 +223,25 @@ class TTProspeccaoDeCliente extends TipoTarefa {
         }
         $ps->close();
         
+        
+        if($tarefa->opcoes[0] > 0){
+            
+            $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".($tarefa->opcoes[0]+1)." WHERE id=$tarefa->id_entidade_relacionada");
+            $ps->execute();
+            $ps->close();
+            
+            return;
+            
+        }else{
+            
+            $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".$tarefa->opcoes[0]." WHERE id=$tarefa->id_entidade_relacionada");
+            $ps->execute();
+            $ps->close();
+            
+            
+            
+        }
+        
         $str_telefones = "";
         foreach($telefones as $key=>$value){
             $str_telefones .= "$key<br>";
@@ -197,6 +264,9 @@ class TTProspeccaoDeCliente extends TipoTarefa {
         $ps = $con->getConexao()->prepare("UPDATE usuario_cliente SET data_inicio=data_inicio, data_fim=CURRENT_TIMESTAMP WHERE id_usuario=$usuario->id AND id_cliente=$tarefa->id_entidade_relacionada");
         $ps->execute();
         $ps->close();
+        
+        
+        
         
     }
 

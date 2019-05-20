@@ -1,3 +1,232 @@
+rtc.controller("crtAprovacaoConsignado", function ($scope, aprovacaoConsignadoService,baseService) {
+
+    $scope.aprovacoes = createAssinc(aprovacaoConsignadoService, 1, 10, 4);
+    assincFuncs(
+            $scope.aprovacoes,
+            "empresa",
+            ["id", "nome","cnpj","produto.nome","produto.valor_base","produto.disponivel"]);
+    $scope.aprovacoes.attList();
+
+    $scope.aprovar = function (aprovacao) {
+
+
+        baseService.merge(aprovacao, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.aprovacoes.attList();
+
+            } else {
+
+                msg.erro("Ocorreu um problema");
+
+            }
+
+        })
+
+    }
+
+
+})
+rtc.controller("crtConsignaProduto", function ($scope, produtoService, empresaService, sistemaService, uploadService) {
+
+    produtoService.filtro_base = "produto.empresa_vendas=0";
+    $scope.produtos_av = createAssinc(produtoService, 1, 7, 4);
+    assincFuncs(
+            $scope.produtos_av,
+            "produto",
+            ["codigo", "nome"], "filtroProdutos2");
+    $scope.produtos_av.attList();
+
+
+    var consignados = angular.copy(produtoService);
+    consignados.filtro_base="produto.empresa_vendas>0";
+
+    $scope.produtos_consignados = createAssinc(consignados, 1, 7, 4);
+    assincFuncs(
+            $scope.produtos_consignados,
+            "produto",
+            ["codigo", "nome"], "filtroProdutos");
+    $scope.produtos_consignados.attList();
+
+    $scope.empresa_av = null;
+    $scope.produto_novo_av = null;
+    $scope.produto_av = null;
+
+    $scope.carregando_av = false;
+    $scope.produtos_possiveis_av = [];
+
+    $scope.travado_av = false;
+
+    $scope.quantidade_av = 0;
+
+    $scope.empresa_selecionada = null;
+
+    $scope.virtuais = [];
+
+    empresaService.getVirtuais(function(v){
+
+        $scope.virtuais = v.virtuais;
+        $scope.empresa_selecionada = v.virtuais[0];
+        
+    })
+
+    empresaService.getEmpresa(function (e) {
+
+        $scope.empresa_av = e.empresa;
+
+        produtoService.getProduto(function (p) {
+
+            $scope.produto_novo_av = p.produto;
+            $scope.novoProduto();
+
+        })
+
+    });
+
+    $("#flImg").change(function () {
+
+        uploadService.upload($(this).prop("files"), function (arquivos, sucesso) {
+
+            if (!sucesso) {
+
+                msg.erro("Falha ao subir arquivo");
+
+            } else {
+
+                var doc = angular.copy($scope.documento);
+
+                for (var i = 0; i < arquivos.length; i++) {
+
+                    if(i === 0){
+                        $scope.produto_av.imagem = arquivos[i];
+                    }else{
+                        $scope.produto_av.mais_fotos[i-1] = arquivos[i];
+                    }
+                }
+
+                msg.alerta("Upload feito com sucesso");
+            }
+
+        })
+
+    })
+
+    $scope.novoProduto = function () {
+
+        $scope.produto_av = angular.copy($scope.produto_novo_av);
+        $scope.produto_av.empresa = $scope.empresa_av;
+    }
+
+    $scope.atualizarPossibilidades = function () {
+
+        $scope.carregando_av = true;
+        produtoService.getProdutosFiltro("produto.nome like '%" + $scope.produto_av.nome + "%'", function (p) {
+
+            $scope.produtos_possiveis_av = p.produtos;
+            $scope.carregando_av = false;
+
+        })
+
+    }
+
+    $scope.liberado = function () {
+
+        if ($scope.travado_av) {
+
+            return true;
+
+        } else {
+
+            if($scope.produto_av.nome == null || $scope.produto_av.fabricante == null || $scope.produto_av.ativo == null || $scope.produto_av.valor_base == 0){
+                
+                return false;
+                
+            }
+
+            if ($scope.produto_av.nome.length > 2 && $scope.produto_av.fabricante.length > 2 && $scope.produto_av.ativo.length > 2) {
+
+                return true;
+
+            }
+
+        }
+
+        return false;
+
+    }
+
+    $scope.selecionarPossibilidade = function (p) {
+
+        $scope.produto_av = p;
+        $scope.produto_av.empresa = $scope.empresa_av;
+        $scope.travado_av = true;
+
+    }
+    
+    $scope.selecionarPossibilidadeSemEstoque = function (p) {
+        
+        if(p.id === 0){
+            p.estoque = 0;
+            p.disponivel = 0;
+        }
+
+        $scope.produto_av = p;
+        $scope.produto_av.empresa = $scope.empresa_av;
+        $scope.travado_av = true;
+
+    }
+
+    $scope.destravar = function () {
+
+        $scope.novoProduto();
+        $scope.travado_av = false;
+
+    }
+
+    $scope.deconsignar = function(produto){
+
+        sistemaService.deconsignarProduto(produto, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Operacao efetuada com sucesso.");
+                $scope.produtos_consignados.attList();
+                $scope.produtos_av.attList();
+
+            } else {
+
+                msg.erro("Ocorreu um problema ao efetuar essa operacao");
+
+            }
+
+        })
+
+    }
+
+    $scope.finalizar = function () {
+
+        sistemaService.consignarProduto($scope.produto_av, $scope.empresa_selecionada, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Operacao efetuada com sucesso.");
+                $scope.destravar();
+                $scope.produtos_consignados.attList();
+                $scope.produtos_av.attList();
+
+            } else {
+
+                msg.erro("Ocorreu um problema ao efetuar essa operacao");
+
+            }
+
+        })
+
+    }
+
+})
 rtc.controller("crtProdutoEncomenda", function ($scope, produtoService, empresaService, sistemaService) {
 
     $scope.produtos_av = createAssinc(produtoService, 1, 7, 4);
@@ -158,11 +387,6 @@ rtc.controller("crtPardal", function ($scope, $sce, $timeout, pardalService) {
         $scope.texto = "";
 
     }
-
-
-    $("#pardal").dropdown('toggle');
-
-
 
 
     pardalService.reset(function () {
@@ -931,9 +1155,25 @@ rtc.controller("crtEncomendaParceiros", function ($scope, produtoService, encome
         var p = angular.copy($scope.prod);
         p.quantidade_comprada = $scope.qtd;
 
+        if(p.limite>0){
+            if(p.quantidade_comprada>p.limite){
+                msg.erro("Essa quantidade ultrapassa o limite para este produto");
+                return;
+            }
+        }
+
         var a = false;
         for (var i = 0; i < carrinho.length; i++) {
             if (carrinho[i].id === p.id) {
+
+                if(p.limite>0){
+                    if(carrinho[i].quantidade_comprada+$scope.qtd>p.limite){
+                        msg.erro("Essa quantidade ultrapassa o limite para este produto");
+                        return;
+                    }
+                }
+
+                carrinho[i].quantidade_comprada += $scope.qtd;
                 a = true;
                 break;
             }
@@ -2417,6 +2657,21 @@ rtc.controller("crtTarefas", function ($scope, $sce, tarefaService, observacaoTa
         }
 
     })
+    
+    
+    $scope.num = function(vector){
+        
+        var a = [];
+        
+        for(var i=0;i<vector.length;i++){
+            
+            a[a.length] = i;
+            
+        }
+        
+        return a;
+        
+    }
 
     $scope.setTarefa = function (tarefa) {
 
@@ -2431,6 +2686,13 @@ rtc.controller("crtTarefas", function ($scope, $sce, tarefaService, observacaoTa
 
                 $scope.observacao_tarefa.observacao = $scope.observacao_padrao;
 
+            })
+            
+            tarefaService.getOpcoes($scope.tarefa,function(r){
+                
+                $scope.tarefa.opcoes = r.opcoes;
+                
+                
             })
 
         })
@@ -9021,7 +9283,14 @@ rtc.controller("crtClientes", function ($scope, categoriaProspeccaoService, clie
     $scope.email = {};
 
     $scope.data_atual = new Date().getTime();
-
+    
+    $scope.classes = [
+        {id:0,nome:"Sem classe"},
+        {id:1,nome:"No RTC"},
+        {id:2,nome:"Nao quer trabalhar momentaneamente com a Agro Fauna"},
+        {id:3,nome:"Nao quer trabalhar com a AgroFauna"},
+        {id:4,nome:"Faliu ou morreu"},
+    ];
 
     $scope.documento_novo = {};
     $scope.documento = {};
@@ -9056,6 +9325,12 @@ rtc.controller("crtClientes", function ($scope, categoriaProspeccaoService, clie
 
         window.location = "analise_credito.php?empresa=" + c.empresa.id + "&cliente=" + c.id;
 
+    }
+    
+    $scope.getLinkConsignadoCliente = function(cliente){
+        
+        return projeto+"/consigna_produto.php?idc="+encode64SPEC(cliente.id+"_"+cliente.razao_social);
+        
     }
 
     $scope.removeCategoriaProspeccao = function (cat) {

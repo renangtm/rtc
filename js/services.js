@@ -1,6 +1,31 @@
 var debuger = function (l) {
     document.write(paraJson(l));
 }
+rtc.service('aprovacaoConsignadoService', function ($http, $q) {
+    this.getAprovacaoConsignado = function (fn) {
+        baseService($http, $q, {
+            query: "$r->aprovacao=new AprovacaoConsignado();",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountAprovacoesConsignado($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getAprovacoesConsignado($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('pardalService', function ($http, $q) {
     this.reset = function (fn) {
         baseService($http, $q, {
@@ -295,6 +320,14 @@ rtc.service('tarefaService', function ($http, $q) {
     this.getTarefasAtivas = function (fn) {
         baseService($http, $q, {
             query: "$a=$usuario->getAusencias($c,'ausencia.fim>CURRENT_TIMESTAMP');$e=$usuario->getExpedientes($c);$r->tarefas=$usuario->getTarefas($c,'tarefa.porcentagem_conclusao<100','tarefa.ordem DESC');$r->tarefas=IATarefas::aplicar($e,$a,$r->tarefas)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getOpcoes = function (tarefa, fn) {
+        baseService($http, $q, {
+            o: {tarefa: tarefa},
+            query: "$r->opcoes=$o->tarefa->tipo_tarefa->getOpcoes($c,$o->tarefa);",
             sucesso: fn,
             falha: fn
         });
@@ -2507,6 +2540,22 @@ rtc.service('sistemaService', function ($http, $q) {
             falha: fn
         });
     }
+    this.consignarProduto = function(produto,empresa,fn){
+        baseService($http, $q, {
+            o: {produto:produto,empresa:empresa},
+            query: "Sistema::consignarProduto($c,$o->produto,$o->empresa);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.deconsignarProduto = function(produto,fn){
+        baseService($http, $q, {
+            o: {produto:produto},
+            query: "Sistema::deconsignarProduto($c,$o->produto);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.addCarrinhoEncomendaCadastrando = function(produto,quantidade,fn){
         baseService($http, $q, {
             o: {produto:produto,quantidade:quantidade},
@@ -2674,6 +2723,13 @@ rtc.service('empresaService', function ($http, $q) {
         baseService($http, $q, {
             o: {empresa: empresa, mkt: mkt},
             query: "$o->empresa->setMarketing($c,$o->mkt)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getVirtuais = function (fn) {
+        baseService($http, $q, {
+            query: "$r->virtuais=Sistema::getEmpresas($c,'empresa.tipo_empresa=3')",
             sucesso: fn,
             falha: fn
         });

@@ -711,7 +711,7 @@ class Usuario {
         $retorno = array();
 
         foreach ($tarefas as $key => $value) {
-            $value->tipo_tarefa->init($value);
+            //$value->tipo_tarefa->init($value);
             $retorno[] = $value;
         }
 

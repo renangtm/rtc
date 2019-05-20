@@ -567,6 +567,15 @@ class Pedido {
                 throw new Exception("Nao existe ninguem habilitado para verificar se sua modificacao sera permitida");
             }
         }
+        
+        if($this->status->id===Sistema::STATUS_CANCELADO()->id){
+            
+            $ps = $con->getConexao()->prepare("UPDATE tarefa SET inicio_minimo=inicio_minimo,excluida=true "
+                . "WHERE tipo_entidade_relacionada='PED_" . $this->empresa->id . "' AND id_entidade_relacionada=$this->id AND porcentagem_conclusao<100");
+            $ps->execute();
+            $ps->close();
+            
+        }
 
         $prods = $this->getProdutos($con);
 

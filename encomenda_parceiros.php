@@ -182,7 +182,7 @@
                                                     <h3 class="product-title">{{produto.nome}}</h3>
                                                     <hr>
 
-                                                    <table class="table table-striped">
+                                                    <table class="table table-striped" ng-if="produto.valor_fixo===0">
                                                         <thead>
                                                         <th>
                                                             De (R$)
@@ -196,10 +196,33 @@
                                                         </thead>
                                                         <tr>
                                                             <th>
-                                                                {{produto.valor_base_inicial}}
+                                                                {{produto.valor_base_inicial.toFixed(2).split('.').join(',')}}
                                                             </th>
                                                             <th>
-                                                                {{produto.valor_base_final}}
+                                                                {{produto.valor_base_final.toFixed(2).split('.').join(',')}}
+                                                            </th>
+                                                            <th>
+                                                                <button class="btn btn-success" ng-click="addCarrinho(produto)"><i class="fas fa-plus-circle"></i></button>
+                                                            </th>
+                                                        </tr>
+                                                        <tfoot>
+                                                        <th style="{{produto.custo_atualizado?'color:Green;font-size:16px':'color:Red;font-size:11px'}}">
+                                                            {{produto.custo_atualizado?'Custos Atualizados':'Custo Desatualizado. Podera sofrer variações'}}
+                                                        </th>
+                                                        </tfoot>
+                                                    </table>
+                                                    <table class="table table-striped" ng-if="produto.valor_fixo>0">
+                                                        <thead>
+                                                        <th>
+                                                            <h4>VALOR (R$) </h4>
+                                                        </th>
+                                                        <th>
+                                                            <i class="fas fa-plus-circle"></i>
+                                                        </th>
+                                                        </thead>
+                                                        <tr>
+                                                            <th>
+                                                                {{produto.valor_fixo.toFixed(2).split('.').join(',')}}
                                                             </th>
                                                             <th>
                                                                 <button class="btn btn-success" ng-click="addCarrinho(produto)"><i class="fas fa-plus-circle"></i></button>
@@ -267,7 +290,7 @@
                                                     <h3 class="product-title">{{produto.nome}}</h3>
                                                     <hr>
 
-                                                    <table class="table table-striped">
+                                                    <table class="table table-striped" ng-if="produto.valor_fixo===0">
                                                         <thead>
                                                         <th>
                                                             De (R$)
@@ -281,10 +304,10 @@
                                                         </thead>
                                                         <tr>
                                                             <th>
-                                                                {{produto.valor_base_inicial}}
+                                                                {{produto.valor_base_inicial.toFixed(2).split('.').join(',')}}
                                                             </th>
                                                             <th>
-                                                                {{produto.valor_base_final}}
+                                                                {{produto.valor_base_final.toFixed(2).split('.').join(',')}}
                                                             </th>
                                                             <th>
                                                                 <button class="btn btn-success" ng-click="addCarrinho(produto)"><i class="fas fa-plus-circle"></i></button>
@@ -293,6 +316,29 @@
                                                         <tfoot>
                                                         <th style="{{produto.custo_atualizado?'color:Green;font-size:16px':'color:Red;font-size:11px'}}">
                                                             {{produto.custo_atualizado?'Custos Atualizados':'Custo Desatualizado. Podera sofrer variações'}}
+                                                        </th>
+                                                        </tfoot>
+                                                    </table>
+                                                    <table class="table table-striped" ng-if="produto.valor_fixo>0">
+                                                        <thead>
+                                                        <th>
+                                                            <h4>VALOR (R$) </h4>
+                                                        </th>
+                                                        <th>
+                                                            <i class="fas fa-plus-circle"></i>
+                                                        </th>
+                                                        </thead>
+                                                        <tr>
+                                                            <th style="text-align:center">
+                                                                <h3 style="color:SteelBlue">{{produto.valor_fixo.toFixed(2).split('.').join(',')}}</h3>
+                                                            </th>
+                                                            <th>
+                                                                <button class="btn btn-success" ng-click="addCarrinho(produto)"><i class="fas fa-plus-circle"></i></button>
+                                                            </th>
+                                                        </tr>
+                                                        <tfoot>
+                                                        <th style="color:Blue;">
+                                                            Produto com valor definido
                                                         </th>
                                                         </tfoot>
                                                     </table>

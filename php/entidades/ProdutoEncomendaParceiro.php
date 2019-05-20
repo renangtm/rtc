@@ -32,6 +32,11 @@ class ProdutoEncomendaParceiro {
     public $transito;
     public $imagem_padrao;
 
+    public $valor_fixo;
+    public $id_empresa;
+    public $limite;
+    public $id_universal;
+
     function __construct() {
 
         $this->id = 0;
@@ -52,6 +57,12 @@ class ProdutoEncomendaParceiro {
         $this->custo_atualizado = false;
         $this->ofertas = 0;
         $this->imagem_padrao = "";
+
+        $this->valor_fixo = 0;
+        $this->id_empresa = 0;
+        $this->limite = 0;
+        $this->id_universal = 0;
+
     }
 
     public function setImagemPadrao() {

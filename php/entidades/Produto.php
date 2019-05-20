@@ -44,6 +44,7 @@ class Produto {
     public $nota_usuario;
     public $codigo;
     public $mais_fotos;
+    public $id_empresa_vendas;
 
     function __construct() {
 
@@ -74,7 +75,9 @@ class Produto {
         $this->ncm = "000000";
         $this->unidade = "Ob";
         $this->codigo = 0;
+        $this->id_empresa_vendas = 0;
         $this->mais_fotos = array();
+        
     }
 
     public function setMaisFotos($con, $fotos) {
