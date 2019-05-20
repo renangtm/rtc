@@ -127,16 +127,18 @@ class TTRecepcaoCliente extends TipoTarefa {
             $str .= $obs->observacao;
         }
         
+        $con = new ConnectionFactory();
+        
         $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".$tarefa->opcoes[0]." WHERE id=".$tarefa->id_entidade_relacionada);
         $ps->execute();
         $ps->close();
         
-        if ($tarefa->opcoes[0] !== 0) {
+        if ($tarefa->opcoes[0] >1) {
 
             return;
         }
 
-        $con = new ConnectionFactory();
+        
 
         $tarefa_ = new Tarefa();
         $tarefa_->tipo_tarefa = Sistema::TT_SUPORTE_CLIENTE($this->id_empresa);
