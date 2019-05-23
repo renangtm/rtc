@@ -20,7 +20,7 @@ class CFOP {
     public static $RETORNO_DEPOSITO = "5907";
     public static $ISENTO = "6110";
     public static $VENDA_DENTRO_ESTADO_2 = "5102";
-    public static $VENDA_FORA_ESTADO_2 = "6102";
+    public static $VENDA_FORA_ESTADO_2 = "5106";
     public static $TRANSFERENCIA = "6152";
     public static $TRANSFERENCIA_DENTRO_ESTADO = "5152";
     public static $ANULACAO_DENTRO_ESTADO = "5206";
@@ -57,8 +57,6 @@ class CFOP {
             return "Anulacao de valor referente a prestacao de servico";
         }else if ($cfop === self::$DEVOLUCAO) {
             return "Devolucao de mercadoria";
-        }else if ($cfop === self::$VENDA_FORA_ESTADO_2) {
-            return "Venda de mercadoria adquirida ou recebida de terceiros";
         }
 
         return "Indefinido";

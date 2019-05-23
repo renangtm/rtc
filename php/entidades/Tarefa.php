@@ -37,8 +37,6 @@ class Tarefa {
     public $calculado_tempo_util_faltante; //calculado
     public $calculado_previsao_inicio; //calculado
 
-    public $opcoes;
-    
     public function __construct() {
 
         $this->id = 0;
@@ -186,6 +184,7 @@ class Tarefa {
 
 
         if ($this->porcentagem_conclusao >= 100) {
+
             $this->tipo_tarefa->aoFinalizar($this, $usuario);
         }
     }

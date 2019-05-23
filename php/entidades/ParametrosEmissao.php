@@ -40,7 +40,6 @@ class ParametrosEmissao {
         $comando = Utilidades::toJson($base);
         Sistema::mergeArquivo($arquivo, $comando, false);
         $endereco = Sistema::$ENDERECO . "php/uploads/" . $arquivo;
-
         $ret = Utilidades::fromJson(Sistema::getMicroServicoJava('EmissorRTC', $endereco));
 
         return $ret;

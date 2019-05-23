@@ -96,7 +96,7 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <td style="padding:10px;">
-                                                                        <table>
+                                                                        <table style="width: 700px;table-layout: fixed;word-wrap: break-word;">
                                                                             <tr>
                                                                                 <td style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);" width="120px">Vendedor:</td>
                                                                                 <td style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);" id="nomeUsuario"><?php echo $p->usuario->nome; ?></td>

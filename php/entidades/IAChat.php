@@ -117,6 +117,7 @@ class IAChat {
             }
             
             $part = substr($part,1);
+            Sistema::avisoDEVS("DELETE FROM ia_chat WHERE id NOT IN ($part) AND id_empresa=".$this->empresa->id);
             $ps = $con->getConexao()->prepare("DELETE FROM ia_chat WHERE id NOT IN ($part) AND id_empresa=".$this->empresa->id);
             $ps->execute();
             $ps->close();

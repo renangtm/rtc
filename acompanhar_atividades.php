@@ -6,10 +6,10 @@
         <meta charset="utf-8">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?125"></script>
-        <script src="js/filters.js?125"></script>
-        <script src="js/services.js?125"></script>
-        <script src="js/controllers.js?125"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
+        <script src="js/rtc.js?5"></script>
+        <script src="js/filters.js?5"></script>
+        <script src="js/services.js?5"></script>
+        <script src="js/controllers.js?5"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -153,6 +153,9 @@
                                                                                 Andamento<hr>
                                                                                 <table class="table-bordered w-100">
                                                                                     <tr ng-repeat="obs in tarefa[0].observacoes">
+                                                                                        <td>
+                                                                                            {{obs.momento*1000 | data}}
+                                                                                        </td>
                                                                                         <td>
                                                                                             Obs:
                                                                                         </td>

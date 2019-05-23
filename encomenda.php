@@ -5,10 +5,10 @@
         <meta charset="utf-8">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?125"></script>
-        <script src="js/filters.js?125"></script>
-        <script src="js/services.js?125"></script>
-        <script src="js/controllers.js?125"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
+        <script src="js/rtc.js?5"></script>
+        <script src="js/filters.js?5"></script>
+        <script src="js/services.js?5"></script>
+        <script src="js/controllers.js?5"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -342,7 +342,7 @@
                                 <p class="text-center"> Tem certeza de que deseja excluir esta Encomenda?</p>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary" ng-disabled="carregando" ng-click="deletePedido()">Sim. {{carregando?'Aguarde... Pode demorar.':''}}</button>
+                                <button class="btn btn-primary" ng-disabled="carregando" ng-click="deleteEncomenda()">Sim. {{carregando?'Aguarde... Pode demorar.':''}}</button>
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Não</button>
                             </div>
                         </div>

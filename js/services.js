@@ -91,7 +91,7 @@ rtc.service('protocoloService', function ($http, $q) {
     }
     this.getProtocolosAtivos = function (fn) {
         baseService($http, $q, {
-            query: "$r->protocolos=$empresa->getProtocolos($c,0,2,'p.fim IS NULL','tp.prioridade DESC');foreach($r->protocolos as $key=>$value){$value->init($c);}",
+            query: "$r->protocolos=$empresa->getProtocolos($c,0,2,'p.fim IS NULL','tp.prioridade DESC',$usuario);foreach($r->protocolos as $key=>$value){$value->init($c);}",
             sucesso: fn,
             falha: fn
         });

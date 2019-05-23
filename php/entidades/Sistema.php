@@ -13,7 +13,7 @@
  */
 class Sistema {
 
-    public static $ENDERECO = "http://192.168.0.121:888/novo_rtc_web/";
+    public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
 
     /*
      * porcentagem
@@ -606,11 +606,15 @@ class Sistema {
         $trabalhos = array();
 
         $prospeccao = new RoboVirtual();
-        $prospeccao->cronoExpression = "re(70m)";
+        $prospeccao->cronoExpression = "re(50m)";
         $trabalhos[] = $prospeccao;
 
+        $det = new RoboDetona();
+        $det->cronoExpression = "at(9h)";
+        $trabalhos[] = $det;
+
         $relatorios = new EnvioRelatorios();
-        $relatorios->cronoExpression = "at(19h)";
+        $relatorios->cronoExpression = "at(20h)";
         $trabalhos[] = $relatorios;
 
         $attdias = new AtualizaDiasCorridos();
@@ -3938,7 +3942,8 @@ class Sistema {
             if($consignado){
                 if($value->id!==Sistema::P_PRODUTO()->id &&
                         $value->id !== Sistema::P_CONSIGNACAO_PRODUTO()->id &&
-                        $value->id !== Sistema::P_CONFIGURACAO_EMPRESA()->id){
+                        $value->id !== Sistema::P_CONFIGURACAO_EMPRESA()->id &&
+                        $value->id !== Sistema::P_PEDIDO_SAIDA()->id){
                     continue;
                 }
             }
@@ -4865,6 +4870,7 @@ class Sistema {
                 . "email_usu.endereco,"
                 . "email_usu.senha,"
                 . "empresa.id,"
+                . "empresa.fornecedor_virtual,"
                 . "empresa.tipo_empresa,"
                 . "empresa.nome,"
                 . "empresa.inscricao_estadual,"
@@ -4902,7 +4908,7 @@ class Sistema {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_usu, $id_cargo, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id_usu, $id_cargo, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa,$fornecedor_virtual, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $usuarios = array();
 
@@ -4940,6 +4946,7 @@ class Sistema {
 
             $empresa = Sistema::getEmpresa($tipo_empresa);
             $empresa->id = $id_empresa;
+            $empresa->fornecedor_virtual = $fornecedor_virtual;
             $empresa->cnpj = new CNPJ($cnpj);
             $empresa->inscricao_estadual = $inscricao_empresa;
             $empresa->nome = $nome_empresa;

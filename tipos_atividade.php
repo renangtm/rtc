@@ -6,10 +6,10 @@
         <meta charset="utf-8">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?125"></script>
-        <script src="js/filters.js?125"></script>
-        <script src="js/services.js?125"></script>
-        <script src="js/controllers.js?125"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
+        <script src="js/rtc.js?5"></script>
+        <script src="js/filters.js?5"></script>
+        <script src="js/services.js?5"></script>
+        <script src="js/controllers.js?5"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -197,6 +197,14 @@
                                         </tr>
                                     </tfoot>
                                 </table>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                                <nav aria-label="Page navigation example">
+                                                    <ul class="pagination justify-content-end">
+                                                        <li class="page-item" ng-repeat="pg in lstCargos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Sair</button>

@@ -30,7 +30,7 @@
                                     <tr style="border-collapse: collapse;"></tr>
                                     <tr style="border-collapse: collapse;">
                                         <td class="es-adaptive" align="center" style="padding: 0px; margin: 0px;">
-                                            <table class="es-header-body" width="600" cellspacing="0" cellpadding="0" align="center" style="border-collapse: collapse; border-spacing: 0px; background-color: transparent;">
+                                            <table class="es-header-body" width="626" cellspacing="0" cellpadding="0" align="center" style="border-collapse: collapse; border-spacing: 0px; background-color: transparent;">
                                                 <tbody style="">
                                                     <tr style="border-collapse: collapse;">
                                                         <td style="margin: 0px; background-color: rgb(255, 255, 255); padding: 15px 20px 20px;" bgcolor="#ffffff" align="left">
@@ -81,12 +81,22 @@
                                     </tr>
                                 </tbody>
                             </table>
-
+                            <style>
+                                .tbl td{
+                                    
+                                    border:2px solid #000000 !important;
+                                    padding:10px;
+                                    font-weight: bold;
+                                    font-size:13px;
+                                    font-family: arial, helvetica, sans-serif;
+                                    
+                                }
+                            </style>
                             <table class="es-content" cellspacing="0" cellpadding="0" align="center" style="border-collapse: collapse; border-spacing: 0px; width: 100%; table-layout: fixed !important;">
                                 <tbody style="">
                                     <tr style="border-collapse: collapse;">
                                         <td align="center" style="padding: 0px; margin: 0px;">
-                                            <table class="es-content-body" width="600" cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center" style="border-collapse: collapse; border-spacing: 0px; background-color: rgb(255, 255, 255);">
+                                            <table class="es-content-body" width="626" cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center" style="border-collapse: collapse; border-spacing: 0px; background-color: rgb(255, 255, 255);">
                                                 <tbody style="">
                                                     <tr>
                                                         <td style="padding: 5px 20px 20px; margin: 0px;">
@@ -108,7 +118,146 @@
                                                                                 <td style="padding:0px 10px;margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);" id="nomeTransportadora">Login: <?php echo $p->usuario->login; ?></td>
                                                                             </tr>               
                                                                         </table>
-
+                                                                        <hr>
+                                                                        <br>
+                                                                        <span style="font-family: arial, helvetica, sans-serif;">Resumo completo do colaborador:</span>
+                                                                        <hr>
+                                                                        <table class="tbl" cellspacing="0px">
+                                                                            <tr>
+                                                                                <?php foreach($p->est as $key=>$value){ ?>
+                                                                                    <td colspan="6">     
+                                                                                        <?php echo $key; ?>
+                                                                                    </td>
+                                                                                <?php } ?>
+                                                                            </tr>  
+                                                                            <tr>
+                                                                                <?php foreach($p->est as $key=>$value){ ?>
+                                                                                    <td colspan="2" style="background-color:#CC0000;color:#FFFFFF">     
+                                                                                        Pendentes
+                                                                                    </td>
+                                                                                    <td colspan="2" style="background-color:#ffd600;color:#FFFFFF">     
+                                                                                        Em Andamento
+                                                                                    </td>
+                                                                                    <td colspan="2" style="background-color:#007E33;color:#FFFFFF">     
+                                                                                        Concluidas
+                                                                                    </td>
+                                                                                <?php } ?>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <?php foreach($p->est as $key=>$value){ ?>
+                                                                                    <td style="color:#CC0000">     
+                                                                                        Fora
+                                                                                    </td>
+                                                                                    <td style="color:#007E33">     
+                                                                                        Dentro
+                                                                                    </td>
+                                                                                    <td style="color:#CC0000;background-color: rgb(227, 230, 222);">     
+                                                                                        Fora
+                                                                                    </td>
+                                                                                    <td style="color:#007E33;background-color: rgb(227, 230, 222);">     
+                                                                                        Dentro
+                                                                                    </td>
+                                                                                    <td style="color:#CC0000">     
+                                                                                        Fora
+                                                                                    </td>
+                                                                                    <td style="color:#007E33">     
+                                                                                        Dentro
+                                                                                    </td>
+                                                                                <?php } ?>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <?php foreach($p->est as $key=>$value){ ?>
+                                                                                    <td>     
+                                                                                        <?php echo(isset($value[0][1])?$value[0][1]:'0'); ?>
+                                                                                    </td>
+                                                                                    <td>     
+                                                                                        <?php echo(isset($value[0][0])?$value[0][0]:'0'); ?>
+                                                                                    </td>
+                                                                                    <td style="background-color: rgb(227, 230, 222);">     
+                                                                                        <?php echo(isset($value[1][1])?$value[1][1]:'0'); ?>
+                                                                                    </td>
+                                                                                    <td style="background-color: rgb(227, 230, 222);">     
+                                                                                        <?php echo(isset($value[1][0])?$value[1][0]:'0'); ?>
+                                                                                    </td>
+                                                                                    <td>     
+                                                                                        <?php echo(isset($value[2][1])?$value[2][1]:'0'); ?>
+                                                                                    </td>
+                                                                                    <td>     
+                                                                                        <?php echo(isset($value[2][0])?$value[2][0]:'0'); ?>
+                                                                                    </td>
+                                                                                <?php } ?>
+                                                                            </tr>
+                                                                        </table>
+                                                                        <hr>
+                                                                        <br>
+                                                                        <span style="font-family: arial, helvetica, sans-serif;">Resumo somente das tarefas que tiveram algum movimento na data.</span>
+                                                                        <hr>
+                                                                        <table class="tbl" cellspacing="0px">
+                                                                            <tr>
+                                                                                <?php foreach($p->est_dia as $key=>$value){ ?>
+                                                                                    <td colspan="6">     
+                                                                                        <?php echo $key; ?>
+                                                                                    </td>
+                                                                                <?php } ?>
+                                                                            </tr>  
+                                                                            <tr>
+                                                                                <?php foreach($p->est_dia as $key=>$value){ ?>
+                                                                                    <td colspan="2" style="background-color:#CC0000;color:#FFFFFF">     
+                                                                                        Pendentes
+                                                                                    </td>
+                                                                                    <td colspan="2" style="background-color:#ffd600;color:#FFFFFF">     
+                                                                                        Em Andamento
+                                                                                    </td>
+                                                                                    <td colspan="2" style="background-color:#007E33;color:#FFFFFF">     
+                                                                                        Concluidas
+                                                                                    </td>
+                                                                                <?php } ?>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <?php foreach($p->est_dia as $key=>$value){ ?>
+                                                                                    <td style="color:#CC0000">     
+                                                                                        Fora
+                                                                                    </td>
+                                                                                    <td style="color:#007E33">     
+                                                                                        Dentro
+                                                                                    </td>
+                                                                                    <td style="color:#CC0000;background-color: rgb(227, 230, 222);">     
+                                                                                        Fora
+                                                                                    </td>
+                                                                                    <td style="color:#007E33;background-color: rgb(227, 230, 222);">     
+                                                                                        Dentro
+                                                                                    </td>
+                                                                                    <td style="color:#CC0000">     
+                                                                                        Fora
+                                                                                    </td>
+                                                                                    <td style="color:#007E33">     
+                                                                                        Dentro
+                                                                                    </td>
+                                                                                <?php } ?>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <?php foreach($p->est_dia as $key=>$value){ ?>
+                                                                                    <td>     
+                                                                                        <?php echo(isset($value[0][1])?$value[0][1]:'0'); ?>
+                                                                                    </td>
+                                                                                    <td>     
+                                                                                        <?php echo(isset($value[0][0])?$value[0][0]:'0'); ?>
+                                                                                    </td>
+                                                                                    <td style="background-color: rgb(227, 230, 222);">     
+                                                                                        <?php echo(isset($value[1][1])?$value[1][1]:'0'); ?>
+                                                                                    </td>
+                                                                                    <td style="background-color: rgb(227, 230, 222);">     
+                                                                                        <?php echo(isset($value[1][0])?$value[1][0]:'0'); ?>
+                                                                                    </td>
+                                                                                    <td>     
+                                                                                        <?php echo(isset($value[2][1])?$value[2][1]:'0'); ?>
+                                                                                    </td>
+                                                                                    <td>     
+                                                                                        <?php echo(isset($value[2][0])?$value[2][0]:'0'); ?>
+                                                                                    </td>
+                                                                                <?php } ?>
+                                                                            </tr>
+                                                                        </table>
                                                                     </td>
 
                                                                 </tr>
@@ -134,7 +283,7 @@
                                                                         <table>
                                                                             <tr>
                                                                                 <td style="padding:10px;margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);" width="120px">Descricao:</td>
-                                                                                <td style="padding:10px;margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);" id="nomeUsuario"><?php echo $tarefa->descricao; ?></td>
+                                                                                <td style="padding:10px;margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);" id="nomeUsuario"><?php echo substr($tarefa->descricao,0,min(100,strlen($tarefa->descricao))).((strlen($tarefa->descricao)>100)?"...":""); ?></td>
                                                                             </tr>
                                                                             <tr style="background-color:#F5F5F5;">
                                                                                 <td style="padding:10px;margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);">Previsao de Inicio:</td>
@@ -169,11 +318,11 @@
                                                                                         
                                                                                         ?></td>
                                                                             </tr>
-                                                                            <tr >
+                                                                            <tr style="background-color:#F5F5F5;">
                                                                                 <td style="padding:10px;margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);" >Porcentagem Concluida</td>
                                                                                 <td style="padding:10px;margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);" id="ruaCliente"><?php echo $tarefa->porcentagem_conclusao; ?> %</td>
                                                                             </tr>
-                                                                            <tr style="background-color:#F5F5F5;">
+                                                                            <tr>
                                                                                 <td style="padding:10px;margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);" >Tempo util ja utilizado:</td>
                                                                                 <td style="padding:10px;margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51);" id="ruaCliente">
                                                                                     
@@ -300,7 +449,7 @@
                                 <tbody style="">
                                     <tr style="border-collapse: collapse;">
                                         <td align="center" style="padding: 0px; margin: 0px;">
-                                            <table class="es-footer-body" width="600" cellspacing="0" cellpadding="0" align="center" style="border-collapse: collapse; border-spacing: 0px; background-color: rgb(128, 128, 128);">
+                                            <table class="es-footer-body" width="626" cellspacing="0" cellpadding="0" align="center" style="border-collapse: collapse; border-spacing: 0px; background-color: rgb(128, 128, 128);">
                                                 <tbody style="">
                                                     <tr style="border-collapse: collapse;">
                                                         <td align="left" bgcolor="#333" style="margin: 0px; background-color: rgb(51, 51, 51); padding: 20px;">

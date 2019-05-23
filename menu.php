@@ -5,9 +5,12 @@ $ses = new SessionManager();
 $empresa = $ses->get('empresa');
 $usuario = $ses->get('usuario');
 
+$espelho = $empresa->fornecedor_virtual==1;
 
 if(isset($_GET['idc'])){
         
+        $espelho = true;
+
         $idc = Utilidades::base64decodeSPEC($_GET['idc']);
         
         $idc = explode('_',$idc);
@@ -351,6 +354,7 @@ $possiveis[0] = $rtc;
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav flex-column" id="men" ng-controller="crtRelatorio">
+                    <?php if(!$espelho){ ?>
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         <select style="background-color:transparent;font-weight:bold;color:#FFFFFF;border:0px solid" class="form-control" onchange="window.location = 'comprar.php?t=' + $(this).find('option:selected').val()">
                             <?php
@@ -375,6 +379,7 @@ $possiveis[0] = $rtc;
                     <li class="nav-item ">
                         <a class="nav-link" href="acompanhar-pedidos.php"><button class="btn btn-warning" onmousedown="tutorial('Acompanhamento de pedido', 'Aqui voce pode acompanhar seus pedidos realizados')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px"><i class="fas fa-info"></i>&nbsp</button><i class="fa fa-fw fa-eye"></i>Acompanhar Pedidos</a>
                     </li>
+                    <?php } ?>
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         <?php echo $empresa->nome; ?>
                     </li>
@@ -570,9 +575,13 @@ $possiveis[0] = $rtc;
                     <li class="nav-item ">
                         <a class="nav-link" href="http://agrofauna.com.br/apresentacao_rtc_passo_a_passo_v6.pdf" target="_blank"><i class="fa fa-fw fa-file-alt"></i>Passo a Passo de seu RTC</a>
                     </li>
+                    <?php if(!$espelho){ ?>
                     <li class="nav-item " style="margin-bottom:150px">
                         <a class="nav-link" href="contrato.php" ><i class="fa fa-fw fa-file-alt"></i>Contrato</a>
                     </li>
+                    <?php }else{ ?>
+
+                    <?php } ?>
 
                 </ul>
             </div>
@@ -627,7 +636,7 @@ $possiveis[0] = $rtc;
         
         if(!hd){
             
-            $("#chat_protocolos").hide(100);
+            $("#chat_protocolos").hide();
             hd = true;
         }else{
             
@@ -650,11 +659,8 @@ $possiveis[0] = $rtc;
     })
     
     var data = new Date();
-    //if(data.getHours()>11){
-        $("#btnEsconde").click();
-    //}
 
-    $("#drag_protocolos").css('left',($(window).width()-180)+"px");
+    $("#drag_protocolos").css('left',($(window).width()-580)+"px");
 
 
             function tutorial(titulo, conteudo){

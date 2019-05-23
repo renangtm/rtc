@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" ng-app="appRtc">
-    
+
     <head>
         <!-- Required meta tags -->
         <meta charset="utf-8">
@@ -39,7 +39,6 @@
             .pdt td{
                  padding:5px
             }
-            
         </style>
     </head>
 
@@ -73,7 +72,7 @@
                         <div class="row">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="page-header">
-                                    <h2 class="pageheader-title">Consignacao de Produtos</h2>
+                                    <h2 class="pageheader-title">CONTRATO DE REPRESENTAÇÃO COMERCIAL PARA VENDAS ON LINE</h2>
                                     <p class="pageheader-text">Nulla euismod urna eros, sit amet scelerisque torton lectus vel mauris facilisis faucibus at enim quis massa lobortis rutrum.</p>
                                     <div class="page-breadcrumb">
                                         <nav aria-label="breadcrumb">
@@ -89,6 +88,7 @@
                         <!-- ============================================================== -->
                         <!-- end pageheader  -->
                         <!-- ============================================================== -->
+
                         <div class="row">
                             <!-- ============================================================== -->
                             <!-- basic table  -->
@@ -96,8 +96,200 @@
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="card">
                                     <div class="card-body">
+                                        <!-- bem vindo ao RTC  -->
+                                        <div class="row">
+                                            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-4 col-12">
+                                                <div class="text-center" style="margin-top: 20px;">
+                                                    <img src="assets/images/avatar-adagro.png" alt="User Avatar" class="user-avatar-xxl">
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-10 col-lg-8 col-md-8 col-sm-8 col-12">
+                                                <div class="user-avatar-info">
+                                                    <div class="m-b-20">
+                                                        <div class="user-avatar-name">
+                                                            <h2 class="mb-1">Adagro Comercio de Produtos Agricolas Ltda</h2>
+                                                        </div>
+                                                    </div>
+                                                    <!--  <div class="float-right"><a href="#" class="user-avatar-email text-secondary">www.henrybarbara.com</a></div> -->
+                                                    <div class="user-avatar-address">
+                                                        <p class="border-bottom pb-3">
+                                                            <br>
+                                                            <br>
+                                                            <span class="d-xl-inline-block d-block mb-2"><i class="fa fa-map-marker-alt mr-2 text-primary " style="color: #5bb1a2 !important;"></i>Rua Av. Rio Branco, nº 1088 , ADAMANTINA - SP</span><br>
+                                                            <!--<span class="d-xl-inline-block d-block mb-2"><i class="fa fa-phone mr-2 text-primary " style="color: #023d77 !important;"></i>11 2484-0087</span><br>
+                                                            <span class="d-xl-inline-block d-block mb-2"><i class="fa fa-envelope mr-2 text-primary " style="color: #023d77 !important;"></i>faleconosco@logc.com.br</span><br>
+                                                            <span class="d-xl-inline-block d-block mb-2"><i class="fa fa-globe mr-2 text-primary " style="color: #023d77 !important;"></i><a class="link-institucional" href="http://www.logc.com.br" target="_blank">http://www.logc.com.br</a></span>--><br>
+                                                        </p>
+                                                        <div class="mt-3 col-8">
+                                                            <img src="assets/images/tira-adagro.jpg" width="528px" alt="User Avatar">
+                                                            <br><br>
+                                                            <h3 style="text-align: center;">Bem vindo ao RTC</h3>
+                                                            <p style="text-align: justify;">Você poderá ser a partir de agora nosso fornecedor virtual do projeto Novos Rumos (Agro fauna).</p>
+                                                            <p style="text-align: justify;">Para que nossa parceria possa ser implantada será necessário estabelecer um contrato com a empresa Virtual Negócios e Servicos que representara a Adagro Comercio de Produtos Agricolas Ltda fazendo a intervenção de vendas on-line em todo o Brasil.</p>
+                                                            <p style="text-align: justify;">Para isso leia com a atenção nosso contrato e siga o passo a passo abaixo.</p>
+                                                            <p></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- fim bem vindo -->
                                         <div class="table-responsive" style="overflow: hidden">
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <i class="fas fa-box" style="display: inline"></i>&nbsp <h4 style="display: inline">Seus produtos ja cadastrados</h4>
+                                                    <hr>
+                                                    <input type="text" class="form-control col-md-8" id="filtroProdutos2" placeholder="Filtro">
+                                                    <br>
 
+                                                    <table class="table table-striped table-bordered first">
+                                                        <thead>
+                                                        <th data-ordem="produto.codigo">Cod.</th>
+                                                        <th data-ordem="produto.nome">Produto</th>
+                                                        <th><i class="fas fa-mouse-pointer"></i></th>
+                                                        </thead>
+                                                        <tr ng-repeat="produt in produtos_av.elementos" style="cursor:pointer;" ng-click="selecionarPossibilidade(produt[0])">
+                                                            <th style="{{produt[0].id===produto_av.id?'background-color:SteelBlue;color:#FFFFFF':''}}">{{produt[0].codigo}}</th>
+                                                            <th style="{{produt[0].id===produto_av.id?'background-color:SteelBlue;color:#FFFFFF':''}}">{{produt[0].nome}}</th>
+                                                            <th style="{{produt[0].id===produto_av.id?'background-color:SteelBlue;color:#FFFFFF':''}}"><i class="fas fa-square"></i></th>
+                                                        </tr>
+                                                    </table>
+                                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                                        <nav aria-label="Page navigation example">
+                                                            <ul class="pagination justify-content-end">
+                                                                <li class="page-item" ng-click="produtos_av.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                                <li class="page-item" ng-repeat="pg in produtos_av.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                                                <li class="page-item" ng-click="produtos_av.next()"><a class="page-link" href="">Próximo</a></li>
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
+                                                    <hr>
+
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <i class="fas fa-truck" style="display: inline"></i>&nbsp <h4 style="display: inline">Produto para consignar</h4>
+                                                    <hr>
+                                                    <div ng-if="travado_av">
+                                                        <button class="btn btn-danger" ng-click="destravar()">
+                                                            <i class="fas fa-times"></i>
+                                                            &nbsp;
+                                                            Alterar produto
+                                                        </button>
+                                                        <hr>
+                                                    </div>
+                                                    <table style="width:100%" class="pdt">
+                                                        <tr>
+                                                            <td colspan="2" style="text-align:center">
+                                                                <img src="{{produto_av.imagem}}" style="max-height:200px">
+                                                                <hr>
+                                                                <input type="file" multiple="true" style="visibility:hidden" id="flImg">
+                                                                <button ng-disabled="travado_av" class="btn btn-success" onclick="$('#flImg').click()"><i class="fas fa-upload"></i>&nbspColocar imagem</button>
+                                                            </td> 
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Nome:
+                                                            </td>
+                                                            <td style="position:relative">
+                                                                <input ng-change="atualizarPossibilidades()" ng-disabled="travado_av" type="text" placeholder="Nome do produto" class="form-control" style="width:100%" ng-model="produto_av.nome">
+                                                                <div ng-if="produtos_possiveis_av.length > 0 && !travado_av" style="width:100%;top:40px;background-color:#FAFAFA;border:3px solid SteelBlue">
+                                                                    Foram encontrados produtos semelhantes no RTC, seria algum destes ?<br>
+                                                                    <div ng-repeat="pos in produtos_possiveis_av" ng-click="selecionarPossibilidadeSemEstoque(pos)" class="search_line">
+                                                                        <img style="height:40px" src="{{pos.imagem}}"></img>
+                                                                        &nbsp;
+                                                                        <strong>{{pos.nome}}</strong>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Fabricante:
+                                                            </td>
+                                                            <td>
+                                                                <input ng-disabled="travado_av" type="text" placeholder="Nome do fabricante" class="form-control" style="width:90%" ng-model="produto_av.fabricante">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Preço de Custo (R$):
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" placeholder="Custo Medio" class="form-control" style="width:40%" ng-model="produto_av.custo">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Preço de Venda (R$):
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" placeholder="Valor de venda" class="form-control" style="width:40%" ng-model="produto_av.valor_base">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Classe de Risco:
+                                                            </td>
+                                                            <td>
+                                                                <input ng-disabled="travado_av" type="number" placeholder="Classe Risco" class="form-control" style="width:40%" ng-model="produto_av.classe_risco">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Ativo:
+                                                            </td>
+                                                            <td>
+                                                                <input ng-disabled="travado_av" type="text" placeholder="Ativo" class="form-control" style="width:80%" ng-model="produto_av.ativo">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Estoque:
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" placeholder="Estoque" class="form-control" style="width:40%" ng-model="produto_av.estoque" ng-change="produto_av.disponivel=produto_av.estoque">
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <hr>
+                                                    <button class="btn btn-success" ng-disabled="!liberado()" ng-click="finalizar()">
+                                                        <i class="fas fa-truck"></i>
+                                                        &nbsp;
+                                                        {{(!liberado()) ? "Digite as informacoes corretamente para consignar" : "Consignar produto"}}
+                                                    </button>
+                                                    <br>
+                                                    <strong style="color:#FF0000;font-size:13px">Ao clicar no botao acima, você esta aceitando os termos do contrato.</strong>
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    Aditivos de contrato
+                                                    <br>
+
+                                                    <table class="table table-striped table-bordered first">
+                                                        <thead>
+                                                        <th data-ordem="produto.codigo">Cod.</th>
+                                                        <th data-ordem="produto.nome">Produto</th>
+                                                        <th><i class="fas fa-trash"></i></th>
+                                                        </thead>
+                                                        <tr ng-repeat="produt in produtos_consignados.elementos">
+                                                            <th>{{produt[0].codigo}}</th>
+                                                            <th>{{produt[0].nome}}</th>
+                                                            <th><button class="btn btn-danger" ng-click="deconsignar(produt[0])"><i class="fas fa-trash"></i></button></th>
+                                                        </tr>
+                                                    </table>
+                                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
+                                                        <nav aria-label="Page navigation example">
+                                                            <ul class="pagination justify-content-end">
+                                                                <li class="page-item" ng-click="produtos_consignados.prev()"><a class="page-link" href="">Anterior</a></li>
+                                                                <li class="page-item" ng-repeat="pg in produtos_consignados.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                                                <li class="page-item" ng-click="produtos_consignados.next()"><a class="page-link" href="">Próximo</a></li>
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <h3>Contrato de prestacao de serviço</h3>
@@ -107,7 +299,7 @@
                                                     </select>
                                                     <br>
                                                     <div style="width:100%;height:600px;border:2px solid;overflow-y:scroll;padding:10px;margin:10px">
-                                                        <h2>CONTRATO DE UTILIZAÇÃO DE PLATAFORMA DIGITAL PARA VENDAS ON LINE</h2>
+                                                        <h2>CONTRATO DE REPRESENTAÇÃO COMERCIAL PARA VENDAS ON LINE</h2>
                                                             <hr>
 
 CONTRATANTE: <strong>{{empresa_av.nome}}</strong>, inscrita no CNPJ nº <strong>{{empresa_av.cnpj.valor}}</strong>, localizada na Rua <strong>{{empresa_av.endereco.rua}}</strong>, nº <strong>{{empresa_av.endereco.numero}}</strong>, na cidade de <strong>{{empresa_av.endereco.cidade.nome}}</strong>, neste ato representada por seu Sócio, Sr. <?php echo $usuario->nome; ?>, (qualificação):
@@ -277,158 +469,7 @@ E, assim justos e contratados, assinam o presente instrumento mediante aceitaç�
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-5">
-                                                    <i class="fas fa-box" style="display: inline"></i>&nbsp <h4 style="display: inline">Seus produtos ja cadastrados</h4>
-                                                    <hr>
-                                                    <input type="text" class="form-control col-md-8" id="filtroProdutos2" placeholder="Filtro">
-                                                    <br>
-
-                                                    <table class="table table-striped table-bordered first">
-                                                        <thead>
-                                                        <th data-ordem="produto.codigo">Cod.</th>
-                                                        <th data-ordem="produto.nome">Produto</th>
-                                                        <th><i class="fas fa-mouse-pointer"></i></th>
-                                                        </thead>
-                                                        <tr ng-repeat="produt in produtos_av.elementos" style="cursor:pointer;" ng-click="selecionarPossibilidade(produt[0])">
-                                                            <th style="{{produt[0].id===produto_av.id?'background-color:SteelBlue;color:#FFFFFF':''}}">{{produt[0].codigo}}</th>
-                                                            <th style="{{produt[0].id===produto_av.id?'background-color:SteelBlue;color:#FFFFFF':''}}">{{produt[0].nome}}</th>
-                                                            <th style="{{produt[0].id===produto_av.id?'background-color:SteelBlue;color:#FFFFFF':''}}"><i class="fas fa-square"></i></th>
-                                                        </tr>
-                                                    </table>
-                                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                        <nav aria-label="Page navigation example">
-                                                            <ul class="pagination justify-content-end">
-                                                                <li class="page-item" ng-click="produtos_av.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                                <li class="page-item" ng-repeat="pg in produtos_av.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                                <li class="page-item" ng-click="produtos_av.next()"><a class="page-link" href="">Próximo</a></li>
-                                                            </ul>
-                                                        </nav>
-                                                    </div>
-                                                    <hr>
-                                                    Produtos consignados atualmente
-                                                    <br>
-
-                                                    <table class="table table-striped table-bordered first">
-                                                        <thead>
-                                                        <th data-ordem="produto.codigo">Cod.</th>
-                                                        <th data-ordem="produto.nome">Produto</th>
-                                                        <th><i class="fas fa-trash"></i></th>
-                                                        </thead>
-                                                        <tr ng-repeat="produt in produtos_consignados.elementos">
-                                                            <th>{{produt[0].codigo}}</th>
-                                                            <th>{{produt[0].nome}}</th>
-                                                            <th><button class="btn btn-danger" ng-click="deconsignar(produt[0])"><i class="fas fa-trash"></i></button></th>
-                                                        </tr>
-                                                    </table>
-                                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                        <nav aria-label="Page navigation example">
-                                                            <ul class="pagination justify-content-end">
-                                                                <li class="page-item" ng-click="produtos_consignados.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                                <li class="page-item" ng-repeat="pg in produtos_consignados.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                                <li class="page-item" ng-click="produtos_consignados.next()"><a class="page-link" href="">Próximo</a></li>
-                                                            </ul>
-                                                        </nav>
-                                                    </div>
-
-
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <i class="fas fa-truck" style="display: inline"></i>&nbsp <h4 style="display: inline">Produto para consignar</h4>
-                                                    <hr>
-                                                    <div ng-if="travado_av">
-                                                        <button class="btn btn-danger" ng-click="destravar()">
-                                                            <i class="fas fa-times"></i>
-                                                            &nbsp;
-                                                            Alterar produto
-                                                        </button>
-                                                        <hr>
-                                                    </div>
-                                                    <table style="width:100%" class="pdt">
-                                                        <tr>
-                                                            <td colspan="2" style="text-align:center">
-                                                                <img src="{{produto_av.imagem}}" style="max-height:200px">
-                                                                <hr>
-                                                                <input type="file" multiple="true" style="visibility:hidden" id="flImg">
-                                                                <button ng-disabled="travado_av" class="btn btn-success" onclick="$('#flImg').click()"><i class="fas fa-upload"></i>&nbspColocar imagem</button>
-                                                            </td> 
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Nome:
-                                                            </td>
-                                                            <td style="position:relative">
-                                                                <input ng-change="atualizarPossibilidades()" ng-disabled="travado_av" type="text" placeholder="Nome do produto" class="form-control" style="width:100%" ng-model="produto_av.nome">
-                                                                <div ng-if="produtos_possiveis_av.length > 0 && !travado_av" style="width:100%;top:40px;background-color:#FAFAFA;border:3px solid SteelBlue">
-                                                                    Foram encontrados produtos semelhantes no RTC, seria algum destes ?<br>
-                                                                    <div ng-repeat="pos in produtos_possiveis_av" ng-click="selecionarPossibilidadeSemEstoque(pos)" class="search_line">
-                                                                        <img style="height:40px" src="{{pos.imagem}}"></img>
-                                                                        &nbsp;
-                                                                        <strong>{{pos.nome}}</strong>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Fabricante:
-                                                            </td>
-                                                            <td>
-                                                                <input ng-disabled="travado_av" type="text" placeholder="Nome do fabricante" class="form-control" style="width:90%" ng-model="produto_av.fabricante">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Custo Medio (R$):
-                                                            </td>
-                                                            <td>
-                                                                <input type="number" placeholder="Custo Medio" class="form-control" style="width:40%" ng-model="produto_av.custo">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Preço de Venda (R$):
-                                                            </td>
-                                                            <td>
-                                                                <input type="number" placeholder="Valor de venda" class="form-control" style="width:40%" ng-model="produto_av.valor_base">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Classe de Risco:
-                                                            </td>
-                                                            <td>
-                                                                <input ng-disabled="travado_av" type="number" placeholder="Classe Risco" class="form-control" style="width:40%" ng-model="produto_av.classe_risco">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Ativo:
-                                                            </td>
-                                                            <td>
-                                                                <input ng-disabled="travado_av" type="text" placeholder="Ativo" class="form-control" style="width:80%" ng-model="produto_av.ativo">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Estoque:
-                                                            </td>
-                                                            <td>
-                                                                <input type="number" placeholder="Estoque" class="form-control" style="width:40%" ng-model="produto_av.estoque" ng-change="produto_av.disponivel=produto_av.estoque">
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                    <hr>
-                                                    <button class="btn btn-success" ng-disabled="!liberado()" ng-click="finalizar()">
-                                                        <i class="fas fa-truck"></i>
-                                                        &nbsp;
-                                                        {{(!liberado()) ? "Digite as informacoes corretamente para consignar" : "Consignar produto"}}
-                                                    </button>
-                                                    <br>
-                                                    <strong style="color:#FF0000;font-size:13px">Ao clicar no botao acima, você esta aceitando os termos do contrato.</strong>
-                                                    
-                                                </div>
-                                            </div>
+                                            
 
 
 

@@ -26,13 +26,16 @@ class TTProspeccaoDeCliente extends TipoTarefa {
                 "<strong style='color:Black'>Aprovar para recepcao</strong>"
                 ,"<strong style='color:Orange'>Cliente nao quer trabalhar momentaneamente com a Agro Fauna</strong>"
                 ,"<strong style='color:Red'>Cliente nao quer trabalhar com a Agro Fauna</strong>"
-                ,"<strong style='color:Purple'>Faleceu, fechou, nao trabalha mais, etc..</strong>"));
+                ,"<strong style='color:Purple'>Faleceu, fechou, nao trabalha mais, etc..</strong>"
+                ,"<strong style='color:Gray'>Cooperativa</strong>"
+                ,"<strong style='color:Blue'>Jogar para o pos-venda</strong>"));
         
         $this->nome = "Prospeccao de Cliente";
         $this->tempo_medio = 0.3;
         $this->prioridade = 100;
         $this->cargos = array(
-            Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO(new Empresa($id_empresa))
+            Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO(new Empresa($id_empresa)),
+            Virtual::CF_ASSISTENTE_VIRTUAL_RECEPCAO(new Empresa($id_empresa))
         );
         $this->carregarDados();
     }

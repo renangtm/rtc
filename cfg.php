@@ -321,6 +321,7 @@
                                                             <th>Cod</th>
                                                             <th>Nome</th>
                                                             <th>Prioridade</th>
+                                                            <th>Cobranca</th>
                                                             <th>Acoes</th>
                                                         </tr>
                                                     </thead>
@@ -329,6 +330,7 @@
                                                             <td>{{t[0].id}}</td>
                                                             <td><input type="text" class="form-control" ng-model="t[0].nome"></td>
                                                             <td><input type="number" class="form-control" ng-model="t[0].prioridade"></td>
+                                                            <td><input type="number" class="form-control" ng-model="t[0].cobranca"></td>
                                                             <td><button class="btn btn-edit" ng-click="mergeTipoProtocolo(t[0])"><i class="fas fa-edit"></i></button>&nbsp<button class="btn btn-danger" ng-click="deleteTipoProtocolo(t[0])"><i class="fas fa-trash"></i></button></td>
                                                         </tr>
                                                     </tbody>
@@ -337,6 +339,7 @@
                                                             <th>Cod</th>
                                                             <th>Nome</th>
                                                             <th>Prioridade</th>
+                                                            <th>Cobranca</th>
                                                             <th><i class="fas fa-trash"></i></th>
                                                         </tr>
                                                     </tfoot>

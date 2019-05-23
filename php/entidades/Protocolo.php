@@ -25,6 +25,7 @@ class Protocolo {
     public $fim;
     public $iniciado_por;
     public $precedente;
+    public $alertar;
 
     public function __construct() {
 
@@ -40,6 +41,8 @@ class Protocolo {
         $this->id_entidade = 0;
         $this->tipo_entidade = 0;
         $this->iniciado_por = "";
+        $this->alertar = true;
+        
     }
     
     public function init($con){

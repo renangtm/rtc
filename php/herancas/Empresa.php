@@ -86,6 +86,7 @@ class Empresa {
     public $cargos_fixos;
     public $tarefas_fixas;
     public $observacao_padrao_nota;
+    public $fornecedor_virtual;
 
     function __construct($id = 0, $cf = null) {
 
@@ -106,6 +107,7 @@ class Empresa {
         $this->tipo_empresa = false;
         $this->permissoes_especiais = array();
         $this->observacao_padrao_nota = "";
+        $this->fornecedor_virtual = 0;
         $this->cargos_fixos = array(
             Empresa::CF_SEM_CARGO($this),
             Empresa::CF_DIRETOR($this),
@@ -4347,7 +4349,7 @@ class Empresa {
         return 0;
     }
 
-    public function getProtocolos($con, $x1, $x2, $filtro = "", $ordem = "") {
+    public function getProtocolos($con, $x1, $x2, $filtro = "", $ordem = "",$usuario=null) {
 
         $empresas = "($this->id";
 
@@ -4361,11 +4363,13 @@ class Empresa {
 
         $sql = "SELECT "
                 . "p.id,"
+                . "IFNULL(p.aberturas_usuario,''),"
                 . "p.titulo,"
                 . "p.descricao,"
                 . "tp.id,"
                 . "tp.nome,"
                 . "tp.prioridade,"
+                . "tp.cobranca,"
                 . "UNIX_TIMESTAMP(p.inicio)*1000,"
                 . "UNIX_TIMESTAMP(p.fim)*1000,"
                 . "p.tipo_entidade,"
@@ -4392,14 +4396,17 @@ class Empresa {
 
         $ids_protocolos = "(-1";
         $protocolos = array();
-
+        
+        $aberturas = array();
+        
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $titulo, $descricao, $id_tipo, $nome_tipo, $prioridade_tipo, $inicio, $fim, $tipo_entidade, $id_entidade, $iniciado_por, $id_empresa, $nome_empresa);
+        $ps->bind_result($id, $abt, $titulo, $descricao, $id_tipo, $nome_tipo, $prioridade_tipo,$cobranca, $inicio, $fim, $tipo_entidade, $id_entidade, $iniciado_por, $id_empresa, $nome_empresa);
         while ($ps->fetch()) {
 
             $t = new TipoProtocolo();
             $t->id = $id_tipo;
+            $t->cobranca = $cobranca;
             $t->nome = $nome_tipo;
             $t->prioridade = $prioridade_tipo;
 
@@ -4420,6 +4427,23 @@ class Empresa {
             $p->tipo = $t;
 
             $protocolos[$id] = $p;
+            
+            
+            $ab = explode(';',$abt);
+            $tmp = array();
+            foreach($ab as $key=>$value){
+                if($value === "")continue;
+                
+                $t = explode('-',$value);
+                $t[0] = intval($t[0]);
+                $t[1] = intval($t[1]);
+                
+                $tmp[] = $t;
+                
+            }
+            
+            $aberturas[$id] = $tmp;
+            
 
             $ids_protocolos .= ",$id";
         }
@@ -4427,6 +4451,34 @@ class Empresa {
         $ids_protocolos .= ")";
 
         $ps->close();
+        
+        
+        if($usuario !== null){
+            
+            foreach($aberturas as $id_protocolo=>$abertura){
+                foreach($abertura as $k=>$ab){
+                    if($ab[0] === $usuario->id){
+                        if(($ab[1]+1)>$protocolos[$id_protocolo]->tipo->cobranca){
+                            $protocolos[$id_protocolo]->alertar = false;
+                        }
+                        $aberturas[$id_protocolo][$k][1]++;
+                        continue 2;
+                    }
+                }
+                $aberturas[$id_protocolo][] = array($usuario->id,1);
+            }
+            
+            foreach($aberturas as $id_protocolo=>$abertura){
+                $str = "";
+                foreach($abertura as $k=>$ab){
+                    $str .= $ab[0]."-".$ab[1].";";
+                }
+                $ps=$con->getConexao()->prepare("UPDATE protocolo SET inicio=inicio,fim=fim,aberturas_usuario='$str' WHERE id=$id_protocolo");
+                $ps->execute();
+                $ps->close();
+            }
+            
+        }
 
         $ps = $con->getConexao()->prepare("SELECT id,mensagem,UNIX_TIMESTAMP(momento)*1000,dados_usuario,id_protocolo FROM mensagem_protocolo WHERE id_protocolo IN $ids_protocolos");
         $ps->execute();
@@ -4454,19 +4506,21 @@ class Empresa {
         return $retorno;
     }
 
+
     public function getTiposProtocolo($con) {
 
         $tipos = array();
 
-        $ps = $con->getConexao()->prepare("SELECT id,nome,prioridade FROM tipo_protocolo WHERE excluido = false");
+        $ps = $con->getConexao()->prepare("SELECT id,nome,prioridade,cobranca FROM tipo_protocolo WHERE excluido = false");
         $ps->execute();
-        $ps->bind_result($id, $nome, $prioridade);
+        $ps->bind_result($id, $nome, $prioridade, $cobranca);
 
         while ($ps->fetch()) {
 
             $tp = new TipoProtocolo();
             $tp->id = $id;
             $tp->nome = $nome;
+            $tp->cobranca = $cobranca;
             $tp->prioridade = $prioridade;
             $tipos[] = $tp;
         }

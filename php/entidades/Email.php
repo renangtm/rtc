@@ -144,7 +144,7 @@ class Email {
     }
 
     public function enviarEmail($destino, $titulo, $conteudo) {
-
+        
         $con = new ConnectionFactory();
 
         $enderecos = $destino->getEnderecos();
@@ -217,6 +217,7 @@ class Email {
             $ps->execute();
             $ps->close();
         }
+        
     }
 
     public function merge($con) {

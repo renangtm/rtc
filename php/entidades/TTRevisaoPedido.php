@@ -21,7 +21,11 @@ class TTRevisaoPedido extends TipoTarefa {
         $this->tempo_medio = 0.1;
         $this->prioridade = 100;
         $this->cargos = array(
-            Empresa::CF_DIRETOR($id_empresa)
+            Empresa::CF_DIRETOR($id_empresa),
+            Empresa::CF_ENCARREGADO_LOGISTICA($id_empresa),
+            Empresa::CF_AUXILIAR_ADM($id_empresa),
+            Empresa::CF_SUPERVISOR_LOGISTICA($id_empresa),
+            Administracao::CF_ASSISTENTE_COMPRAS($id_empresa)
         );
         $this->carregarDados();
     }

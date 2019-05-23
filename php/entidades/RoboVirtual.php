@@ -77,21 +77,29 @@ class RoboVirtual {
 
                 $empresa = new Empresa($empresa, $con);
 
-                $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO($virtual)->id) * 50, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL) AND cliente.prospectar_ignorar_pular=0 AND cliente.pessoa_fisica=false AND cliente.cnpj <> '00.000.000/0000-00'");
-
+                $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_PROSPECCAO($virtual)->id) * 15, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL) AND cliente.prospectar_ignorar_pular=0 AND cliente.pessoa_fisica=false AND cliente.cnpj <> '00.000.000/0000-00' AND cliente.robo_virtual=0");
+                
                 foreach ($clientes as $key3 => $cliente) {
 
+                    $ps = $con->getConexao()->prepare("UPDATE cliente SET inicio_limite=inicio_limite,termino_limite=termino_limite,robo_virtual=1 WHERE id=$cliente->id");
+                    $ps->execute();
+                    $ps->close();
+                    
                     if (count($cliente->telefones) === 0) {
                         continue;
                     }
+                    
 
                     if ($cliente->telefones[0]->numero === "0000-0000") {
                         continue;
                     }
                     
+                    
+                    
                     if($cliente->cnpj->valor==='00.000.000/0000-00'){
                         continue;
                     }
+                    
 
                     $tarefa = new Tarefa();
                     $tarefa->tipo_tarefa = Sistema::TT_PROSPECCAO_CLIENTE($virtual->id);
@@ -113,7 +121,7 @@ class RoboVirtual {
                     Sistema::novaTarefaEmpresa($con, $tarefa, $virtual);
                 }
 
-                $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_RECEPCAO($virtual)->id) * 50, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL) AND cliente.prospectar_ignorar_pular=2");
+                $clientes = $empresa->getClientes($con, 0, $virtual->getCountUsuarios($con, "usuario.id_cargo=" . Virtual::CF_ASSISTENTE_VIRTUAL_RECEPCAO($virtual)->id) * 10, "cliente.id NOT IN (SELECT uc.id_cliente FROM usuario_cliente uc WHERE uc.data_fim IS NULL) AND cliente.prospectar_ignorar_pular=2");
 
                 foreach ($clientes as $key3 => $cliente) {
 

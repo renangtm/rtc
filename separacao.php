@@ -5,7 +5,7 @@
         <meta charset="utf-8">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?125"></script>
+        <script src="js/rtc.js?5"></script>
 
         <script>
 
@@ -23,9 +23,9 @@ $id_pedido = $_GET['pedido'];
 
         </script>
 
-        <script src="js/filters.js?125"></script>
-        <script src="js/services.js?125"></script>
-        <script src="js/controllers.js?125"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
+        <script src="js/filters.js?5"></script>
+        <script src="js/services.js?5"></script>
+        <script src="js/controllers.js?5"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -82,9 +82,6 @@ $id_pedido = $_GET['pedido'];
                                     </button>
                                     <button class="btn btn-primary" style="float:right;margin-right:10px" ng-if="pedido !== null && itens.length > 0" ng-click="gerarRelatorio()">
                                         <i class="fas fa-paperclip"></i> &nbsp; Imprimir
-                                    </button>
-                                    <button class="btn btn-primary" style="float:right;margin-right:10px" ng-if="pedido !== null && itens.length > 0" ng-click="imprimirItens()">
-                                        <i class="fas fa-paperclip"></i> &nbsp; Imprimir Etiquetas
                                     </button>
                                     <hr>
 

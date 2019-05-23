@@ -6,10 +6,10 @@
         <meta charset="utf-8">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?125"></script>
-        <script src="js/filters.js?125"></script>
-        <script src="js/services.js?125"></script>
-        <script src="js/controllers.js?125"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
+        <script src="js/rtc.js?5"></script>
+        <script src="js/filters.js?5"></script>
+        <script src="js/services.js?5"></script>
+        <script src="js/controllers.js?5"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -547,7 +547,7 @@
                                         <th><input type="text" style="max-width:60px" class="form-control" ng-model="prod[0].limite"></th>
                                         <th>{{prod[0].produto.custo}}</th>
                                         <th ng-click="selecionarValor(prod[0], v)" style="cursor:pointer;{{v.selecionado?'text-decoration:underline;color:Green':''}}" ng-repeat="v in prod[0].valores">{{v.valor}} R$</th>
-                                        <th ng-click="selecionarValor(prod[0], prod[0].valor_editavel)"><input type="text" class="form-control" style="width:50px;{{prod[0].valor_editavel.selecionado?'color:Green;text-decoration:underline':''}}" ng-model="prod[0].valor_editavel.valor"></th>
+                                        <th ng-click="selecionarValor(prod[0], prod[0].valor_editavel)"><input type="text" class="form-control" style="width:130px;{{prod[0].valor_editavel.selecionado?'color:Green;text-decoration:underline':''}}" ng-model="prod[0].valor_editavel.valor"></th>
                                     </tr>
                                 </table>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">

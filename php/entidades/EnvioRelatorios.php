@@ -38,10 +38,11 @@ class EnvioRelatorios {
 
     public function executar($con) {
 
-        $data = 'CURRENT_DATE';
+        $data = "CURRENT_DATE";
 
         $empresas = array();
         $empresas_inteiras = array();
+        
         $ps = $con->getConexao()->prepare("SELECT id,tipo_empresa FROM empresa WHERE rtc>=6");
         $ps->execute();
         $ps->bind_result($id, $tipo_empresa);
@@ -66,7 +67,7 @@ class EnvioRelatorios {
 
                 $cpf = md5($usuario->cpf->valor);
 
-                $tarefas = $usuario->getTarefas($con, '(tarefa.porcentagem_conclusao < 100 OR (DATE(observacao.momento)=DATE(' . $data . ') AND MONTH(observacao.momento)=MONTH(' . $data . ') AND YEAR(observacao.momento)=YEAR(' . $data . ')))', '');
+                $tarefas = $usuario->getTarefas($con, 'DATE(observacao.momento)=DATE(' . $data . ') AND MONTH(observacao.momento)=MONTH(' . $data . ') AND YEAR(observacao.momento)=YEAR(' . $data . ')', '',true);
 
                 if (count($tarefas) === 0) {
                     continue;
@@ -135,11 +136,14 @@ class EnvioRelatorios {
             $obj_relatorio->empresa = $logos[$cpf][0];
             $obj_relatorio->usuario = $usuario;
             $obj_relatorio->tarefas = $tasks[$cpf];
+            $obj_relatorio->est = $usuario->getEstatisticas($con);
+            $obj_relatorio->est_dia = $usuario->getEstatisticas($con,true);
             $html = Sistema::getHtml('relatorio_servico', $obj_relatorio);
             $emails = $envios[$cpf];
             foreach ($emails as $key3 => $value3) {
                 try {
                     $obj_relatorio->empresa->email->enviarEmail($value3, 'Relatorio do ' . $usuario->nome, $html);
+                    //Sistema::avisoDEVS_MASTER($html);
                 } catch (Exception $ex) {
                     Sistema::avisoDEVS('Erro no envio de email dos relatorios, ' . $ex->getMessage());
                 }

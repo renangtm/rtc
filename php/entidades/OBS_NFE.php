@@ -27,7 +27,9 @@ class OBS_NFE {
                     . " de 06 06 00 reg. pelo decreto 4072 02 de 04 01 2002, as embalagens adquiridas nesta NF deverao ser devolvidas no prazo de 1 (um) ano,"
                     . " perfuradas e com a triplice lavagem realizada, na unidade de recebimento: "
                     . "Agro-Fauna Com. Ins. Ltda. R.Coutinho Cavalcanti, 1171 - Jd Alto Alegre - S J Rio Preto-SP. "
-                    . "ARIA - ASSOC DE REVENDEDORES DE INSUMOS AGROPECUARIOS Rua Gino Cecconi, 400 Distrito Industrial Carlos de Arnaldo Silva - Sao Jose do Rio Preto SP."
+                    . "ARIA - ASSOC DE REVENDEDORES DE INSUMOS AGROPECUARIOS Rua Gino Cecconi, 400 Distrito Industrial Carlos de Arnaldo Silva - Sao Jose do Rio Preto SP "
+                    . "Declaro que os produtos perigosos estao adequadamente classificados, embalados, identificados, e estivados para suportar os riscos das operacoes de transporte "
+                    . "e que atendem as exigencias da regulamentacal BASE DE CALCULO DO ICMS REDUZIDA EM 60% CONFORME CONVENIO 100/97 - IPI ALIQUOTA ZERO"
                     . ". Pedido: " . $pedido->id;
 
             if ($pedido->cliente->suframado) {

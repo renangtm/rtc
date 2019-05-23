@@ -8,7 +8,7 @@
 
 /**
  * Description of RegraTabela
- *
+ *ge
  * @author Renan
  */
 class Pedido {
@@ -205,6 +205,8 @@ class Pedido {
                 . "produto.codigo,"
                 . "produto.id_logistica,"
                 . "produto.classe_risco,"
+                . "produto.onu,"
+                . "produto.descricao_onu,"
                 . "produto.fabricante,"
                 . "produto.imagem,"
                 . "produto.id_universal,"
@@ -261,7 +263,7 @@ class Pedido {
                 . " WHERE produto_pedido_saida.id_pedido=$this->id");
 
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lote, $nota_usuario, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro, $cod_pro, $id_log, $classe_risco,$onu,$descricao_onu, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lote, $nota_usuario, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
@@ -270,7 +272,9 @@ class Pedido {
         while ($ps->fetch()) {
 
             $p = new Produto();
-
+            
+            $p->onu = $onu;
+            $p->descricao_onu = $descricao_onu;
             $p->logistica = $id_log;
             $p->id = $id_pro;
             $p->codigo = $cod_pro;
@@ -490,12 +494,28 @@ class Pedido {
             $pn->produto = $value->produto;
             $pn->quantidade = $value->quantidade;
             $pn->valor_unitario = ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete);
-            $pn->informacao_adicional = "Cl Risco: " . $value->produto->classe_risco . "."; //Verificar esse ponto tambem;
+            $pn->informacao_adicional = "Cl Risco: " . $value->produto->classe_risco . ". ONU ".$value->produto->onu." ".$value->produto->descricao_onu;
 
             if ($value->produto->sistema_lotes) {
-                $pn->informacao_adicional = "Validade: " . date("d/m/Y", $value->validade_minima / 1000) . ".";
+                
+                $con = new ConnectionFactory();
+                
+                $pn->informacao_adicional .= "LOTES(S): D. Validade: " . date("d/m/Y", $value->validade_minima / 1000) . " ";
                 foreach ($value->retiradas as $key2 => $retirada) {
-                    $pn->informacao_adicional .= "Lote: " . $retirada[0] . " - Qtd: " . $retirada[1];
+                    
+                    $codigo_lote = $retirada[0];
+                    
+                    $ps = $con->getConexao()->prepare("SELECT codigo_fabricante FROM lote WHERE id=$codigo_lote");
+                    $ps->execute();
+                    $ps->bind_result($cod);
+                    if($ps->fetch()){
+                        if($cod !== ""){
+                            $codigo_lote = $cod;
+                        }
+                    }
+                    $ps->close();
+                    
+                    $pn->informacao_adicional .= "$codigo_lote (Qtd: " . $retirada[1].")";
                 }
             }
 
@@ -851,11 +871,19 @@ class Pedido {
                 $t->nome_fantasia = $l->nome;
                 $t = $getter->getTransportadoraViaTransportadora($con, $t);
                 $nota_logistica_empresa->transportadora = $t;
-
+                
+                $vencimento = new Vencimento();
+                $vencimento->nota = $nota_logistica_empresa;
+                $vencimento->valor = 0;
+                
                 foreach ($nota_logistica_empresa->produtos as $key => $value) {
                     $value->cfop = CFOP::$RETORNO_DEPOSITO;
                     $value->valor_unitario=$value->produto->custo;
+                    $value->valor_total=$value->valor_unitario*$value->quantidade;
+                    $vencimento->valor += $value->valor_unitario*$value->quantidade;
                 }
+                
+                $nota_logistica_empresa->vencimentos = array($vencimento);
 
                 $nota_logistica_empresa->observacao = new OBS_NFE($this->logistica, $this, OBS_NFE::$RETORNO_REMESSA);
                 $nota_logistica_empresa->observacao = $nota_logistica_empresa->observacao->getObs();

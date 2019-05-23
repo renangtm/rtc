@@ -4196,7 +4196,22 @@ rtc.controller("crtEmpresa", function ($scope, $timeout, $interval, empresaServi
 
     protocoloService.getProtocolosAtivos(function (p) {
 
-        $scope.protocolos_ativos = p.protocolos;
+       $scope.protocolos_ativos = p.protocolos;
+        
+        var mostrar = false;
+        
+        for(var i=0;i<$scope.protocolos_ativos.length;i++){
+            if($scope.protocolos_ativos[i].alertar){
+                mostrar = true;
+                break;
+            }
+        }
+        
+        if(!mostrar){
+            
+          $("#btnEsconde").click();
+               
+        }
 
 
     })
@@ -6617,7 +6632,7 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoGrupalService, cot
 
 
 })
-rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabelaService, baseService, produtoService, sistemaService, statusPedidoEntradaService, transportadoraService, fornecedorService, produtoPedidoEntradaService) {
+rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService,empresaService, tabelaService, baseService, produtoService, sistemaService, statusPedidoEntradaService, transportadoraService, fornecedorService, produtoPedidoEntradaService) {
 
     $scope.pedidos = createAssinc(pedidoEntradaService, 1, 10, 10);
     $scope.pedidos.attList();
@@ -6627,6 +6642,13 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
             ["id", "fornecedor.nome", "id_status", "frete", "prazo", "data"]);
 
     $scope.produtos = createAssinc(produtoService, 1, 3, 4);
+
+
+    $scope.empresas = [];
+    $scope.local_retirada = null;
+
+
+
 
     assincFuncs(
             $scope.produtos,
@@ -6666,6 +6688,27 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
 
     $scope.produto = {};
 
+
+    $scope.localEntrega = function(){
+
+        var e = $scope.local_retirada;
+
+        var valor = "Local de Entrega: "+e.nome+"<br>CNPJ: "+e.cnpj.valor+"<br>Estado: "+
+        e.endereco.cidade.estado.sigla+"<br>Cidade: "+e.endereco.cidade.nome
+        +"<br>Bairro: "+e.endereco.bairro+"<br>Rua: "
+        +e.endereco.rua+"<br>Numero: "+e.endereco.numero+"<br>CEP: "+e.endereco.cep.valor;
+
+        $scope.pedido.observacoes = valor;
+
+
+    }
+
+    empresaService.getGrupoEmpresarial(function(g){
+
+        $scope.empresas = g.grupo;
+        $scope.local_retirada = g.grupo[0];
+        $scope.localEntrega();
+    })
 
 
     $scope.getPesoBrutoPedido = function () {
@@ -6860,7 +6903,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
     $scope.setPedido = function (pedido) {
 
         $scope.pedido = pedido;
-
+        $scope.localEntrega();
         if ($scope.pedido.id === 0) {
 
             $scope.pedido.status = $scope.status_pedido[0];
@@ -6868,6 +6911,8 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, tabe
             return;
 
         }
+
+        
 
         pedidoEntradaService.getProdutos(pedido, function (p) {
 

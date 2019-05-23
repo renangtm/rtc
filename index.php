@@ -8,10 +8,10 @@
         <title>Login - RTC (Reltrab Cliente) - WEB</title>
         <!-- Bootstrap CSS -->
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?125"></script>
-        <script src="js/filters.js?125"></script>
-        <script src="js/services.js?125"></script>
-        <script src="js/controllers.js?125"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>       
+        <script src="js/rtc.js?5"></script>
+        <script src="js/filters.js?5"></script>
+        <script src="js/services.js?5"></script>
+        <script src="js/controllers.js?5"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>       
 
         <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
         <link href="assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
@@ -110,7 +110,7 @@
                         </div>
                         <div class="modal-footer" style="text-align:center;">
                             <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                            <button id="btRecuperar" ng-click="recuperar()" class="btn btn-primary">Gerar nova senha, e enviar para o email</button>
+                            <button id="btRecuperar" ng-click="recupera()" class="btn btn-primary">Gerar nova senha, e enviar para o email</button>
                         </div>
                     </div>				  
                 </div>

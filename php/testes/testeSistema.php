@@ -27,11 +27,43 @@ class testeSistema extends PHPUnit_Framework_TestCase {
     }
 
     public function testSimple() {
-
+        
         date_default_timezone_set("America/Sao_Paulo");
         
         $con = new ConnectionFactory();
         
+        $e = new RoboVirtual();
+        $e->executar($con);
+        
+        return;
+        
+        $dados = array();
+        
+        $ps = $this->getConexao()->prepare("SELECT p.F_CODPROD,p.F_NRONU,CONCAT(CONCAT(CONCAT(CONCAT(IFNULL(p.NOM_EMBARQ,''),', N.E. '),IFNULL(p.F_GRQUIMIC,IFNULL(p.F_CONCENTR,''))),' '),IFNULL(p.GRUPO_EMB,'')) FROM db_agrofauna.PRODUTO p");
+        $ps->execute();
+        $ps->bind_result($id,$onu,$desc);
+        while($ps->fetch()){
+            $dados[] = array($id,$onu,$desc);
+        }
+        $ps->close();
+        
+        foreach($dados as $key=>$value){
+            
+            if($value[1]==""){
+                $value[1] = 0;
+            }else{
+                $value[1] = intval($value[1]);
+            }
+            
+            $ps = $con->getConexao()->prepare("UPDATE produto SET onu=".$value[1].", descricao_onu='".addslashes($value[2])."' WHERE codigo=".$value[0]);
+            //echo "UPDATE produto SET onu=".$value[1].", descricao_onu='".addslashes($value[2])."' WHERE codigo=".$value[0];
+            
+            $ps->execute();
+            $ps->close();
+            
+        }
+        
+        return;
         
         $tarefas = array();
         

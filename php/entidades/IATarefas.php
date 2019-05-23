@@ -126,10 +126,10 @@ class IATarefas {
             $tarefa->calculado_tempo_util_faltante = $tarefa->calculado_previsao_util_conclusao - $tarefa->calculado_horas_uteis_dispendidas;
         
             if($tarefa->calculado_tempo_util_faltante == 0){
-                $tarefa->ordem = 0;
-                $tarefa->ordem_teste = 0;
+                $tarefa->ordem = $tarefa->tipo_tarefa->prioridade;
+                $tarefa->ordem_teste = $tarefa->tipo_tarefa->prioridade;
             }else{
-                $tarefa->ordem = round((($tarefa->prioridade * self::$PRIORIDADE_VS_TEMPO) / ($tarefa->calculado_tempo_util_faltante / 10000)), 11);
+                $tarefa->ordem = round((($tarefa->tipo_tarefa->prioridade * self::$PRIORIDADE_VS_TEMPO) / ($tarefa->calculado_tempo_util_faltante / 10000)), 11);
                 $tarefa->ordem_teste = $tarefa->ordem;
             }
             

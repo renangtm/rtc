@@ -5,10 +5,10 @@
         <meta charset="utf-8">
 
         <script src="js/angular.min.js"></script>
-        <script src="js/rtc.js?125"></script>
-        <script src="js/filters.js?125"></script>
-        <script src="js/services.js?125"></script>
-        <script src="js/controllers.js?125"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
+        <script src="js/rtc.js?5"></script>
+        <script src="js/filters.js?5"></script>
+        <script src="js/services.js?5"></script>
+        <script src="js/controllers.js?5"></script>  <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>    
 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
@@ -217,13 +217,20 @@
 
                                         <div class="col-9">
                                             <div class="form-group">
+                                                <label for="">Local de Entrega</label>
+                                                <div class="form-row">
+                                                    <select class="form-control" style="width:60%" ng-model="local_retirada" ng-change="localEntrega()">
+                                                        <option ng-repeat="local in empresas" ng-value="local">{{local.nome}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <label for="">Observações</label>
                                                 <div class="form-row">
                                                     <div class="col">
                                                         <textarea ng-trim="true" class="form-control" rows="2" id="comment" ng-model="pedido.observacoes"></textarea>
                                                     </div>
                                                 </div>
-
                                             </div>			
                                         </div>
                                         <div class="col">

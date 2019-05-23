@@ -1,0 +1,259 @@
+<style>
+    .calendarioClasse{
+        color:#000000;
+        border-spacing: 5px;
+        border-collapse: separate;
+
+    }   
+    .cellDia{
+        border:1px solid;
+        cursor:pointer;
+        border-bottom:3px solid;
+        transition-duration: 0.1s;
+        transition-property: all;
+        color:#4F5467
+    } 
+
+    .cellDia:hover{
+        border:1px solid;
+        cursor:pointer;
+        border-left:6px solid;
+        color:Green;
+        transition-duration: 0.1s;
+        transition-property: all;
+    } 
+
+    .cellDiaN{
+        border:1px solid;
+        cursor:pointer;
+        color:Gray;
+        border-bottom:3px solid;
+    } 
+
+    .cellDiaS{
+
+        border:5px double;
+        cursor:pointer;
+        color:SteelBlue;
+    }
+
+    .cellDiaIni{
+
+        border:5px double;
+        cursor:pointer;
+        color:SteelBlue;
+        background-color: lightblue;
+
+    }
+
+    .cellDiaI{
+
+        border:5px double;
+        cursor:pointer;
+        color:purple;
+        background-color: #FFF;
+
+    }
+
+    .cellDiaF{
+
+        border:5px double;
+        cursor:pointer;
+        color:DarkRed;
+        background-color: lightcoral;
+
+    }
+
+    .cellSet{
+
+        border:5px double;
+        cursor:pointer;
+        color:Green;
+        background-color: lightgreen;
+
+    }
+
+    .cellDiaIni:hover{
+
+        border:5px double;
+        cursor:pointer;
+        color:Purple;
+        background-color: lightblue;
+
+    }
+
+    .cellDiaF:hover{
+
+        border:5px double;
+        cursor:pointer;
+        color:Purple;
+        background-color: lightcoral;
+
+    }
+
+</style>
+
+<div style="position:relative;{{foco()?'z-index:999':'z-index:3'}};padding:10px;background-color: #FAFAFA">
+
+    <div style="width:auto;z-index:500;padding:20px;border-radius: 5px;{{botao?'position:absolute;left:5px;top:5px;border:1px solid':''}};background-color:#FFFFFF" id="cal_dv{{idUnico}}" ng-if="dsp">
+        <table ng-repeat="el in elementos" style="display: inline;width:{{100 / quantidade_meses}}%" class="calendarioClasse">
+            <tr>
+                <th colspan="{{dias.length}}" style="text-align: center;background-color: #CCC;border-top-left-radius: 5px;border-top-right-radius: {{el.i===quantidade_meses-1?'5px':'0px'}};border-top-left-radius: {{el.i===0?'5px':'0px'}}">
+                    <i class="fas fa-calendar" style="display:inline"></i>&nbsp<h4 style="display:inline">{{el.titulo}}</h4>
+                </th>
+            <tr>
+            <tr>
+                <td ng-repeat="d in dias" style="padding:10px">
+                    {{d}}
+                <td>
+            <tr>
+            <tr ng-repeat="semana in el.dias">
+                <td ng-click="setData(dia)" ng-repeat="dia in semana" style="text-align: center;border-bottom-left-radius: {{dia.j===el.dias.length-1 && el.i===0 && dia.k===0 ? '5px':'0px'}};border-bottom-right-radius: {{dia.j===el.dias.length-1 && el.i===quantidade_meses-1 && dia.k===semana.length-1 ? '5px':'0px'}};" class="{{((dia.inicio && inif > 0) || (dia.fim && inif < 0)) ? 'cellSet' : ((dia.inicio) ? 'cellDiaIni' : ((dia.fim) ? 'cellDiaF' : ((dia.intervalo) ? 'cellDiaI' : (dia.mes_contexto ? ((dia.selecionado) ? 'cellDiaS' : 'cellDia') : 'cellDiaN'))))}}">
+                    <i class="fas fa-check" ng-if="dia.intervalo"></i>
+                    <i class="fas fa-arrow-right" ng-if="dia.inicio"></i>
+                    <i class="fas fa-arrow-left" ng-if="dia.fim"></i>
+                    <i class="fas fa-check" ng-if="dia.selecionado"></i>&nbsp{{dia.dia}}
+                </td>
+            </tr>
+        </table>
+        <hr>
+        <button type="button" class="btn btn-outline-warning" ng-click="prevMonth(12)" style="width:22px;height:22px;padding:0px;padding-left:3px"><i class="fas fa-arrow-left"></i>&nbsp</button>
+        &nbsp;
+        <button type="button" class="btn btn-outline-primary" ng-click="prevMonth(1)" style="width:22px;height:22px;padding:0px;padding-left:3px"><i class="fas fa-arrow-left"></i>&nbsp</button>
+        &nbsp;
+        <button type="button" class="btn btn-outline-primary" ng-click="nextMonth(1)" style="width:22px;height:22px;padding:0px;padding-left:3px"><i class="fas fa-arrow-right"></i>&nbsp</button>
+        &nbsp;
+        <button type="button" class="btn btn-outline-warning" ng-click="nextMonth(12)" style="width:22px;height:22px;padding:0px;padding-left:3px"><i class="fas fa-arrow-right"></i>&nbsp</button>
+        &nbsp;
+        <button type="button" class="btn btn-outline-danger" ng-click="removeMonth()" style="width:22px;height:22px;padding:0px;padding-left:3px"><i class="fas fa-minus-circle"></i>&nbsp</button>
+        &nbsp;
+        <button type="button" class="btn btn-outline-success" ng-click="addMonth()" style="width:22px;height:22px;padding:0px;padding-left:3px"><i class="fas fa-plus-circle"></i>&nbsp</button>
+        &nbsp
+        <hr>
+        
+        <div ng-if="intervalo && tempo" style="margin: 15px;">
+            Inicio: &nbsp 
+            
+            <input type="number" max="31" ng-change="trocaData()" ng-model="dia_i.dia" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            /
+            <input type="number" max="12" ng-change="trocaData()" ng-model="mes_i.mes" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            /
+            <input type="number" ng-change="trocaData()" ng-model="ano_i.ano" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            &nbsp;
+            &nbsp;
+            <input type="number" max="24" ng-change="trocaPeriodo()" ng-model="hora_inicio.hora" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            &nbsp;
+            :
+            &nbsp;
+            <input type="number" max="60" ng-change="trocaPeriodo()" ng-model="minuto_inicio.minuto" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            <br>
+        </div>
+        <div ng-if="intervalo && tempo" style="margin: 15px;">
+            Fim: &nbsp 
+            
+            <input type="number" max="31" ng-change="trocaData()" ng-model="dia_f.dia" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            /
+            <input type="number" max="12" ng-change="trocaData()" ng-model="mes_f.mes" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            /
+            <input type="number" ng-change="trocaData()" ng-model="ano_f.ano" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            &nbsp;
+            &nbsp;
+            <input type="number" max="24" ng-change="trocaPeriodo()" ng-model="hora_fim.hora" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            &nbsp;
+            :
+            &nbsp;
+            <input type="number" max="60" ng-change="trocaPeriodo()" ng-model="minuto_fim.minuto" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            <br>
+        </div>
+        <div ng-if="!intervalo && tempo" style="margin: 15px;">
+            Data: &nbsp
+            
+            <input type="number" max="31" ng-change="trocaData()" ng-model="dia_i.dia" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            /
+            <input type="number" max="12" ng-change="trocaData()" ng-model="mes_i.mes" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            /
+            <input type="number" ng-change="trocaData()" ng-model="ano_i.ano" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            &nbsp;
+            &nbsp;
+            
+            
+            
+            <input type="number" max="24" ng-change="trocaPeriodo()" ng-model="hora_model.hora" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            &nbsp;
+            :
+            &nbsp;
+            <input type="number" max="60" ng-change="trocaPeriodo()" ng-model="minuto_model.minuto" class="form-control" style="height:27px;width:50px;padding:2px;display:inline">
+            <br>
+        </div>
+        <div ng-if="!intervalo && !tempo" style="margin: 15px;">
+            Data: &nbsp <strong>{{model| data_st}}</strong>&nbsp
+            <br>
+        </div>
+        <div style="display:inline" ng-if="tem_confirma">
+            <button type="button" class="btn btn-primary" ng-click="confirmar()" style="height:27px;width:80px;padding:5px;padding-top:3px;margin-left:15px"><i class="fas fa-check"></i>&nbspOk</button>
+        </div>
+        <hr>
+        <div ng-if="intervalo" style="font-style: italic">
+            <strong style="font-size:15px;font-style: initial">Seleção de período RTC, Legenda</strong>
+            <br>
+            <table style="font-weight:bold;">
+                <tr>
+                    <td>
+                        <div class="cellDiaF" style="width:17px;height:17px;padding:2px"></div>
+                    <td>
+                    <td>
+                        Data final do período, pode ser alterada clicando em cima, e em seguida clicando em uma nova.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="cellDiaIni" style="width:17px;height:17px;padding:2px"></div>
+                    <td>
+                    <td>
+                        Data inicial do período, pode ser alterada clicando em cima, e em seguida clicando em uma nova.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="cellDiaI" style="width:17px;height:17px;padding:2px"></div>
+                    <td>
+                    <td>
+                        Representa um dia dentro do período
+                    </td>
+                </tr>
+                <tr>
+                    <td style="color:Red">
+                        OBS:
+                    <td>
+                    <td style="color:Red">
+                        A data inicial pode ser igual a final
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-primary" id="cal_bt{{idUnico}}" ng-click="trocar()" ng-if="botao" style="z-index:100;">
+        <i class="fas fa-calendar" style="display:inline"></i>&nbsp 
+          &nbsp
+
+            <div ng-if="!intervalo && !tempo && responsividade()" style="display:inline">
+                {{model | data_st}}
+            </div>
+            <div ng-if="!intervalo && tempo && responsividade()" style="display:inline">
+                {{model | data}}
+            </div>
+
+            <div ng-if="intervalo && !tempo && responsividade()" style="display:inline">
+                De {{inicio | data_st}} ate {{fim | data_st}}
+            </div>
+            <div ng-if="intervalo && tempo && responsividade()" style="display:inline">
+                De {{inicio | data}} ate {{fim | data}}
+            </div>
+
+    </button>
+    <button type="button" class="btn btn-danger" id="cal_2_bt{{idUnico}}" ng-click="trocar()" ng-if="botao && dsp" style="z-index:501;position:absolute;left:10px;top:10px">
+        <i class="fas fa-times"></i>&nbsp Fechar
+    </button>
+</div>

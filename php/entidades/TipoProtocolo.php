@@ -16,25 +16,28 @@ class TipoProtocolo {
     public $id;
     public $nome;
     public $prioridade;
-
+    public $cobranca;
+    
     function __construct() {
 
         $this->id = 0;
         $this->nome = "";
         $this->prioridade = 0;
+        $this->cobranca = 0;
+        
     }
 
     public function merge($con) {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO tipo_protocolo(nome,prioridade) VALUES('".addslashes($this->nome)."',$this->prioridade)");
+            $ps = $con->getConexao()->prepare("INSERT INTO tipo_protocolo(nome,prioridade,cobranca) VALUES('".addslashes($this->nome)."',$this->prioridade,$this->cobranca)");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
 
-            $ps = $con->getConexao()->prepare("UPDATE tipo_protocolo SET nome = '" . addslashes($this->nome) . "', prioridade=$this->prioridade WHERE id = " . $this->id);
+            $ps = $con->getConexao()->prepare("UPDATE tipo_protocolo SET nome = '" . addslashes($this->nome) . "', prioridade=$this->prioridade,cobranca=$this->cobranca WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
         }

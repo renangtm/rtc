@@ -42,7 +42,6 @@ class Usuario {
         $this->permissoes = array();
         $this->cargo = null;
         $this->faixa_salarial = 0;
-        
     }
 
     public function getCountClientes($con, $filtro = "") {
@@ -83,6 +82,178 @@ class Usuario {
         $ps = $con->getConexao()->prepare("UPDATE usuario_cliente SET data_inicio=data_inicio,data_fim=data_fim,id_usuario=$this->id WHERE id=$uc->id");
         $ps->execute();
         $ps->close();
+    }
+
+    public function getEstatisticas($con, $somente_data = false) {
+
+        $agora = round(microtime(true));
+
+        $repeat = array();
+
+        $ps = $con->getConexao()->prepare("SELECT id,intervalos_execucao FROM tarefa WHERE id_usuario=$this->id");
+        $ps->execute();
+        $ps->bind_result($id, $interv);
+        while ($ps->fetch()) {
+
+            $i = explode(';', $interv);
+            foreach ($i as $key => $value) {
+                if ($value === "") {
+                    continue;
+                }
+                $it = explode('@', $interv);
+
+                if (isset($repeat[$it[0]][$it[1]])) {
+                    continue;
+                }
+
+                if (!isset($repeat[$it[0]])) {
+                    $repeat[$it[0]] = array();
+                }
+
+                $repeat[$it[0]][$it[1]] = true;
+
+                $x1 = doubleval($it[1]);
+                $x2 = doubleval($it[0]);
+
+                $intervalos[] = array($id, min($x1, $x2), max($x1, $x2));
+            }
+        }
+        $ps->close();
+
+
+        for ($i = 1; $i < count($intervalos); $i++) {
+            for ($j = $i; $j > 0 && $intervalos[$j][2] <= $intervalos[$j - 1][1]; $j--) {
+                $k = $intervalos[$j];
+                $intervalos[$j] = $intervalos[$j - 1];
+                $intervalos[$j - 1] = $k;
+            }
+        }
+
+        $tmp = array();
+
+        foreach ($intervalos as $key => $value) {
+            $tmp[] = $value[1];
+            $tmp[] = $value[2];
+        }
+
+        $tmp[] = $agora;
+
+
+        $tipos_tarefa = $this->empresa->getTiposTarefa($con);
+
+        $tarefas = array();
+
+        $sql = "SELECT tarefa.id,tarefa.id_tipo_tarefa,tarefa.porcentagem_conclusao,UNIX_TIMESTAMP(tarefa.inicio_minimo)*1000,tarefa.intervalos_execucao "
+                . "FROM tarefa "
+                . "LEFT JOIN observacao ON observacao.id_tarefa=tarefa.id "
+                . "WHERE (".($somente_data?"(DATE(observacao.momento)=DATE(FROM_UNIXTIME($agora)) AND MONTH(observacao.momento)=MONTH(FROM_UNIXTIME($agora)) AND YEAR(observacao.momento)=YEAR(FROM_UNIXTIME($agora)))":"true")
+                . ") AND tarefa.id_usuario=$this->id AND tarefa.excluida=false GROUP BY tarefa.id";
+
+        $ps = $con->getConexao()->prepare($sql);
+        $ps->execute();
+        $ps->bind_result($id, $tipo, $porcentagem, $inicio, $interv);
+        while ($ps->fetch()) {
+
+            $tarefa = new stdClass();
+            $tarefa->id = $id;
+            $tarefa->inicio = $inicio;
+            $tarefa->fim = $inicio;
+            $tarefa->concluida = ($porcentagem >= 100) ? 2 : ($porcentagem > 0 ? 1 : 0);
+            $tarefa->tipo_tarefa = null;
+
+
+            foreach ($tipos_tarefa as $key => $value) {
+                if ($value->id === $tipo) {
+                    $tarefa->tipo_tarefa = $value;
+                    break;
+                }
+            }
+
+            if ($tarefa->tipo_tarefa === null) {
+                continue;
+            }
+
+            $tempo_utilizado = 0;
+            $i = explode(';', $interv);
+            foreach ($i as $key => $value) {
+                if ($value === "") {
+                    continue;
+                }
+                $it = explode('@', $interv);
+
+                $x1 = doubleval($it[1]);
+                $x2 = doubleval($it[0]);
+
+                $tempo_utilizado += abs($x1 - $x2);
+
+                $m = max($x1, $x2);
+
+                $tarefa->fim = max($tarefa->fim, $m);
+            }
+
+            $tarefa->tempo_utilizado = $tempo_utilizado;
+
+
+            $tarefas[$id] = $tarefa;
+        }
+        $ps->close();
+
+
+        $res = array();
+
+        foreach ($tarefas as $id_tarefa => $tarefa) {
+
+            $tempo = $tarefa->tipo_tarefa->tempo_medio * 60 * 60 * 1000 * 100;
+
+            $prox = 0;
+
+            while ($prox < count($tmp) && $tmp[$prox] < $tarefa->inicio) {
+                $prox++;
+            }
+
+
+            $fora = max(0, $tempo - $tarefa->tempo_utilizado);
+
+
+            $inicio = $tarefa->inicio;
+
+            $fim = $tarefa->fim;
+
+            if (!$tarefa->concluida) {
+                $fim = $agora * 1000;
+            }
+
+            while ($inicio < $fim && $fora > 0 && $prox < count($tmp)) {
+
+                $dist = min((min($fim, $tmp[$prox]) - $inicio), $fora);
+                $inicio += $dist;
+
+                if ($prox % 2 === 0) {
+                    $fora -= $dist;
+                    if ($prox > 0) {
+                        $tmp[$prox - 1] = $inicio;
+                    } else {
+                        $tmp[$prox] = $inicio - $dist;
+                    }
+                }
+
+                $prox++;
+            }
+
+            $tarefa->fora = $fora == 0;
+
+            if (!isset($res[$tarefa->tipo_tarefa->nome])) {
+                $res[$tarefa->tipo_tarefa->nome] = array();
+            }
+
+            if (!isset($res[$tarefa->tipo_tarefa->nome][$tarefa->concluida])) {
+                $res[$tarefa->tipo_tarefa->nome][$tarefa->concluida] = array(0, 0);
+            }
+
+            $res[$tarefa->tipo_tarefa->nome][$tarefa->concluida][$tarefa->fora ? 1 : 0] ++;
+        }
+
+        return $res;
     }
 
     public function getClientes($con, $x1, $x2, $filtro = "", $ordem = "") {
@@ -368,29 +539,28 @@ class Usuario {
     }
 
     public function getTarefasSolicitadas($con) {
-       
+
         $cm = new CacheManager(3600000);
-        
+
         $cache = $cm->getCache("tarefas_solicitadas_$this->id", false, true);
-        
-        
-        
+
+
+
         if ($cache === null) {
             $cache = new stdClass();
 
             $cache->usuarios = "($this->id";
             $cache->arr_usuarios = array();
             $filiais = $this->empresa->getFiliais($con);
+            $filiais[] = $this->empresa;
             foreach ($filiais as $key => $value) {
-                if ($value->id !== $this->empresa->id) {
-                    $u = $value->getUsuarios($con, 0, 1, "usuario.cpf='" . $this->cpf->valor . "'");
-                    if (count($u) === 1) {
-                        $org = new Organograma($value);
-                        $inf = $org->getInferiores($con, $u[0]);
-                        foreach ($inf as $key2 => $value2) {
-                            $cache->usuarios .= ",$value2->id_usuario";
-                            $cache->arr_usuarios[] = $value2->id_usuario;
-                        }
+                $u = $value->getUsuarios($con, 0, 1, "usuario.cpf='" . $this->cpf->valor . "'");
+                if (count($u) === 1) {
+                    $org = new Organograma($value);
+                    $inf = $org->getInferiores($con, $u[0]);
+                    foreach ($inf as $key2 => $value2) {
+                        $cache->usuarios .= ",$value2->id_usuario";
+                        $cache->arr_usuarios[] = $value2->id_usuario;
                     }
                 }
             }
@@ -467,7 +637,7 @@ class Usuario {
             $cm->setCache("tarefas_solicitadas_$this->id", $cache, false, true);
         }
         //---------------------------------------
-     
+
         $tarefas = array();
 
         $sql = "SELECT "
@@ -500,8 +670,8 @@ class Usuario {
                 . "LEFT JOIN usuario u2 ON tarefa.criada_por=u2.id "
                 . "WHERE tarefa.excluida=false AND (tarefa.id_usuario IN $cache->usuarios OR tarefa.criada_por=$this->id) AND tarefa.porcentagem_conclusao<100 ORDER BY tarefa.id DESC";
 
-        
-        
+
+
         $tmp = array();
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
@@ -576,17 +746,17 @@ class Usuario {
         }
 
         $ps->close();
-        
+
         foreach ($tmp as $key => $value) {
             if ($value->tipo_tarefa !== null) {
                 //$value->tipo_tarefa->init($value);
             }
         }
-        
-        
-        
+
+
+
         //--------------------------------------
-        
+
 
         $retorno = array();
 
@@ -604,11 +774,11 @@ class Usuario {
                 }
             }
         }
-        
+
         return $retorno;
     }
 
-    public function getTarefas($con, $filtro = "", $ordem = "") {
+    public function getTarefas($con, $filtro = "", $ordem = "", $agendadas = false) {
 
         $tipos_tarefa = $this->empresa->getTiposTarefa($con);
 
@@ -634,7 +804,7 @@ class Usuario {
                 . "FROM tarefa "
                 . "LEFT JOIN (SELECT * FROM observacao WHERE observacao.excluida = false) observacao ON tarefa.id=observacao.id_tarefa "
                 . "LEFT JOIN usuario u ON u.id=tarefa.criada_por "
-                . "WHERE tarefa.excluida=false AND (tarefa.agendamento IS NULL OR tarefa.agendamento<CURRENT_TIMESTAMP) AND tarefa.id_usuario=$this->id";
+                . "WHERE tarefa.excluida=false AND " . (!$agendadas ? "(tarefa.agendamento IS NULL OR tarefa.agendamento<CURRENT_TIMESTAMP) AND " : "") . "tarefa.id_usuario=$this->id";
 
         if ($filtro !== "") {
 
@@ -649,7 +819,7 @@ class Usuario {
         $tarefas = array();
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $inicio_minimo,$start_usuario, $ordem, $porcentagem_conclusao, $tipo_entidade_relacionada, $id_entidade_relacionada, $titulo, $descricao, $intervalos_execucao, $realocavel, $id_tipo_tarefa, $prioridade, $id_observacao, $porcentagem_observacao, $momento_observacao, $observacao, $ass);
+        $ps->bind_result($id, $inicio_minimo, $start_usuario, $ordem, $porcentagem_conclusao, $tipo_entidade_relacionada, $id_entidade_relacionada, $titulo, $descricao, $intervalos_execucao, $realocavel, $id_tipo_tarefa, $prioridade, $id_observacao, $porcentagem_observacao, $momento_observacao, $observacao, $ass);
         while ($ps->fetch()) {
 
             if (!isset($tarefas[$id])) {
