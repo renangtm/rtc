@@ -8,7 +8,7 @@
 
 /**
  * Description of RegraTabela
- *ge
+ * ge
  * @author Renan
  */
 class Pedido {
@@ -263,7 +263,7 @@ class Pedido {
                 . " WHERE produto_pedido_saida.id_pedido=$this->id");
 
         $ps->execute();
-        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro, $cod_pro, $id_log, $classe_risco,$onu,$descricao_onu, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lote, $nota_usuario, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $quantidade, $validade, $valor_base, $juros, $icms, $base_calculo, $frete, $ie, $ir, $ipi, $id_pro, $cod_pro, $id_log, $classe_risco, $onu, $descricao_onu, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lote, $nota_usuario, $cat_id, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $retorno = array();
 
@@ -272,7 +272,7 @@ class Pedido {
         while ($ps->fetch()) {
 
             $p = new Produto();
-            
+
             $p->onu = $onu;
             $p->descricao_onu = $descricao_onu;
             $p->logistica = $id_log;
@@ -494,28 +494,28 @@ class Pedido {
             $pn->produto = $value->produto;
             $pn->quantidade = $value->quantidade;
             $pn->valor_unitario = ($value->valor_base + $value->icms + $value->ipi + $value->juros + $value->frete);
-            $pn->informacao_adicional = "Cl Risco: " . $value->produto->classe_risco . ". ONU ".$value->produto->onu." ".$value->produto->descricao_onu;
+            $pn->informacao_adicional = "Cl Risco: " . $value->produto->classe_risco . ". ONU " . $value->produto->onu . " " . $value->produto->descricao_onu;
 
             if ($value->produto->sistema_lotes) {
-                
+
                 $con = new ConnectionFactory();
-                
+
                 $pn->informacao_adicional .= "LOTES(S): D. Validade: " . date("d/m/Y", $value->validade_minima / 1000) . " ";
                 foreach ($value->retiradas as $key2 => $retirada) {
-                    
+
                     $codigo_lote = $retirada[0];
-                    
+
                     $ps = $con->getConexao()->prepare("SELECT codigo_fabricante FROM lote WHERE id=$codigo_lote");
                     $ps->execute();
                     $ps->bind_result($cod);
-                    if($ps->fetch()){
-                        if($cod !== ""){
+                    if ($ps->fetch()) {
+                        if ($cod !== "") {
                             $codigo_lote = $cod;
                         }
                     }
                     $ps->close();
-                    
-                    $pn->informacao_adicional .= "$codigo_lote (Qtd: " . $retirada[1].")";
+
+                    $pn->informacao_adicional .= "$codigo_lote (Qtd: " . $retirada[1] . ")";
                 }
             }
 
@@ -576,25 +576,23 @@ class Pedido {
             $t->descricao = "Observacoes: " . $this->observacao_status;
             $t->tipo_entidade_relacionada = 'DAD';
             $t->id_entidade_relacionada = $dado;
-            
+
             try {
-                
+
                 Sistema::novaTarefaEmpresa($con, $t, $empresa);
                 return;
-                
             } catch (Exception $ex) {
 
                 throw new Exception("Nao existe ninguem habilitado para verificar se sua modificacao sera permitida");
             }
         }
-        
-        if($this->status->id===Sistema::STATUS_CANCELADO()->id){
-            
+
+        if ($this->status->id === Sistema::STATUS_CANCELADO()->id) {
+
             $ps = $con->getConexao()->prepare("UPDATE tarefa SET inicio_minimo=inicio_minimo,excluida=true "
-                . "WHERE tipo_entidade_relacionada='PED_" . $this->empresa->id . "' AND id_entidade_relacionada=$this->id AND porcentagem_conclusao<100");
+                    . "WHERE tipo_entidade_relacionada='PED_" . $this->empresa->id . "' AND id_entidade_relacionada=$this->id AND porcentagem_conclusao<100");
             $ps->execute();
             $ps->close();
-            
         }
 
         $prods = $this->getProdutos($con);
@@ -754,6 +752,32 @@ class Pedido {
                     $ps->close();
                 }
             }
+
+            $ps = $con->getConexao()->prepare("SELECT empresa_vendas FROM empresa WHERE id=".$this->empresa->id);
+            $ps->execute();
+            $ps->bind_result($ev);
+            if($ps->fetch()){
+                
+                if($ev > 0){
+                    $ps->close();
+                    
+                    $vrt = new Virtual($ev, $con);
+                    $t = new Tarefa();
+                    $t->tipo_tarefa = Sistema::TT_SUPORTE_ACOMPANHAMENTO($vrt->id);
+                    $t->titulo = "Acompanhe o pedido $this->id, do cliente " . $this->cliente->codigo . "-" . $this->cliente->razao_social;
+                    $t->descricao .= "Acompanhe o andamento do pedido, para acompanhar as etapas, basta entrar em Pedidos de Venda, digitar o id $this->id do pedido na barra de busca, após isso ao visualizar o pedido, clique no icone <i class='fas fa-edit'></i> para ver maiores informações do pedido, e posteriormente acompanhe seu andamento pela aba de Logs do Pedido, isso deve ser feito com frequencia, pedidos que estao a mais de 48 horas na empresa, se tornam protocolos.";
+
+                    $t->tipo_entidade_relacionada = "PED_" . $this->empresa->id;
+                    $t->id_entidade_relacionada = $this->id;
+                    Sistema::novaTarefaEmpresa($con, $t, $vrt);
+
+                }else{
+                    $ps->close();
+                }
+            }else{
+                $ps->close();
+            }
+            
         } else {
 
             $ps = $con->getConexao()->prepare("UPDATE pedido SET id_cliente=" . $this->cliente->id . ",id_transportadora=" . $this->transportadora->id . ",frete=$this->frete,observacoes='$this->observacoes',frete_inclusao=" . ($this->frete_incluso ? "true" : "false") . ",id_empresa=" . $this->empresa->id . ",data=FROM_UNIXTIME($this->data/1000),excluido=false,id_usuario=" . $this->usuario->id . ",id_nota=$this->id_nota,prazo=$this->prazo,parcelas=$this->parcelas,id_status=" . $this->status->id . ",id_forma_pagamento=" . $this->forma_pagamento->id . ", id_logistica=" . ($this->logistica != null ? $this->logistica->id : 0) . ",etapa_frete=$this->etapa_frete WHERE id=$this->id");
@@ -781,8 +805,7 @@ class Pedido {
             try {
 
                 $value->delete($con);
-                Sistema::avisoDEVS_MASTER($value->produto->nome.", Retirado do pedido $this->id");
-                
+                Sistema::avisoDEVS_MASTER($value->produto->nome . ", Retirado do pedido $this->id");
             } catch (Exception $ex) {
 
                 $erro = $ex->getMessage();
@@ -871,18 +894,18 @@ class Pedido {
                 $t->nome_fantasia = $l->nome;
                 $t = $getter->getTransportadoraViaTransportadora($con, $t);
                 $nota_logistica_empresa->transportadora = $t;
-                
+
                 $vencimento = new Vencimento();
                 $vencimento->nota = $nota_logistica_empresa;
                 $vencimento->valor = 0;
-                
+
                 foreach ($nota_logistica_empresa->produtos as $key => $value) {
                     $value->cfop = CFOP::$RETORNO_DEPOSITO;
-                    $value->valor_unitario=$value->produto->custo;
-                    $value->valor_total=$value->valor_unitario*$value->quantidade;
-                    $vencimento->valor += $value->valor_unitario*$value->quantidade;
+                    $value->valor_unitario = $value->produto->custo;
+                    $value->valor_total = $value->valor_unitario * $value->quantidade;
+                    $vencimento->valor += $value->valor_unitario * $value->quantidade;
                 }
-                
+
                 $nota_logistica_empresa->vencimentos = array($vencimento);
 
                 $nota_logistica_empresa->observacao = new OBS_NFE($this->logistica, $this, OBS_NFE::$RETORNO_REMESSA);
@@ -905,7 +928,7 @@ class Pedido {
 
                 foreach ($merged as $key => $value) {
                     $value->delete($con);
-                    Sistema::avisoDEVS_MASTER($value->produto->nome.", Retirado do pedido $this->id");
+                    Sistema::avisoDEVS_MASTER($value->produto->nome . ", Retirado do pedido $this->id");
                 }
 
                 $ps = $con->getConexao()->prepare("DELETE FROM pedido WHERE id=$this->id");
@@ -956,7 +979,7 @@ class Pedido {
     public function delete($con) {
 
         $this->cancelarNotas($con);
-
+        
         $ps = $con->getConexao()->prepare("UPDATE pedido SET excluido=true WHERE id = " . $this->id);
         $ps->execute();
         $ps->close();

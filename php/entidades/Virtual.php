@@ -55,6 +55,7 @@ class Virtual extends Empresa {
         $this->tarefas_fixas[] = "TT_FAQ_CLIENTE";
         $this->tarefas_fixas[] = "TT_ATENDIMENTO_POSVENDA";
         $this->tarefas_fixas[] = "TT_PROSPECCAO_EXTERNA_CLIENTE";
+        $this->tarefas_fixas[] = "TT_SUPORTE_ACOMPANHAMENTO";
         
     }
     

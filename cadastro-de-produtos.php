@@ -129,6 +129,7 @@
                                                                 <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setProduto(produto[0]);getReceituario(produto[0])" data-target="#demo{{produto[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
                                                                 <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setProduto(produto[0]);getReceituario(produto[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
                                                                 <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setProduto(produto[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
+                                                                <a href="#" class="btn btn-outline-light btndel" data-title="Clonar" ng-click="passarParaOutrasEmpresas(produto[0])"><i class="fas fa-copy"></i>&nbspClonar</a>
                                                             </div>
                                                         </th>
                                                     </tr>

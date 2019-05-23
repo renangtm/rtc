@@ -2072,6 +2072,14 @@ rtc.service('produtoService', function ($http, $q) {
             falha: fn
         });
     }
+    this.passarParaOutrasEmpresas = function (produto,fn) {
+        baseService($http, $q, {
+            o:{produto:produto},
+            query: "$o->produto->passarParaOutrasEmpresas($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.setMaisFotos = function (produto, fotos, fn) {
         baseService($http, $q, {
             o: {produto: produto, fotos: fotos},

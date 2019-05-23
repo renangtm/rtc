@@ -32,8 +32,6 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         $con = new ConnectionFactory();
         
-        $e = new RoboVirtual();
-        $e->executar($con);
         
         return;
         

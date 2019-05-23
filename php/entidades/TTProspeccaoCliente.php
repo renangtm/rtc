@@ -28,7 +28,10 @@ class TTProspeccaoDeCliente extends TipoTarefa {
                 ,"<strong style='color:Red'>Cliente nao quer trabalhar com a Agro Fauna</strong>"
                 ,"<strong style='color:Purple'>Faleceu, fechou, nao trabalha mais, etc..</strong>"
                 ,"<strong style='color:Gray'>Cooperativa</strong>"
-                ,"<strong style='color:Blue'>Jogar para o pos-venda</strong>"));
+                ,"<strong style='color:Blue'>Jogar para o pos-venda</strong>"
+                ,"<strong style='color:Red'>Usina</strong>"
+                ,"<strong style='color:LightGreen'>Consumidor</strong>"
+                ,"<strong style='color:DarkOrange'>Contatos invalidos</strong>"));
         
         $this->nome = "Prospeccao de Cliente";
         $this->tempo_medio = 0.3;

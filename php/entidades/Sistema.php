@@ -937,6 +937,11 @@ class Sistema {
 
         return new TTCompra($id_empresa);
     }
+    
+    public static function TT_SUPORTE_ACOMPANHAMENTO($id_empresa) {
+
+        return new TTSuporteAcompanhamento($id_empresa);
+    }
 
     public static function TT_CONFIRMACAO_PAGAMENTO($id_empresa) {
 

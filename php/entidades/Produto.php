@@ -79,6 +79,46 @@ class Produto {
         $this->mais_fotos = array();
         
     }
+    
+    public function passarParaOutrasEmpresas($con){
+        
+        if($this->categoria === null){
+            
+            $cats = Sistema::getCategoriaProduto($this->empresa);
+            
+            $this->categoria = $cats[0];
+            
+            $this->merge($con);
+            
+        }
+        
+        $clone = Utilidades::copyId0($this);
+        $clone->logistica = null;
+        $clone->codigo = 0;
+        $clone->estoque = 0;
+        $clone->disponivel = 0;
+        $clone->transito = 0;
+        
+        $filiais = $this->empresa->getFiliais($con);
+        
+        foreach($filiais as $key=>$value){
+            
+            if($value->id === $this->empresa->id)continue;
+            
+            $clone2 = Utilidades::copyId0($clone);
+            
+            $clone2->empresa = $value;
+            
+            $cats = Sistema::getCategoriaProduto($value);
+            
+            $clone2->categoria = $cats[0];
+            
+            $clone2->merge($con);
+            
+        }
+        
+        
+    }
 
     public function setMaisFotos($con, $fotos) {
 

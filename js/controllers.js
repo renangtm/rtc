@@ -9629,7 +9629,25 @@ rtc.controller("crtProdutos", function ($scope, fabricanteService, ativoService,
 
     $scope.receituario_novo = {};
     $scope.receituario = {};
-
+    
+    $scope.passarParaOutrasEmpresas = function(produto){
+           
+        
+        produtoService.passarParaOutrasEmpresas(produto,function(r){
+            
+            if(r.sucesso){
+                
+                msg.alerta("Operacao efetuada com sucesso");
+                
+            }else{
+                
+                msg.erro("Falha ao efetuar operacao");
+                
+            }
+            
+        })
+        
+    }
 
     $scope.ativos = [];
 
