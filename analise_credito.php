@@ -90,7 +90,9 @@ if (isset($_GET['pedido'])) {
 
                                     <div class="modal-body">
 
-                                        <h3>Ultimos 12 mêses de faturamento:</h3>
+                                        <h3 style="display:inline">Ultimos 12 mêses de faturamento:</h3>
+                                        &nbsp
+                                        <button class="btn btn-primary" style="margin-left:10px" ng-click="finalizarAnalisePrecaria()">Analise Precaria <strong>R$ {{precario}}</strong></button>
                                         <hr>
                                         <div id="seisMesesFaturamentoReal">
                                             <input class="form-control" style="width:20%;margin-left:5px;display:inline-block;margin-bottom:5px" type="number" ng-model="meses_faturamento.mes1" placeholder="1º mes">

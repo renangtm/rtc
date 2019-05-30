@@ -45,6 +45,11 @@ class Produto {
     public $codigo;
     public $mais_fotos;
     public $id_empresa_vendas;
+    public $perfeicao;
+    public $aceitacao;
+
+    public $grau_perfeicao;
+    public $grau_aceitacao;
 
     function __construct() {
 
@@ -77,7 +82,69 @@ class Produto {
         $this->codigo = 0;
         $this->id_empresa_vendas = 0;
         $this->mais_fotos = array();
+
+
+        $this->perfeicao = 0;
+        $this->aceitacao = 0;
+
+        $this->grau_aceitacao = array(
+            new GrauProduto(10,"Produtos para descarte"),
+            new GrauProduto(20,"Produtos para doacao"),
+            new GrauProduto(30,"Produtos de baixo nivel de interesse"),
+            new GrauProduto(40,"Produtos fora de uso para atividades de Museu"),
+            new GrauProduto(50,"Produtos fora de epoca podendo ser novos. Tipo reliquia etc"),
+            new GrauProduto(60,"Produtos dirigidos a grupos especificos tipo uniformes, bandeiras, roupas tipicas, folclore etc"),
+            new GrauProduto(70,"Produtos importantes mas que podem ser substituidos como vestuario, materiais escolares e de escritorio"),
+            new GrauProduto(80,"Produtos especificos em atividades gerais. Ferramentas, maquinas de forma geral tipo serralheria,marcenaria,hospitalares"),
+            new GrauProduto(90,"Produtos utilizados em diferentes atividades tipo: motocicleta, bicicleta, roupas, materiais esportivos."),
+            new GrauProduto(100,"Produto muito utilizado em qualquer lugar, circunstancia, esfera ou cultura. Ex: cadeira, mesa, celular, microondas, geladeira, veiculo, ar condicionado, etc...")
+        );
+
+
+        $this->grau_perfeicao = array(
+            new GrauProduto(10,"Sucata"),
+            new GrauProduto(20,"Pode ser sucata sem desmante"),
+            new GrauProduto(30,"Produto para desmante, pecas boas"),
+            new GrauProduto(40,"Produto muito sujo. Sem funcionamento"),
+            new GrauProduto(50,"Produto sujo. Sem funcionamento"),
+            new GrauProduto(90,"Produto sujo com bom funcionamento"),
+            new GrauProduto(92,"Bonito funcionando muito bem"),
+            new GrauProduto(94,"Bom estado funcionando muito bem"),
+            new GrauProduto(96,"Semi novo com garantia Help"),
+            new GrauProduto(98,"Semi novo fora da embalagem com garantia Help"),
+            new GrauProduto(99,"Novo fora da embalagem com garantia Help"),
+            new GrauProduto(100,"Novo na caixa com Garantia")
+        );
         
+    }
+
+    public function setFichaEmergencia($con,$ficha){
+
+        $ps = $con->getConexao()->prepare("DELETE FROM ficha_emergencia WHERE id_produto=$this->id");
+        $ps->execute();
+        $ps->close();
+
+        $ps = $con->getConexao()->prepare("INSERT INTO ficha_emergencia(id_produto,link_ficha) VALUES($this->id,'$ficha')");
+        $ps->execute();
+        $ps->close();
+
+    }
+
+    public function getFichaEmergencia($con){
+
+        $ps = $con->getConexao()->prepare("SELECT link_ficha FROM ficha_emergencia WHERE id_produto=$this->id");
+        $ps->execute();
+        $ps->bind_result($link);
+        if($ps->fetch()){
+            $ps->close();
+
+            return $link;
+
+        }
+        $ps->close();
+
+        return "";
+
     }
     
     public function passarParaOutrasEmpresas($con){
@@ -177,7 +244,7 @@ class Produto {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO produto(id_universal,nome,id_categoria,liquido,quantidade_unidade,excluido,habilitado,id_empresa,valor_base,custo,peso_bruto,peso_liquido,estoque,disponivel,transito,grade,unidade,ncm,lucro_consignado,ativo,concentracao,classe_risco,fabricante,imagem,id_logistica,sistema_lotes,nota_usuario,codigo) VALUES($this->id_universal,'" . addslashes($this->nome) . "'," . $this->categoria->id . "," . ($this->liquido ? "true" : "false") . ",$this->quantidade_unidade,false," . ($this->habilitado ? "true" : "false") . "," . $this->empresa->id . ",$this->valor_base,$this->custo,$this->peso_bruto,$this->peso_liquido,$this->estoque,$this->disponivel,$this->transito,'" . $this->grade->str . "','" . addslashes($this->unidade) . "','" . addslashes($this->ncm) . "',$this->lucro_consignado,'$this->ativo','$this->concentracao','$this->classe_risco','$this->fabricante','$this->imagem'," . ($this->logistica !== null ? $this->logistica->id : 0) . "," . ($this->sistema_lotes ? "true" : "false") . ",$this->nota_usuario,$this->codigo)");
+            $ps = $con->getConexao()->prepare("INSERT INTO produto(id_universal,nome,id_categoria,liquido,quantidade_unidade,excluido,habilitado,id_empresa,valor_base,custo,peso_bruto,peso_liquido,estoque,disponivel,transito,grade,unidade,ncm,lucro_consignado,ativo,concentracao,classe_risco,fabricante,imagem,id_logistica,sistema_lotes,nota_usuario,codigo,perfeicao,aceitacao) VALUES($this->id_universal,'" . addslashes($this->nome) . "'," . $this->categoria->id . "," . ($this->liquido ? "true" : "false") . ",$this->quantidade_unidade,false," . ($this->habilitado ? "true" : "false") . "," . $this->empresa->id . ",$this->valor_base,$this->custo,$this->peso_bruto,$this->peso_liquido,$this->estoque,$this->disponivel,$this->transito,'" . $this->grade->str . "','" . addslashes($this->unidade) . "','" . addslashes($this->ncm) . "',$this->lucro_consignado,'$this->ativo','$this->concentracao','$this->classe_risco','$this->fabricante','$this->imagem'," . ($this->logistica !== null ? $this->logistica->id : 0) . "," . ($this->sistema_lotes ? "true" : "false") . ",$this->nota_usuario,$this->codigo,$this->perfeicao,$this->aceitacao)");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
@@ -214,7 +281,7 @@ class Produto {
                 //throw new Exception("O estoque nao pode ser menor que o disponivel");
             }
 
-            $ps = $con->getConexao()->prepare("UPDATE produto SET nome = '" . addslashes($this->nome) . "', id_universal=$this->id_universal, id_categoria=" . $this->categoria->id . ",liquido=" . ($this->liquido ? "true" : "false") . ", valor_base=" . $this->valor_base . ",custo=$this->custo,peso_bruto=$this->peso_bruto,peso_liquido=$this->peso_liquido,grade='" . $this->grade->str . "',unidade='" . addslashes($this->unidade) . "',ncm='" . addslashes($this->ncm) . "',quantidade_unidade=$this->quantidade_unidade,lucro_consignado=$this->lucro_consignado, ativo='$this->ativo', concentracao='$this->concentracao',classe_risco='$this->classe_risco',fabricante='$this->fabricante',imagem='$this->imagem',sistema_lotes=" . ($this->sistema_lotes ? "true" : "false") . ",nota_usuario=$this->nota_usuario, codigo=$this->codigo WHERE codigo = " . $this->codigo . " AND id_empresa=" . $this->empresa->id);
+            $ps = $con->getConexao()->prepare("UPDATE produto SET nome = '" . addslashes($this->nome) . "', id_universal=$this->id_universal, id_categoria=" . $this->categoria->id . ",liquido=" . ($this->liquido ? "true" : "false") . ", valor_base=" . $this->valor_base . ",custo=$this->custo,peso_bruto=$this->peso_bruto,peso_liquido=$this->peso_liquido,grade='" . $this->grade->str . "',unidade='" . addslashes($this->unidade) . "',ncm='" . addslashes($this->ncm) . "',quantidade_unidade=$this->quantidade_unidade,lucro_consignado=$this->lucro_consignado, ativo='$this->ativo', concentracao='$this->concentracao',classe_risco='$this->classe_risco',fabricante='$this->fabricante',imagem='$this->imagem',sistema_lotes=" . ($this->sistema_lotes ? "true" : "false") . ",nota_usuario=$this->nota_usuario, codigo=$this->codigo,perfeicao=$this->perfeicao,aceitacao=$this->aceitacao WHERE codigo = " . $this->codigo . " AND id_empresa=" . $this->empresa->id);
             $ps->execute();
             $ps->close();
 

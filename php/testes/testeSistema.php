@@ -32,6 +32,42 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         $con = new ConnectionFactory();
         
+        $er = new RoboVirtual();
+        $er->executar($con);
+        
+        return;
+        
+        $e = new Empresa(1734,$con);
+        
+        $servico = $e->getPedidos($con,0, 1000,"pedido.data < DATE_SUB(CURRENT_DATE,INTERVAL 3 DAY) AND pedido.id_status IN (".Sistema::STATUS_FATURAMENTO()->id.",".Sistema::STATUS_CONFIRMACAO_PAGAMENTO()->id.",".Sistema::STATUS_LIMITE_CREDITO()->id.") AND pedido.data>DATE_SUB(CURRENT_DATE,INTERVAL 30 DAY)");
+        
+        $protocolos = array();
+        
+        
+        foreach($servico as $key=>$value){
+            
+            echo $value->id.",";
+            
+            $p = new Protocolo();
+            $p->empresa = $value->empresa;
+            $p->id_entidade = $value->id;
+            $p->tipo_entidade = 'Pedido';
+            $p->titulo = "Pendencia na etapa de ".$value->status->nome;
+            $p->descricao = "Pedido pendente desde ".date('d/m/Y',$value->data/1000).", atualmente esta na etapa de ".$value->status->nome.", o cliente é ".$value->cliente->razao_social;
+            
+            $tipos = $value->empresa->getTiposProtocolo($con,"(tipo_protocolo.nome like '%Emerg%')");
+            if(count($tipos) === 0)continue;
+            
+            $p->tipo = $tipos[0];
+            
+            $p->iniciado_por = "SISTEMA";
+            
+            $p->merge($con);
+            
+            $protocolos[$value->id] = true;
+            
+        }
+        
         
         return;
         

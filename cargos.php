@@ -105,6 +105,7 @@
                                                                 <div class="product-btn" ng-if="c[0].id > 0">
                                                                     <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="mergeCargo(c[0])"><i class="fas fa-pencil-alt"></i>&nbsp Confirmar Alteracao</a>
                                                                     <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="deleteCargo(c[0])"><i class="fas fa-trash-alt"></i>&nbsp Excluir</a>
+                                                                    <a href="#" class="btn btn-outline-light btndel" data-toggle="modal" data-target="#permissoes" data-title="Permissoes" ng-click="setCargo(c[0])"><i class="fas fa-key"></i>&nbsp Permissoes Padrao</a>
                                                                 </div>
                                                                 <div class="product-btn" ng-if="c[0].id <= 0">
                                                                     Cargo Fixo
@@ -187,6 +188,46 @@
                 </div>
                 <!-- /.modal-content --> 
 
+                <div class="modal fade" id="permissoes" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Permissoes do cargo {{cargo.nome}}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+
+                                <button class="btn btn-outline-light" ng-click="setPermissoesCargo(cargo_permissoes)"><i class="fas fa-check"></i>&nbspConfirmar alteracoes</button>
+                                <hr>
+                                <table id="clientes" class="table table-striped table-bordered first">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Alt</th>
+                                            <th>Inc</th>
+                                            <th>Del</th>
+                                            <th>Cons</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="p in cargo_permissoes.permissoes">
+                                            <td>{{p.nome}}</td>
+                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.alt"></td>
+                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.in"></td>
+                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.del"></td>
+                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.cons"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- /.modal-content LOADING --> 
                 <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 

@@ -37,13 +37,35 @@ class RoboInventario {
     }
 
     public function executar($con) {
-
+        
         $empresas = Sistema::getEmpresas($con, 'empresa.rtc>=5');
         
-        foreach ($empresas as $key => $empresa) {
+        foreach($empresas as $key=>$empresa){
             
+            $ja_tem = false;
             
-
+            $ps = $con->getConexao()->prepare("SELECT id FROM inventario WHERE id_empresa=$empresa->id AND DATE(CURRENT_TIMESTAMP)=DATE(FROM_UNIXTIME($this->momento/1000)) AND MONTH(CURRENT_TIMESTAMP)=MONTH(FROM_UNIXTIME($this->momento/1000)) AND YEAR(CURRENT_TIMESTAMP)=YEAR(FROM_UNIXTIME($this->momento/1000))");
+            $ps->execute();
+            $ps->bind_result($id);
+            $ja_tem = $ps->fetch();
+            $ps->close();
+            
+            if(!$ja_tem){
+            
+                $produtos = $empresa->getProdutosInventario($con);
+            
+                $inventario = $empresa->getItensInventario($con, $produtos, $this->momento);
+                
+                foreach($inventario as $key=>$value){
+                    
+                    $value->merge($con);
+                    
+                }
+                
+                unset($produtos);
+                
+            }
+            
         }
         
     }

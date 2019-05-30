@@ -48,28 +48,7 @@ class TTAnaliseCredito extends TipoTarefa {
                 $empresa = new Empresa($id_empresa, $con);
                 $pedido = $empresa->getPedidos($con, 0, 1, "pedido.id=$tarefa->id_entidade_relacionada");
                 $pedido = $pedido[0];
-                if (!$passou) {
-                    if ($pedido->prazo < 3) {
-                        $passou = true;
-                    } else {
-                        $limite = $pedido->cliente->getLimiteCredito();
-                        $divida = $pedido->cliente->getDividas($con);
-                        $pedido->produtos = $pedido->getProdutos($con);
-                        if (($divida + $pedido->getTotal()) < $limite) {
-                            $passou = true;
-                        } else {
-                            $pedido->status = Sistema::STATUS_CANCELADO();
-                            $pedido->merge($con);
-                            $lo = Logger::gerarLog($pedido, "Pedido cancelado devido a limite de credito, limite: R$ " . round($limite, 2) . ", divida: R$ " . round($divida, 2) . ", valor do pedido: R$ " . round($pedido->getTotal(), 2));
-                            $html = $lo->toHtml();
-                            $empresa->email->enviarEmail($pedido->cliente->email->filtro(Email::$COMPRAS), "Cancelamento de pedido", $html);
-                            $empresa->email->enviarEmail($empresa->email->filtro(Email::$FINANCEIRO), "Cancelamento de pedido", $html);
-                            return;
-                        }
-                    }
-                }
-
-                if ($passou) {
+                
 
                     $emp = $pedido->empresa;
                     if ($pedido->logistica !== null) {
@@ -87,7 +66,7 @@ class TTAnaliseCredito extends TipoTarefa {
 
                     $pedido->status = Sistema::STATUS_SEPARACAO();
                     $pedido->merge($con);
-                }
+                
             }
         }
     }

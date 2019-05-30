@@ -703,6 +703,7 @@
                                     <th data-ordem="produto.codigo">Cod.</th>
                                     <th data-ordem="produto.nome">Produto</th>
                                     <th data-ordem="produto.disponivel">Disponivel</th>
+                                    <th data-ordem="produto.disponivel">Local</th>
                                     <th data-ordem="produto.valor_base">Valor</th>
                                     <th>Selecionar</th>
                                     </thead>
@@ -710,6 +711,7 @@
                                         <th>{{produt[0].codigo}}</th>
                                         <th>{{produt[0].nome}}</th>
                                         <th>{{produt[0].disponivel}}</th>
+                                        <th>{{produt[0].logistica===null?'Proprio':produt[0].logistica.nome}}</th>
                                         <th>{{produt[0].valor_base}}</th>
                                         <th><button class="btn btn-success" ng-click="setProduto(produt[0])" data-target="#demo{{produt[0].id}}" data-toggle="collapse" class="accordion-toggle"><i class="fa fa-info"></i></button></th>
                                     </tr>

@@ -158,6 +158,7 @@ $possiveis[0] = $rtc;
                 <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
             </div>
 
+            <?php if(!$espelho){ ?>
             <div style="position:absolute;cursor:pointer;padding:10px;top:80px;background-color: #FFFFFF;z-index: 99999;border-radius:5px;border:1px solid;visibility: {{protocolos_ativos.length===0?'hidden':'initial'}}" id="drag_protocolos" >
                 <button class="btn btn-warning" id="btnEsconde"><i class="fas fa-list"></i>&nbsp PROTOCOLOS</button>
                 <div id="chat_protocolos">
@@ -203,6 +204,8 @@ $possiveis[0] = $rtc;
                     </div>
                 </div>
             </div>
+            <?php } ?>
+
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -315,7 +318,13 @@ $possiveis[0] = $rtc;
 
                 <li class="nav-item dropdown nav-user">
                     <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" class="user-avatar-md rounded-circle">
+                        
+                        <?php if(!$espelho){ ?>
+                                    <img src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" class="user-avatar-md rounded-circle ">
+                                <?php }else{ ?>
+                                    <img src="assets/images/avatar-user-adagro.jpg" alt="" class="user-avatar-md rounded-circle ">
+                                <?php } ?>
+                                    
                         <span class="hidden-lg"><?php
                             if (strlen($usuario->nome) < 5) {
                                 echo $usuario->nome;
@@ -327,7 +336,15 @@ $possiveis[0] = $rtc;
                     <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
                         <div class="nav-user-info clearfix align-middle" style="background-color:<?php echo $logo->cor_predominante; ?>">
                             <div class="float-left m-r-10 m-t-5">
-                                <img src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" class="user-avatar-md rounded-circle ">
+                                
+                                
+                                <?php if(!$espelho){ ?>
+                                    <img src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" class="user-avatar-md rounded-circle ">
+                                <?php }else{ ?>
+                                    <img src="assets/images/avatar-user-adagro.jpg" alt="" class="user-avatar-md rounded-circle ">
+                                <?php } ?>
+                                
+                                
                             </div>
                             <div class="float-left">									
                                 <h5 class="mb-0 nav-user-name" style="color:<?php echo $fonte; ?>"><?php echo $usuario->nome; ?></h5>
@@ -364,6 +381,8 @@ $possiveis[0] = $rtc;
                             <?php } ?>
                         </select>
                     </li>
+                    <?php } ?>
+                    <?php if(!$espelho && $usuario->empresa->rtc->numero>0){ ?>
                     <li class="nav-item ">
                         <a class="nav-link" href="comprar.php"><button class="btn btn-warning" onmousedown="tutorial('Compra Parceiros', 'Aqui voce pode comprar produtos da Agro Fauna, e de qualquer empresa do grupo Novos Rumos, adicione os produtos desejados ao seu carrinho de compras, e finalize seu pedido')" style="padding:0px;padding-left:4px;display:inline;margin: 0px">&nbsp<i class="fas fa-info"></i></button><i class="fa fa-fw fa-shopping-basket"></i>&nbspCompra Parceiros</a>
                     </li>
@@ -411,6 +430,11 @@ $possiveis[0] = $rtc;
                     <?php if ($usuario->temPermissao(Sistema::P_TIPOS_ATIVIDADE()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="tipos_atividade.php" ><button class="btn btn-warning" onmousedown="tutorial('Tipos Atividade', 'Aqui voce consegue gerenciar os tipos de atividade')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-random"></i>Tipos de Atividade</a>
+                        </li>
+                    <?php } ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_TAREFA_SIMPLIFICADA()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="tarefa_simplificada.php" ><button class="btn btn-warning" onmousedown="tutorial('Tarefa Simplificada', 'Aqui voce pode realizar o cadastro das tarefas simplificadas, como principal objetivo a afericao de custos')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks"></i>Atividades Simplificadas</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_ENCOMENDA()->m("C"))) { ?>
@@ -559,6 +583,9 @@ $possiveis[0] = $rtc;
                         <li class="nav-item">
                             <a class="nav-link" href="visualizar-pedidos-venda.php"><button class="btn btn-warning" onmousedown="tutorial('Pedido de Venda', 'Aqui � onde voc� cria os pedidos de venda para os seus clientes, j� levando em considera��o suas promo��es e fazendo as movimenta��es de estoque conforme necess�rio')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks"></i>Pedidos de Venda</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="visualizar-pedidos-reserva.php"><button class="btn btn-warning" onmousedown="tutorial('Pedido de Reserva', 'Aqui � onde voc� cria os pedidos de reserva para reservar estoque')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-industry"></i>Pedidos de Reserva</a>
+                        </li>
                     <?php } ?>
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         Relatorios
@@ -569,12 +596,28 @@ $possiveis[0] = $rtc;
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
                         Administrativo RTC
                     </li>
+                    <?php if(!$espelho){ ?>
+                        
+                    <?php }else{ ?>
+                        <li class="nav-item ">
+                            <a class="nav-link" href="institucional_32749737000106.php" >&nbsp<i class="fa fa-fw fa-file-alt"></i>Institucional da Virtual Negócios e Serviços</a>
+                        </li>
+                    <?php } ?>
+                    
                     <li class="nav-item ">
                         <a class="nav-link" href="http://agrofauna.com.br/apresentacao_rtc_v6.pdf" target="_blank"><i class="fa fa-fw fa-file-alt"></i>Projeto Novos Rumos</a>
                     </li>
-                    <li class="nav-item ">
-                        <a class="nav-link" href="http://agrofauna.com.br/apresentacao_rtc_passo_a_passo_v6.pdf" target="_blank"><i class="fa fa-fw fa-file-alt"></i>Passo a Passo de seu RTC</a>
-                    </li>
+                    <?php if(!$espelho){ ?>
+                        <li class="nav-item ">
+                            <a class="nav-link" href="http://agrofauna.com.br/apresentacao_rtc_passo_a_passo_v6.pdf" target="_blank"><i class="fa fa-fw fa-file-alt"></i>Passo a Passo de seu RTC</a>
+                        </li>
+                    <?php }else{ ?>
+                        <li class="nav-item ">
+                            <a class="nav-link" href="https://www.rtcagro.com.br/consignar_produtos_passo_a_passo_v3.pdf" target="_blank"><i class="fa fa-fw fa-file-alt"></i>Passo a Passo - produto consignado</a>
+                        </li>
+
+                    <?php } ?>
+                    
                     <?php if(!$espelho){ ?>
                     <li class="nav-item " style="margin-bottom:150px">
                         <a class="nav-link" href="contrato.php" ><i class="fa fa-fw fa-file-alt"></i>Contrato</a>

@@ -1,6 +1,46 @@
 var debuger = function (l) {
     document.write(paraJson(l));
 }
+rtc.service('tarefaSimplificadaService', function ($http, $q) {
+    this.getUsuariosPossiveis = function(tipo_tarefa,fn){
+        baseService($http, $q, {
+            o:tipo_tarefa,
+            query: "$r->usuarios=Sistema::getUsuariosPossiveisParaTarefa($c,$o,$empresa)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getTarefaSimplificada = function (fn) {
+        baseService($http, $q, {
+            query: "$r->tarefa=new TarefaSimplificada();$r->tarefa->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getAndamentoTarefaSimplificada = function (fn) {
+        baseService($http, $q, {
+            query: "$r->andamento=new AndamentoTarefaSimplificada()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountTarefasSimplificadas($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getTarefasSimplificadas($c,$o->x0,$o->x1,$o->filtro,$o->ordem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('aprovacaoConsignadoService', function ($http, $q) {
     this.getAprovacaoConsignado = function (fn) {
         baseService($http, $q, {
@@ -719,6 +759,22 @@ rtc.service('cargoService', function ($http, $q) {
             });
         }
     }
+    this.getPermissoes = function (cargo, fn) {
+        baseService($http, $q, {
+            o:cargo,
+            query: "$r->permissoes=$o->getPermissoes($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.setPermissoes = function (cargo,permissoes, fn) {
+        baseService($http, $q, {
+            o:{cargo:cargo,permissoes:permissoes},
+            query: "$o->cargo->setPermissoes($c,$o->permissoes)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getCargo = function (fn) {
         if (este.empresa === null) {
             baseService($http, $q, {
@@ -835,10 +891,40 @@ rtc.service('usuarioService', function ($http, $q) {
     var este = this;
     this.empresa = null;
     this.filtro_base = "";
-
+    
+    this.getPermissoesPermitidas = function(fn){
+        baseService($http, $q, {
+            query: "$r->permissoes=Sistema::getPermissoesPermitidas($c,$usuario)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getPermissoesAbaixo = function(fn){
+        baseService($http, $q, {
+            query: "$r->permissoes = $usuario->getPermissoesAbaixo($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.setPermissoesAbaixo = function(permissoes,fn){
+        baseService($http, $q, {
+            o:{permissoes:permissoes},
+            query: "$usuario->setPermissoesAbaixo($c,$o->permissoes)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getRTC = function (fn) {
         baseService($http, $q, {
             query: "$r->rtc=$empresa->getRTC($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getTiposTarefaUsuario = function (usuario,fn) {
+        baseService($http, $q, {
+            o:usuario,
+            query: "$r->tipos_tarefa_usuario=$o->getTiposTarefaUsuario($c)",
             sucesso: fn,
             falha: fn
         });
@@ -1352,7 +1438,69 @@ rtc.service('acompanharPedidoService', function ($http, $q) {
         });
     }
 })
-
+rtc.service('pedidoReservaService', function ($http, $q) {
+    this.getPedidoEspecifico = function (id_empresa, id_pedido, fn) {
+        baseService($http, $q, {
+            o: {id_empresa: id_empresa, id_pedido: id_pedido},
+            query: "$e=new Empresa($o->id_empresa,$c);$r->pedido=$e->getPedidosReserva($c,0,1,'pedido_reserva.id='.$o->id_pedido);$r->pedido=$r->pedido[0];$r->pedido->produtos=$r->pedido->getProdutos($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getPedido = function (fn) {
+        baseService($http, $q, {
+            query: "$r->pedido=new PedidoReserva();$r->pedido->usuario=$usuario;$r->pedido->empresa=$empresa",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.gerarCobranca = function (pedido, fn) {
+        baseService($http, $q, {
+            o: pedido,
+            query: "$r->retorno=$o->gerarCobranca()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.atualizarCustos = function (pedido, fn) {
+        baseService($http, $q, {
+            o: pedido,
+            query: "$o->atualizarCustos()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getProdutos = function (pedido, fn) {
+        var f = function (p) {
+            for (var i = 0; i < p.produtos.length; i++) {
+                p.produtos[i].pedido = pedido;
+            }
+            fn(p);
+        }
+        baseService($http, $q, {
+            o: pedido,
+            query: "$r->produtos=$o->getProdutos($c)",
+            sucesso: f,
+            falha: f
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: filtro},
+            query: "$r->qtd=$empresa->getCountPedidosReserva($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: filtro, ordem: ordem},
+            query: "$r->elementos=$empresa->getPedidosReserva($c,$o->x0,$o->x1,$o->filtro,$o->ordem);",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('pedidoService', function ($http, $q) {
     this.getPedidoEspecifico = function (id_empresa, id_pedido, fn) {
         baseService($http, $q, {
@@ -1445,6 +1593,15 @@ rtc.service('produtoPedidoService', function ($http, $q) {
     this.getProdutoPedido = function (fn) {
         baseService($http, $q, {
             query: "$r->produto_pedido=new ProdutoPedidoSaida()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+rtc.service('produtoPedidoReservaService', function ($http, $q) {
+    this.getProdutoPedido = function (fn) {
+        baseService($http, $q, {
+            query: "$r->produto_pedido = new ProdutoPedidoReserva()",
             sucesso: fn,
             falha: fn
         });
@@ -2072,10 +2229,26 @@ rtc.service('produtoService', function ($http, $q) {
             falha: fn
         });
     }
-    this.passarParaOutrasEmpresas = function (produto,fn) {
+    this.passarParaOutrasEmpresas = function(produto,fn){
         baseService($http, $q, {
-            o:{produto:produto},
-            query: "$o->produto->passarParaOutrasEmpresas($c)",
+            o:produto,
+            query: "$o->passarParaOutrasEmpresas($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getFichaEmergencia = function (produto,fn) {
+        baseService($http, $q, {
+            o:produto,
+            query: "$r->ficha=$o->getFichaEmergencia($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.setFichaEmergencia = function (produto,ficha,fn) {
+        baseService($http, $q, {
+            o:{produto:produto,ficha:ficha},
+            query: "$o->produto->setFichaEmergencia($c,$o->ficha)",
             sucesso: fn,
             falha: fn
         });
@@ -2443,11 +2616,11 @@ rtc.service('produtoService', function ($http, $q) {
     }
     this.getProdutosFiltro = function (filtro, fn) {
         baseService($http, $q, {
-            o: {filtro:filtro},
+            o: {filtro: filtro},
             query: "$r->produtos=Sistema::getProdutos($c,0,5,$o->filtro,'produto.nome ASC')",
             sucesso: fn,
             falha: fn
-        },null,true);
+        }, null, true);
     }
     this.getElementos = function (x0, x1, filtro, ordem, fn) {
         if (typeof this["empresa"] === 'undefined') {
@@ -2533,7 +2706,7 @@ rtc.service('loginService', function ($http, $q) {
     this.recuperar = function (email, fn) {
         baseService($http, $q, {
             o: {email: email},
-            query: "$u=Sistema::getUsuario(\"email_usu.endereco like '\".$o->email.\"%'\");if($u==null)throw new Exception('');$s=Sistema::getEmailSistema();Sistema::gerarSenha($u);$s->enviarEmail($u->email,'Recuperacao de Senha','Segue seus acessos: <hr> Login:'.$u->login.' <br> Senha: '.$u->senha)",
+            query: "$u=Sistema::getUsuario(\"email_usu.endereco like '\".$o->email.\"%'\");if($u==null)throw new Exception('');$s=Sistema::getEmailSistema();Sistema::gerarSenha($u);$s->enviarEmail($u->email,'Recuperacao de Senha','Segue seus acessos: <hr> Login:'.$u->login.' <br> Senha: '.$u->senha,false)",
             sucesso: fn,
             falha: fn
         });
@@ -2548,25 +2721,25 @@ rtc.service('sistemaService', function ($http, $q) {
             falha: fn
         });
     }
-    this.consignarProduto = function(produto,empresa,fn){
+    this.consignarProduto = function (produto, empresa, cidades, fn) {
         baseService($http, $q, {
-            o: {produto:produto,empresa:empresa},
-            query: "Sistema::consignarProduto($c,$o->produto,$o->empresa);",
+            o: {produto: produto, empresa: empresa, cidades:cidades},
+            query: "Sistema::consignarProduto($c,$o->produto,$o->empresa,$o->cidades);",
             sucesso: fn,
             falha: fn
         });
     }
-    this.deconsignarProduto = function(produto,fn){
+    this.deconsignarProduto = function (produto, fn) {
         baseService($http, $q, {
-            o: {produto:produto},
+            o: {produto: produto},
             query: "Sistema::deconsignarProduto($c,$o->produto);",
             sucesso: fn,
             falha: fn
         });
     }
-    this.addCarrinhoEncomendaCadastrando = function(produto,quantidade,fn){
+    this.addCarrinhoEncomendaCadastrando = function (produto, quantidade, fn) {
         baseService($http, $q, {
-            o: {produto:produto,quantidade:quantidade},
+            o: {produto: produto, quantidade: quantidade},
             query: "Sistema::addCarrinhoEncomendaCadastrando($c,$o->produto,$o->quantidade,$empresa);",
             sucesso: fn,
             falha: fn
@@ -2713,6 +2886,13 @@ rtc.service('sistemaService', function ($http, $q) {
     this.getHistoricos = function (fn) {
         baseService($http, $q, {
             query: "$r->historicos=Sistema::getHistorico($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getUsuario = function (fn) {
+        baseService($http, $q, {
+            query: "$r->usuario=$usuario",
             sucesso: fn,
             falha: fn
         });

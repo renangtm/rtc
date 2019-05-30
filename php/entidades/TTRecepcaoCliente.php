@@ -135,6 +135,10 @@ class TTRecepcaoCliente extends TipoTarefa {
         
         if ($tarefa->opcoes[0] >1) {
 
+            $ps = $con->getConexao()->prepare("UPDATE tarefa SET sucesso=0,inicio_minimo=inicio_minimo WHERE id=$tarefa->id");
+            $ps->execute();
+            $ps->close();
+
             return;
         }
 

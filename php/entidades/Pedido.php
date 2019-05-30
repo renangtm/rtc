@@ -805,7 +805,7 @@ class Pedido {
             try {
 
                 $value->delete($con);
-                Sistema::avisoDEVS_MASTER($value->produto->nome . ", Retirado do pedido $this->id");
+                Sistema::avisoDEVS($value->produto->nome . ", quantidade:". $value->quantidade.", Valor Base: R$ ".$value->valor_base.", Retirado do pedido $this->id");
             } catch (Exception $ex) {
 
                 $erro = $ex->getMessage();

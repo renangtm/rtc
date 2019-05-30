@@ -47,7 +47,7 @@ class RTC {
                 continue;
             if ($rtc->numero > $this->numero) {
                 foreach ($this->permissoes as $key2 => $permissao) {
-                    if ($permissao->clonada === true)
+                    if ($permissao->clonada === true || !$permissao->frente)
                         continue;
                     $p = Utilidades::copy($permissao);
                     $p->clonada = true;
@@ -55,7 +55,7 @@ class RTC {
                 }
             } else {
                 foreach ($rtc->permissoes as $key2 => $permissao) {
-                    if ($permissao->clonada === true)
+                    if ($permissao->clonada === true || !$permissao->frente)
                         continue;
                     $p = Utilidades::copy($permissao);
                     $p->clonada = true;

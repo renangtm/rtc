@@ -62,6 +62,20 @@ class TTSeparacao extends TipoTarefa {
                             "</strong>";
                 }
 
+                $pedido->produtos = $pedido->getProdutos($con);
+
+                foreach($pedido->produtos as $key=>$value){
+
+                    $ficha = $value->produto->getFichaEmergencia($con);
+
+                    if($ficha !== ""){
+
+                        $t->descricao .= "<hr> <a href='".$ficha."'>Link da ficha de emergencia do item ".$value->produto->nome."</a>";
+
+                    }
+
+                }
+
                 $t->tipo_entidade_relacionada = "PED_" . $pedido->empresa->id;
                 $t->id_entidade_relacionada = $pedido->id;
                 Sistema::novaTarefaEmpresa($con, $t, $emp);

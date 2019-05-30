@@ -140,6 +140,7 @@
                                                                 <div class="product-btn" ng-if="c[0].id > 0">
                                                                     <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="mergeCargo(c[0])"><i class="fas fa-pencil-alt"></i></a>
                                                                     <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="deleteCargo(c[0])"><i class="fas fa-trash-alt"></i></a>
+                                                                    <a href="#" class="btn btn-outline-light btndel" data-toggle="modal" data-target="#permissoes" data-title="Permissoes" ng-click="setCargo(c[0])"><i class="fas fa-key"></i></a>
                                                                 </div>
                                                                 <div class="product-btn" ng-if="c[0].id <= 0">
                                                                     Cargo Fixo
@@ -310,9 +311,9 @@
                                                 <h3><i class="fas fa-warning"></i>&nbsp;Tipos de Protocolo</h3>
                                                 <br>
                                                 <input type="number" class="form-control" ng-model="tipo_protocolo.prioridade" class="form-control" placeholder="prioridade" style="width:10%;display:inline;margin-right:10px">
-                                                
+
                                                 <input type="text" placeholder="nomenclatura do protocolo" class="form-control" ng-model="tipo_protocolo.nome" style="width:50%;display:inline;margin-right:10px">
-                                                
+
                                                 <button class="btn btn-success" ng-click="novoTipoProtocolo()"><i class="fas fa-plus-circle"></i></button>
                                                 <hr>
                                                 <table id="tipo_protocolo" class="table table-striped table-bordered first">
@@ -344,7 +345,7 @@
                                                         </tr>
                                                     </tfoot>
                                                 </table>
-                                                
+
                                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
                                                     <nav aria-label="Page navigation example">
                                                         <ul class="pagination justify-content-end">
@@ -388,6 +389,7 @@
                                                     <div class="product-btn">
                                                         <a href="#" class="btn btn-outline-light btninfo" data-toggle="collapse" ng-click="setUsuario(usuari[0])" data-target="#demo{{usuari[0].id}}" class="accordion-toggle"><i class="fas fa-info-circle"></i></a>
                                                         <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setUsuario(usuari[0])" data-toggle="modal" data-target="#add"><i class="fas fa-pencil-alt"></i></a>
+                                                        <a href="#" class="btn btn-outline-light btnedit" data-title="Edit" ng-click="setUsuario(usuari[0])" data-toggle="modal" data-target="#tipoTarefa"><i class="fas fa-random"></i></a>
                                                         <a href="#" class="btn btn-outline-light btndel" data-title="Delete" ng-click="setUsuario(usuari[0])" data-toggle="modal" data-target="#delete"><i class="fas fa-trash-alt"></i></a>
                                                     </div>
                                                 </th>
@@ -478,24 +480,46 @@
                                             Permiss&otilde;es do usu&aacute;rio: <strong>{{usuario.id}} - {{usuario.nome}}</strong>
                                             <hr>
                                             <button class="btn btn-outline-light" ng-click="mergeUsuario()"><i class="fas fa-check"></i>&nbspConfirmar alteracoes</button>
+                                            &nbsp
+                                            <button class="btn btn-success" ng-click="igualarCargo()"><i class="fas fa-id-card-alt"></i>&nbspIgualar permissoes ao cargo</button>
                                             <hr>
                                             <table id="clientes" class="table table-striped table-bordered first">
                                                 <thead>
                                                     <tr>
                                                         <th>Nome</th>
-                                                        <th>Alt</th>
-                                                        <th>Inc</th>
-                                                        <th>Del</th>
-                                                        <th>Cons</th>
+                                                        <th style="cursor:pointer" ng-click="col(0)">Alt</th>
+                                                        <th style="cursor:pointer" ng-click="col(1)">Inc</th>
+                                                        <th style="cursor:pointer" ng-click="col(2)">Del</th>
+                                                        <th style="cursor:pointer" ng-click="col(3)">Cons</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr ng-repeat="p in usuario.permissoes">
-                                                        <td>{{p.nome}}</td>
-                                                        <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.alt"></td>
-                                                        <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.in"></td>
-                                                        <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.del"></td>
-                                                        <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.cons"></td>
+                                                    <tr ng-repeat="p in getPermissoesUsuario(usuario)">
+                                                        <td>
+                                                            {{p.nome}}
+
+                                                            <div style="float:right">
+                                                                <button class="btn btn-warning" style="width:auto;height:17px;padding:0px;display: block;margin-bottom: 1px;font-size: 11px" ng-click="row(p,1)">Direitos do usuario</button>
+                                                                <button class="btn btn-success" style="width:auto;height:17px;padding:0px;display: block;font-size: 11px" ng-click="row(p,0)">Ceder permissao</button>
+                                                                
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input ng-if="p.p.length>1" class="form-control" type="checkbox" ng-value="true" ng-model="p.p[1].alt" ng-disabled="!permitida(p,0)">
+                                                            <input class="form-control" type="checkbox" ng-value="true" ng-model="p.p[0].alt" ng-disabled="!permitida(p,0)">
+                                                        </td>
+                                                        <td>
+                                                            <input ng-if="p.p.length>1" class="form-control" type="checkbox" ng-value="true" ng-model="p.p[1].in" ng-disabled="!permitida(p,0)">
+                                                            <input class="form-control" type="checkbox" ng-value="true" ng-model="p.p[0].in" ng-disabled="!permitida(p,1)">
+                                                        </td>
+                                                        <td>
+                                                            <input ng-if="p.p.length>1" class="form-control" type="checkbox" ng-value="true" ng-model="p.p[1].del" ng-disabled="!permitida(p,2)">
+                                                            <input class="form-control" type="checkbox" ng-value="true" ng-model="p.p[0].del" ng-disabled="!permitida(p,2)">
+                                                        </td>
+                                                        <td>
+                                                            <input ng-if="p.p.length>1" class="form-control" type="checkbox" ng-value="true" ng-model="p.p[1].cons" ng-disabled="!permitida(p,3)">
+                                                            <input class="form-control" type="checkbox" ng-value="true" ng-model="p.p[0].cons" ng-disabled="!permitida(p,3)">
+                                                        </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -725,7 +749,74 @@
 
                 <!-- /.modal-content --> 				
 
+                <div class="modal fade" id="permissoes" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Permissoes do cargo {{cargo.nome}}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
 
+                                <button class="btn btn-outline-light" ng-click="setPermissoesCargo(cargo_permissoes)"><i class="fas fa-check"></i>&nbspConfirmar alteracoes</button>
+                                <hr>
+                                <table id="clientes" class="table table-striped table-bordered first">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th style="cursor:pointer">Alt</th>
+                                            <th style="cursor:pointer">Inc</th>
+                                            <th style="cursor:pointer">Del</th>
+                                            <th style="cursor:pointer">Cons</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="p in cargo_permissoes.permissoes" style="cursor:pointer">
+                                            <td>{{p.nome}}</td>
+                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.alt" ng-disabled="!permitida(p,0)"></td>
+                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.in" ng-disabled="!permitida(p,1)"></td>
+                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.del" ng-disabled="!permitida(p,2)"></td>
+                                            <td><input class="form-control" type="checkbox" ng-value="true" ng-model="p.cons" ng-disabled="!permitida(p,3)"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" data-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="modal fade" id="tipoTarefa" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-trash-alt fa-3x"></i>&nbsp;&nbsp;&nbsp;Relacao do colaborador {{usuario.nome}} com suas atividades</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-striped">
+                                    <tr>
+                                        <td>Nome</td>
+                                        <td>Dominio</td>
+                                        <td>Salvar</td>
+                                    </tr>
+                                    <tr ng-repeat="t in tipos_tarefa_usuario">
+                                        <td>{{t.tipo_tarefa.nome}}</td>
+                                        <td><input type="number" ng-model="t.importancia" class="form-control"></td>
+                                        <td><button class="btn btn-success" ng-click="mergeTipoTarefaUsuario(t)"><i class="fas fa-edit"></i></button></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" data-dismiss="modal">Nao</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- /.modal-content DELETE --> 
                 <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
@@ -751,7 +842,7 @@
                 <span style="position:absolute;z-index:999999" id="loading" class="dashboard-spinner spinner-success spinner-sm "></span>
 
                 <!-- jquery 3.3.1 -->
-                
+
                 <script src="assets/vendor/jquery/jquery.mask.min.js"></script>
                 <script src="assets/libs/js/form-mask.js"></script>
                 <script src="assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>

@@ -37,9 +37,67 @@
                 background-color:SteelBlue
             }
             .pdt td{
-                 padding:5px
+                padding:5px
             }
+
+            a.link-passoapasso:hover{
+                color: #fff !important;
+            }
+
         </style>
+        <style>
+            .passoapasso-carousel{}
+            .passoapasso .carousel-indicators {
+                position: absolute;
+                right: 0;
+                bottom: -80px;
+                left: 0;
+                z-index: 15;
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-pack: center;
+                justify-content: center;
+                padding-left: 0;
+                margin-right: 15%;
+                margin-left: 15%;
+                list-style: none;
+                bottom: -50px;
+            }
+
+            .passoapasso .carousel-indicators li {
+                position: relative;
+                -ms-flex: 0 1 auto;
+                flex: 0 1 auto;
+                width: 20px!important;
+                height: 20px!important;
+                margin-right: 3px;
+                margin-left: 3px;
+                text-indent: -999px;
+                background-color: rgb(224, 224, 231);
+                border-radius: 100%;
+
+                width: 10px!important;
+                height: 10px!important;
+                border-radius: 50%;
+
+            }
+            .passoapasso .carousel-indicators li.active{ background-color: #13161f; }
+            .passoapasso .carousel-control-next,.passoapasso .carousel-control-prev {   
+                background-color: #13161f;
+                width: 50px;
+                height: 50px;
+                background-size: 60%;
+                border-radius: 10px;
+                top: unset;
+                bottom: 5px;
+            }
+            .passoapasso .carousel-control-next {
+                right: 8px;
+            }
+            .passoapasso .carousel-control-prev {
+                left: 8px;
+            }
+        </style>    
     </head>
 
     <body ng-controller="crtConsignaProduto">
@@ -98,45 +156,433 @@
                                     <div class="card-body">
                                         <!-- bem vindo ao RTC  -->
                                         <div class="row">
-                                            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-4 col-12">
-                                                <div class="text-center" style="margin-top: 20px;">
-                                                    <img src="assets/images/avatar-adagro.png" alt="User Avatar" class="user-avatar-xxl">
-                                                </div>
-                                            </div>
                                             <div class="col-xl-10 col-lg-8 col-md-8 col-sm-8 col-12">
-                                                <div class="user-avatar-info">
-                                                    <div class="m-b-20">
-                                                        <div class="user-avatar-name">
-                                                            <h2 class="mb-1">Adagro Comercio de Produtos Agricolas Ltda</h2>
+                                                <div style="width:100%;background-position:center top;background-size:100% auto;background-repeat: no-repeat;<?php
+                                                if ($espelho) {
+                                                    echo "background-image:url('assets/images/tira-adagro.jpg')";
+                                                }
+                                                ?>">
+                                                    <div class="container">
+                                                        <div class="row" style="padding: 0px;">
+                                                            <div style="margin-top: 150px;padding:40px;background-color: #13161f;color:#fff;">
+                                                                <h2 class="mb-1" style="text-align: center;color:#fff;">Bem vindo ao RTC</h2><br>
+                                                                <p style="text-align: justify;">Você poderá ser a partir de agora ser nosso fornecedor virtual do projeto Novos Rumos (Agro fauna).</p>
+                                                                <p style="text-align: justify;">Para que nossa parceria possa ser implantada será necessário estabelecer um contrato com a empresa Virtual Negócios e Servicos que representara a <?php echo $empresa->nome; ?> fazendo a intervenção de vendas on-line em todo o brasil ou nas cidades definidas no anexo contratual.</p>
+                                                                <p style="text-align: justify;">Para isso leia com a atenção nosso contrato e siga o passo a passo abaixo.</p>
+                                                                <!--<a class="nav-link link-passoapasso" href="https://www.rtcagro.com.br/consignar_produtos_passo_a_passo_v2.pdf" target="_blank"><i class="fa fa-fw fa-file-alt"></i>&nbsp;&nbsp;Passo a Passo - produto consignado</a>-->
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <!--  <div class="float-right"><a href="#" class="user-avatar-email text-secondary">www.henrybarbara.com</a></div> -->
-                                                    <div class="user-avatar-address">
-                                                        <p class="border-bottom pb-3">
-                                                            <br>
-                                                            <br>
-                                                            <span class="d-xl-inline-block d-block mb-2"><i class="fa fa-map-marker-alt mr-2 text-primary " style="color: #5bb1a2 !important;"></i>Rua Av. Rio Branco, nº 1088 , ADAMANTINA - SP</span><br>
-                                                            <!--<span class="d-xl-inline-block d-block mb-2"><i class="fa fa-phone mr-2 text-primary " style="color: #023d77 !important;"></i>11 2484-0087</span><br>
-                                                            <span class="d-xl-inline-block d-block mb-2"><i class="fa fa-envelope mr-2 text-primary " style="color: #023d77 !important;"></i>faleconosco@logc.com.br</span><br>
-                                                            <span class="d-xl-inline-block d-block mb-2"><i class="fa fa-globe mr-2 text-primary " style="color: #023d77 !important;"></i><a class="link-institucional" href="http://www.logc.com.br" target="_blank">http://www.logc.com.br</a></span>--><br>
-                                                        </p>
-                                                        <div class="mt-3 col-8">
-                                                            <img src="assets/images/tira-adagro.jpg" width="528px" alt="User Avatar">
+                                                </div>
+                                                <br><br>
+                                            </div>
+
+                                        </div>
+                                        <!-- fim bem vindo -->
+                                        <!-- PASSO A PASSO -->
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <div style="border: 1px solid rgba(0,0,0,.1);padding:30px">
+                                                    <div id="carouselExampleIndicators" class="passoapasso carousel slide" data-interval="false" data-ride="carousel" data-pause="hover" style="border: 1px solid rgba(0,0,0,.1);margin-bottom: 40px;">
+                                                        <ol class="carousel-indicators">
+                                                            <li data-target="#carouselExampleIndicators" data-slide-to="0" style="cursor: pointer;width: 30px!important;height: 10px!important;border-radius: 20%;" class="active"></li>
+                                                            <li data-target="#carouselExampleIndicators" data-slide-to="1" style="cursor: pointer;width: 30px!important;height: 10px!important;border-radius: 20%;"></li>
+                                                            <li data-target="#carouselExampleIndicators" data-slide-to="2" style="cursor: pointer;width: 30px!important;height: 10px!important;border-radius: 20%;"></li>
+                                                            <li data-target="#carouselExampleIndicators" data-slide-to="3" style="cursor: pointer;width: 30px!important;height: 10px!important;border-radius: 20%;"></li>
+                                                            <li data-target="#carouselExampleIndicators" data-slide-to="4" style="cursor: pointer;width: 30px!important;height: 10px!important;border-radius: 20%;"></li>
+                                                            <li data-target="#carouselExampleIndicators" data-slide-to="5" style="cursor: pointer;width: 30px!important;height: 10px!important;border-radius: 20%;"></li>
+                                                            <li data-target="#carouselExampleIndicators" data-slide-to="6" style="cursor: pointer;width: 30px!important;height: 10px!important;border-radius: 20%;"></li>
+                                                            <li data-target="#carouselExampleIndicators" data-slide-to="7" style="cursor: pointer;width: 30px!important;height: 10px!important;border-radius: 20%;"></li>
+                                                        </ol>
+                                                        <div class="carousel-inner">
+                                                            <div class="carousel-item active">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide1.PNG" alt="First slide">
+                                                            </div>
+                                                            <div class="carousel-item">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide2.PNG" alt="Second slide">
+                                                            </div>
+                                                            <div class="carousel-item">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide3.PNG" alt="Third slide">
+                                                            </div>
+                                                            <div class="carousel-item">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide4.PNG" alt="Third slide">
+                                                            </div>
+                                                            <div class="carousel-item">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide5.PNG" alt="Third slide">
+                                                            </div>
+                                                            <div class="carousel-item">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide6.PNG" alt="Third slide">
+                                                            </div>
+                                                            <div class="carousel-item">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide7.PNG" alt="Third slide">
+                                                            </div>
+                                                            <div class="carousel-item">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide8.PNG" alt="Third slide">
+                                                            </div>
+                                                        </div>
+                                                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev" style="display: flex;">
+                                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                            <span class="sr-only">Previous</span>
+                                                        </a>
+                                                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                            <span class="sr-only">Next</span>
+                                                        </a>
+                                                    </div>
+                                                </div>    
+                                            </div>
+                                        </div>
+
+                                        <style type="text/css">
+                                            .frm td{
+                                                padding:10px;
+                                            }
+                                            .frm{
+                                                margin-left: auto;
+                                                margin-right: auto;
+                                            }
+
+                                            .frm input[tpe='text']{
+                                                width:300px;
+                                            }
+
+
+                                            .tt input[tpe='text']{
+                                                width:300px;
+                                            }
+
+                                            .frm input[type='password']{
+                                                width:200px;
+                                            }
+
+                                        </style>
+                                        <!-- FIM PASSO A PASSO -->
+                                        <!-- CONTRATO -->
+                                        <div class="row" ng-if="!liberadoc">
+                                            <div class="col-10">
+                                                <br><br>
+                                                <table class="frm" style="width: 100%;">
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <i class="fas fa-key fa-2x" style="display: inline;margin-left:10px"></i>&nbsp
+                                                            <h3 style="display: inline">Verifique seus dados e escolha um login e uma senha</h3>
                                                             <br><br>
-                                                            <h3 style="text-align: center;">Bem vindo ao RTC</h3>
-                                                            <p style="text-align: justify;">Você poderá ser a partir de agora nosso fornecedor virtual do projeto Novos Rumos (Agro fauna).</p>
-                                                            <p style="text-align: justify;">Para que nossa parceria possa ser implantada será necessário estabelecer um contrato com a empresa Virtual Negócios e Servicos que representara a Adagro Comercio de Produtos Agricolas Ltda fazendo a intervenção de vendas on-line em todo o Brasil.</p>
-                                                            <p style="text-align: justify;">Para isso leia com a atenção nosso contrato e siga o passo a passo abaixo.</p>
-                                                            <p></p>
-                                                        </div>
-                                                    </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <div class="form-group row">
+                                                                <label class="col-3 col-lg-2 col-form-label text-left">Nome</label>
+                                                                <div class="col-md-5">
+                                                                    <input type="text" class="form-control" ng-model="usuario.nome">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-3 col-lg-2 col-form-label text-left">Nome de Usuario</label>
+                                                                <div class="col-md-5">
+                                                                    <input type="text" class="form-control" ng-model="usuario.login">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-3 col-lg-2 col-form-label text-left">Senha</label>
+                                                                <div class="col-md-5">
+                                                                    <input type="password" class="form-control" ng-model="usuario.senha">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-3 col-lg-2 col-form-label text-left">Confirmar Senha</label>
+                                                                <div class="col-md-5">
+                                                                    <input type="password" class="form-control" ng-model="usuario.confirmar_senha">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-3 col-lg-2 col-form-label text-left">RG</label>
+                                                                <div class="col-md-5">
+                                                                   <input type="text" class="form-control" ng-model="usuario.rg.valor">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-3 col-lg-2 col-form-label text-left">CPF</label>
+                                                                <div class="col-md-5">
+                                                                   <input type="text" class="form-control" ng-model="usuario.cpf.valor">
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <br>
+                                                            <i class="fas fa-list fa-2x" style="display: inline;margin-right: 10px"></i><h3 style="display: inline">Dados da empresa</h3>
+                                                            <br><br>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2" class="tt">
+                                                            <div class="form-group row">
+                                                                <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Razao Social</label>
+                                                                <div class="col-md-5">
+                                                                    <input id="txtname" type="text" ng-model="empresa.nome" required data-parsley-type="email" placeholder="" class="form-control">
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid text.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">IE</label>
+                                                                <div class="col-md-4">
+                                                                    <input id="txtname" type="text" ng-model="empresa.inscricao_estadual" required data-parsley-type="email" placeholder="" class="form-control">
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid text.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Telefone</label>
+                                                                <div class="col-md-4">
+                                                                    <telefone model="empresa.telefone.numero"></telefone>
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid text.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">CNPJ</label>
+                                                                <div class="col-md-4">
+                                                                    <input id="txtname" type="text" ng-model="empresa.cnpj.valor" required data-parsley-type="email" placeholder="" class="form-control">
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid text.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Rua</label>
+                                                                <div class="col-md-4">
+                                                                    <input id="txtname" type="text" ng-model="empresa.endereco.rua" required data-parsley-type="email" placeholder="" class="form-control">
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid text.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Bairro</label>
+                                                                <div class="col-md-4">
+                                                                    <input id="txtname" type="text" ng-model="empresa.endereco.bairro" required data-parsley-type="email" placeholder="" class="form-control">
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid text.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Numero</label>
+                                                                <div class="col-md-2">
+                                                                    <input id="txtname" type="text" ng-model="empresa.endereco.numero" required data-parsley-type="email" placeholder="" class="form-control">
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid text.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">CEP</label>
+                                                                <div class="col-md-4">
+                                                                    <input id="txtname" type="text" ng-model="empresa.endereco.cep.valor" required data-parsley-type="email" placeholder="" class="form-control">
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid text.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label  class="col-3 col-lg-2 col-form-label text-left">Estado</label>
+                                                                <div class="col-md-2">
+                                                                    <select ng-model="estado" class="form-control">
+                                                                        <option ng-repeat="e in estados" ng-value="e">{{e.sigla}}</option>
+                                                                    </select>
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid text.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label  class="col-3 col-lg-2 col-form-label text-left">Cidade</label>
+                                                                <div class="col-md-5">
+                                                                    <select ng-model="empresa.endereco.cidade" class="form-control">
+                                                                        <option ng-repeat="cidade in estado.cidades" ng-value="cidade">{{cidade.nome}}</option>
+                                                                    </select>
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid text.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <hr>
+                                                            <button class="btn btn-success" ng-click="mergeUsuario(usuario)"><i class="fas fa-check"></i>&nbsp Confirme seus dados para prosseguir</button>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-if="liberadoc">
+                                            <div class="col-md-12">
+                                                <br>
+                                                <hr>
+                                                <br><br>
+                                                <h3>Contrato de prestacao de serviço</h3>
+                                                <hr>
+                                                <select class="form-control" style="width:40%;display: inline;margin-right:30px" ng-model="empresa_selecionada">
+                                                    <option ng-repeat="emp in virtuais" ng-value="emp">{{emp.nome}}</option>
+                                                </select>
+                                                <button class="btn btn-outline-light" ng-click="aceitar()" style="display: inline" ng-if="!aceitou_contrato">
+                                                    <i class="fas fa-square fa-2x"></i>&nbsp
+                                                    Eu li e aceito os termos desse Contrato abaixo
+                                                </button>
+                                                <button class="btn btn-success" style="display: inline" ng-if="aceitou_contrato" ng-click="aceitar()">
+                                                    <i class="fas fa-check fa-2x"></i>&nbsp
+                                                    Contrato aceito
+                                                </button>
+                                                <br>
+                                                <div id="contrato" style="width:100%;height:600px;border:2px solid;overflow-y:scroll;padding:10px;margin:10px">
+                                                    <input id="btnprint" type="button" value="Imprimir" />
+                                                    <br><br>
+                                                    <h2>CONTRATO DE REPRESENTAÇÃO COMERCIAL, VEICULAÇÃO DE IMAGEM E VENDA DE PRODUTOS NA INTERNET</h2>
+                                                    <hr>
+
+                                                    CONTRATANTE: <strong>{{empresa_av.nome}}</strong>,com sede em  <strong>{{empresa_av.endereco.cidade.nome}}</strong>, na Rua <strong>{{empresa_av.endereco.rua}}</strong>, nº <strong>{{empresa_av.endereco.numero}}</strong>, bairro  <strong>{{empresa_av.endereco.bairro}}</strong>, Cep  <strong>{{empresa_av.endereco.cep.valor}}</strong>, no Estado  <strong>{{empresa_av.endereco.estado}}</strong>, inscrita no C.N.P.J. sob o nº  <strong>{{empresa_av.cnpj.valor}}</strong>, e no Cadastro Estadual sob o nº  <strong>{{empresa_av.inscricao_estadual}}</strong>, neste ato representada por  Sr(a). <?php echo $usuario->nome; ?>, (Nacionalidade), (Estado Civil), (Profissão), Carteira de Identidade nº  <strong>{{usuario.rg.valor}}</strong> 
+                                                    <br><br>
+                                                    CONTRATADA: <strong>{{empresa_selecionada.nome}}</strong>, com sede em  <strong>{{empresa_selecionada.endereco.cidade.nome}}</strong>, na Rua <strong>{{empresa_selecionada.endereco.rua}}</strong>, nº <strong>{{empresa_selecionada.endereco.numero}}</strong>, bairro <strong>{{empresa_selecionada.endereco.bairro}}</strong>, Cep <strong>{{empresa_selecionada.endereco.cep.valor}}</strong>, no Estado <strong>{{empresa_selecionada.endereco.estado}}</strong>, inscrita no C.N.P.J. sob o nº <strong>{{empresa_selecionada.cnpj.valor}}</strong>, e no Cadastro Estadual sob o nº  <strong>{{empresa_selecionada.inscricao_estadual}}</strong> neste ato representada por Sr. Elias Tadeu de Oliveira, brasileiro, divorciado, engenheiro agrônomo, portador do CPF nº 601.254.208-97 e do RG nº 7.895.953:  
+                                                    <br><br>
+                                                    As partes acima identificadas têm, entre si, justo e acertado o presente Contrato de Representação Comercial, Veiculação de Imagem e Venda de Produtos na Intranet, que se regerá pelas cláusulas seguintes e pelas condições descritas no presente.
+                                                    <br><br>
+                                                    Ao aceitar eletronicamente ou particularmente este contrato, o CONTRATANTE estará automaticamente aceitando aos termos aqui consignados, não podendo, em hipótese alguma, arguir desconhecimento sobre os mesmos. 
+                                                    <br><br>
+                                                    <h3>DO OBJETO DO CONTRATO</h3>
+                                                    Cláusula 1ª - O presente instrumento tem como objeto a prestação de serviços de representação comercial e venda de produtos pela internet. 
+                                                    <br><br>
+                                                    Cláusula 1ª.1 - A CONTRATADA se obriga a disponibilizar uma plataforma de Serviços (ERP) RTC, desenvolvida para possibilitar a comercialização de produtos diretamente pela intranet, para o Brasil ou cidades definidas no anexo contratual.
+                                                    <br><br>
+                                                    <h3>DAS OBRIGAÇÕES DA CONTRATADA</h3>
+                                                    Cláusula 2ª - A CONTRATADA está obrigada a promover a veiculação, em sua página na intranet www.rtcagro.com.br (designar o endereço eletrônico da página), das imagens das mercadorias produzidas pela CONTRATANTE.
+                                                    <br><br>
+                                                    Cláusula 3ª - A CONTRATADA deverá também realizar todos os atos necessários à venda dos produtos, divulgando-os em suas diversas plataformas digitais e utilizando sua carteira de proponentes compradores, dentre outras.    
+                                                    <br><br>
+                                                    Cláusula 3ª.1 - Não será responsabilizada a CONTRATADA por eventuais falhas ou suspensão nos serviços da plataforma de vendas virtual ocasionados por problemas técnicos alheios à sua responsabilidade.   
+                                                    <br><br>
+                                                    <h3>DAS OBRIGAÇÕES DA CONTRATANTE</h3>
+
+                                                    Cláusula 4ª - A CONTRATANTE está obrigada a manter a exclusividade da CONTRATADA para o que foi estabelecido neste contrato, não podendo contratar outra empresa que realize os mesmos serviços.
+                                                    <br><br>
+                                                    Cláusula 5ª - A CONTRATANTE deverá realizar a entrega dos produtos divulgados pela CONTRATADA na data previamente fixada pelas partes, responsabilizando-se pela qualidade dos mesmos perante os compradores.
+                                                    <br><br>
+                                                    Cláusula 5ª.1 - A CONTRATANTE deverá inserir na plataforma própria os produtos a serem comercializados, informando nome, marca, prazo de validade, preço, forma de pagamento e prazo de entrega.
+                                                    <br><br>
+                                                    Cláusula 5ª.2 - Cabe exclusivamente à CONTRATADA a analise e posterior liberação e aceitação dos produtos disponibilizados pela CONTRATANTE, cuja liberação poderá ser total ou parcial.
+                                                    <br><br>
+                                                    Cláusula 5ª.3 - Os produtos disponibilizados pela CONTRATANTE deverão obedecer o paradigma da CONTRATADA, qual seja preço baixo.
+                                                    <br><br>
+                                                    Cláusula 5ª.4 - A CONTRATANTE poderá estabelecer cidades ou regiões onde a comercialização dos produtos disponibilizados serão de inteira exclusividade da CONTRATADA.
+                                                    <br><br>
+                                                    Cláusula 6ª - Não cabe nenhuma responsabilidade à CONTRATADA pela inadimplência no pagamento dos produtos disponibilizados e comercializados através da plataforma digital oferecida a CONTRATANTE, a qual assume o risco total das operações.
+                                                    <br><br>
+                                                    <h3>DO PAGAMENTO</h3>
+
+                                                    Cláusula 7ª - A CONTRATANTE deverá pagar à CONTRATADA o percentual de 2% descrito no anexo a título de comissão dos valores comercializados através da plataforma virtual de vendas, cujo valor deverá ser pago através de cobrança bancaria 
+                                                    <br><br>
+                                                    Cláusula 8ª - O repasse do valor obtido na venda desses produtos deve se dar em até  três dias a partir do recebimento.
+                                                    <br><br>
+                                                    § 1º - O atraso na remuneração ora referida, sujeitará a CONTRATANTE a suspensão dos serviços virtuais até a confirmação do pagamento. 
+                                                    <br><br>
+                                                    § 2º - Caso não seja cumprida a determinação referida nesta cláusula, a CONTRATADA ficará desobrigada a cumprir o que ora se avença, podendo ainda inibir a utilização disponibilizadas ao uso.
+                                                    <br><br>
+                                                    § 3º - Todos os parâmetros contratuais referentes aos produtos e regiões a serem comercializados estata, expostos definidos nos anexos deste contrato
+                                                    <br><br>
+                                                    <h3>DA RESCISÃO</h3>
+
+                                                    Cláusula 10ª - O contrato poderá ser rescindido por ambas as partes, a qualquer momento, devendo, porém, a parte avisar à outra com 30 (trinta) dias de antecedência.   
+                                                    <br><br>
+                                                    Cláusula 11ª - O contrato também será rescindido caso uma das partes descumpra o estabelecido nas cláusulas do presente instrumento, a qualquer momento bastando para isso se utilizar da plataforma RTC no campo encerramento contratual, onde encontrara todas as orientacoes e observações para o procedimento.
+                                                    <br><br>
+                                                    <h3>DISPOSIÇÕES ESPECIAIS</h3>
+
+                                                    Cláusula 12ª - Qualquer alteração das condições aqui ajustadas será considerada como ato de mera tolerância e liberalidade, não acarretando nem sendo considerada como novação ou alteração das mesmas, posto que tal providência só terá validade e surtirá efeitos permanentes para as Partes se forem efetivadas através de instrumento específico.   
+                                                    <br><br>
+                                                    § Único - A CONTRATADA se reserva o direito de fazer modificações, adições ou exclusões, no todo ou em parte, nas condições estabelecidas neste contrato, sem prejuízo para o CONTRATANTE das obrigações aqui assumidas, sendo que tal fato será comunicado ao CONTRATANTE, por aviso escrito por meios eletrônicos, especialmente via e-mail. 
+                                                    <br><br>
+                                                    a) Caso o CONTRATANTE não concorde com as modificações apresentadas, poderá rescindir este COMPROMISSO, observadas as condições aqui previstas. 
+                                                    <br><br>
+                                                    Cláusula 13ª - A CONTRATANTE arcará com o ônus financeiro dos tributos, contribuições sociais, encargos, dentre outras modalidades de impostos que porventura venham a incidir sobre o uso e destinação da plataforma de serviços RTC ora contratada, além de responder por direitos de terceiros eventualmente prejudicados.    
+                                                    <br><br>
+                                                    Cláusula 14ª - A CONTRATADA se exime de qualquer responsabilidade cívil, criminal ou outras, pelo uso e destinação que será dado ao objeto ora contratado, ficando a CONTRATANTE exclusivamente obrigada a responder por danos porventura causados.     
+                                                    <br><br>
+                                                    § Único - O CONTRATANTE concorda em proteger e isentar a CONTRATADA, ou ainda indenizar esta, suas controladoras, subsidiárias, afiliadas, administradores, acionistas, empregados e agentes, por quaisquer danos morais ou materiais sofridos de qualquer natureza.  
+                                                    <br><br>
+                                                    Cláusula 15ª - As partes se comprometem por si, seus funcionários e prepostos, a manter o mais absoluto sigilo sobre toda e qualquer informação, material e documentos, que venham a ter acesso por força do cumprimento do objeto deste contrato, sob pena de arcar com perdas e danos que vier a dar causa, por transgressão às disposições desta cláusula.      
+                                                    <br><br>
+                                                    Cláusula 16ª - A impossibilidade de prestação do serviço motivado por incorreção em informação fornecida pela CONTRATANTE ou por omissão no provimento de informação essencial à prestação, não caracterizará descumprimento de obrigação contratual pela CONTRATADA, isentando-a de toda e qualquer responsabilidade, ao tempo em que configurará o não cumprimento de obrigação por parte da CONTRATANTE.       
+                                                    <br><br>
+                                                    Cláusula 17ª - O CONTRATANTE neste ato declara estar ciente e de acordo que não mantém nenhum compromisso hierárquico ou trabalhista de qualquer natureza com a CONTRATADA, seja ele em relação a horário ou comparecimento a sede da mesma, não podendo alegar posteriormente qualquer vínculo empregatício.        
+                                                    <br><br>
+                                                    <h3>DISPOSIÇÕES GERAIS</h3>
+
+                                                    Cláusula 18ª - Para fins de execução do serviço objeto deste contrato, o CONTRATANTE se compromete a fornecer todas as informações solicitadas pela CONTRATADA e efetuar o pagamento conforme já estipulado.         
+                                                    <br><br>
+                                                    Cláusula 19ª - As partes se obrigam a manter os seus dados comerciais devidamente atualizados; toda e qualquer alteração deverá ser comunicada imediatamente, uma à outra e aditadas na plataforma RTC.        
+                                                    <br><br>
+                                                    Cláusula 20ª - Os direitos e obrigações decorrentes deste contrato somente poderão ser cedidos, mediante aviso prévio e escrito, com expresso consentimento das partes.           
+                                                    <br><br>
+                                                    Cláusula 21ª - Todo contato, solicitação e chamado formal entre as partes para tratar de assuntos ligados à prestação dos serviços, se dará por HelpDesk ou e-mail, nos endereços divulgados, ou acesso às dependências de escritório sede da CONTRATANTE, no horário comercial.            
+                                                    <br><br>
+                                                    Cláusula 22ª - Em qualquer hipótese de terminação do presente contrato, as condições relativas à proteção de direitos autorais, garantias e responsabilidades, confidencialidade e sigilo, permanecerão íntegras, sendo que sua observância subsistirá por prazo indeterminado.            
+                                                    <br><br>
+                                                    <h3>DO PRAZO</h3>
+
+                                                    Cláusula 23ª - O presente contrato terá prazo indeterminado, iniciando-se a vigência no ato de sua assinatura.                 
+                                                    <br><br>
+                                                    <h3>DO FORO</h3>
+
+                                                    Cláusula 23ª - Para dirimir quaisquer controvérsias oriundas do presente contrato, as partes elegem o foro da comarca de São José do Rio Preto, São Paulo, Brasil.                 
+                                                    <br><br>
+                                                    Por estarem assim justos e contratados, firmam o presente instrumento, em duas vias de igual teor, juntamente com 2 (duas) testemunhas.
+                                                    <br><br>
+                                                    <p>São José do Rio Preto-SP, _____, __________________, 2019</p>
+                                                    <br>
+                                                    <p><center>__________________________ &emsp;&emsp;&emsp;&emsp; _________________________</center></p>
+                                                    <p><center>CONTRATADA({{empresa_av.nome}}) &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; CONTRATANTE({{empresa.nome}})</center>
+                                                    <br><br>
+                                                    <p align="justify"><center>Testemunhas 1:&nbsp;&nbsp;____________________  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Testemunha 2:&nbsp;&nbsp;_____________________  </center> </p>
+                                                    <br><br>
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- fim bem vindo -->
-                                        <div class="table-responsive" style="overflow: hidden">
+                                        <hr>
+                                        <i class="fas fa" style="display: inline"></i>&nbsp<h3 style="display: inline">Locais de venda do produto</h3>
+                                                                <hr>
+                                        <div style="width:100%;border:2px solid;padding:20px;border-radius: 3px">
+
+                                            <div style="display:block"><button class="btn btn-primary" ng-click="selecionarPais()"><i style="display: inline" class="fas fa-certificate"></i></button>&nbsp<h3 style="display: inline">Brasil</h3></div>
+                                            <hr>
+                                                            
+                                                                <div ng-repeat="r in regioes" style="width:calc(26% - 120px);font-size:14px;max-height: 300px;border:1px dashed;overflow-y: scroll;padding:20px;margin-top:20px;margin-left:20px;display: inline-block;">
+                                                                     <button class="btn btn-primary" style="float:left" ng-click="selecionarTudo(r)"><i class="fas fa-certificate"></i></button>&nbsp<h4 style="display: inline">{{r.nome}}</h4>
+                                                                    <br>
+                                                                    <input style="margin-top:20px" type="text" ng-model="r.filtro" placeholder="Filtro cidade" ng-change="filtro(r)" class="form-control">
+                                                                    <hr>
+                                                                    <strong ng-if="c.aparecer" ng-click="selecionar(c)" ng-repeat="c in r.cidades" style="display: block;cursor:pointer;{{c.selecionada?'color:Green;font-weight: bold;text-decoration: underline;':'color:Black'}}">
+                                                                       <i class="fas fa-square" style="display: inline"></i> &nbsp {{c.cidade.nome}} - {{c.cidade.estado.sigla}}
+                                                                    </strong>
+                                                                </div>
+
+                                         </div>                   
+                                        <hr>
+                                        <!-- FIM CONTRATO -->
+                                        <div class="table-responsive" style="overflow: hidden" ng-if="liberadoc">
+                                            <br>
+                                            <hr>
+                                            <br><br>
                                             <div class="row">
-                                                <div class="col-md-5">
+                                                <div class="col-md-5" style="border-right: 1px solid #e6e6f2;padding-right: 45px;">
                                                     <i class="fas fa-box" style="display: inline"></i>&nbsp <h4 style="display: inline">Seus produtos ja cadastrados</h4>
                                                     <hr>
                                                     <input type="text" class="form-control col-md-8" id="filtroProdutos2" placeholder="Filtro">
@@ -166,7 +612,7 @@
                                                     <hr>
 
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-6" style="padding-left: 45px;">
                                                     <i class="fas fa-truck" style="display: inline"></i>&nbsp <h4 style="display: inline">Produto para consignar</h4>
                                                     <hr>
                                                     <div ng-if="travado_av">
@@ -247,7 +693,7 @@
                                                                 Estoque:
                                                             </td>
                                                             <td>
-                                                                <input type="number" placeholder="Estoque" class="form-control" style="width:40%" ng-model="produto_av.estoque" ng-change="produto_av.disponivel=produto_av.estoque">
+                                                                <input type="number" placeholder="Estoque" class="form-control" style="width:40%" ng-model="produto_av.estoque" ng-change="produto_av.disponivel = produto_av.estoque">
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -259,23 +705,32 @@
                                                     </button>
                                                     <br>
                                                     <strong style="color:#FF0000;font-size:13px">Ao clicar no botao acima, você esta aceitando os termos do contrato.</strong>
-                                                    
+
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    Aditivos de contrato
                                                     <br>
-
+                                                    <hr>
+                                                    <br>
+                                                    <i class="fas fa-plus-circle" style="display:inline"></i>&nbsp<h4 style="display: inline">Anexo contratual de representação comercial para venda de produtos entre as partes (<strong>{{empresa_selecionada.nome}}</strong> e <?php echo $empresa->nome; ?>)</h4> 
+                                                    <br>
+                                                    <br>
                                                     <table class="table table-striped table-bordered first">
                                                         <thead>
                                                         <th data-ordem="produto.codigo">Cod.</th>
                                                         <th data-ordem="produto.nome">Produto</th>
+                                                        <th data-ordem="produto.nome">Preço de Custo (R$)</th>
+                                                        <th data-ordem="produto.nome">Preço de Venda (R$)</th>
+                                                        <th data-ordem="produto.nome">Estoque</th>
                                                         <th><i class="fas fa-trash"></i></th>
                                                         </thead>
                                                         <tr ng-repeat="produt in produtos_consignados.elementos">
                                                             <th>{{produt[0].codigo}}</th>
                                                             <th>{{produt[0].nome}}</th>
+                                                            <th>{{produt[0].custo}}</th>
+                                                            <th>{{produt[0].valor_base}}</th>
+                                                            <th>{{produt[0].estoque}}</th>
                                                             <th><button class="btn btn-danger" ng-click="deconsignar(produt[0])"><i class="fas fa-trash"></i></button></th>
                                                         </tr>
                                                     </table>
@@ -290,186 +745,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <h3>Contrato de prestacao de serviço</h3>
-                                                    <hr>
-                                                    <select class="form-control" style="width:40%" ng-model="empresa_selecionada">
-                                                        <option ng-repeat="emp in virtuais" ng-value="emp">{{emp.nome}}</option>
-                                                    </select>
-                                                    <br>
-                                                    <div style="width:100%;height:600px;border:2px solid;overflow-y:scroll;padding:10px;margin:10px">
-                                                        <h2>CONTRATO DE REPRESENTAÇÃO COMERCIAL PARA VENDAS ON LINE</h2>
-                                                            <hr>
 
-CONTRATANTE: <strong>{{empresa_av.nome}}</strong>, inscrita no CNPJ nº <strong>{{empresa_av.cnpj.valor}}</strong>, localizada na Rua <strong>{{empresa_av.endereco.rua}}</strong>, nº <strong>{{empresa_av.endereco.numero}}</strong>, na cidade de <strong>{{empresa_av.endereco.cidade.nome}}</strong>, neste ato representada por seu Sócio, Sr. <?php echo $usuario->nome; ?>, (qualificação):
-<br><br>
-CONTRATADA: <strong>{{empresa_selecionada.nome}}</strong>, inscrita no CNPJ nº <strong>{{empresa_selecionada.cnpj.valor}}</strong>, localizada na Rua <strong>{{empresa_selecionada.endereco.rua}}</strong>, nº <strong>{{empresa_selecionada.endereco.numero}}</strong>, na cidade de <strong>{{empresa_selecionada.endereco.cidade.nome}}</strong>, neste ato representada por seu Sócio, Sr. Elias Tadeu de Oliveira, brasileiro, divorciado, engenheiro agrônomo, portador do CPF nº 601.254.208-97 e do RG nº 7.895.953:
-Celebram entre si o presente contrato particular de prestação de serviços a reger-se pelas condições adiante alinhadas, que mutuamente outorgam, aceitam e prometem cumprir, a saber: 
-Ao aceitar eletronicamente ou particularmente esta contratação, o CONTRATANTE estará automaticamente aceitando aos termos aqui consignados, não podendo, em hipótese alguma, arguir desconhecimento sobre os mesmos. 
-<br><br>
 
-OBJETO Cláusula 1ª - A CONTRATADA se obriga a disponibilizar/licenciar uma plataforma de vendas – Loja Virtual, desenvolvida para possibilitar a comercialização de produtos diretamente pela internet.. 
-<br><br>
-Cláusula 2ª - A CONTRATANTE estará adquirindo apenas o direito de utilização do sistema através de interface própria disponibilizada pela CONTRATADA.
-<br><br>
-§ 1º - O licenciamento que tratamos não será exclusivo e nem é transferível.
-<br><br>
-§ 2º - A licença de uso será efetivada através de acesso via internet em servidores controlados pela CONTRATADA. 
-<br><br>
-Cláusula 3ª - As obrigações da CONTRATADA são as seguintes, além de outras já mencionadas: 
-<br><br>
-I - Responsabilizar-se pela manutenção da hospedagem da referida Loja Virtual em seus provedores de conteúdo. A CONTRATADA não se responsabiliza pela disponibilidade de serviços mantidos por terceiros.
-<br><br> 
-II - Manter informações sobre o cadastro da CONTRATANTE e de seus clientes em seus servidores, além de gerenciar e prestar todas as informações das transações realizadas através de sua plataforma de vendas. 
-<br><br>
-III - Disponibilizar ao CONTRATANTE acesso através de usuário e senha a um painel administrativo da loja virtual, permitindo assim o gerenciamento da mesma. 
-<br><br>
-IV - Disponibilizar, se necessário e pertinente, quaisquer melhorias ou modificações na loja virtual mediante novas licenças com condições a combinar, que venham a ser licenciados para se atingir os objetivos previstos neste instrumento; novos módulos/aplicações específicas ou exclusivas, estes deverão ser contratados separadamente, mediante novo acordo de prestação de serviços, a ser definido por adendo. 
-<br><br>
-V - Intervenções para corrigir as falhas que vierem a surgir no conteúdo desenvolvido, informando porventura a impossibilidade ou inviabilidade técnica. 
-<br><br>
-VI - Oferecer manutenção do conteúdo desenvolvido como, ajustes, atualizações e aperfeiçoamentos para melhor desempenho. 
-<br><br>
-§ 1º - Eventuais problemas que dificultem ou impossibilitem o cumprimento desta prestação, originados por culpa de terceiros ou de tecnologia aplicada, não configuram descumprimento contratual pela CONTRATADA. 
-<br><br>
-§ 2º - Toda a lógica de programação necessária para a perfeita transação das operações e funcionamento do sistema em epígrafe deverá ser desenvolvida especificamente dentro dos limites da proposta referida. 
-<br><br>
-Cláusula 4ª - O plano da loja virtual escolhida pelo CONTRATANTE dá direito de expor o limite máximo de produtos e limite máximo de vendas. 
-<br><br>
-§ 1º - Qualquer dos pacotes escolhidos conterá obrigatoriamente os seguintes itens: 
-<br><br>
-a) Hospedagem em servidor seguro, controlados pela CONTRATADA; 
-<br><br>
-b) Certificado SSL próprio ou compartilhado de segurança; 
-<br><br>
-c) Meio de pagamento integrado;
-<br><br>
-d) Controle de estoques e pedidos; 
-<br><br>
-e) Cálculo automático de frete;
-<br><br>
- f) Simulador automático de parcelas; 
- <br><br>
-g) Suporte permanente via acesso a HelpDesk, Chat ou Telefone; 
-<br><br>
-§ 2º - O plano inicial ora contratado pode ser alterado a qualquer momento pelo Lojista. 
-<br><br>
-Cláusula 5ª - A CONTRATADA não dará qualquer suporte a outra plataforma particular diversa da que ora especificou nas cláusulas acima. 
-<br><br>
-§ 1º - A CONTRATADA não fornece, nem se responsabiliza pelos produtos comercializados ou por qualquer operação relacionada á entrega ou cobrança, ficando sob a responsabilidade do CONTRATANTE toda administração. 
-<br><br>
-§ 2º - Fica reservado à CONTRATADA, por força deste instrumento, o direito de suspender temporariamente ou mesmo definitivamente o cadastramento e aceitação de novos contratos quando forem constatados problemas técnicos que impeçam o comércio eletrônico de funcionar,dentre elas:
-<br><br>
-I - As ilícitas, transmissão ou divulgação de ameaças, material que instigue o racismo ou a violência, dentre outros. 
-<br><br>
-II - Não realizar envio em massa de mensagens de e-mail não solicitadas denominados "SPAM" para a promoção de produtos, serviços ou entidades, de natureza comercial ou não, com ou sem fins lucrativos.
-<br><br>
- III - Informar à CONTRATADA sobre toda campanha de marketing e/ou publicidade realizada em grande escala, afim de preservar os recursos e o pleno funcionamento dos serviços mantidos no servidor de hospedagem. 
- <br><br>
-IV - Fornecer todas as informações corretas e completas sobre si e seu negócio, como pressuposto fundamental para a configuração de sua loja virtual e sua manutenção, sendo que a inobservância deste requisito dará direito a CONTRATADA de cancelar total ou parcialmente o fornecimento dos serviços ora contratados. 
-<br><br>
-V - Responsabilizar-se por todos os bens e serviços disponibilizados a comercialização, bem como todos os materiais e informações prestadas a seus clientes, sejam de qualquer natureza ou origem, estendendo-se, igualmente, a eventuais omissões e atos ilícitos que ocorram na sua loja, incluindo, mas não se limitando, às suas senhas de acesso. 
-<br><br>
-VI - Ser responsável pela reprodução e exibição de quaisquer obras intelectuais, imagens, informações próprias ou de terceiros, usadas na divulgação de seu comércio eletrônico.
-<br><br>
-VII - Não obter ou tentar obter acesso a qualquer servidor controlado pela CONTRATADA, sem que haja a escrita autorização. VIII - Manter regularmente todas as suas mensalidades em dia evitando o bloqueio parcial ou total da loja virtual.
-<br><br>
-§ Único - Reconhece que possui senha para acesso e uso dos recursos que lhe é disponibilizado por força deste instrumento, devendo, desta forma, mantê-la como confidencial, devendo notificar à CONTRATADA imediatamente se tiver qualquer suspeita de quebra da sua segurança. 
-<br><br>
-<h3>PROPRIEDADE INTELECTUAL</h3>
-<br><br>
-Cláusula 7ª - Os serviços contratados foram desenvolvidos e são licenciados pela CONTRATADA; as ferramentas utilizadas para a criação e implementação da referida loja virtual, é de propriedade exclusiva da mesma, que não fornece qualquer tipo de acesso ao código fonte e não permite em hipótese alguma a reprodução ou comercialização, sem consentimento prévio e escrito. 
-<br><br>
-§ 1º - A CONTRATADA garante que todo o material fornecido e colocado à disposição do CONTRATANTE se encontra devidamente protegido e tem a anuência expressa dos respectivos titulares dos direitos autorais e de imagem daí decorrentes, bem como de patentes, não se constituindo a sua utilização em violação de direitos, e/ou nem concorrência desleal, nos termos da norma legal aplicável; o mesmo não se aplica a loja disponibilizada para o CONTRATANTE onde o conteúdo exposto é de sua inteira responsabilidade. 
-<br><br>
-§ 2º - O CONTRATANTE, por conseguinte, reconhece que qualquer violação que venha a ocorrer neste particular deverá ser de sua inteira responsabilidade, assumindo o polo passivo de qualquer procedimento judicial que venha a ser intentado por terceiros, arcando com todas as despesas daí decorrentes. 
-<br><br>
-Cláusula 8ª - A propriedade intelectual de toda a linguagem de programação e de todo o conteúdo ora contratado é de propriedade exclusiva da CONTRATADA, mesmo que advenha rescisão contratual por qualquer das partes ou motivo. 
-<br><br>
-§ 1º - Aplica-se a este contrato o disposto nas Leis 9.609/98 (proteção da propriedade intelectual do software) e 9.610/98 (proteção dos direitos autorais). 
-<br><br>
-§ 2º - O direito sobre a propriedade intelectual ora tratada será transmitido aos herdeiros e ou sucessores dos CONTRATADOS, na forma da lei, podendo-os usufruir a maneira que mais lhes convier. 
-GARANTIAS 
-<br><br>
-Cláusula 9ª - Os serviços prestados pelos CONTRATADOS são fornecidos observadas as condições estabelecidas neste instrumento, sem quaisquer outras garantias expressas ou implícitas de qualquer natureza diferentes das definidas pela lei vigente.
-<br><br>
-§ 1º - Este contrato e seus aditamentos não garantem que os serviços online da loja serão ininterruptos, por prazo indeterminado, livres de erros, pois os mecanismos incorporados têm limitações próprias. 
-Cláusula 10ª - A CONTRATADA se responsabiliza pela integridade da Loja On-line, nos termos previstos neste instrumento, sendo que qualquer defeito havido determinará simplesmente a substituição ou correção do mesmo. 
-<br><br>
-<h3>PRAZO DE ENTREGA</h3>
-Cláusula 11ª - A CONTRATADA se compromete a disponibilizar a aplicação retro determinada em até 48 (quarenta e oito) horas quando se tratar de um plano com estrutura padrão sem particularidades ou personalizações ou exclusividades contada da assinatura eletrônica deste instrumento, quando estará apta a ser utilizada pela CONTRATANTE. Para outros formatos de planos personalizados o prazo de liberação será aquele determinado e divulgado no momento da escolha e contratação do plano ou combinado particularmente. 
-REMUNERAÇÃO 
-<br><br>
-Cláusula 12ª - A título de remuneração pela prestação dos serviços referidos, a CONTRATANTE pagará a CONTRATADA as importâncias abaixo elencadas:
-<br><br>
- I - O valor do plano escolhido pelo CONTRATANTE deve ser pago de forma adiantada em relação uso da aplicação; os demais vencimentos mensais se darão em ciclos de 30 dias, a partir da data de pagamento da primeira mensalidade à vista, reajustáveis anualmente de acordo com a maior variação apurada entre os índices brasileiros. 
- <br><br>
-§ 1º - O atraso na remuneração ora referida, sujeitará a CONTRATANTE a suspensão da loja virtual até a confirmação do pagamento. 
-<br><br>
-§ 2º - Caso não seja cumprida a determinação referida nesta cláusula, a CONTRATADA ficará desobrigada a cumprir o que ora se avença, podendo ainda inibir a utilização da aplicação porventura já entregue ao uso.
-<br><br>
-§ 3º - O pagamento referido no item I desta cláusula será preferencialmente feito por boleto bancário. 
-<br><br>
-§ 4º - Todas as mensalidades a vencer estará disponível para impressão de boleto no painel administrativo do lojista.
-<br><br>
- § 5º - Os recibos de pagamentos serão os boletos, os comprovantes de depósito ou outros cupons emitidos pela instituição que realizará a operação, ficando a CONTRATADA responsável a prestar qualquer outro à CONTRATANTE, na hipótese de pagamento em moeda corrente ou para atender interesses da mesma. 
- <br><br>
-<h3>DISPOSIÇÕES ESPECIAIS </h3>
-Cláusula 13ª - Qualquer alteração das condições aqui ajustadas será considerada como ato de mera tolerância e liberalidade, não acarretando nem sendo considerada como novação ou alteração das mesmas, posto que tal providência só terá validade e surtirá efeitos permanentes para as Partes se forem efetivadas através de instrumento específico.
-<br><br>
- § Único - A CONTRATADA se reserva o direito de fazer modificações, adições ou exclusões, no todo ou em parte, nas condições estabelecidas neste contrato, sem prejuízo para o CONTRATANTE das obrigações aqui assumidas, sendo que tal fato será comunicado ao CONTRATANTE, por aviso escrito por meios eletrônicos, especialmente via e-mail.
- <br><br>
-a) Caso o CONTRATANTE não concorde com as modificações apresentadas, poderá rescindir este COMPROMISSO, observadas as condições aqui previstas. 
-<br><br>
-Cláusula 14ª - A CONTRATANTE arcará com o ônus financeiro dos tributos, contribuições sociais, encargos, dentre outras modalidades de impostos que porventura venham a incidir sobre o uso e destinação da loja virtual ora contratada, além de responder por direitos de terceiros eventualmente prejudicados. 
-<br><br>
-Cláusula 15ª - A CONTRATADA se exime de qualquer responsabilidade cível, criminal ou outras, pelo uso e destinação que será dado ao objeto ora contratado, ficando a CONTRATANTE exclusivamente obrigada a responder por danos porventura causados. 
-<br><br>
-§ Único - O CONTRATANTE concorda em proteger e isentar a CONTRATADA, ou ainda indenizar esta, suas controladoras, subsidiárias, afiliadas, administradores, acionistas, empregados e agentes, por quaisquer danos morais ou materiais sofridos de qualquer natureza. 
-<br><br>
-Cláusula 16ª - As partes se comprometem por si, seus funcionários e prepostos, a manter o mais absoluto sigilo sobre toda e qualquer informação, material e documentos, que venham a ter acesso por força do cumprimento do objeto deste contrato, sob pena de arcar com perdas e danos que vier a dar causa, por transgressão às disposições desta cláusula. 
-<br><br>
-Cláusula 17ª - A impossibilidade de prestação do serviço motivado por incorreção em informação fornecida pela CONTRATANTE ou por omissão no provimento de informação essencial à prestação, não caracterizará descumprimento de obrigação contratual pela CONTRATADA, isentando-a de toda e qualquer responsabilidade, ao tempo em que configurará o não cumprimento de obrigação por parte da CONTRATANTE. 
-<br><br>
-Cláusula 18ª - O CONTRATANTE neste ato declara estar ciente e de acordo que não mantém nenhum compromisso hierárquico ou trabalhista de qualquer natureza com a CONTRATADA, seja ele em relação a horário ou comparecimento a sede da mesma, não podendo alegar posteriormente qualquer vínculo empregatício. 
-<br><br>
-<h3>DISPOSIÇÕES GERAIS </h3>
-<br><br>
-Cláusula 19ª - Para fins de execução do serviço objeto deste contrato, o CONTRATANTE se compromete a fornecer todas as informações solicitadas pela CONTRATADA e efetuar o pagamento conforme já estipulado. 
-Cláusula 20ª - As partes se obrigam a manter os seus dados comerciais devidamente atualizados; toda e qualquer alteração deverá ser comunicada imediatamente, uma à outra. 
-<br><br>
-Cláusula 21ª - Os direitos e obrigações decorrentes deste contrato somente poderão ser cedidos, mediante aviso prévio e escrito, com expresso consentimento das partes. 
-<br><br>
-Cláusula 22ª - Todo contato, solicitação e chamado formal entre as partes para tratar de assuntos ligados à prestação dos serviços, se dará por HelpDesk ou e-mail, nos endereços divulgados, ou acesso às dependências de escritório sede da CONTRATANTE, no horário comercial. 
-<br><br>
-<h3>VIGÊNCIA</h3>
-<br><br>
-Cláusula 24ª - O presente contrato é pactuado por prazo indeterminado a contar da data de assinatura deste, mas poderá ser rescindido por qualquer das partes, sem declinar o motivo, nas seguintes situações: 
-<br><br>
-I - em qualquer tempo pela CONTRATADA, mediante notificação à CONTRATANTE, com antecedência mínima de 30 (trinta) dias, mediante cumprimento das suas obrigações no prazo previsto para denuncia;
-<br><br>
- II - em qualquer tempo pela CONTRATATE, mediante notificação à CONTRATADA, com antecedência mínima de 30 (trinta) dias, mediante cumprimento das suas obrigações no prazo previsto para denuncia; ]
- <br><br>
-Cláusula 25ª - Qualquer das partes poderá rescindir de imediato este contrato, independentemente de notificação judicial ou extrajudicial, caso haja o descumprimento de qualquer cláusula ou condição ora estabelecida e, se notificada a parte faltosa, não tenha a mesma, num prazo de 7 (sete) dias a contar do recebimento pertinente, sanado a falta praticada ou justificado a razão de sua manutenção. 
-<br><br>
-§ 1º - Caso o ilícito tenha sido praticado pelo CONTRATANTE, a CONTRATADA se reserva o direito de suspender todo o acesso da loja virtual, bem como suspender a sua visibilidade na Internet, sem que caiba ao mesmo qualquer pedido de indenização, seja a que título for. 
-<br><br>
-a) A medida acima poderá ser igualmente aplicada caso a CONTRATADA, a seu critério, conclua que o CONTRATANTE esteja envolvido em atividade ilegal de qualquer natureza que possa prejudicar direitos da CONTRATADA ou de terceiros.
-<br><br>
- § 2º - Caso o cancelamento do serviço seja solicitado pela CONTRATANTE, a CONTRATADA se isenta de quaisquer reembolso de mensalidades pagas. 
- <br><br>
-Cláusula 26ª - Em qualquer hipótese de terminação do presente contrato, as condições relativas à proteção de direitos autorais, garantias e responsabilidades, confidencialidade e sigilo, permanecerão íntegras, sendo que sua observância subsistirá por prazo indeterminado.
-<br><br>
- <h3>FORO </h3>
- <br><br>
-Cláusula 27ª - O Foro de eleição, para todos os fins, será o da Comarca de São José do Rio Preto-SP, para dirimir quaisquer dúvidas ou eventuais dissídios relativos a este instrumento de contrato, inclusive nas ações de execução , excluindo-se qualquer outro por mais privilegiado que seja. 
-<br><br>
-E, assim justos e contratados, assinam o presente instrumento mediante aceitação dos termos e confirmação eletrônica, podendo cada parte imprimir uma via do mesmo.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
 
 
 
@@ -566,69 +843,79 @@ E, assim justos e contratados, assinam o presente instrumento mediante aceitaç�
 
                 <!-- Optional JavaScript -->
                 <script>
+                                            document.getElementById('btnprint').onclick = function () {
+                                                var conteudo = document.getElementById('contrato').innerHTML,
+                                                        tela_impressao = window.open('about:blank');
 
-                                            var l = $('#loading');
-                                            l.hide();
+                                                tela_impressao.document.write(conteudo);
+                                                tela_impressao.window.print();
+                                                tela_impressao.window.close();
+                                            };
+                </script>
+                <script>
 
-
-                                            var x = 0;
-                                            var y = 0;
-
-                                            $(document).mousemove(function (e) {
-
-                                                x = e.clientX;
-                                                y = e.clientY;
-
-                                                var s = $(this).scrollTop();
-
-                                                l.offset({top: (y + s), left: x});
-
-                                            })
-
-                                            var sh = false;
-                                            var it = null;
-
-                                            loading.show = function () {
-                                                l.show();
-                                                var s = $(document).scrollTop();
-
-                                                l.offset({top: (y + s), left: x});
-
-                                            }
-
-                                            loading.close = function () {
-                                                l.hide();
-                                            }
+                            var l = $('#loading');
+                            l.hide();
 
 
+                            var x = 0;
+                            var y = 0;
 
-                                            $(document).ready(function () {
-                                                $(document).on({
-                                                    'show.bs.modal': function () {
-                                                        var zIndex = 1040 + (10 * $('.modal:visible').length);
-                                                        $(this).css('z-index', zIndex);
-                                                        setTimeout(function () {
-                                                            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
-                                                        }, 0);
-                                                    },
-                                                    'hidden.bs.modal': function () {
-                                                        if ($('.modal:visible').length > 0) {
-                                                            // restore the modal-open class to the body element, so that scrolling works
-                                                            // properly after de-stacking a modal.
-                                                            setTimeout(function () {
-                                                                $(document.body).addClass('modal-open');
-                                                            }, 0);
-                                                        }
-                                                    }
-                                                }, '.modal');
-                                            });
+                            $(document).mousemove(function (e) {
+
+                                x = e.clientX;
+                                y = e.clientY;
+
+                                var s = $(this).scrollTop();
+
+                                l.offset({top: (y + s), left: x});
+
+                            })
+
+                            var sh = false;
+                            var it = null;
+
+                            loading.show = function () {
+                                l.show();
+                                var s = $(document).scrollTop();
+
+                                l.offset({top: (y + s), left: x});
+
+                            }
+
+                            loading.close = function () {
+                                l.hide();
+                            }
 
 
-                                            $(document).ready(function () {
-                                                $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
-                                                $('.btnedit').tooltip({title: "Editar", placement: "top"});
-                                                $('.btndel').tooltip({title: "Deletar", placement: "top"});
-                                            });
+
+                            $(document).ready(function () {
+                                $(document).on({
+                                    'show.bs.modal': function () {
+                                        var zIndex = 1040 + (10 * $('.modal:visible').length);
+                                        $(this).css('z-index', zIndex);
+                                        setTimeout(function () {
+                                            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+                                        }, 0);
+                                    },
+                                    'hidden.bs.modal': function () {
+                                        if ($('.modal:visible').length > 0) {
+                                            // restore the modal-open class to the body element, so that scrolling works
+                                            // properly after de-stacking a modal.
+                                            setTimeout(function () {
+                                                $(document.body).addClass('modal-open');
+                                            }, 0);
+                                        }
+                                    }
+                                }, '.modal');
+                            });
+
+
+                            $(document).ready(function () {
+                                $('.btninfo').tooltip({title: "Mais informação", placement: "top"});
+                                $('.btnedit').tooltip({title: "Editar", placement: "top"});
+                                $('.btndel').tooltip({title: "Deletar", placement: "top"});
+                            });
 
 
                 </script>

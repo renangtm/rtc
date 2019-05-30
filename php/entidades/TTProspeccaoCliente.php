@@ -14,6 +14,8 @@
 class TTProspeccaoDeCliente extends TipoTarefa {
 
     public $id_empresa;
+
+    public $relac;
     
     function __construct($id_empresa) {
 
@@ -21,17 +23,21 @@ class TTProspeccaoDeCliente extends TipoTarefa {
 
         $this->id_empresa = $id_empresa;
         
+        $this->relac = array(12,2,3,4,7,8,9,10,1);
+
+
         $this->classes = array(
             array(
-                "<strong style='color:Black'>Aprovar para recepcao</strong>"
+                "<strong style='color:Blue'>Aprovar para recepcao</strong>"
                 ,"<strong style='color:Orange'>Cliente nao quer trabalhar momentaneamente com a Agro Fauna</strong>"
                 ,"<strong style='color:Red'>Cliente nao quer trabalhar com a Agro Fauna</strong>"
                 ,"<strong style='color:Purple'>Faleceu, fechou, nao trabalha mais, etc..</strong>"
                 ,"<strong style='color:Gray'>Cooperativa</strong>"
-                ,"<strong style='color:Blue'>Jogar para o pos-venda</strong>"
+                ,"<strong style='color:SteelBlue'>Jogar para o pos-venda</strong>"
                 ,"<strong style='color:Red'>Usina</strong>"
                 ,"<strong style='color:LightGreen'>Consumidor</strong>"
-                ,"<strong style='color:DarkOrange'>Contatos invalidos</strong>"));
+                ,"<strong style='color:DarkOrange'>Contatos invalidos</strong>"
+                ,"<strong style='color:Green'>Cliente Ja Utiliza o RTC</strong>"));
         
         $this->nome = "Prospeccao de Cliente";
         $this->tempo_medio = 0.3;
@@ -49,7 +55,11 @@ class TTProspeccaoDeCliente extends TipoTarefa {
         $ps->execute();
         $ps->bind_result($classe_virtual);
         if($ps->fetch()){
-            return array($classe_virtual);
+          	for($i=0;$i<count($this->relac);$i++){
+          		if($this->relac[$i]===$classe_virtual){
+          			return $i;
+          		}
+          	}
         }
         $ps->close();
         return array(0);
@@ -140,20 +150,10 @@ class TTProspeccaoDeCliente extends TipoTarefa {
         
          $con = new ConnectionFactory();
         
-         if($tarefa->opcoes[0] > 0){
-            
-            $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".$tarefa->opcoes[0]." WHERE id=$tarefa->id_entidade_relacionada");
+            $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".$this->relac[$tarefa->opcoes[0]]." WHERE id=$tarefa->id_entidade_relacionada");
             $ps->execute();
             $ps->close();
-            
-        }else{
-            
-            $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".($tarefa->opcoes[0]+1)." WHERE id=$tarefa->id_entidade_relacionada");
-            $ps->execute();
-            $ps->close();
-            
-            
-        }
+           
         
     }
     
@@ -230,23 +230,9 @@ class TTProspeccaoDeCliente extends TipoTarefa {
         $ps->close();
         
         
-        if($tarefa->opcoes[0] > 0){
-            
-            $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".($tarefa->opcoes[0]+1)." WHERE id=$tarefa->id_entidade_relacionada");
+        $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".$this->relac[$tarefa->opcoes[0]]." WHERE id=$tarefa->id_entidade_relacionada");
             $ps->execute();
             $ps->close();
-            
-            return;
-            
-        }else{
-            
-            $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".$tarefa->opcoes[0]." WHERE id=$tarefa->id_entidade_relacionada");
-            $ps->execute();
-            $ps->close();
-            
-            
-            
-        }
         
         $str_telefones = "";
         foreach($telefones as $key=>$value){
@@ -257,21 +243,29 @@ class TTProspeccaoDeCliente extends TipoTarefa {
         foreach($emails as $key=>$value){
             $str_emails .= "$key<br>";
         }
+
+        if($tarefa->opcoes[0] === 0){
         
-        $tarefa_ = new Tarefa();
-        $tarefa_->tipo_tarefa = Sistema::TT_RECEPCAO_CLIENTE($this->id_empresa);
-        $tarefa_->titulo = "Recepcao de Cliente $nome";
-        $tarefa_->descricao = "Recepcione o cliente $codigo -$nome para o RTC CNPJ: $cnpj<hr>Telefones:<br>$str_telefones<hr>Emails:<br>$str_emails<hr>";
-        $tarefa_->id_entidade_relacionada = $tarefa->id_entidade_relacionada;
-        $tarefa_->tipo_entidade_relacionada = $tarefa->tipo_entidade_relacionada;
-        
-        Sistema::novaTarefaEmpresa(new ConnectionFactory(), $tarefa_, new Virtual($this->id_empresa,$con));
-        
-        $ps = $con->getConexao()->prepare("UPDATE usuario_cliente SET data_inicio=data_inicio, data_fim=CURRENT_TIMESTAMP WHERE id_usuario=$usuario->id AND id_cliente=$tarefa->id_entidade_relacionada");
-        $ps->execute();
-        $ps->close();
-        
-        
+            $tarefa_ = new Tarefa();
+            $tarefa_->tipo_tarefa = Sistema::TT_RECEPCAO_CLIENTE($this->id_empresa);
+            $tarefa_->titulo = "Recepcao de Cliente $nome";
+            $tarefa_->descricao = "Recepcione o cliente $codigo -$nome para o RTC CNPJ: $cnpj<hr>Telefones:<br>$str_telefones<hr>Emails:<br>$str_emails<hr>";
+            $tarefa_->id_entidade_relacionada = $tarefa->id_entidade_relacionada;
+            $tarefa_->tipo_entidade_relacionada = $tarefa->tipo_entidade_relacionada;
+            
+            Sistema::novaTarefaEmpresa(new ConnectionFactory(), $tarefa_, new Virtual($this->id_empresa,$con));
+            
+            $ps = $con->getConexao()->prepare("UPDATE usuario_cliente SET data_inicio=data_inicio, data_fim=CURRENT_TIMESTAMP WHERE id_usuario=$usuario->id AND id_cliente=$tarefa->id_entidade_relacionada");
+            $ps->execute();
+            $ps->close();
+
+        }else{
+
+            $ps = $con->getConexao()->prepare("UPDATE tarefa SET sucesso=0,inicio_minimo=inicio_minimo WHERE id=$tarefa->id");
+            $ps->execute();
+            $ps->close();
+
+        }
         
         
     }

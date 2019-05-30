@@ -27,6 +27,7 @@ class Usuario {
     public $permissoes;
     public $cargo;
     public $faixa_salarial;
+    public $contrato_fornecedor;
 
     function __construct() {
 
@@ -42,6 +43,91 @@ class Usuario {
         $this->permissoes = array();
         $this->cargo = null;
         $this->faixa_salarial = 0;
+        $this->contrato_fornecedor = false;
+
+    }
+    
+    public function setPermissoesAbaixo($con, $permissoes) {
+
+        $resultado = array();
+
+        foreach ($permissoes as $key => $value) {
+
+            if ($value->in) {
+                $resultado[] = array($value->id, 0);
+            }
+            if ($value->del) {
+                $resultado[] = array($value->id, 1);
+            }
+            if ($value->alt) {
+                $resultado[] = array($value->id, 2);
+            }
+            if ($value->cons) {
+                $resultado[] = array($value->id, 3);
+            }
+        }
+
+
+        $ps = $con->getConexao()->prepare("DELETE FROM usuario_permissao_abaixo WHERE id_usuario=$this->id");
+        $ps->execute();
+        $ps->close();
+
+        foreach ($resultado as $key => $value) {
+
+            $ps = $con->getConexao()->prepare("INSERT INTO usuario_permissao_abaixo(id_usuario,id_permissao,tipo) VALUES($this->id,$value[0],$value[1])");
+            $ps->execute();
+            $ps->close();
+        }
+    }
+    
+    public function getPermissoesAbaixo($con) {
+
+        $permissoes = array();
+
+        $ps = $con->getConexao()->prepare("SELECT id_permissao,tipo FROM usuario_permissao_abaixo WHERE id_usuario=$this->id");
+        $ps->execute();
+        $ps->bind_result($id_permissao, $tipo);
+        while ($ps->fetch()) {
+
+            if (!isset($permissoes[$id_permissao])) {
+
+                $permissoes[$id_permissao] = array();
+            }
+
+            $permissoes[$id_permissao][$tipo] = true;
+        }
+        $ps->close();
+
+        $todas_permissoes = Sistema::getPermissoes($this->empresa);
+
+        $retorno = array();
+
+        foreach ($todas_permissoes as $key => $value) {
+
+            $cp = Utilidades::copy($value);
+            
+            if (isset($permissoes[$cp->id][0])) {
+                $cp->in = true;
+            }
+            if (isset($permissoes[$cp->id][1])) {
+                $cp->del = true;
+            }
+            if (isset($permissoes[$cp->id][2])) {
+                $cp->alt = true;
+            }
+            if (isset($permissoes[$cp->id][3])) {
+                $cp->cons = true;
+            }
+            
+            $retorno[] = $cp;
+            
+            unset($cp);            
+
+            
+        }
+
+        return $retorno;
+        
     }
 
     public function getCountClientes($con, $filtro = "") {
@@ -70,6 +156,68 @@ class Usuario {
         $ps->close();
 
         return 0;
+    }
+
+    public function getTiposTarefaUsuario($con) {
+
+        $tipos_tarefa = $this->empresa->getTiposTarefa($con);
+
+        $tt = array();
+
+        foreach ($tipos_tarefa as $key => $value) {
+
+            foreach ($value->cargos as $key2 => $value2) {
+
+                if ($value2->id === $this->cargo->id) {
+
+                    $tt[] = $value;
+
+                    continue 2;
+                }
+            }
+        }
+
+
+        $retorno = array();
+
+        $ps = $con->getConexao()->prepare("SELECT id,id_tipo_tarefa,importancia FROM tipo_tarefa_usuario WHERE id_usuario=$this->id");
+        $ps->execute();
+        $ps->bind_result($id, $id_tipo_tarefa, $importancia);
+
+        while ($ps->fetch()) {
+
+            foreach ($tt as $key => $value) {
+
+                if ($value->id === $id_tipo_tarefa) {
+
+                    $ut = new UsuarioTipoTarefa();
+                    $ut->id = $id;
+                    $ut->importancia = $importancia;
+                    $ut->tipo_tarefa = $value;
+                    $ut->usuario = $this;
+
+                    $retorno[] = $ut;
+
+                    unset($tt[$key]);
+
+                    continue 2;
+                }
+            }
+        }
+
+        $ps->close();
+
+        foreach ($tt as $key => $value) {
+
+            $ut = new UsuarioTipoTarefa();
+            $ut->importancia = $importancia;
+            $ut->tipo_tarefa = $value;
+            $ut->usuario = $this;
+
+            $retorno[] = $ut;
+        }
+
+        return $retorno;
     }
 
     public function addCliente($con, $cliente, $situacao) {
@@ -143,15 +291,15 @@ class Usuario {
 
         $tarefas = array();
 
-        $sql = "SELECT tarefa.id,tarefa.id_tipo_tarefa,tarefa.porcentagem_conclusao,UNIX_TIMESTAMP(tarefa.inicio_minimo)*1000,tarefa.intervalos_execucao "
+        $sql = "SELECT tarefa.id,tarefa.id_tipo_tarefa,tarefa.porcentagem_conclusao,UNIX_TIMESTAMP(tarefa.inicio_minimo)*1000,tarefa.intervalos_execucao,tarefa.sucesso "
                 . "FROM tarefa "
                 . "LEFT JOIN observacao ON observacao.id_tarefa=tarefa.id "
-                . "WHERE (".($somente_data?"(DATE(observacao.momento)=DATE(FROM_UNIXTIME($agora)) AND MONTH(observacao.momento)=MONTH(FROM_UNIXTIME($agora)) AND YEAR(observacao.momento)=YEAR(FROM_UNIXTIME($agora)))":"true")
+                . "WHERE (" . ($somente_data ? "(DATE(observacao.momento)=DATE(FROM_UNIXTIME($agora)) AND MONTH(observacao.momento)=MONTH(FROM_UNIXTIME($agora)) AND YEAR(observacao.momento)=YEAR(FROM_UNIXTIME($agora)))" : "true")
                 . ") AND tarefa.id_usuario=$this->id AND tarefa.excluida=false GROUP BY tarefa.id";
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id, $tipo, $porcentagem, $inicio, $interv);
+        $ps->bind_result($id, $tipo, $porcentagem, $inicio, $interv, $sucesso);
         while ($ps->fetch()) {
 
             $tarefa = new stdClass();
@@ -160,7 +308,7 @@ class Usuario {
             $tarefa->fim = $inicio;
             $tarefa->concluida = ($porcentagem >= 100) ? 2 : ($porcentagem > 0 ? 1 : 0);
             $tarefa->tipo_tarefa = null;
-
+            $tarefa->sucesso = $sucesso == 1;
 
             foreach ($tipos_tarefa as $key => $value) {
                 if ($value->id === $tipo) {
@@ -247,10 +395,10 @@ class Usuario {
             }
 
             if (!isset($res[$tarefa->tipo_tarefa->nome][$tarefa->concluida])) {
-                $res[$tarefa->tipo_tarefa->nome][$tarefa->concluida] = array(0, 0);
+                $res[$tarefa->tipo_tarefa->nome][$tarefa->concluida] = array(array(0, 0), array(0, 0));
             }
 
-            $res[$tarefa->tipo_tarefa->nome][$tarefa->concluida][$tarefa->fora ? 1 : 0] ++;
+            $res[$tarefa->tipo_tarefa->nome][$tarefa->concluida][$tarefa->fora ? 1 : 0][$tarefa->sucesso ? 1 : 0] ++;
         }
 
         return $res;
@@ -1010,12 +1158,12 @@ class Usuario {
 
 
         if ($this->id == 0) {
-            $ps = $con->getConexao()->prepare("INSERT INTO usuario(login,senha,nome,cpf,excluido,id_empresa,rg,faixa_salarial) VALUES('" . addslashes($this->login) . "','" . addslashes($this->senha) . "','" . addslashes($this->nome) . "','" . $this->cpf->valor . "',false," . $this->empresa->id . ",'" . addslashes($this->rg->valor) . "',$this->faixa_salarial)");
+            $ps = $con->getConexao()->prepare("INSERT INTO usuario(login,senha,nome,cpf,excluido,id_empresa,rg,faixa_salarial,contrato_fornecedor) VALUES('" . addslashes($this->login) . "','" . addslashes($this->senha) . "','" . addslashes($this->nome) . "','" . $this->cpf->valor . "',false," . $this->empresa->id . ",'" . addslashes($this->rg->valor) . "',$this->faixa_salarial,".($this->contrato_fornecedor?"true":"false").")");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
         } else {
-            $ps = $con->getConexao()->prepare("UPDATE usuario SET login='" . addslashes($this->login) . "',senha='" . addslashes($this->senha) . "', nome = '" . addslashes($this->nome) . "', cpf='" . $this->cpf->valor . "',excluido=false, id_empresa=" . $this->empresa->id . ",rg='" . addslashes($this->rg->valor) . "',faixa_salarial=$this->faixa_salarial WHERE id = " . $this->id);
+            $ps = $con->getConexao()->prepare("UPDATE usuario SET login='" . addslashes($this->login) . "',senha='" . addslashes($this->senha) . "', nome = '" . addslashes($this->nome) . "', cpf='" . $this->cpf->valor . "',excluido=false, id_empresa=" . $this->empresa->id . ",rg='" . addslashes($this->rg->valor) . "',faixa_salarial=$this->faixa_salarial,contrato_fornecedor=".($this->contrato_fornecedor?"true":"false")." WHERE id = " . $this->id);
             $ps->execute();
             $ps->close();
         }

@@ -24,5 +24,11 @@ class EmpresaAgricola extends Empresa {
             Sistema::P_PARAMETRROS_TECNICOS_PRODUTO());
         
     }
+    
+    public function getProdutosInventario($con){
+        
+        return $this->getProdutos($con, 0, 100000,"produto.id_categoria=".Sistema::CATP_AGRICOLA()->id);
+        
+    }
 
 }

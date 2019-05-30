@@ -407,11 +407,13 @@ class ProdutoPedidoSaida {
             $emp = $this->pedido->logistica;
         }
 
-        $juros_mes = 1 + $emp->juros_mensal / 100;
+        $juros_mes = 1 + $this->pedido->empresa->juros_mensal / 100;
 
         $juros_dia = pow($juros_mes, 1 / 30);
 
-        $this->juros = round(($this->valor_base * pow($juros_dia, $this->pedido->prazo)) - $this->valor_base, 2);
+        $periodo = $this->pedido->prazo/$this->pedido->parcelas;
+
+        $this->juros = round($this->valor_base * (((pow($juros_dia, $periodo)-1)/2)*($this->pedido->parcelas+1)), 2);
 
         if ($this->pedido->cliente != null) {
 

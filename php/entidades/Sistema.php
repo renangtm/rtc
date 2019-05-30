@@ -13,7 +13,7 @@
  */
 class Sistema {
 
-    public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
+    public static $ENDERECO = "https://www.rtcagro.com.br/";
 
     /*
      * porcentagem
@@ -28,8 +28,87 @@ class Sistema {
         $ps->close();
 
     }
+    
+    public static function getPermissoesPermitidas($con,$usuario){
+        
+        $org = new Organograma($usuario->empresa);
+        
+        $superiores = $org->getSuperiores($con, $usuario);
+        
+        $ids_usuarios = "(-1";
+        
+        foreach($superiores as $key=>$value){
+            if($value->id_usuario !== $usuario->id){
+                $ids_usuarios .= ",$value->id_usuario";
+            }
+        }
+        
+        $ids_usuarios .= ")";
+        
+        $usuarios = $usuario->empresa->getUsuarios($con,0,10000,"usuario.id IN $ids_usuarios");
+        
+        $permissoes = Sistema::getPermissoes($usuario->empresa);
+        $rp = array();
+        
+        
+        foreach($permissoes as $key=>$value){
+            $permissoes[$key] = Utilidades::copy($value);
+            $permissoes[$key]->in = true;
+            $permissoes[$key]->alt = true;
+            $permissoes[$key]->cons = true;
+            $permissoes[$key]->del = true;
+            $rp[$permissoes[$key]->id] = $permissoes[$key];
+        }
+        
+        foreach($usuarios as $key=>$value){
+      
+            $prm = $value->getPermissoesAbaixo($con);
+            
+            foreach($prm as $key2=>$value2){
+                
+                if(isset($rp[$value2->id])){
+                    
+                    $p = $rp[$value2->id];
+                    $p->in = $p->in && $value2->in;
+                    $p->alt = $p->alt && $value2->alt;
+                    $p->cons = $p->cons && $value2->cons;
+                    $p->del = $p->del && $value2->del;
+                    
+                }
+                
+            }
+            
+        }
+        
+        
+        $real_ret = array();
+       
+        foreach($rp as $key=>$value){
+            $real_ret[] = $value;
+        }
+        
+        return $real_ret;
+        
+        
+    }
+    
+    public static function getUsuariosPossiveisParaTarefa($con,$tipo,$empresa){
+        
+        $cargos = "(0";
+        
+        foreach($tipo->cargos as $key=>$value){
+            $cargos .= ",$value->id";
+        }
+        
+        $cargos .= ")";
+        
+        $usuarios = $empresa->getUsuarios($con,0,10000,"usuario.id_cargo IN $cargos");
+        
+        return $usuarios;
+        
+    }
 
-    public static function consignarProduto($con,$produto,$empresa){
+    public static function consignarProduto($con,$produto,$empresa,$cidades=array()){
 
     	if ($produto->id === 0) {
 
@@ -44,6 +123,22 @@ class Sistema {
         $ps->execute();
         $ps->close();
 
+        
+        if(count($cidades)>0){
+
+            
+             $ps = $con->getConexao()->prepare("DELETE FROM produto_consignado_cidade WHERE id_produto=$produto->id");
+             $ps->execute();
+             $ps->close();
+             
+             foreach($cidades as $key=>$value){
+                 $ps = $con->getConexao()->prepare("INSERT INTO produto_consignado_cidade(id_produto,id_cidade) VALUES($produto->id,$value->id)");
+                 $ps->execute();
+                 $ps->close();
+             }
+             
+        }
+        
     }
 
     public static function addCarrinhoEncomendaCadastrando($con, $produto, $quantidade) {
@@ -605,16 +700,20 @@ class Sistema {
 
         $trabalhos = array();
 
+        $inventario = new RoboInventario();
+        $inventario->cronoExpression = "at(23h)";
+        //$trabalhos[] = $inventario;
+        
         $prospeccao = new RoboVirtual();
         $prospeccao->cronoExpression = "re(50m)";
-        $trabalhos[] = $prospeccao;
+        //$trabalhos[] = $prospeccao;
 
         $det = new RoboDetona();
         $det->cronoExpression = "at(9h)";
         $trabalhos[] = $det;
 
         $relatorios = new EnvioRelatorios();
-        $relatorios->cronoExpression = "at(20h)";
+        $relatorios->cronoExpression = "at(19h)";
         $trabalhos[] = $relatorios;
 
         $attdias = new AtualizaDiasCorridos();
@@ -679,6 +778,10 @@ class Sistema {
 
     public static function STATUS_EXCLUIDO() {
         return new StatusPedidoSaida(30, "Excluido", false, false, Email::$COMPRAS, Email::$VENDAS, false, false, true, false);
+    }
+
+    public static function STATUS_RESERVA() {
+        return new StatusPedidoSaida(31, "Reserva", false, true, Email::$COMPRAS, Email::$VENDAS, true, true, false, false);
     }
 
     public static function STATUS_ENCOMENDA_ANALISE() {
@@ -864,6 +967,10 @@ class Sistema {
     public static function P_RELATORIO_MAX_PALET() {
         return new Permissao(44, "RelatorioMaxPalet");
     }
+    
+    public static function P_RELATORIO_INVENTARIO() {
+        return new Permissao(97, "RelatorioInventario");
+    }
 
     public static function P_EMPRESA_CLIENTE() {
         return new Permissao(45, "Empresa Cliente");
@@ -926,11 +1033,15 @@ class Sistema {
     }
     
     public static function P_CONSIGNACAO_PRODUTO() {
-        return new Permissao(87, "Consignacao de Produto");
+        return new Permissao(87, "Consignacao de Produto",false,false,false,false,false);
     }
     
     public static function P_GERENCIAR_CONSIGNADOS() {
         return new Permissao(88, "Gerenciar consignacao");
+    }
+    
+     public static function P_TAREFA_SIMPLIFICADA() {
+        return new Permissao(89, "Tarefa Simplificada");
     }
 
     public static function TT_COMPRA($id_empresa) {
@@ -1121,13 +1232,14 @@ class Sistema {
 
     public static function avisoDEVS_MASTER($aviso) {
 
-        $email = new Email("renan.miranda@agrofauna.com.br");
-        $email->senha = "5hynespt";
+        $email = new Email("suporte@agftec.com.br");
+        $email->senha = "5Q44Cq2uACTNoUVO";
 
         $destino = new Email("renan_goncalves@outlook.com.br");
+        $destino2 = new Email("renan.miranda@agrofauna.com.br");
 
         try {
-
+            $email->enviarEmail($destino2, 'Aviso', $aviso);
             $email->enviarEmail($destino, 'Aviso', $aviso);
         } catch (Exception $ex) {
             
@@ -1136,8 +1248,8 @@ class Sistema {
 
     public static function avisoDEVS($aviso) {
 
-        $email = new Email("renan.miranda@agrofauna.com.br");
-        $email->senha = "5hynespt";
+        $email = new Email("suporte@agftec.com.br");
+        $email->senha = "5Q44Cq2uACTNoUVO";
 
 
         $destino = new Email("renan_goncalves@outlook.com.br");
@@ -1273,7 +1385,7 @@ class Sistema {
                 . "observacao.observacao,"
                 . "tarefa.id_usuario "
                 . "FROM tarefa LEFT JOIN (SELECT * FROM observacao WHERE observacao.excluida = false) observacao ON tarefa.id=observacao.id_tarefa "
-                . "WHERE tarefa.excluida=false AND tarefa.id_usuario IN $in AND tarefa.porcentagem_conclusao<100";
+                . "WHERE tarefa.excluida=false AND tarefa.id_usuario IN $in AND tarefa.porcentagem_conclusao<100 AND (tarefa.agendamento IS NULL OR tarefa.agendamento <= CURRENT_TIMESTAMP)";
 
         $tmp = array();
         $ps = $con->getConexao()->prepare($sql);
@@ -1363,17 +1475,15 @@ class Sistema {
 
             $t[] = $tarefa;
 
-            IATarefas::aplicar($e, $a, $t);
-
             if ($menor < 0) {
 
                 $menor = $usuario;
-                $tempo = $tarefa->calculado_momento_conclusao;
+                $tempo = count($tarefas);
                 $tasks = $t;
             } else {
-                if ($tempo > $tarefa->calculado_momento_conclusao) {
+                if ($tempo > count($tarefas)) {
                     $menor = $usuario;
-                    $tempo = $tarefa->calculado_momento_conclusao;
+                    $tempo = count($tarefas);
                     $tasks = $t;
                 }
             }
@@ -1661,7 +1771,8 @@ class Sistema {
         $relatorios[] = new RelatorioProdutoLogistica($empresa);
         $relatorios[] = new RelatorioMaxPalet($empresa);
         $relatorios[] = new RelatorioProduto($empresa);
-
+        $relatorios[] = new RelatorioInventario($empresa);
+        
         $permitidos = array();
 
         foreach ($relatorios as $key => $value) {
@@ -3781,7 +3892,7 @@ class Sistema {
 
     public static function getMicroServicoJava($nome, $parametros = null) {
 
-        $servico = realpath('../micro_servicos_java'); //trocar
+        $servico = realpath('../micro_servicos_java'); 
         $servico .= "/$nome.jar";
         $comando = "java -jar \"$servico\"";
 
@@ -3923,10 +4034,10 @@ class Sistema {
         $empresa->setLogo($con, 'http://www.tratordecompras.com.br/renew/Status_3/php/uploads/arquivo_15501989058192.png');
 
         $rtc = Sistema::getRTCS();
-        $rtc = $rtc[0];
+        $rtc = $rtc[1];
         
         if($consigna){
-            $rtc=$rtc[5];
+            $rtc=$rtc[6];
         }
         
         $empresa->setRTC($con, $rtc);
@@ -4377,10 +4488,14 @@ class Sistema {
         $cats[] = new CategoriaDocumento(2, "Certificado Comerciante de Agrotoxico");
         $cats[] = new CategoriaDocumento(3, "Documentos Empresariais");
         $cats[] = new CategoriaDocumento(4, "Balanco");
+        $cats[] = new CategoriaDocumento(5, "Seraza");
+        $cats[] = new CategoriaDocumento(6, "Ficha Cadastral");
+        $cats[] = new CategoriaDocumento(7, "Carta de fianca");
+        $cats[] = new CategoriaDocumento(8, "Documentos dos socios");
 
         return $cats;
     }
-
+ 
     public static function getEmailSistema() {
 
         $email = new Email("renan.miranda@agrofauna.com.br");
@@ -4391,15 +4506,17 @@ class Sistema {
 
     public static function getRTCS() {
         RTC::$RTCS = array();
-        return array(new RTC(1, array(
+        return array(new RTC(0, array(
                 Sistema::P_CONSIGNACAO_PRODUTO(),
+                Sistema::P_PRODUTO(),
+                Sistema::P_LOGO(),
+                Sistema::P_CONFIGURACAO_EMPRESA()
+                )),new RTC(1, array(
                 Sistema::P_CLIENTE(),
                 Sistema::P_FORNECEDOR(),
                 Sistema::P_TRANSPORTADORA(),
                 Sistema::P_PEDIDO_SAIDA(),
                 Sistema::P_PEDIDO_ENTRADA(),
-                Sistema::P_LOGO(),
-                Sistema::P_PRODUTO(),
                 Sistema::P_MOVIMENTO_PRODUTO(),
                 Sistema::P_ALTERAR_SEM_REVISAR())
             ), new RTC(2, array(
@@ -4407,7 +4524,6 @@ class Sistema {
                 Sistema::P_CATEGORIA_CLIENTE(),
                 Sistema::P_CATEGORIA_PRODUTO(),
                 Sistema::P_CATEGORIA_DOCUMENTO(),
-                Sistema::P_CONFIGURACAO_EMPRESA(),
                 Sistema::P_COTACAO())
             ), new RTC(3, array(
                 Sistema::P_GRUPO_CIDADE(),
@@ -4418,7 +4534,9 @@ class Sistema {
             ), new RTC(4, array(
                 Sistema::P_NOTA(),
                 Sistema::P_ENTRADA_NFE(),
-                Sistema::P_IA_CHAT()
+                Sistema::P_IA_CHAT(),
+                Sistema::P_RELATORIO_INVENTARIO(),
+                Sistema::P_TAREFA_SIMPLIFICADA()
                     )), new RTC(5, array(
                 Sistema::P_BANCO(),
                 Sistema::P_RELATORIO_FINANCEIRO(),
@@ -4463,6 +4581,19 @@ class Sistema {
                     }
                 }
             }
+            
+            $rtcs = Sistema::getRTCS();
+            
+            foreach($rtcs as $key=>$value){
+                if($value->numero < $rtc->numero){
+                    foreach($value->permissoes as $key2=>$value2){
+                        if(!$value2->frente){
+                            $perms[] = $value2;
+                        }
+                    }
+                }
+            }
+            
         }
 
         return $perms;
@@ -4787,6 +4918,8 @@ class Sistema {
             $ret[] = Sistema::CATP_INFORMATICA();
             $ret[] = Sistema::CATP_ADUBOS_FOLIARES();
             $ret[] = Sistema::CATP_AGRICOLA_SUSP();
+            $ret[] = Sistema::CATP_LEILAO();
+            
         } else {
 
             $ret[] = Sistema::CATP_AGRICOLA();
@@ -4857,6 +4990,7 @@ class Sistema {
 
         $sql = "SELECT "
                 . "usuario.id,"
+                . "usuario.contrato_fornecedor,"
                 . "usuario.id_cargo,"
                 . "usuario.nome,"
                 . "usuario.login,"
@@ -4913,7 +5047,7 @@ class Sistema {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_usu, $id_cargo, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa,$fornecedor_virtual, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id_usu, $contrato_fornecedor, $id_cargo, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa,$fornecedor_virtual, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $usuarios = array();
 
@@ -4922,6 +5056,7 @@ class Sistema {
             $usuario = new Usuario();
 
             $usuario->id_cargo = $id_cargo;
+            $usuario->contrato_fornecedor = $contrato_fornecedor==1;
             $usuario->cpf = new CPF($cpf_usu);
             $usuario->email = new Email($email_usu_end);
             $usuario->email->id = $email_usu_id;

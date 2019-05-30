@@ -110,7 +110,7 @@
                         </div>
                         <div class="modal-footer" style="text-align:center;">
                             <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
-                            <button id="btRecuperar" ng-click="recupera()" class="btn btn-primary">Gerar nova senha, e enviar para o email</button>
+                            <button id="btRecuperar" ng-click="recuperar()" class="btn btn-primary">Gerar nova senha, e enviar para o email</button>
                         </div>
                     </div>				  
                 </div>

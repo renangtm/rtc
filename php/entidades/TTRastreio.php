@@ -25,6 +25,30 @@ class TTRastreio extends TipoTarefa {
         );
         $this->carregarDados();
     }
+    
+    
+    public function init($tarefa) {
+        
+        $con = new ConnectionFactory();
+
+        $pt = explode("_", $tarefa->tipo_entidade_relacionada);
+        if (count($pt) === 2) {
+            if ($pt[0] === "PED") {
+
+                $id_empresa = intval($pt[1]);
+                $empresa = new Empresa($id_empresa, $con);
+                $pedido = $empresa->getPedidos($con, 0, 1, "pedido.id=$tarefa->id_entidade_relacionada");
+                $pedido = $pedido[0];
+
+                $observ = $tarefa->observacoes[count($tarefa->observacoes)-1];
+                
+                Logger::gerarLog($pedido, "Rastreamento do pedido $pedido->id do cliente ".$pedido->cliente->razao_social.": ".$observ->observacao);
+                
+            }
+        }
+        
+        
+    }
 
    public function aoFinalizar($tarefa, $usuario) {
 

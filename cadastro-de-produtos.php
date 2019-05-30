@@ -306,11 +306,53 @@
                                         <?php } ?>
                                     </div>
                                 </nav>
+                                <style type="text/css">
+                                    .tbl td{
+                                        padding:10px;
+                                    }
+                                </style>
                                 <div class="tab-content" id="nav-tabContent">
                                     <div class="tab-pane fade show active" id="nav-prod" role="tabpanel" aria-labelledby="nav-prod-tab">
 
                                         <!-- form produto -->
                                         <form id="add-form" ng-submit="mergeProduto()" parsley-validate>
+                                            <?php if($empresa->tipo_empresa === 4){?>
+                                            <div class="form-group row">
+                                                <div class="col-12 col-lg-12" style="padding:10px">
+                                                    <table class="tbl" style="width:100%">
+                                                        <tr>
+                                                            <td>Perfeicao</td>
+                                                            <td>
+                                                                <input type="range" style="width:100%" min="1" max="100" ng-model="produto.perfeicao">
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" class="form-control" style="width:100px" ng-model="produto.perfeicao">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="3" style="font-size:20px;font-weight: bold;color:#000000">
+                                                                {{nivel(produto.perfeicao,produto.grau_perfeicao)}}
+                                                            </td>
+                                                            <hr>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Aceitacao</td>
+                                                            <td>
+                                                                <input type="range" style="width:100%" min="1" max="100" ng-model="produto.aceitacao">
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" class="form-control" style="width:100px" ng-model="produto.aceitacao">
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="3" style="font-size: 20px;font-weight: bold;color:#000000">
+                                                                {{nivel(produto.aceitacao,produto.grau_aceitacao)}}
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <?php } ?>
                                             <div class="form-group row">
                                                 <label for="txtname" class="col-3 col-lg-2 col-form-label text-left">Codigo</label>
                                                 <div class="col-9 col-lg-10">
@@ -549,6 +591,21 @@
 
                                     </div>
                                     <div class="tab-pane fade" id="nav-uso" role="tabpanel" aria-labelledby="nav-uso-tab">
+                                        <div class="row">
+                                            <hr>
+                                            <div class="col-md-8">
+                                                <a href="{{produto.ficha}}" ng-if="produto.ficha !== ''" target="_blank" style="text-decoration: underline;"><i class="fas fa-upload"></i>&nbspDOWNLOAD FICHA DE EMERGENCIA</a>
+                                                <strong style="color:Red" ng-if="produto.ficha===''">PRODUTO SEM FICHA DE EMERGENCIA</strong>
+                                                
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button class="btn btn-success" onclick="$('#flFicha').click()">
+                                                    <i class="fas fa-upload"></i>&nbsp Colocar Ficha
+                                                </button>
+                                                <input type="file" style="visibility: hidden" id="flFicha">
+                                            </div>
+                                            <hr>
+                                        </div>
                                         <div class="row">
                                             <div class="col-md-6">
                                                 Cultura:

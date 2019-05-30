@@ -143,7 +143,7 @@ class Email {
         return $enderecos;
     }
 
-    public function enviarEmail($destino, $titulo, $conteudo) {
+    public function enviarEmail($destino, $titulo, $conteudo,$elias=true) {
         
         $con = new ConnectionFactory();
 
@@ -167,6 +167,16 @@ class Email {
         }
 
         foreach ($enderecos as $key => $endereco) {
+
+            if(!$elias){
+
+                if(strpos($endereco, 'elias') !== false){
+
+                    continue;
+
+                }
+
+            }
 
             $hash = md5($conteudo . $endereco . $titulo);
 

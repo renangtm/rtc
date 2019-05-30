@@ -103,6 +103,33 @@
                                     color:Purple !important;
                                 }
 
+                                .c5 td{
+                                    color:Gray !important;
+                                }
+
+                                .c6 td{
+                                    color:Brown !important;
+                                }
+
+                                .c7 td{
+                                    color:LightGray !important;
+                                }
+
+                                .c8 td{
+                                    color:SteelBlue !important;
+                                }
+
+                                .c9 td{
+                                    color:Red !important;
+                                }
+
+                                .c10 td{
+                                    color:LightGreen !important;
+                                }
+
+                                .c11 td{
+                                    color:DarkOrange !important;
+                                }
 
                             </style>
                            

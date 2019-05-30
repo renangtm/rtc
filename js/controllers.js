@@ -1,10 +1,891 @@
-rtc.controller("crtAprovacaoConsignado", function ($scope, aprovacaoConsignadoService,baseService) {
+rtc.controller("crtTarefaSimplificada", function ($scope, tarefaSimplificadaService, baseService, uploadService, tipoTarefaService) {
+
+    $scope.tarefas = createAssinc(tarefaSimplificadaService, 1, 10, 4);
+    assincFuncs(
+            $scope.tarefas,
+            "t",
+            ["prioridade","id", "descricao", "id_tipo_tarefa", "momento"]);
+    $scope.tarefas.attList();
+
+    $scope.tipos_andamento = [
+        {id: 0, nome: "Inicio"},
+        {id: 1, nome: "Pausa"},
+        {id: 2, nome: "Fim"}
+    ]
+
+    $scope.nova_tarefa = {};
+    $scope.tarefa = {};
+
+    $scope.tipos_tarefa = [];
+
+    $scope.novo_andamento = {};
+    $scope.andamento = {};
+
+
+    $("#flArquivos").change(function () {
+
+        uploadService.upload($(this).prop("files"), function (arquivos, sucesso) {
+
+            if (!sucesso) {
+
+                msg.erro("Falha ao subir arquivo");
+
+            } else {
+
+                var doc = angular.copy($scope.documento);
+
+                for (var i = 0; i < arquivos.length; i++) {
+
+                    $scope.tarefa.arquivos[$scope.tarefa.arquivos.length] = arquivos[i];
+                    
+                }
+
+                baseService.merge($scope.tarefa, function (r) {
+
+                    if (r.sucesso) {
+
+                        msg.alerta("Operacao efetuada com sucesso");
+
+                    } else {
+
+                        msg.erro("Falha ao efetuar operacao");
+
+                    }
+
+                })
+            }
+
+        })
+
+    })
+
+    $scope.initUpload = function(tarefa){
+        
+        $scope.tarefa = tarefa;
+        
+        $('#flArquivos').click();
+        
+    }
+
+    $scope.novoAndamento = function (tarefa) {
+
+        $scope.andamento = angular.copy($scope.novo_andamento);
+        $scope.andamento.tarefa = tarefa;
+        $scope.andamento.usuario = tarefa.usuarios[0];
+
+        var possiveis = $scope.getTiposPossiveis($scope.andamento);
+        $scope.andamento.tipo = possiveis[0].id;
+
+    }
+
+    tarefaSimplificadaService.getAndamentoTarefaSimplificada(function (a) {
+
+        $scope.novo_andamento = a.andamento;
+
+    })
+
+    $scope.setTarefa = function (tarefa) {
+
+        $scope.tarefa = tarefa;
+
+        if ($scope.tarefa.tipo === null) {
+
+            $scope.tarefa.tipo = $scope.tipos_tarefa[0];
+
+        }
+
+        equalize($scope.tarefa, "tipo", $scope.tipos_tarefa);
+
+        $scope.getUsuariosPossiveis($scope.tarefa);
+
+    }
+
+    $scope.novaTarefa = function () {
+
+        if ($scope.tarefa.id !== 0) {
+
+            $scope.tarefa = angular.copy($scope.nova_tarefa);
+            $scope.setTarefa($scope.tarefa);
+
+        }
+
+    }
+
+    $scope.getStatus = function (tarefa) {
+
+        if (tarefa.andamentos.length === 0) {
+
+            return -1;
+
+        }
+
+        return tarefa.andamentos[tarefa.andamentos.length - 1].tipo;
+
+    }
+
+    tipoTarefaService.getTiposTarefa(function (t) {
+
+        $scope.tipos_tarefa = t.tipos_tarefa;
+
+    })
+
+    tarefaSimplificadaService.getTarefaSimplificada(function (t) {
+
+        $scope.nova_tarefa = t.tarefa;
+
+    })
+
+    $scope.usuarios_possiveis = [];
+
+    $scope.getUsuariosPossiveis = function (tarefa) {
+
+        tarefaSimplificadaService.getUsuariosPossiveis(tarefa.tipo, function (u) {
+
+            $scope.usuarios_possiveis = u.usuarios;
+
+        })
+
+    }
+
+    $scope.contem = function (usuario, tarefa) {
+
+        for (var i = 0; i < tarefa.usuarios.length; i++) {
+            if (tarefa.usuarios[i].id === usuario.id) {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
+    $scope.addUsuario = function (usuario, tarefa) {
+
+        for (var i = 0; i < tarefa.usuarios.length; i++) {
+            if (tarefa.usuarios[i].id === usuario.id) {
+                msg.erro("Esse usuario ja esta na tarefa");
+                return;
+            }
+        }
+
+        tarefa.usuarios[tarefa.usuarios.length] = usuario;
+
+    }
+
+    $scope.removeUsuario = function (usuario, tarefa) {
+
+        var nu = [];
+
+        for (var i = 0; i < tarefa.usuarios.length; i++) {
+            if (tarefa.usuarios[i].id !== usuario.id) {
+                nu[nu.length] = tarefa.usuarios[i];
+            }
+        }
+
+        tarefa.usuarios = nu;
+
+    }
+    
+    $scope.removeArquivo = function (arquivo, tarefa) {
+
+        var na = [];
+
+        for (var i = 0; i < tarefa.arquivos.length; i++) {
+            if (tarefa.arquivos[i] !== arquivo) {
+                na[na.length] = tarefa.arquivos[i];
+            }
+        }
+
+        tarefa.arquivos = na;
+        
+        baseService.merge(tarefa, function (r) {
+
+            if (!r.sucesso) {
+
+                msg.erro("Falha ao efetuar operacao");
+
+            }
+
+        })
+
+    }
+
+    $scope.removeAndamento = function (andamento, tarefa) {
+
+        baseService.delete(andamento, function (r) {
+
+            if (r.sucesso) {
+
+                var na = [];
+
+                for (var i = 0; i < tarefa.andamentos.length; i++) {
+                    if (tarefa.andamentos[i].id !== andamento.id) {
+                        na[na.length] = tarefa.andamentos[i];
+                    }
+                }
+
+                tarefa.andamentos = na;
+
+                msg.alerta("Operação efetuada com sucesso");
+
+
+            } else {
+
+                msg.erro("Ocorreu um problema ao executar a operação");
+
+            }
+
+        })
+
+    }
+
+
+    $scope.getTiposPossiveis = function (andamento) {
+
+        return $scope.tipos_andamento;
+        //---- imediato;
+        var possiveis = [];
+
+        var ultimo_andamento = null;
+
+        if (andamento.tarefa.andamentos.length > 0) {
+            ultimo_andamento = andamento.tarefa.andamentos[andamento.tarefa.andamentos.length - 1];
+        }
+
+        if (ultimo_andamento === null) {
+
+            possiveis = [$scope.tipos_andamento[0]];
+
+            return possiveis;
+
+        } else if (ultimo_andamento.tipo === 0) {
+
+
+            possiveis = [$scope.tipos_andamento[1], $scope.tipos_andamento[2]];
+
+            return possiveis;
+
+        } else {
+
+            possiveis = [$scope.tipos_andamento[0]];
+
+            return possiveis;
+
+        }
+
+    }
+
+    $scope.mergeAndamento = function (andamento) {
+
+        baseService.merge(andamento, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.tarefas.attList();
+
+            } else {
+
+                msg.erro("Falha ao efetuar operacao");
+
+            }
+
+        })
+
+    }
+
+    $scope.deleteTarefa = function (tarefa) {
+
+        baseService.delete(tarefa, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.tarefas.attList();
+
+            } else {
+
+                msg.erro("Falha ao efetuar operacao");
+
+            }
+
+        })
+
+    }
+
+    $scope.mergeTarefa = function (tarefa) {
+
+        if (tarefa.usuarios.length === 0) {
+
+            msg.erro("A tarefa precisa ter pelo menos um usuario");
+            return;
+
+        }
+
+        baseService.merge(tarefa, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.tarefas.attList();
+
+            } else {
+
+                msg.erro("Falha ao efetuar operacao");
+
+            }
+
+        })
+
+    }
+
+
+})
+rtc.controller("crtPedidosReserva", function ($scope, pedidoReservaService, logService, tabelaService, baseService, produtoService, sistemaService, statusPedidoSaidaService, formaPagamentoService, transportadoraService, clienteService, produtoPedidoReservaService) {
+
+    $scope.pedidos = createAssinc(pedidoReservaService, 1, 10, 10);
+    $scope.pedidos.attList();
+    assincFuncs(
+            $scope.pedidos,
+            "pedido_reserva",
+            ["id", "cliente.razao_social", "data", "frete", "usuario.nome"]);
+
+    produtoService.vencidos = false;
+    $scope.produtos = createAssinc(produtoService, 1, 3, 4);
+
+    assincFuncs(
+            $scope.produtos,
+            "produto",
+            ["codigo", "nome", "disponivel"], "filtroProdutos");
+
+    $scope.transportadoras = createAssinc(transportadoraService, 1, 3, 4);
+
+    assincFuncs(
+            $scope.transportadoras,
+            "transportadora",
+            ["codigo", "razao_social"], "filtroTransportadoras");
+
+    $scope.clientes = createAssinc(clienteService, 1, 3, 4);
+
+    $scope.carregando = false;
+
+    $scope.inverterPrecos = function () {
+
+        $scope.atualizaCustos();
+
+        var p = $scope.pedido;
+
+        var total = 0;
+
+        for (var i = 0; i < p.produtos.length; i++) {
+            total += p.produtos[i].quantidade * p.produtos[i].valor_base;
+        }
+
+        for (var i = 0; i < p.produtos.length; i++) {
+
+            var pro = p.produtos[i];
+            var vun = pro.valor_base + pro.frete + pro.juros + pro.icms + pro.ipi;
+
+            var perc = pro.quantidade * pro.valor_base / total;
+
+            var frete = (p.frete * perc) / pro.quantidade;
+            vun -= frete;
+
+            var ipi = 1 + (pro.ipi / (vun - pro.ipi));
+
+            vun -= pro.ipi;
+
+            var icms = ((vun - pro.icms) / (vun));
+
+            vun -= pro.icms;
+
+            var juros = 1 + (pro.juros / (vun - pro.juros));
+
+            var fat = juros / icms * ipi;
+
+            pro.valor_base = parseFloat(((pro.valor_base - frete) / fat).toFixed(3));
+
+
+        }
+
+        $scope.atualizaCustos();
+
+    }
+
+    assincFuncs(
+            $scope.clientes,
+            "cliente",
+            ["codigo", "razao_social"], "filtroClientes");
+
+
+    $scope.meses_validade_curta = 3;
+
+    $scope.pedido_novo = {};
+
+    $scope.produto_pedido_novo = {};
+
+    $scope.pedido = {};
+
+    $scope.fretes = [];
+
+    $scope.qtd = 0;
+
+    $scope.produto = {};
+
+    $scope.logisticas = [];
+
+    $scope.logs = [];
+
+    $scope.retorno_cobranca = ""
+
+    sistemaService.getLogisticas(function (rr) {
+
+        $scope.logisticas = rr.logisticas;
+
+    })
+
+
+    produtoPedidoReservaService.getProdutoPedido(function (pp) {
+
+        $scope.produto_pedido_novo = pp.produto_pedido;
+
+    })
+
+
+    $scope.gerarCobranca = function () {
+
+        pedidoReservaService.gerarCobranca($scope.pedido, function (r) {
+
+            if (r.sucesso) {
+                $("#retCob").html("Cobranca gerada com sucesso. <hr> " + r.retorno);
+            } else {
+                $("#retCob").html("Problema ao gerar cobranca");
+            }
+
+        })
+
+    }
+
+
+    $scope.getPesoBrutoPedido = function () {
+
+        var tot = 0;
+
+        for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+
+            var p = $scope.pedido.produtos[i];
+
+            tot += (p.produto.peso_bruto) * p.quantidade;
+
+        }
+
+        return tot;
+
+    }
+
+    $scope.getTotalPedido = function () {
+
+        var tot = 0;
+
+        for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+
+            var p = $scope.pedido.produtos[i];
+
+            tot += (p.valor_base + p.icms + p.ipi + p.juros + p.frete) * p.quantidade;
+
+        }
+
+        return tot;
+
+    }
+
+    $scope.formas_pagamento = {};
+
+
+    $scope.setTransportadora = function (trans) {
+
+        $scope.pedido.transportadora = trans;
+        $scope.atualizaCustos();
+
+    }
+
+    $scope.setCliente = function (cli) {
+
+        $scope.pedido.cliente = cli;
+        $scope.atualizaCustos();
+
+    }
+
+
+    $scope.addProduto = function (produto) {
+        var pp = angular.copy($scope.produto_pedido_novo);
+        pp.produto = produto;
+        pp.pedido = $scope.pedido;
+        pp.valor_base = produto.valor_base;
+        pp.quantidade = $scope.qtd;
+
+        var a = false;
+        for (var j = 0; j < $scope.pedido.produtos.length; j++) {
+
+            var pr = $scope.pedido.produtos[j];
+
+            if (pr.produto.id === pp.produto.id) {
+
+                pr.quantidade += pp.quantidade;
+                a = true;
+
+            }
+
+        }
+
+        if (!a) {
+            $scope.pedido.produtos[$scope.pedido.produtos.length] = pp;
+        }
+
+
+
+        $scope.atualizaCustos();
+
+    }
+
+    $scope.removerProduto = function (produto) {
+
+        var dt = new Date().getTime();
+        dt += $scope.meses_validade_curta * 30 * 24 * 60 * 60 * 1000;
+
+        remove($scope.pedido.produtos, produto);
+
+        if (produto.validade_minima > dt) {
+            for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+
+                var p = $scope.pedido.produtos[i];
+
+                if (p.validade_minima > produto.validade_minima && p.produto.id === produto.produto.id) {
+
+                    remove($scope.pedido.produtos, p);
+                    i--;
+
+                }
+            }
+        }
+
+        $scope.atualizaCustos();
+
+    }
+
+    $scope.mergePedido = function () {
+
+        $scope.carregando = true;
+
+        var p = $scope.pedido;
+
+        if (p.cliente == null) {
+            msg.erro("Pedido sem cliente.");
+            return;
+        }
+
+        if (p.transportadora == null) {
+            msg.erro("Pedido sem transportadora.");
+            return;
+        }
+
+        if (p.forma_pagamento == null) {
+            msg.erro("Pedido sem forma de pagamento.");
+            return;
+        }
+
+
+        baseService.merge(p, function (r) {
+            if (r.sucesso) {
+                $scope.pedido = r.o;
+                if ($scope.pedido.logistica !== null) {
+                    equalize($scope.pedido, "logistica", $scope.logisticas);
+                }
+                equalize($scope.pedido, "forma_pagamento", $scope.formas_pagamento);
+
+                msg.alerta("Operacao efetuada com sucesso");
+
+                if (typeof $scope.pedido["retorno"] !== 'undefined') {
+
+                    msg.alerta($scope.pedido["retorno"]);
+
+                }
+
+            } else {
+                $scope.pedido = r.o;
+                if ($scope.pedido.logistica !== null) {
+                    equalize($scope.pedido, "logistica", $scope.logisticas);
+                }
+                equalize($scope.pedido, "forma_pagamento", $scope.formas_pagamento);
+                msg.erro("Ocorreu o seguinte problema: " + r.mensagem);
+            }
+            $scope.carregando = false;
+        });
+
+    }
+
+    $scope.setFrete = function (fr) {
+
+        $scope.pedido.frete = fr.valor + fr.transportadora.despacho;
+        $scope.pedido.transportadora = fr.transportadora;
+        $scope.atualizaCustos();
+
+    }
+
+    $scope.setProduto = function (produto) {
+
+        produtoService.getValidades($scope.meses_validade_curta, produto, function (v) {
+
+            produto.validades = v;
+
+        })
+
+    }
+
+    $scope.calculoPronto = function () {
+
+        if ($scope.pedido.cliente != null && $scope.pedido.produtos != null) {
+            if ($scope.pedido.produtos.length > 0) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+
+    $scope.getFretes = function () {
+
+        var pesoTotal = 0;
+        var valorTotal = 0;
+
+        for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+            var p = $scope.pedido.produtos[i];
+            valorTotal += (p.valor_base + p.juros + p.icms) * p.quantidade;
+            pesoTotal += p.produto.peso_bruto * p.quantidade;
+        }
+        if ($scope.pedido.logistica === null) {
+            tabelaService.getFretes(null, {cidade: $scope.pedido.cliente.endereco.cidade, valor: valorTotal, peso: pesoTotal}, function (f) {
+
+                $scope.fretes = f.fretes;
+
+            })
+        } else {
+
+            tabelaService.getFretes($scope.pedido.logistica, {cidade: $scope.pedido.cliente.endereco.cidade, valor: valorTotal, peso: pesoTotal}, function (f) {
+
+                $scope.fretes = f.fretes;
+
+            })
+        }
+
+    }
+
+    $scope.atualizaCustos = function () {
+
+        pedidoReservaService.atualizarCustos($scope.pedido, function (np) {
+
+            $scope.pedido = np.o;
+
+            equalize($scope.pedido, "forma_pagamento", $scope.formas_pagamento);
+
+            if ($scope.pedido.logistica !== null) {
+                equalize($scope.pedido, "logistica", $scope.logisticas);
+            }
+
+        })
+
+    }
+
+    pedidoReservaService.getPedido(function (ped) {
+        ped.pedido.produtos = [];
+        $scope.pedido_novo = ped.pedido;
+
+    })
+
+    $scope.novoPedido = function () {
+
+        if ($scope.pedido.id === 0) {
+            $scope.setPedido(angular.copy($scope.pedido));
+        } else {
+            $scope.setPedido(angular.copy($scope.pedido_novo));
+        }
+    }
+
+    $scope.resetarPedido = function () {
+
+        $scope.pedido.transportadora = null;
+        $scope.pedido.produtos = [];
+
+        if ($scope.pedido.logistica === null) {
+            produtoService.filtro_base = "produto.id_logistica=0";
+            transportadoraService.empresa = $scope.pedido.empresa;
+        } else {
+            produtoService.filtro_base = "produto.id_logistica=" + $scope.pedido.logistica.id;
+            transportadoraService.empresa = $scope.pedido.logistica;
+        }
+
+        $scope.produtos.attList();
+        $scope.transportadoras.attList();
+
+    }
+
+    $scope.setPedido = function (pedido) {
+
+        $scope.pedido = pedido;
+
+        if (pedido.logistica !== null) {
+
+            equalize($scope.pedido, "logistica", $scope.logisticas);
+
+        }
+
+        if ($scope.pedido.logistica === null) {
+            produtoService.filtro_base = "produto.id_logistica=0";
+            transportadoraService.empresa = $scope.pedido.empresa;
+        } else {
+            produtoService.filtro_base = "produto.id_logistica=" + $scope.pedido.logistica.id;
+            transportadoraService.empresa = $scope.pedido.logistica;
+        }
+
+        if ($scope.pedido.id === 0) {
+
+            formaPagamentoService.getFormasPagamento($scope.pedido, function (f) {
+
+                $scope.formas_pagamento = f.formas;
+                $scope.pedido.forma_pagamento = $scope.formas_pagamento[0];
+
+            });
+
+            return;
+
+        }
+
+        pedidoReservaService.getProdutos(pedido, function (p) {
+
+            pedido.produtos = p.produtos;
+
+            formaPagamentoService.getFormasPagamento($scope.pedido, function (f) {
+                $scope.formas_pagamento = f.formas;
+                equalize(pedido, "forma_pagamento", $scope.formas_pagamento);
+            })
+
+            var ic = $("#myIframe").contents();
+
+            ic.find("#logoEmpresa img").remove();
+            ic.find("#logoEmpresa").append($("#logo").clone().addClass("product-image"));
+            ic.find("#infoEmpresa").html(pedido.empresa.nome + ", " + pedido.empresa.endereco.cidade.nome + "-" + pedido.empresa.endereco.cidade.estado.sigla);
+            ic.find("#infoEmpresa2").html(pedido.empresa.endereco.bairro + ", " + pedido.empresa.endereco.cep.valor + " - " + pedido.empresa.telefone.numero);
+
+            ic.find("#idPedido").html($scope.pedido.id);
+            ic.find("#nomeUsuario").html($scope.pedido.usuario.nome);
+            ic.find("#nomeCliente").html($scope.pedido.cliente.razao_social);
+            ic.find("#cnpjCliente").html($scope.pedido.cliente.cnpj.valor);
+            ic.find("#ruaCliente").html($scope.pedido.cliente.endereco.rua);
+            ic.find("#cidadeCliente").html($scope.pedido.cliente.endereco.cidade.nome);
+            ic.find("#emailCliente").html($scope.pedido.cliente.email.endereco);
+
+            ic.find("#transportadora").html($scope.pedido.transportadora.razao_social);
+            ic.find("#cnpjTransportadora").html($scope.pedido.transportadora.cnpj.valor);
+            ic.find("#emailTransportadora").html($scope.pedido.transportadora.email.endereco);
+
+            var telefones = "";
+
+            for (var i = 0; i < $scope.pedido.transportadora.telefones.length; i++) {
+                telefones += $scope.pedido.transportadora.telefones[i].numero + "<br>";
+            }
+
+            ic.find("#telefoneTransportadora").html(telefones);
+            ic.find("#cidadeEstadoTransportadora").html($scope.pedido.transportadora.endereco.cidade.nome + " - " + $scope.pedido.transportadora.endereco.cidade.estado.sigla);
+
+            var suframa = "Sem suframa";
+
+            if ($scope.pedido.cliente.suframa) {
+                suframa = $scope.pedido.cliente.inscricao_suframa;
+            }
+
+            ic.find("#suframa").html(suframa);
+
+            var p = ic.find("#produto").each(function () {
+                p = $(this);
+            });
+
+            p.hide();
+
+            ic.find("#produtos").find("tr").each(function () {
+                if (typeof $(this).data("gerado") !== 'undefined') {
+                    $(this).remove();
+                }
+            });
+
+            var p = p.clone();
+
+            var icms = 0;
+            var base = 0;
+            var total = 0;
+            for (var i = 0; i < $scope.pedido.produtos.length; i++) {
+
+                p = p.clone();
+
+                var pro = $scope.pedido.produtos[i];
+                icms += pro.icms * pro.quantidade;
+                base += pro.base_calculo * pro.quantidade;
+                p.find("[data-tipo='nome']").html(pro.produto.nome);
+                p.find("[data-tipo='valor']").html((pro.valor_base + pro.frete + pro.juros + pro.icms).toFixed(2));
+                p.find("[data-tipo='quantidade']").html(pro.quantidade);
+                p.find("[data-tipo='validade']").html(toDate(pro.validade_minima));
+                p.find("[data-tipo='total']").html(((pro.valor_base + pro.frete + pro.ipi + pro.juros + pro.icms) * pro.quantidade).toFixed(2));
+                p.data("gerado", true);
+
+                ic.find("#produtos").append(p);
+                p.show();
+
+                total += (pro.valor_base + pro.frete + pro.juros + pro.ipi + pro.icms) * pro.quantidade;
+
+            }
+            var alicota = (icms * 100 / base);
+
+            ic.find("#prazo").html(pedido.prazo);
+            ic.find("#alicota").html(alicota.toFixed(0));
+            ic.find("#icms").html(icms.toFixed(2));
+
+            ic.find("#tipoFrete").html(pedido.frete_incluso ? 'CIF' : 'FOB');
+            ic.find("#nomeTransportadora").html(pedido.transportadora.razao_social);
+            ic.find("#contato").html(pedido.transportadora.email.endereco);
+            ic.find("#valorFrete").html(pedido.frete);
+
+            ic.find("#observacoes").html(pedido.observacoes);
+            ic.find("#nomeUsuario2").html(pedido.usuario.nome);
+
+        })
+
+
+    }
+
+    $scope.deletePedido = function () {
+        $scope.carregando = true;
+        baseService.delete($scope.pedido, function (r) {
+            if (r.sucesso) {
+                msg.alerta("Operacao efetuada com sucesso");
+                $scope.pedido = angular.copy($scope.novo_pedido);
+                $scope.pedidos.attList();
+            } else {
+                msg.erro("Problema ao efetuar operacao");
+            }
+            $scope.carregando = false;
+        });
+
+    }
+
+
+})
+rtc.controller("crtAprovacaoConsignado", function ($scope, aprovacaoConsignadoService, baseService) {
 
     $scope.aprovacoes = createAssinc(aprovacaoConsignadoService, 1, 10, 4);
     assincFuncs(
             $scope.aprovacoes,
             "empresa",
-            ["id", "nome","cnpj","produto.nome","produto.valor_base","produto.disponivel"]);
+            ["id", "nome", "cnpj", "produto.nome", "produto.valor_base", "produto.disponivel"]);
     $scope.aprovacoes.attList();
 
     $scope.aprovar = function (aprovacao) {
@@ -29,7 +910,7 @@ rtc.controller("crtAprovacaoConsignado", function ($scope, aprovacaoConsignadoSe
 
 
 })
-rtc.controller("crtConsignaProduto", function ($scope, produtoService, empresaService, sistemaService, uploadService) {
+rtc.controller("crtConsignaProduto", function ($scope, produtoService,cidadeService, empresaService, sistemaService, uploadService, baseService) {
 
     produtoService.filtro_base = "produto.empresa_vendas=0";
     $scope.produtos_av = createAssinc(produtoService, 1, 7, 4);
@@ -40,8 +921,193 @@ rtc.controller("crtConsignaProduto", function ($scope, produtoService, empresaSe
     $scope.produtos_av.attList();
 
 
+    $scope.usuario = null;
+
+    $scope.estados = [];
+    $scope.cidades = [];
+
+
+    $scope.selecionar = function(c){
+        c.selecionada = !c.selecionada;
+    }
+
+    $scope.regioes = [
+        {id:0,nome:"Norte",estados:["AM","RO","AP","PR","AC","RO","RR"],cidades:[],filtro:""},
+        {id:1,nome:"Centro-Oeste",estados:["MT","GO","MS"],cidades:[],filtro:""},
+        {id:2,nome:"Regiao Nordeste",estados:["MR","CE","PI","RS","RN","PE","BA","SE"],cidades:[],filtro:""},
+        {id:3,nome:"Sudeste",estados:["SP","MG","ES","RJ"],cidades:[],filtro:""},
+        {id:4,nome:"Sul",estados:["PR","SC","RG"],cidades:[],filtro:""}
+    ];
+
+    $scope.liberadoc = false;
+     $scope.aceitou_contrato = false;
+    
+
+     $scope.selecionarTudo = function(regiao){
+
+        for(var i=0;i<regiao.cidades.length;i++){
+            if(regiao.cidades[i].aparecer){
+                regiao.cidades[i].selecionada = !regiao.cidades[i].selecionada;
+            }
+        }
+
+     }
+
+     $scope.selecionarPais = function(){
+
+        for(var i=0;i<$scope.regioes.length;i++){
+
+            var r = $scope.regioes[i];
+
+            for(var j=0;j<r.cidades.length;j++){
+
+                var c = r.cidades[j];
+
+                c.selecionada = !c.selecionada;
+
+            }
+
+        }
+
+     }
+
+     var getCidadesSelecionadas = function(){
+
+        var ret = [];
+
+        for(var i=0;i<$scope.regioes.length;i++){
+
+            var r = $scope.regioes[i];
+
+            for(var j=0;j<r.cidades.length;j++){
+
+                var c = r.cidades[j];
+
+                if(c.selecionada){
+
+                    ret[ret.length] = c.cidade;
+
+                }
+
+            }
+
+        }
+
+        return ret;
+
+     }
+
+     $scope.filtro = function(regiao){
+
+        var f = regiao.filtro.toUpperCase();
+
+        for(var i=0;i<regiao.cidades.length;i++){
+
+            var c = regiao.cidades[i];
+            c.aparecer = c.cidade.nome.toUpperCase().indexOf(f)>=0 || c.cidade.estado.sigla.toUpperCase().indexOf(f)>=0;
+            
+        }
+
+     }
+
+    $scope.empresa = null;
+    sistemaService.getUsuario(function(u){
+
+        $scope.usuario = u.usuario;
+        $scope.empresa = $scope.usuario.empresa;
+
+        $scope.liberadoc = u.usuario.contrato_fornecedor;
+        $scope.aceitou_contrato = u.usuario.contrato_fornecedor;
+
+        cidadeService.getElementos(function (p) {
+
+                        var estados = [];
+                        var cidades = p.elementos;
+                        $scope.cidades = cidades;
+
+                        lbl:
+                                for (var i = 0; i < cidades.length; i++) {
+                            var c = cidades[i];
+
+                            for(var q=0;q<$scope.regioes.length;q++){
+                                var r = $scope.regioes[q];
+                                for(var l=0;l<r.estados.length;l++){
+                                    var e = r.estados[l];
+                                    if(e===c.estado.sigla){
+                                        r.cidades[r.cidades.length] = {cidade:c,selecionada:false,aparecer:true};
+                                    }
+                                }
+                            }
+
+
+                            for (var j = 0; j < estados.length; j++) {
+                                if (estados[j].id === c.estado.id) {
+                                    estados[j].cidades[estados[j].cidades.length] = c;
+                                    c.estado = estados[j];
+                                    continue lbl;
+                                }
+                            }
+
+                            
+
+                            c.estado["cidades"] = [c];
+                            estados[estados.length] = c.estado;
+                        }
+
+                        $scope.estados = estados;
+           
+                        equalize($scope.empresa.endereco, "cidade", $scope.cidades);
+                        if (typeof $scope.empresa.endereco.cidade !== 'undefined') {
+                            $scope.estado = $scope.empresa.endereco.cidade.estado;
+                        } else {
+                            $scope.empresa.endereco.cidade = $scope.cidades[0];
+                            $scope.estado = $scope.empresa.endereco.cidade.estado;
+                        }
+                    
+                })
+
+            })
+
+
+
+
+    $scope.mergeUsuario = function(usuario){
+
+        if(usuario.senha !== usuario.confirmar_senha){
+            msg.erro("Confirmacao de senha incorreta");
+            return;
+        }
+
+        baseService.merge(usuario,function(r){
+
+            if(r.sucesso){
+                baseService.merge(usuario.empresa,function(rr){
+                    if(rr.sucesso){
+                        msg.alerta("Operacao Efetuada com sucesso");
+                        $scope.liberadoc = true;
+                    }else{
+                        msg.erro("Estamos em manutencao no momento tente mais tarde");
+                    }
+                })
+            }else{
+                msg.erro("Ocorreu um problema: "+r.mensagem);
+            }
+        })
+
+    }
+
+   
+
+
+    $scope.aceitar = function () {
+
+        $scope.aceitou_contrato = !$scope.aceitou_contrato;
+
+    }
+
+
     var consignados = angular.copy(produtoService);
-    consignados.filtro_base="produto.empresa_vendas>0";
+    consignados.filtro_base = "produto.empresa_vendas>0";
 
     $scope.produtos_consignados = createAssinc(consignados, 1, 7, 4);
     assincFuncs(
@@ -65,11 +1131,11 @@ rtc.controller("crtConsignaProduto", function ($scope, produtoService, empresaSe
 
     $scope.virtuais = [];
 
-    empresaService.getVirtuais(function(v){
+    empresaService.getVirtuais(function (v) {
 
         $scope.virtuais = v.virtuais;
         $scope.empresa_selecionada = v.virtuais[0];
-        
+
     })
 
     empresaService.getEmpresa(function (e) {
@@ -99,10 +1165,10 @@ rtc.controller("crtConsignaProduto", function ($scope, produtoService, empresaSe
 
                 for (var i = 0; i < arquivos.length; i++) {
 
-                    if(i === 0){
+                    if (i === 0) {
                         $scope.produto_av.imagem = arquivos[i];
-                    }else{
-                        $scope.produto_av.mais_fotos[i-1] = arquivos[i];
+                    } else {
+                        $scope.produto_av.mais_fotos[i - 1] = arquivos[i];
                     }
                 }
 
@@ -139,10 +1205,10 @@ rtc.controller("crtConsignaProduto", function ($scope, produtoService, empresaSe
 
         } else {
 
-            if($scope.produto_av.nome == null || $scope.produto_av.fabricante == null || $scope.produto_av.ativo == null || $scope.produto_av.valor_base == 0){
-                
+            if ($scope.produto_av.nome == null || $scope.produto_av.fabricante == null || $scope.produto_av.ativo == null || $scope.produto_av.valor_base == 0) {
+
                 return false;
-                
+
             }
 
             if ($scope.produto_av.nome.length > 2 && $scope.produto_av.fabricante.length > 2 && $scope.produto_av.ativo.length > 2) {
@@ -164,10 +1230,10 @@ rtc.controller("crtConsignaProduto", function ($scope, produtoService, empresaSe
         $scope.travado_av = true;
 
     }
-    
+
     $scope.selecionarPossibilidadeSemEstoque = function (p) {
-        
-        if(p.id === 0){
+
+        if (p.id === 0) {
             p.estoque = 0;
             p.disponivel = 0;
         }
@@ -185,7 +1251,7 @@ rtc.controller("crtConsignaProduto", function ($scope, produtoService, empresaSe
 
     }
 
-    $scope.deconsignar = function(produto){
+    $scope.deconsignar = function (produto) {
 
         sistemaService.deconsignarProduto(produto, function (r) {
 
@@ -207,7 +1273,12 @@ rtc.controller("crtConsignaProduto", function ($scope, produtoService, empresaSe
 
     $scope.finalizar = function () {
 
-        sistemaService.consignarProduto($scope.produto_av, $scope.empresa_selecionada, function (r) {
+        if(($scope.produto_av.valor_base/$scope.produto_av.custo)<1.02){
+            msg.erro("A porcentagem minima é de 2%");
+            return;
+        }
+
+        sistemaService.consignarProduto($scope.produto_av, $scope.empresa_selecionada,getCidadesSelecionadas(), function (r) {
 
             if (r.sucesso) {
 
@@ -286,10 +1357,10 @@ rtc.controller("crtProdutoEncomenda", function ($scope, produtoService, empresaS
 
         } else {
 
-            if($scope.produto_av.nome == null || $scope.produto_av.fabricante == null || $scope.produto_av.ativo == null){
-                
+            if ($scope.produto_av.nome == null || $scope.produto_av.fabricante == null || $scope.produto_av.ativo == null) {
+
                 return false;
-                
+
             }
 
             if ($scope.produto_av.nome.length > 2 && $scope.produto_av.fabricante.length > 2 && $scope.produto_av.ativo.length > 2) {
@@ -311,16 +1382,16 @@ rtc.controller("crtProdutoEncomenda", function ($scope, produtoService, empresaS
         $scope.travado_av = true;
 
     }
-    
+
     $scope.selecionarPossibilidadeSemEstoque = function (p) {
-        
-        if(p.disponivel > 0){
-            
+
+        if (p.disponivel > 0) {
+
             msg.erro("Existe o produto em estoque nao e possivel encomenda-lo");
             window.open("comprar.php");
-            
+
         }
-    
+
         $scope.produto_av = p;
         $scope.produto_av.empresa = $scope.empresa_av;
         $scope.travado_av = true;
@@ -342,7 +1413,7 @@ rtc.controller("crtProdutoEncomenda", function ($scope, produtoService, empresaS
 
                 msg.alerta("Operacao efetuada com sucesso. O produto ja se encontra no seu carrinho");
                 $scope.destravar();
-                
+
             } else {
 
                 msg.erro("Ocorreu um problema ao efetuar essa operacao");
@@ -500,8 +1571,16 @@ rtc.controller("crtProtocolos", function ($scope, protocoloService, tipoProtocol
 
     $scope.novoProtocolo = function () {
 
-        $scope.protocolo = angular.copy($scope.protocolo_novo);
-        $scope.setProtocolo($scope.protocolo);
+        if ($scope.protocolo.id === 0) {
+
+            $scope.setProtocolo($scope.protocolo);
+
+        } else {
+
+            $scope.protocolo = angular.copy($scope.protocolo_novo);
+            $scope.setProtocolo($scope.protocolo);
+
+        }
 
     }
 
@@ -1155,8 +2234,8 @@ rtc.controller("crtEncomendaParceiros", function ($scope, produtoService, encome
         var p = angular.copy($scope.prod);
         p.quantidade_comprada = $scope.qtd;
 
-        if(p.limite>0){
-            if(p.quantidade_comprada>p.limite){
+        if (p.limite > 0) {
+            if (p.quantidade_comprada > p.limite) {
                 msg.erro("Essa quantidade ultrapassa o limite para este produto");
                 return;
             }
@@ -1166,8 +2245,8 @@ rtc.controller("crtEncomendaParceiros", function ($scope, produtoService, encome
         for (var i = 0; i < carrinho.length; i++) {
             if (carrinho[i].id === p.id) {
 
-                if(p.limite>0){
-                    if(carrinho[i].quantidade_comprada+$scope.qtd>p.limite){
+                if (p.limite > 0) {
+                    if (carrinho[i].quantidade_comprada + $scope.qtd > p.limite) {
                         msg.erro("Essa quantidade ultrapassa o limite para este produto");
                         return;
                     }
@@ -1864,6 +2943,32 @@ rtc.controller("crtAnaliseCredito", function ($scope, clienteService, sistemaSer
 
     }
 
+    $scope.precario = 0;
+
+    $scope.finalizarAnalisePrecaria = function () {
+
+        msg.confirma("Tem certeza que deseja finalizar com limite de R$ " + $scope.precario + ", para o cliente " + $scope.cliente.razao_social, function () {
+
+            sistemaService.setLimiteCredito($scope.precario, rtc.id_cliente, rtc.id_empresa, rtc.id_pedido, function (r) {
+
+                if (r.sucesso) {
+
+                    msg.alerta("Limite analisado com sucesso. " + (rtc.id_pedido > 0 ? 'Redirecionando novamente a tela de tarefas' : ''));
+
+                    window.location = "tarefas.php";
+
+                } else {
+
+                    msg.erro("Ocorreu um problema.");
+
+                }
+
+            })
+
+        });
+
+    }
+
     var calcular = function () {
 
         var limite = 0;
@@ -1885,6 +2990,8 @@ rtc.controller("crtAnaliseCredito", function ($scope, clienteService, sistemaSer
 
 
         var fat_perc = media_faturamento * porcentagem / 100;
+
+        $scope.precario = fat_perc;
 
 
         var perc_bal = fat_perc * 0.1;
@@ -2657,20 +3764,20 @@ rtc.controller("crtTarefas", function ($scope, $sce, tarefaService, observacaoTa
         }
 
     })
-    
-    
-    $scope.num = function(vector){
-        
+
+
+    $scope.num = function (vector) {
+
         var a = [];
-        
-        for(var i=0;i<vector.length;i++){
-            
+
+        for (var i = 0; i < vector.length; i++) {
+
             a[a.length] = i;
-            
+
         }
-        
+
         return a;
-        
+
     }
 
     $scope.setTarefa = function (tarefa) {
@@ -2687,12 +3794,12 @@ rtc.controller("crtTarefas", function ($scope, $sce, tarefaService, observacaoTa
                 $scope.observacao_tarefa.observacao = $scope.observacao_padrao;
 
             })
-            
-            tarefaService.getOpcoes($scope.tarefa,function(r){
-                
+
+            tarefaService.getOpcoes($scope.tarefa, function (r) {
+
                 $scope.tarefa.opcoes = r.opcoes;
-                
-                
+
+
             })
 
         })
@@ -4196,21 +5303,21 @@ rtc.controller("crtEmpresa", function ($scope, $timeout, $interval, empresaServi
 
     protocoloService.getProtocolosAtivos(function (p) {
 
-       $scope.protocolos_ativos = p.protocolos;
-        
+        $scope.protocolos_ativos = p.protocolos;
+
         var mostrar = false;
-        
-        for(var i=0;i<$scope.protocolos_ativos.length;i++){
-            if($scope.protocolos_ativos[i].alertar){
+
+        for (var i = 0; i < $scope.protocolos_ativos.length; i++) {
+            if ($scope.protocolos_ativos[i].alertar) {
                 mostrar = true;
                 break;
             }
         }
-        
-        if(!mostrar){
-            
-          $("#btnEsconde").click();
-               
+
+        if (!mostrar) {
+
+            $("#btnEsconde").click();
+
         }
 
 
@@ -4701,6 +5808,133 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, tipoProtocoloService, 
             $scope.empresa_atual = a;
         })
     })
+    
+    $scope.tipos_tarefa_usuario = [];
+    
+    $scope.permissoes_abaixo = [];
+    
+    $scope.permissoes_permitidas = [];
+    
+    usuarioService.getPermissoesPermitidas(function(a){
+        
+        $scope.permissoes_permitidas = a.permissoes;
+        
+        
+    })
+
+    var cache = [];
+
+    $scope.getPermissoesUsuario = function(usuario){
+
+        for(var j=0;j<cache.length;j++){
+            if(cache[j].usuario === usuario){
+                return cache[j].cache;
+            }
+        }
+
+        var p = [];
+
+        for(var i=0;i<$scope.permissoes_abaixo.length;i++){
+
+            var k = $scope.permissoes_abaixo[i];
+
+            p[p.length] = {id:k.id,nome:k.nome,p:[k]};
+
+        }
+
+        for(var i=0;i<usuario.permissoes.length;i++){
+
+            var k=usuario.permissoes[i];
+
+            for(var j=0;j<p.length;j++){
+
+                if(p[j].id === k.id){
+
+                    p[j].p[p[j].p.length] = k;
+                    break;
+
+                }
+
+            }
+
+        }
+
+        cache[cache.length] = {usuario:usuario,cache:p};
+
+        return p;
+
+    }
+    
+    $scope.permitida = function(permissao,tipo){
+        
+        for(var i =0;i<$scope.permissoes_permitidas.length;i++){
+            
+            if($scope.permissoes_permitidas[i].id === permissao.id){
+                
+                var t = ["alt","in","del","cons"];
+                
+                return $scope.permissoes_permitidas[i][t[tipo]];
+                
+            }
+            
+        }
+        
+        return false;
+        
+    }
+    
+    usuarioService.getPermissoesAbaixo(function(a){
+        
+        $scope.permissoes_abaixo = a.permissoes;
+        
+    })
+    
+    $scope.col = function(l){
+        
+        var k = ["alt","in","del","cons"];
+        
+        for(var i=0;i<$scope.usuario.permissoes.length;i++){
+            
+
+
+            var p = $scope.usuario.permissoes[i];
+
+            if(!$scope.permitida(p,l))
+                continue;
+            
+            p[k[l]] = !p[k[l]];
+            
+        }
+
+        for(var i=0;i<$scope.permissoes_abaixo.length;i++){
+            
+            var p = $scope.permissoes_abaixo[i];
+            
+            if(!$scope.permitida(p,l))
+                continue;
+
+            p[k[l]] = !p[k[l]];
+            
+        }
+        
+    }
+    
+    $scope.row = function(p,x){
+        
+        if($scope.permitida(p.p[x],0))
+            p.p[x].alt = !p.p[x].alt;
+
+        if($scope.permitida(p.p[x],1))
+            p.p[x].in = !p.p[x].in;
+
+        if($scope.permitida(p.p[x],2))
+            p.p[x].del = !p.p[x].del;
+
+        if($scope.permitida(p.p[x],3))
+            p.p[x].cons = !p.p[x].cons;
+        
+    }
+    
     $scope.trocaEmpresa = function () {
         usuarioService.filtro_base = "usuario.id>=0";
         usuarioService.empresa = $scope.empresa_atual;
@@ -4746,6 +5980,59 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, tipoProtocoloService, 
     }
 
     var attTiposProtocolo = function () {
+
+    }
+
+    $scope.igualarCargo = function () {
+
+        var cargo = $scope.usuario.cargo;
+
+        if (cargo !== null) {
+
+            cargoService.getPermissoes(cargo, function (r) {
+
+                var permissoes = r.permissoes;
+
+                for (var i = 0; i < $scope.usuario.permissoes.length; i++) {
+
+                    var px = $scope.usuario.permissoes[i];
+
+                    for (var j = 0; j < permissoes.length; j++) {
+
+                        var py = permissoes[j];
+
+                        if (px.id === py.id) {
+
+                            px.in = py.in;
+                            px.alt = py.alt;
+                            px.del = py.del;
+                            px.cons = py.cons;
+                            break;
+                        }
+
+                    }
+
+                }
+
+                $scope.mergeUsuario();
+
+            })
+
+        }
+
+    }
+
+    $scope.cargo_permissoes = {};
+
+    $scope.setCargo = function (cargo) {
+
+        $scope.cargo_permissoes = cargo;
+
+        cargoService.getPermissoes(cargo, function (r) {
+
+            cargo.permissoes = r.permissoes;
+
+        })
 
     }
 
@@ -4954,7 +6241,33 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, tipoProtocoloService, 
             usuario.endereco.cidade = $scope.cidades[0];
             $scope.estado = usuario.endereco.cidade.estado;
         }
+        
+        usuarioService.getTiposTarefaUsuario($scope.usuario,function(r){
+            
+            $scope.tipos_tarefa_usuario = r.tipos_tarefa_usuario;
+            
+        })
 
+    }
+    
+    
+    $scope.mergeTipoTarefaUsuario = function(tt){
+        
+        baseService.merge(tt,function(r){
+            
+            if(r.sucesso){
+                
+                msg.alerta("Salvo com sucesso");
+                
+            }else{
+                
+                msg.erro("Problema ao salvar");
+                
+            }
+            
+            
+        })
+        
     }
 
     $scope.novoTipoTarefa = function () {
@@ -5040,6 +6353,24 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, tipoProtocoloService, 
         });
     }
 
+    $scope.setPermissoesCargo = function (cargo) {
+
+        cargoService.setPermissoes(cargo, cargo.permissoes, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Permissoes colocadas com sucesso");
+
+            } else {
+
+                msg.erro("Problema ao colocar permissoes");
+
+            }
+
+        })
+
+    }
+
     $scope.mergeCargo = function (cargo) {
         if (cargo.nome === "") {
             msg.erro("Digite o nome");
@@ -5078,14 +6409,28 @@ rtc.controller("crtUsuarios", function ($scope, $timeout, tipoProtocoloService, 
             if (r.sucesso) {
                 $scope.usuario = r.o;
 
-                msg.alerta("Operacao efetuada com sucesso");
-                $scope.setUsuario($scope.usuario);
-                $scope.usuarios.attList();
+                usuarioService.setPermissoesAbaixo($scope.permissoes_abaixo,function(t){
+            
+                    if(t.sucesso){
+                        
+                        msg.alerta("Operacao efetuada com sucesso");
+                        $scope.setUsuario($scope.usuario);
+                        $scope.usuarios.attList();
+                        
+                    }else{
+                        
+                        msg.erro("Ocorreu um problema na operacao");
+                        
+                    }
+                    
+                })
 
             } else {
                 msg.erro("Problema ao efetuar operacao. " + r.mensagem);
             }
         });
+
+
 
     }
     $scope.deleteUsuario = function () {
@@ -6632,7 +7977,7 @@ rtc.controller("crtCotacoesEntrada", function ($scope, cotacaoGrupalService, cot
 
 
 })
-rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService,empresaService, tabelaService, baseService, produtoService, sistemaService, statusPedidoEntradaService, transportadoraService, fornecedorService, produtoPedidoEntradaService) {
+rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService, empresaService, tabelaService, baseService, produtoService, sistemaService, statusPedidoEntradaService, transportadoraService, fornecedorService, produtoPedidoEntradaService) {
 
     $scope.pedidos = createAssinc(pedidoEntradaService, 1, 10, 10);
     $scope.pedidos.attList();
@@ -6689,21 +8034,21 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService,empre
     $scope.produto = {};
 
 
-    $scope.localEntrega = function(){
+    $scope.localEntrega = function () {
 
         var e = $scope.local_retirada;
 
-        var valor = "Local de Entrega: "+e.nome+"<br>CNPJ: "+e.cnpj.valor+"<br>Estado: "+
-        e.endereco.cidade.estado.sigla+"<br>Cidade: "+e.endereco.cidade.nome
-        +"<br>Bairro: "+e.endereco.bairro+"<br>Rua: "
-        +e.endereco.rua+"<br>Numero: "+e.endereco.numero+"<br>CEP: "+e.endereco.cep.valor;
+        var valor = "Local de Entrega: " + e.nome + "<br>CNPJ: " + e.cnpj.valor + "<br>Estado: " +
+                e.endereco.cidade.estado.sigla + "<br>Cidade: " + e.endereco.cidade.nome
+                + "<br>Bairro: " + e.endereco.bairro + "<br>Rua: "
+                + e.endereco.rua + "<br>Numero: " + e.endereco.numero + "<br>CEP: " + e.endereco.cep.valor;
 
         $scope.pedido.observacoes = valor;
 
 
     }
 
-    empresaService.getGrupoEmpresarial(function(g){
+    empresaService.getGrupoEmpresarial(function (g) {
 
         $scope.empresas = g.grupo;
         $scope.local_retirada = g.grupo[0];
@@ -6912,7 +8257,7 @@ rtc.controller("crtPedidosEntrada", function ($scope, pedidoEntradaService,empre
 
         }
 
-        
+
 
         pedidoEntradaService.getProdutos(pedido, function (p) {
 
@@ -9328,13 +10673,20 @@ rtc.controller("crtClientes", function ($scope, categoriaProspeccaoService, clie
     $scope.email = {};
 
     $scope.data_atual = new Date().getTime();
-    
+
     $scope.classes = [
-        {id:0,nome:"Sem classe"},
-        {id:1,nome:"No RTC"},
-        {id:2,nome:"Nao quer trabalhar momentaneamente com a Agro Fauna"},
-        {id:3,nome:"Nao quer trabalhar com a AgroFauna"},
-        {id:4,nome:"Faliu ou morreu"},
+        {id: 0, nome: "Sem classe"},
+        {id: 1, nome: "No RTC"},
+        {id: 2, nome: "Nao quer trabalhar momentaneamente com a Agro Fauna"},
+        {id: 3, nome: "Nao quer trabalhar com a AgroFauna"},
+        {id: 4, nome: "Faliu ou morreu"},
+        {id: 5, nome: "Nao atende"},
+        {id: 6, nome: "Nao se encontra"},
+        {id: 7, nome: "Cooperativa"},
+        {id: 8, nome: "Pos-venda"},
+        {id: 9, nome: "Usina"},
+        {id: 10, nome: "Consumidor"},
+        {id: 11, nome: "Contatos invalidos"}
     ];
 
     $scope.documento_novo = {};
@@ -9371,11 +10723,11 @@ rtc.controller("crtClientes", function ($scope, categoriaProspeccaoService, clie
         window.location = "analise_credito.php?empresa=" + c.empresa.id + "&cliente=" + c.id;
 
     }
-    
-    $scope.getLinkConsignadoCliente = function(cliente){
-        
-        return projeto+"/consigna_produto.php?idc="+encode64SPEC(cliente.id+"_"+cliente.razao_social);
-        
+
+    $scope.getLinkConsignadoCliente = function (cliente) {
+
+        return projeto + "/consigna_produto.php?idc=" + encode64SPEC(cliente.id + "_" + cliente.razao_social);
+
     }
 
     $scope.removeCategoriaProspeccao = function (cat) {
@@ -9629,24 +10981,36 @@ rtc.controller("crtProdutos", function ($scope, fabricanteService, ativoService,
 
     $scope.receituario_novo = {};
     $scope.receituario = {};
-    
-    $scope.passarParaOutrasEmpresas = function(produto){
-           
-        
-        produtoService.passarParaOutrasEmpresas(produto,function(r){
-            
-            if(r.sucesso){
-                
-                msg.alerta("Operacao efetuada com sucesso");
-                
-            }else{
-                
-                msg.erro("Falha ao efetuar operacao");
-                
+
+    $scope.nivel = function(nivel,vetor){
+
+        for(var i=0;i<vetor.length;i++){
+            if(nivel<=vetor[i].nivel){
+                return vetor[i].nome;
             }
-            
+        }        
+
+        return "";
+
+    }
+
+    $scope.passarParaOutrasEmpresas = function (produto) {
+
+
+        produtoService.passarParaOutrasEmpresas(produto, function (r) {
+
+            if (r.sucesso) {
+
+                msg.alerta("Operacao efetuada com sucesso");
+
+            } else {
+
+                msg.erro("Falha ao efetuar operacao");
+
+            }
+
         })
-        
+
     }
 
     $scope.ativos = [];
@@ -9710,6 +11074,48 @@ rtc.controller("crtProdutos", function ($scope, fabricanteService, ativoService,
         })
 
     }
+
+    $("#flFicha").change(function () {
+
+        uploadService.upload($(this).prop("files"), function (arquivos, sucesso) {
+
+            if (!sucesso) {
+
+                msg.erro("Falha ao subir arquivo de imagem");
+
+            } else {
+
+                
+                for (var i = 0; i < arquivos.length; i++) {
+                   
+                    $scope.produto.ficha = arquivos[i];
+
+                    produtoService.setFichaEmergencia($scope.produto,arquivos[i],function(r){
+
+                        if(r.sucesso){
+
+                            msg.alerta("Procedimento efetuado com sucesso");
+
+                        }else{
+
+                            msg.erro("Falha ao executar procedimento");
+
+                        }
+
+
+                    })
+
+
+                    break;
+
+                }
+
+
+            }
+
+        })
+
+    })
 
     $("#uploaderImagemProdutoSecundario").change(function () {
 
@@ -9946,6 +11352,13 @@ rtc.controller("crtProdutos", function ($scope, fabricanteService, ativoService,
         if ($scope.produto.logistica !== null) {
             equalize($scope.produto, "logistica", $scope.logisticas);
         }
+
+        produtoService.getFichaEmergencia(produto,function(f){
+
+            produto.ficha = f.ficha;
+
+        })
+
     }
 
     produtoService.getProduto(function (p) {

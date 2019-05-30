@@ -20,8 +20,9 @@ class Permissao {
     public $alt;
     public $cons;
     public $clonada;
-
-    function __construct($id = 0, $nome = "", $in = false, $del = false, $alt = false, $cons = false) {
+    public $aparecer_frente;
+    
+    function __construct($id = 0, $nome = "", $in = false, $del = false, $alt = false, $cons = false, $frente=true) {
 
         $this->id = $id;
         $this->nome = $nome;
@@ -30,6 +31,8 @@ class Permissao {
         $this->alt = $alt;
         $this->cons = $cons;
         $this->clonada = false;
+        $this->frente = $frente;
+        
     }
 
     public function m($str) {
