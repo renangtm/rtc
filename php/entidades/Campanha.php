@@ -55,7 +55,43 @@ class Campanha {
         
     }
     
-    public function merge($con) {
+    public function merge($con,$block = false) {
+        
+        if($this->empresa->tipo_empresa === 3 && !$block){
+            
+            $campanhas = array();
+            $empresas = array();
+            
+            foreach($this->produtos as $key=>$value){
+                
+                if(!isset($campanhas[$value->produto->empresa->id])){
+                    
+                    $campanhas[$value->produto->empresa->id] = array();
+                    $empresas[$value->produto->empresa->id] = $value->produto->empresa;
+                    
+                }
+                
+                $campanhas[$value->produto->empresa->id][] = Utilidades::copy($value);
+                
+            }
+            
+            foreach($campanhas as $key=>$value){
+                
+                $campanha = Utilidades::copyId0($this);
+                $campanha->produtos = $value;
+                $campanha->empresa =  $empresas[$key];
+                
+                foreach($campanha->produtos as $key2=>$produtos2){
+                    $produtos2->campanha = $campanha; 
+                }
+                
+                $campanha->merge($con,true);
+                
+            }
+            
+            return;
+            
+        }
 
         if ($this->id == 0) {
 

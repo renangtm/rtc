@@ -132,7 +132,10 @@
                                                                             </thead>
                                                                             <tr ng-repeat="prod in campanha[0].produtos">
                                                                                 <th class="text-center">{{prod.produto.codigo}}</th>
-                                                                                <th>{{prod.produto.nome}}</th>
+                                                                                <th>
+                                                                                    {{prod.produto.nome}}
+
+                                                                                </th>
                                                                                 <th ng-if="prod.validade !== 1000">{{prod.validade| data}}</th>
                                                                                 <th ng-if="prod.validade === 1000">------</th>
                                                                                 <th class="text-center">{{prod.limite}}</th>
@@ -167,15 +170,7 @@
                                             </table>
 
                                             <!-- paginação  -->
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="campanhas.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in campanhas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="campanhas.next()"><a class="page-link" href="">Próximo</a></li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
+                                            <paginacao assinc="campanhas"></paginacao>
 
                                         </div>
                                     </div>
@@ -269,8 +264,8 @@
                                                 <th>{{prod.produto.nome}}</th>
                                                 <th ng-if="prod.validade !== 1000">{{prod.validade| data_st}}</th>
                                                 <th ng-if="prod.validade === 1000">------</th>
-                                                <th><input type="text" class="form-control" ng-model="prod.limite"></th>
-                                                <th><input type="text" class="form-control" ng-model="prod.valor"></th>
+                                                <th><input type="text" style="width:70px" class="form-control" ng-model="prod.limite"></th>
+                                                <th><input type="text" style="width:70px" class="form-control" ng-model="prod.valor"></th>
                                                 <th><button class="btn btn-danger" ng-click="deleteProdutoCampanha(campanha, prod)"><i class="fa fa-times"></i></button></th>
                                             </tr>
                                         </table>
@@ -533,6 +528,9 @@
                                     <thead>
                                     <th>Camp</th>
                                     <th>Produto</th>
+                                    <?php if($empresa->tipo_empresa===3){ ?>
+                                    <th>Fornecedor</th>
+                                    <?php } ?>
                                     <th>Validade</th>
                                     <th>Limite</th>
                                     <th>Valor</th>
@@ -541,9 +539,24 @@
                                     </thead>
                                     <tr ng-repeat="prod in campanha.lista.elementos">
                                         <th><button ng-click="addNumeracao(prod[0])" ng-right-click="removeNumeracao(prod[0])" class="btn btn-default" style="width:23px;height:23px;padding:1px;display:inline;background-color:{{getNumeracaoCor(prod[0].numeracao)}};color:#FFFFFF">{{getNumeracaoAlfabetica(prod[0].numeracao)}}</button></th>
-                                        <th><button ng-click="removeProdutoCamp(c,prod[0])" class="btn btn-danger" style="width:20px;height:20px;padding:1px"><i class="fas fa-times"></i></button>&nbsp{{prod[0].produto.codigo}} - {{prod[0].produto.nome}}</th>
+                                        <th>
+
+                                            <button ng-click="removeProdutoCamp(c,prod[0])" class="btn btn-danger" style="width:20px;height:20px;padding:1px"><i class="fas fa-times"></i></button>&nbsp{{prod[0].produto.codigo}} - {{prod[0].produto.nome}}
+
+                                            <?php if($empresa->tipo_empresa===3){ ?>
+                                                                                    <hr>
+                                                                                    <button class="btn btn-{{prod[0].compra0_encomenda1===1?'outline-':''}}success" ng-click="prod[0].compra0_encomenda1=0" style="display: inline;margin-left:0px;border-top-right-radius: 0px;border-bottom-right-radius: 0px;padding:5px;min-width: 30px">C</button>
+                                                                                    <button class="btn btn-{{prod[0].compra0_encomenda1===0?'outline-':''}}success" ng-click="prod[0].compra0_encomenda1=1" style="display: inline;margin-right:0px;border-top-left-radius: 0px;border-bottom-left-radius: 0px;padding:5px;min-width: 30px">E</button>
+                                                                                    <?php } ?>
+
+
+                                        </th>
+                                        <?php if($empresa->tipo_empresa===3){ ?>
+                                        <th><strong ng-repeat="l in prod[0].produto.locais" style="display:block">{{l.nome}}</strong></th>
+                                        <?php } ?>
                                         <th ng-if="prod[0].validade !== 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-{{prod[0].validade<0?'danger':'success'}}" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">{{(prod[0].validade > 0) ? (prod[0].validade | data_st) : 'Selecione'}}</strong> ({{prod[0].quantidade_validade}})</th>
                                         <th ng-if="prod[0].validade === 1000"><button ng-click="setProdutoValidade(prod[0])" class="btn btn-warning" data-toggle="modal" data-target="#validadeProduto" style="width:23px;height:23px;padding:1px;display:inline"><i class="fas fa-info"></i></button>&nbsp<strong style="display:inline">------</strong> ({{prod[0].quantidade_validade}})</th>
+                                        
                                         <th><input type="text" style="max-width:60px" class="form-control" ng-model="prod[0].limite"></th>
                                         <th>{{prod[0].produto.custo}}</th>
                                         <th ng-click="selecionarValor(prod[0], v)" style="cursor:pointer;{{v.selecionado?'text-decoration:underline;color:Green':''}}" ng-repeat="v in prod[0].valores">{{v.valor}} R$</th>

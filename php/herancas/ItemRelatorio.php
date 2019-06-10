@@ -13,6 +13,7 @@
  */
 class ItemRelatorio {
 
+    public $id;
     public $campos_agrupados;
     public $valores_campos_agrupados;
     public $campos;
@@ -21,6 +22,8 @@ class ItemRelatorio {
     public $quantidade_filhos;
 
     function __construct($relatorio) {
+
+        $this->id = 0;
 
         $this->relatorio = $relatorio;
 

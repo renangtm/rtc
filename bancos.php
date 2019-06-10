@@ -135,15 +135,7 @@
                                             </table>
 
                                             <!-- paginação  -->
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="bancos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in bancos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="bancos.next()"><a class="page-link" href="">Próximo</a></li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
+                                            <paginacao assinc="bancos"></paginacao>
 
                                         </div>
                                     </div>

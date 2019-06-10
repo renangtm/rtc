@@ -50,6 +50,8 @@ class CampoRelatorio {
                 return "CASE WHEN MAX(k.$this->nome) IS NOT NULL AND MAX(k.$this->nome) <> '' THEN CONCAT(CONCAT(CONCAT('Ultimo:',MAX(k.$this->nome)),' - Primeiro:'),MIN(k.$this->nome)) ELSE '------' END";
             }else if($this->tipo === 'D'){
                 return "CONCAT(CONCAT(CONCAT('De:',FROM_UNIXTIME(MIN(k.$this->nome)/1000)),' - Ate:'),FROM_UNIXTIME(MAX(k.$this->nome)/1000))";
+            }else if($this->tipo === 'DF'){
+                return "CONCAT(CONCAT(CONCAT('De:',FROM_UNIXTIME(MIN(k.$this->nome)/1000)),' - Ate:'),FROM_UNIXTIME(MAX(k.$this->nome)/1000))";
             }
         }
     }

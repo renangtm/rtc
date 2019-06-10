@@ -5094,6 +5094,12 @@ class Empresa {
                 . "INNER JOIN empresa e ON e.id=p.id_empresa "
                 . "WHERE e.id IN $empresas ";
 
+        if($usuario !== null){
+
+            $sql .= "AND p.id IN (SELECT pp.id_protocolo FROM protocolo_usuario pp INNER JOIN usuario u ON pp.id_usuario=u.id WHERE u.cpf='".$usuario->cpf->valor."') ";
+
+        }
+
         if ($filtro !== "") {
 
             $sql .= "AND $filtro ";
@@ -5208,6 +5214,22 @@ class Empresa {
         }
 
         $ps->close();
+
+        $ps = $con->getConexao()->prepare("SELECT u.id,u.nome,u.cpf,p.id_protocolo FROM usuario u INNER JOIN protocolo_usuario p ON p.id_usuario=u.id AND p.id_protocolo IN $ids_protocolos");
+        $ps->execute();
+        $ps->bind_result($id_usuario,$nome_usuario,$cpf_usuario,$id_protocolo);
+        while($ps->fetch()){
+
+            $u = new Usuario();
+            $u->id = $id_usuario;
+            $u->nome = $nome_usuario;
+            $u->cpf = new CPF($cpf_usuario);
+
+            $protocolos[$id_protocolo]->usuarios[] = $u;
+
+        }
+        $ps->close();
+
 
         $retorno = array();
 
@@ -5904,6 +5926,7 @@ class Empresa {
                 . "UNIX_TIMESTAMP(produto_campanha.validade)*1000,"
                 . "produto_campanha.limite,"
                 . "produto_campanha.valor, "
+                . "produto_campanha.compra0_encomenda1,"
                 . "empresa.id,"
                 . "empresa.tipo_empresa,"
                 . "empresa.nome,"
@@ -5937,7 +5960,7 @@ class Empresa {
                 . " WHERE campanha.inicio<=CURRENT_TIMESTAMP AND campanha.fim>=CURRENT_TIMESTAMP AND campanha.excluida=false");
 
         $ps->execute();
-        $ps->bind_result($id, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id, $inicio, $fim, $prazo, $parcelas, $cliente, $id_produto_campanha, $id_produto, $validade, $limite, $valor,$compra0_encomenda1, $id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         while ($ps->fetch()) {
 
@@ -6003,6 +6026,7 @@ class Empresa {
             $p = new ProdutoCampanha();
             $p->id = $id_produto_campanha;
             $p->validade = $validade;
+            $p->compra0_encomenda1 = $compra0_encomenda1;
             $p->limite = $limite;
             $p->valor = $valor;
             $p->campanha = $campanha;
@@ -6034,6 +6058,7 @@ class Empresa {
                 . "produto.peso_bruto,"
                 . "produto.peso_liquido,"
                 . "produto.estoque,"
+                . "produto.troca,"
                 . "produto.disponivel,"
                 . "produto.transito,"
                 . "produto.grade,"
@@ -6070,7 +6095,7 @@ class Empresa {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id,$id_empresa_vendas,$perfeicao,$aceitacao);
+        $ps->bind_result($id_pro, $cod_pro, $id_log, $classe_risco, $fabricante, $imagem, $id_uni, $liq, $qtd_un, $hab, $vb, $cus, $pb, $pl, $est,$troca, $disp, $tr, $gr, $uni, $ncm, $nome, $lucro, $ativo, $conc, $sistema_lotes, $nota_usuario, $cat_id,$id_empresa_vendas,$perfeicao,$aceitacao);
 
         while ($ps->fetch()) {
 
@@ -6088,6 +6113,7 @@ class Empresa {
             $p->aceitacao = $aceitacao;
             $p->id_universal = $id_uni;
             $p->sistema_lotes = $sistema_lotes == 1;
+            $p->troca = $troca;
             $p->nota_usuario = $nota_usuario;
             $p->liquido = $liq == 1;
             $p->quantidade_unidade = $qtd_un;
@@ -6793,8 +6819,11 @@ class Empresa {
     public function getCountClientes($con, $filtro = "") {
 
         $sql = "SELECT COUNT(*) FROM cliente "
-                . "INNER JOIN empresa ON empresa.id=cliente.id_empresa"
-                . " WHERE id_empresa=$this->id AND excluido=false ";
+                . "INNER JOIN empresa ON empresa.id=cliente.id_empresa "
+                . "INNER JOIN endereco ON endereco.id_entidade=cliente.id AND endereco.tipo_entidade='CLI' "
+                . "INNER JOIN cidade cidade_cliente ON cidade_cliente.id=endereco.id_cidade "
+                . "INNER JOIN estado estado_cliente ON estado_cliente.id=cidade_cliente.id_estado"
+                . " WHERE cliente.id_empresa=$this->id AND cliente.excluido=false ";
 
         if ($filtro != "") {
 

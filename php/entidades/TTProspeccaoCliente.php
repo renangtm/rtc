@@ -23,7 +23,7 @@ class TTProspeccaoDeCliente extends TipoTarefa {
 
         $this->id_empresa = $id_empresa;
         
-        $this->relac = array(12,2,3,4,7,8,9,10,1);
+        $this->relac = array(12,2,3,4,7,8,9,9,10,1);
 
 
         $this->classes = array(
@@ -57,7 +57,7 @@ class TTProspeccaoDeCliente extends TipoTarefa {
         if($ps->fetch()){
           	for($i=0;$i<count($this->relac);$i++){
           		if($this->relac[$i]===$classe_virtual){
-          			return $i;
+          			return array($i);
           		}
           	}
         }
@@ -148,104 +148,158 @@ class TTProspeccaoDeCliente extends TipoTarefa {
     
     public function init($tarefa){
         
+
+        $passar = false;
+
+        if(strpos($tarefa->descricao, "##@@") !== false){
+            $passar = true;
+        }
+
+        if(!$passar){
+
          $con = new ConnectionFactory();
         
             $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".$this->relac[$tarefa->opcoes[0]]." WHERE id=$tarefa->id_entidade_relacionada");
             $ps->execute();
             $ps->close();
-           
+
+        }
+
+
         
     }
     
     public function aoFinalizar($tarefa,$usuario) {
+
+        if($tarefa->id_entidade_relacionada === 0){
+            return;
+        }
+
         
         $con = new ConnectionFactory();
         
-        
-        
-        $dados = array();
-        
-        foreach($tarefa->observacoes as $key=>$value){
-            $o = str_replace(array("<br>"), array(""), $value->observacao);
-            $o = explode("#", $o);
-            foreach($o as $k=>$d){
-                $val = explode(":", $d,2);
-                if(count($val)<2){
-                    continue;
-                }
-                $val2 = $val[1];
-                $val = $val[0];
-                if(strlen($val)===0 || strlen($val2)===0){
-                    continue;
-                }
-                while($val2{0} === " "){
-                    $val2 = substr($val2, 1);
-                }
-                $dados[strtolower($val)] = $val2;
-            }
-        }
-        
-        
-        
-        if(isset($dados['nome'])){
-            $ps = $con->getConexao()->prepare("UPDATE cliente SET razao_social='".$dados['nome']."' WHERE id=$tarefa->id_entidade_relacionada");
-            $ps->execute();
-            $ps->close();
-        }
-        
-        if(isset($dados['cnpj'])){
-            $ps = $con->getConexao()->prepare("UPDATE cliente SET cnpj='".$dados['cnpj']."' WHERE id=$tarefa->id_entidade_relacionada");
-            $ps->execute();
-            $ps->close();
-        }
-        
-        if(isset($dados['cpf'])){
-            $ps = $con->getConexao()->prepare("UPDATE cliente SET razao_social='".$dados['cpf']."' WHERE id=$tarefa->id_entidade_relacionada");
-            $ps->execute();
-            $ps->close();
-        }
-        
-        if(isset($dados['email'])){
-            $ps = $con->getConexao()->prepare("UPDATE email SET endereco='".$dados['email']."' WHERE tipo_entidade='CLI' AND id_entidade=$tarefa->id_entidade_relacionada");
-            $ps->execute();
-            $ps->close();
-        }
-        
-        $telefones = array();
-        $emails = array();
-        $nome = "";
-        $cnpj = "";
-        $codigo = "";
-        
-        $ps = $con->getConexao()->prepare("SELECT c.codigo,c.razao_social, c.cnpj, t.numero, e.endereco FROM cliente c LEFT JOIN email e ON e.id_entidade=c.id AND e.tipo_entidade='CLI' LEFT JOIN telefone t ON t.id_entidade=c.id AND t.tipo_entidade='CLI' WHERE c.id=$tarefa->id_entidade_relacionada");
-        $ps->execute();
-        $ps->bind_result($codigo,$nome_cliente,$cnpj_cliente,$telefone_cliente,$email_cliente);
-        while($ps->fetch()){
-            $nome = $nome_cliente;
-            $cnpj = $cnpj_cliente;
-            $codigo = $codigo;
-            $telefones[$telefone_cliente] = "";
-            $emails[$email_cliente] = "";
-        }
-        $ps->close();
-        
-        
-        $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".$this->relac[$tarefa->opcoes[0]]." WHERE id=$tarefa->id_entidade_relacionada");
-            $ps->execute();
-            $ps->close();
-        
-        $str_telefones = "";
-        foreach($telefones as $key=>$value){
-            $str_telefones .= "$key<br>";
-        }
-        
-        $str_emails = "";
-        foreach($emails as $key=>$value){
-            $str_emails .= "$key<br>";
+
+        $passar = false;
+
+        if(strpos($tarefa->descricao, "##@@") !== false){
+            $passar = true;
         }
 
-        if($tarefa->opcoes[0] === 0){
+        if(!$passar){
         
+            $dados = array();
+            
+            foreach($tarefa->observacoes as $key=>$value){
+                $o = str_replace(array("<br>"), array(""), $value->observacao);
+                $o = explode("#", $o);
+                foreach($o as $k=>$d){
+                    $val = explode(":", $d,2);
+                    if(count($val)<2){
+                        continue;
+                    }
+                    $val2 = $val[1];
+                    $val = $val[0];
+                    if(strlen($val)===0 || strlen($val2)===0){
+                        continue;
+                    }
+                    while($val2{0} === " "){
+                        $val2 = substr($val2, 1);
+                    }
+                    $dados[strtolower($val)] = $val2;
+                }
+            }
+            
+            
+            if(isset($dados['nome'])){
+                $ps = $con->getConexao()->prepare("UPDATE cliente SET razao_social='".$dados['nome']."' WHERE id=$tarefa->id_entidade_relacionada");
+                $ps->execute();
+                $ps->close();
+            }
+            
+            if(isset($dados['cnpj'])){
+                $ps = $con->getConexao()->prepare("UPDATE cliente SET cnpj='".$dados['cnpj']."' WHERE id=$tarefa->id_entidade_relacionada");
+                $ps->execute();
+                $ps->close();
+            }
+            
+            if(isset($dados['cpf'])){
+                $ps = $con->getConexao()->prepare("UPDATE cliente SET razao_social='".$dados['cpf']."' WHERE id=$tarefa->id_entidade_relacionada");
+                $ps->execute();
+                $ps->close();
+            }
+            
+            if(isset($dados['email'])){
+                $ps = $con->getConexao()->prepare("UPDATE email SET endereco='".$dados['email']."' WHERE tipo_entidade='CLI' AND id_entidade=$tarefa->id_entidade_relacionada");
+                $ps->execute();
+                $ps->close();
+            }
+            
+            if(isset($dados['telefones'])){
+                
+                $tels = $dados['telefones'];
+                $tels = explode(';', $tels);
+                
+                new Telefone();
+                $ps = $con->getConexao()->prepare("DELETE FROM telefone WHERE tipo_entidade='CLI' AND id_entidade=$tarefa->id_entidade_relacionada");
+                $ps->execute();
+                $ps->close();
+                
+                foreach($tels as $key=>$value){
+                    
+                    if($value==="" || $value === " ")
+                        continue;
+                    
+                    
+                   $ps = $con->getConexao()->prepare("INSERT INTO telefone(id_entidade,tipo_entidade,numero,excluido) VALUES($tarefa->id_entidade_relacionada,'CLI','".addslashes($value)."',false)");
+                   $ps->execute();
+                   $ps->close();
+                    
+                }
+                
+            }
+
+        }
+
+        $telefones = array();
+            $emails = array();
+            $nome = "";
+            $cnpj = "";
+            $codigo = "";
+            
+            $ps = $con->getConexao()->prepare("SELECT c.codigo,c.razao_social, c.cnpj, t.numero, e.endereco FROM cliente c LEFT JOIN email e ON e.id_entidade=c.id AND e.tipo_entidade='CLI' LEFT JOIN telefone t ON t.id_entidade=c.id AND t.tipo_entidade='CLI' WHERE c.id=$tarefa->id_entidade_relacionada");
+            $ps->execute();
+            $ps->bind_result($codigo,$nome_cliente,$cnpj_cliente,$telefone_cliente,$email_cliente);
+            while($ps->fetch()){
+                $nome = $nome_cliente;
+                $cnpj = $cnpj_cliente;
+                $codigo = $codigo;
+                $telefones[$telefone_cliente] = "";
+                $emails[$email_cliente] = "";
+            }
+            $ps->close();
+            
+        if(!$passar){
+        
+            $ps = $con->getConexao()->prepare("UPDATE cliente SET classe_virtual=".$this->relac[$tarefa->opcoes[0]]." WHERE id=$tarefa->id_entidade_relacionada");
+                $ps->execute();
+                $ps->close();
+            
+        }
+
+            $str_telefones = "";
+            foreach($telefones as $key=>$value){
+                $str_telefones .= "$key<br>";
+            }
+            
+            $str_emails = "";
+            foreach($emails as $key=>$value){
+                $str_emails .= "$key<br>";
+            }
+
+        
+        
+        if($tarefa->opcoes[0] === 0 || $passar){
+
             $tarefa_ = new Tarefa();
             $tarefa_->tipo_tarefa = Sistema::TT_RECEPCAO_CLIENTE($this->id_empresa);
             $tarefa_->titulo = "Recepcao de Cliente $nome";

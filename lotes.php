@@ -190,15 +190,7 @@
                                             </table>
 
                                             <!-- pagina??�??�o  -->
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="lotes.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in lotes.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="lotes.next()"><a class="page-link" href="">Proximo</a></li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
+                                            <paginacao assinc="lotes"></paginacao>
 
                                         </div>
                                     </div>
@@ -270,13 +262,7 @@
                                         <td class="text-center"><button class="btn btn-primary" ng-click="setPendencia(pendencia[0], pendencia[0].divisao)" data-toggle="modal" data-target="#cadastroLotes"><i class="fas fa-plus-circle"></i></button></td>
                                     </tr>
                                 </table>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-repeat="pg in pendencias.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <paginacao assinc="pendencias"></paginacao>
 
                             </div>
                             <div class="modal-footer">

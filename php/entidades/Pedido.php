@@ -765,7 +765,7 @@ class Pedido {
                     $t = new Tarefa();
                     $t->tipo_tarefa = Sistema::TT_SUPORTE_ACOMPANHAMENTO($vrt->id);
                     $t->titulo = "Acompanhe o pedido $this->id, do cliente " . $this->cliente->codigo . "-" . $this->cliente->razao_social;
-                    $t->descricao .= "Acompanhe o andamento do pedido, para acompanhar as etapas, basta entrar em Pedidos de Venda, digitar o id $this->id do pedido na barra de busca, após isso ao visualizar o pedido, clique no icone <i class='fas fa-edit'></i> para ver maiores informações do pedido, e posteriormente acompanhe seu andamento pela aba de Logs do Pedido, isso deve ser feito com frequencia, pedidos que estao a mais de 48 horas na empresa, se tornam protocolos.";
+                    $t->descricao .= "Acompanhe o andamento do pedido, para acompanhar as etapas, basta entrar em Pedidos de Venda, digitar o id $this->id do pedido na barra de busca, apï¿½s isso ao visualizar o pedido, clique no icone <i class='fas fa-edit'></i> para ver maiores informaï¿½ï¿½es do pedido, e posteriormente acompanhe seu andamento pela aba de Logs do Pedido, isso deve ser feito com frequencia, pedidos que estao a mais de 48 horas na empresa, se tornam protocolos.";
 
                     $t->tipo_entidade_relacionada = "PED_" . $this->empresa->id;
                     $t->id_entidade_relacionada = $this->id;

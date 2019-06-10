@@ -92,7 +92,7 @@
                             <!-- ============================================================== -->
                             <!-- basic table  -->
                             <!-- ============================================================== -->
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="card">
                                     <div class="card-body row">
                                         <div class="col-md-12">
@@ -124,13 +124,7 @@
                                                 </table>
 
                                                 <!-- paginacao  -->
-                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-
-                                                    <div style="width:105px;margin-left:5px;margin-bottom:5px;display:inline-block" class="page-item" ng-click="usuarios.prev()"><a class="page-link" href="">Anterior</a></div>
-                                                    <div style="width:50px;margin-left:5px;margin-bottom:5px;display:inline-block" class="page-item" ng-repeat="pg in usuarios.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></div>
-                                                    <div style="width:105px;margin-left:5px;margin-bottom:5px;display:inline-block" class="page-item" ng-click="usuarios.next()"><a class="page-link" href="">Proximo</a></div>
-
-                                                </div>
+                                                <paginacao assinc="usuarios"></paginacao>
 
                                             </div>
                                         </div>
@@ -138,7 +132,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-5" style="overflow: visible">
+                            <div class="col-md-4" style="overflow: visible">
                                 <div class="card" style="overflow: visible">
                                     <div class="card-body row" style="overflow: visible">
                                         <div class="col-md-12" style="overflow: visible">
@@ -171,13 +165,7 @@
                                                 </table>
 
                                                 <!-- paginacao  -->
-                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-
-
-                                                    <div style="width:50px;margin-left:5px;margin-bottom:5px;display:inline-block" class="page-item" ng-repeat="pg in ausencias.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></div>
-
-
-                                                </div>
+                                                <paginacao assinc="ausencias"></paginacao>
 
                                             </div>
                                         </div>
@@ -225,13 +213,7 @@
                                                 </table>
 
                                                 <!-- paginacao  -->
-                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-
-
-                                                    <div style="width:50px;margin-left:5px;margin-bottom:5px;display:inline-block" class="page-item" ng-repeat="pg in expedientes.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></div>
-
-
-                                                </div>
+                                                <paginacao assinc="expedientes"></paginacao>
 
                                             </div>
                                         </div>

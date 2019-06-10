@@ -207,11 +207,7 @@
 
 
                                             <!-- paginação  -->
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-
-                                                <div style="width:40px;display:inline-block" ng-repeat="pg in tarefas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></div>
-
-                                            </div>
+                                            <paginacao assinc="tarefas"></paginacao>
 
 
 
@@ -445,6 +441,8 @@
                             </div>
                             <div class="modal-body">
                                 <input type="text" class="form-control" placeholder="Filtro" id="filtroUsuarios">
+                                <hr>
+                                <button class="btn btn-success" ng-click="todos()"><i class="fas fa-plus-circle"></i>&nbsp Todos</button>
                                 <hr>
                                 <table id="lista_usuarios" class="table table-striped table-bordered first">
                                     <thead>

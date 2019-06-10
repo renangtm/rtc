@@ -193,31 +193,35 @@
                                                             <li data-target="#carouselExampleIndicators" data-slide-to="5" style="cursor: pointer;width: 30px!important;height: 10px!important;border-radius: 20%;"></li>
                                                             <li data-target="#carouselExampleIndicators" data-slide-to="6" style="cursor: pointer;width: 30px!important;height: 10px!important;border-radius: 20%;"></li>
                                                             <li data-target="#carouselExampleIndicators" data-slide-to="7" style="cursor: pointer;width: 30px!important;height: 10px!important;border-radius: 20%;"></li>
+                                                            <li data-target="#carouselExampleIndicators" data-slide-to="8" style="cursor: pointer;width: 30px!important;height: 10px!important;border-radius: 20%;"></li>
                                                         </ol>
                                                         <div class="carousel-inner">
                                                             <div class="carousel-item active">
-                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide1.PNG" alt="First slide">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo3/Slide1.PNG" alt="First slide">
                                                             </div>
                                                             <div class="carousel-item">
-                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide2.PNG" alt="Second slide">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo3/Slide2.PNG" alt="Second slide">
                                                             </div>
                                                             <div class="carousel-item">
-                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide3.PNG" alt="Third slide">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo3/Slide3.PNG" alt="Third slide">
                                                             </div>
                                                             <div class="carousel-item">
-                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide4.PNG" alt="Third slide">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo3/Slide4.PNG" alt="Third slide">
                                                             </div>
                                                             <div class="carousel-item">
-                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide5.PNG" alt="Third slide">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo3/Slide5.PNG" alt="Third slide">
                                                             </div>
                                                             <div class="carousel-item">
-                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide6.PNG" alt="Third slide">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo3/Slide6.PNG" alt="Third slide">
                                                             </div>
                                                             <div class="carousel-item">
-                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide7.PNG" alt="Third slide">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo3/Slide7.PNG" alt="Third slide">
                                                             </div>
                                                             <div class="carousel-item">
-                                                                <img class="d-block w-100" src="assets/images/passo_a_passo1/Slide8.PNG" alt="Third slide">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo3/Slide8.PNG" alt="Third slide">
+                                                            </div>
+                                                            <div class="carousel-item">
+                                                                <img class="d-block w-100" src="assets/images/passo_a_passo3/Slide9.PNG" alt="Third slide">
                                                             </div>
                                                         </div>
                                                         <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev" style="display: flex;">

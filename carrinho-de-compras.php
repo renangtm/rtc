@@ -140,7 +140,7 @@
                                                             </div>
                                                             <div class="custom-control custom-radio custom-control-inline" style="margin-left:30px;margin-top: 5px;">
                                                                 <!-- GAMBIARRA "|| (pedido.empresa.id===1734 && pedido.logistica === null)"  --> 
-                                                                <input ng-disabled="(pedido.status_finalizacao !== null && pedido.status_finalizacao.final) || (pedido.empresa.id === 1734 && pedido.logistica === null)" type="radio" id="rb{{pedido.identificador}}" name="radio_{{pedido.identificador}}" ng-value="false" ng-change="atualizaCustosResetandoFrete(pedido)" ng-model="pedido.frete_incluso" class="custom-control-input">
+                                                                <input ng-disabled="(pedido.status_finalizacao !== null && pedido.status_finalizacao.final) || (pedido.empresa.id === 1734 && pedido.logistica === null) || (pedido.empresa.id === 2072)" type="radio" id="rb{{pedido.identificador}}" name="radio_{{pedido.identificador}}" ng-value="false" ng-change="atualizaCustosResetandoFrete(pedido)" ng-model="pedido.frete_incluso" class="custom-control-input">
                                                                 <label class="custom-control-label" for="rb{{pedido.identificador}}">Por sua conta (FOB)</label>
                                                             </div>
                                                             <hr>

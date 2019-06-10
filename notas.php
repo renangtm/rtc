@@ -81,6 +81,7 @@
                                             <div class="product-btn m-b-20">
                                                 <a href="#" class="btn btn-primary" data-title="AddCompra" ng-click="novoNota()" data-toggle="modal" data-target="#editCompra" ><i class="fas fa-plus-circle m-r-10"></i>Cadastrar Nota</a>
 
+                                                <button class="btn btn-warning" ng-disabled="selecao_minuta.length===0" ng-click="emitirMinutas()"><i class="fas fa-truck"></i>&nbspEmitir minuta de NF selecionadas ({{selecao_minuta.length}})</button>
 
                                             </div>
                                             <hr><br>
@@ -103,7 +104,13 @@
                                                     <tr ng-repeat-start="notaa in notas.elementos" style="{{notaa[0].cancelada?'color:DarkRed':(!notaa[0].emitida?'color:DarkOrange':'')}}">
                                                         <td>{{notaa[0].ficha}}</td>
                                                         <td>{{notaa[0].numero}}</td>
-                                                        <td>{{notaa[0].transportadora.razao_social}}</td>
+                                                        <td>
+                                                        	<i class="fas fa-square fa-2x" style="cursor: pointer;color:#000000" ng-if="isSelecionada(notaa[0])<0" ng-click="selecionar(notaa[0])"></i>
+                                                        	<i class="fas fa-square fa-2x" style="cursor: pointer;color:Green" ng-if="isSelecionada(notaa[0])>=0" ng-click="selecionar(notaa[0])"></i>
+
+                                                       	 	{{notaa[0].transportadora.razao_social}}
+
+                                                    	</td>
                                                         <td>{{notaa[0].saida ? 'Saída' : 'Entrada'}}</td>
                                                         <td>{{notaa[0].id_pedido}}</td>
                                                         <td ng-if="notaa[0].emitida">{{notaa[0].data_emissao| data}}</td>
@@ -216,15 +223,7 @@
                                                     </tr>
                                                 </tfoot>
                                             </table>
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="notas.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in notas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="notas.next()"><a class="page-link" href="">Proximo</a></li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
+                                            <paginacao assinc="notas"></paginacao>
                                             <!-- paginação  -->
 
 
@@ -390,6 +389,10 @@
                                         <div class="col-4" style="position:relative" ng-if="nota.emitida">
                                             <input class="custom-control-input" id="chkr" style="display: inline-block;position:absolute;top:0px;left:5px" type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="nota.cancelada">
                                             <label class="custom-control-label" style="cursor:pointer;" for="chkr"><strong style="position:absolute;top:0px;left:27px">Nota cancelada</strong></label>
+                                        </div>
+                                        <div class="col-4" style="position:relative">
+                                            <input class="custom-control-input" id="chk2" style="display: inline-block;position:absolute;top:0px;left:5px" type="checkbox" ng-true-value="false" ng-false-value="true" ng-model="nota.interferir_estoque" ng-disabled="nota.ficha > 0">
+                                            <label class="custom-control-label" style="cursor:pointer;" for="chk2"><strong style="position:absolute;top:0px;left:27px">Nota somente de efeito fiscal</strong></label>
                                         </div>
                                     </div>
                                     <div class="form-row" ng-if="nota.emitida">
@@ -590,15 +593,7 @@
                                         <th><button class="btn btn-success" ng-click="setFornecedor(fo[0])"><i class="fa fa-info"></i></button></th>
                                     </tr> 
                                 </table>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-click="fornecedores.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in fornecedores.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                            <li class="page-item" ng-click="fornecedores.next()"><a class="page-link" href="">Próximo</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <paginacao assinc="fornecedores"></paginacao>
 
                             </div>
                             <div class="modal-footer">
@@ -630,15 +625,7 @@
                                         <th><button class="btn btn-success" ng-click="setCliente(cli[0])"><i class="fa fa-info"></i></button></th>
                                     </tr> 
                                 </table>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-click="clientes.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in clientes.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                            <li class="page-item" ng-click="clientes.next()"><a class="page-link" href="">Próximo</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <paginacao assinc="clientes"></paginacao>
 
                             </div>
                             <div class="modal-footer">
@@ -670,15 +657,7 @@
                                         <th><button class="btn btn-success" ng-click="setTransportadora(trans[0])"><i class="fa fa-info"></i></button></th>
                                     </tr> 
                                 </table>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-click="transportadoras.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in transportadoras.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                            <li class="page-item" ng-click="transportadoras.next()"><a class="page-link" href="">Próximo</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <paginacao assinc="transportadoras"></paginacao>
 
                             </div>
                             <div class="modal-footer">
@@ -716,15 +695,7 @@
                                         <th><button class="btn btn-success" ng-click="setProduto(produt[0])" data-target="#demo{{produt[0].id}}" data-toggle="collapse" class="accordion-toggle"><i class="fa fa-info"></i></button></th>
                                     </tr>
                                 </table>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-click="produtos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                            <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Próximo</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <paginacao assinc="produtos"></paginacao>
 
                             </div>
                             <div class="modal-footer">

@@ -1,4 +1,6 @@
-var projeto = "https://www.rtcagro.com.br";
+var projeto = "http://192.168.18.121:888/novo_rtc_web";
+
+
 
 function mtlCharAt(str, idx) {
     str += '';
@@ -427,7 +429,13 @@ function createAssinc(lista, cols, rows, maxPage) {
         ordem: "",
         por_pagina: rows,
         por_coluna: cols,
+        quantidade:0,
+        pontos_meio:false,
+        numero_paginas:0,
         elementos: [],
+        primeiros:[],
+        ultimos:[],
+        pagina_mu:1,
         pagina: 0,
         next: function () {
             this.pagina++;
@@ -438,15 +446,26 @@ function createAssinc(lista, cols, rows, maxPage) {
             this.attList();
         },
         paginas: [],
+        attListMU:function(){
+            this.pagina = this.pagina_mu-1;
+            this.attList();
+        },
         attList: function () {
 
             var este = this;
 
             lista.getCount(este.filtro, function (r) {
                 //----------------------------
+                
+                este.pagina_mu = este.pagina+1;
+                
+                este.quantidade = r.qtd;
+                
                 var np = Math.ceil(r.qtd / (este.por_pagina * este.por_coluna));
+                este.numero_paginas = np;
                 este.pagina = Math.max(Math.min(este.pagina, np - 1), 0);
-
+                este.pagina_mu = este.pagina+1;
+                
                 lista.getElementos(este.pagina * (este.por_pagina * este.por_coluna),
                         Math.min((este.pagina + 1) * (este.por_pagina * este.por_coluna), r.qtd),
                         este.filtro, este.ordem, function (e) {
@@ -471,7 +490,94 @@ function createAssinc(lista, cols, rows, maxPage) {
                                     }, isAtual: este.pagina == i}
                                 este.paginas[este.paginas.length] = p;
                             }
+                            
+                            var len = Math.floor(maxPage/2);
+                            
+                            var dir = (este.pagina >= np/2);
+                            
+                            este.ultimos = [];
+                            este.primeiros = [];
+                            este.pontos_meio = false;
+                            
+                            var i = este.pagina-(este.pagina%(len-1));
+                            
+                            if(dir){
+                                
+                                var i = np-1-este.pagina;
+                                
+                                if(i%(len-1)===0){
+                                    i += (len-1);
+                                }else{
+                                    i += (len-1)-(i%(len-1));
+                                }
+                                
+                                i = Math.max(np-i-1,0);
+                                
+                            }
+                            
+                            for(var j=i;j<i+len && j<np;j++){
+                                var p = {numero: j, ir: function () {
+                                        este.pagina = this.numero;
+                                        este.attList();
+                                    }, isAtual: este.pagina == j};
+                                if(dir){
+                                    este.ultimos[este.ultimos.length] = p;
+                                }else{
+                                    este.primeiros[este.primeiros.length] = p;
+                                }
+                            }
+                            
+                            if(dir){
+                                
+                                for(var j=0;j<len && j<i;j++){
+                                    
+                                    este.pontos_meio = true;
+                                    
+                                    var p = {numero: j, ir: function () {
+                                        este.pagina = this.numero;
+                                        este.attList();
+                                    }, isAtual: false};
+                                    
+                                    este.primeiros[este.primeiros.length] = p;
+                                    
+                                }
+                               
+                            }else{
+                                
+                                for(var j=np-1;j>=np-len && j>=i+len;j--){
+                                    
+                                    este.pontos_meio = true;
+                                    
+                                    var p = {numero: j, ir: function () {
+                                        este.pagina = this.numero;
+                                        este.attList();
+                                    }, isAtual: false};
+                                    
+                                    este.ultimos[este.ultimos.length] = p;
+                                    
+                                }
+                                
+                                for(var j=0;j<Math.floor(este.ultimos.length/2);j++){
+                                    var k = este.ultimos[j];
+                                    este.ultimos[j] = este.ultimos[este.ultimos.length-1-j];
+                                    este.ultimos[este.ultimos.length-1-j] = k;
+                                }
+                                
 
+                            }
+
+                            if(este.ultimos.length>0 && este.primeiros.length>0 && este.pontos_meio){
+
+                                var n1 = este.primeiros[este.primeiros.length-1].numero;
+                                var n2 = este.ultimos[0].numero;
+
+                                if(n2-n1===1){
+                                    este.pontos_meio = false;
+                                }
+
+                            }
+                            
+                            
                             if (typeof este["posload"] !== 'undefined') {
                                 este["posload"](els);
                             }
@@ -626,6 +732,23 @@ function createList(lista, cols, rows, filterParam, comparator) {
         elementos: [],
         pagina: 0,
         paginas: [],
+        numero_paginas:0,
+        pontos_meio:false,
+        primeiros:[],
+        ultimos:[],
+        pagina_mu:1,
+        prev:function(){
+            this.pagina = Math.max(0,this.pagina-1);
+            this.attList();
+        },
+        next:function(){
+            this.pagina = Math.min(this.numero_paginas,this.pagina+1);
+            this.attList();
+        },
+        attListMU:function(){
+            this.pagina = this.pagina_mu-1;
+            this.attList();
+        },
         attList: function () {
 
             var este = this;
@@ -679,6 +802,99 @@ function createList(lista, cols, rows, filterParam, comparator) {
                     }, isAtual: este.pagina == i}
                 this.paginas[this.paginas.length] = p;
             }
+
+            este.numero_paginas = np;
+            este.pagina_mu = este.pagina+1;
+            //=========================================
+
+            var len = Math.floor(4/2);
+                            
+                            var dir = (este.pagina >= np/2);
+                            
+                            este.ultimos = [];
+                            este.primeiros = [];
+                            este.pontos_meio = false;
+                            
+                            var i = este.pagina-(este.pagina%(len-1));
+                            
+                            if(dir){
+                                
+                                var i = np-1-este.pagina;
+                                
+                                if(i%(len-1)===0){
+                                    i += (len-1);
+                                }else{
+                                    i += (len-1)-(i%(len-1));
+                                }
+                                
+                                i = Math.max(np-i-1,0);
+                                
+                            }
+                            
+                            for(var j=i;j<i+len && j<np;j++){
+                                var p = {numero: j, ir: function () {
+                                        este.pagina = this.numero;
+                                        este.attList();
+                                    }, isAtual: este.pagina == j};
+                                if(dir){
+                                    este.ultimos[este.ultimos.length] = p;
+                                }else{
+                                    este.primeiros[este.primeiros.length] = p;
+                                }
+                            }
+                            
+                            if(dir){
+                                
+                                for(var j=0;j<len && j<i;j++){
+                                    
+                                    este.pontos_meio = true;
+                                    
+                                    var p = {numero: j, ir: function () {
+                                        este.pagina = this.numero;
+                                        este.attList();
+                                    }, isAtual: false};
+                                    
+                                    este.primeiros[este.primeiros.length] = p;
+                                    
+                                }
+                               
+                            }else{
+                                
+                                for(var j=np-1;j>=np-len && j>=i+len;j--){
+                                    
+                                    este.pontos_meio = true;
+                                    
+                                    var p = {numero: j, ir: function () {
+                                        este.pagina = this.numero;
+                                        este.attList();
+                                    }, isAtual: false};
+                                    
+                                    este.ultimos[este.ultimos.length] = p;
+                                    
+                                }
+                                
+                                for(var j=0;j<Math.floor(este.ultimos.length/2);j++){
+                                    var k = este.ultimos[j];
+                                    este.ultimos[j] = este.ultimos[este.ultimos.length-1-j];
+                                    este.ultimos[este.ultimos.length-1-j] = k;
+                                }
+                                
+
+                            }
+
+                            if(este.ultimos.length>0 && este.primeiros.length>0 && este.pontos_meio){
+
+                                var n1 = este.primeiros[este.primeiros.length-1].numero;
+                                var n2 = este.ultimos[0].numero;
+
+                                if(n2-n1===1){
+                                    este.pontos_meio = false;
+                                }
+
+                            }
+
+            //=========================================
+
         }
     }
 
@@ -1509,6 +1725,8 @@ rtc.directive('telefone', function ($timeout) {
     };
 })
 
+
+
 rtc.directive('inteiro', function () {
     return {
         restrict: 'E',
@@ -1839,13 +2057,159 @@ rtc.directive('calendario', function ($timeout) {
                 scope.tem_confirma = scope.confirma !== undefined;
                 scope.dsp = !scope.botao;
                 scope.trocar = function () {
-
+                    
+                    var rgn = function(k){
+                        
+                        var e = document.getElementById(k.attr('id'));
+                        e.setSelectionRange(0,k.val().length);
+                        
+                    }
+                    
                     scope.dsp = !scope.dsp;
 
                     if (scope.dsp) {
                         focoAtual = scope.idUnico;
                     }
+                    setTimeout(function(){
+                        
+                        rgn($("#di"+scope.idUnico).focus().keyup(function(){
+                            
+                            if($(this).val().length === 2){
+                            
+                                rgn($("#mi"+scope.idUnico).focus());
+                                
+                            }
+                            
+                        }).click(function(){
+                            
+                            rgn($(this));
+                            
+                        }));
+                        
+                       $("#mi"+scope.idUnico).keyup(function(){
+                           
+                           if($(this).val().length === 2){
+                            
+                                rgn($("#ai"+scope.idUnico).focus());
+                                
+                            }
+                            
+                       }).click(function(){
+                            
+                            rgn($(this));
+                            
+                        })
+                        
+                       $("#ai"+scope.idUnico).keyup(function(){
+                           
+                           if($(this).val().length === 4){
+                            
+                                rgn($("#hi"+scope.idUnico).focus());
+                                
+                            }
+                            
+                       }).click(function(){
+                            
+                            rgn($(this));
+                            
+                        }) 
+                       
+                       $("#hi"+scope.idUnico).keyup(function(){
+                           
+                           if($(this).val().length === 2){
+                            
+                                rgn($("#mmi"+scope.idUnico).focus());
+                                
+                            }
+                            
+                       }).click(function(){
+                            
+                            rgn($(this));
+                            
+                        })
+                       
+                       $("#mmi"+scope.idUnico).keyup(function(){
+                           
+                           if($(this).val().length === 2){
+                            
+                                rgn($("#df"+scope.idUnico).focus());
+                                
+                            }
+                            
+                       }).click(function(){
+                            
+                            rgn($(this));
+                            
+                        })
+                       
+                       $("#df"+scope.idUnico).keyup(function(){
+                           
+                           if($(this).val().length === 2){
+                            
+                                rgn($("#mf"+scope.idUnico).focus());
+                                
+                            }
+                            
+                       }).click(function(){
+                            
+                            rgn($(this));
+                            
+                        })
+                       
+                       $("#mf"+scope.idUnico).keyup(function(){
+                           
+                           if($(this).val().length === 2){
+                            
+                                rgn($("#af"+scope.idUnico).focus());
+                                
+                            }
+                            
+                       }).click(function(){
+                            
+                            rgn($(this));
+                            
+                        })
+                       
+                       $("#af"+scope.idUnico).keyup(function(){
+                           
+                           if($(this).val().length === 4){
+                            
+                                rgn($("#hf"+scope.idUnico).focus());
+                                
+                            }
+                            
+                       }).click(function(){
+                            
+                            rgn($(this));
+                            
+                        })
+                       
+                       $("#hf"+scope.idUnico).keyup(function(){
+                           
+                           if($(this).val().length === 2){
+                            
+                                rgn($("#mmf"+scope.idUnico).focus());
+                                
+                            }
+                            
+                       }).click(function(){
+                            
+                            rgn($(this));
+                            
+                        })
+                        
+                        
+                        $("#mmf"+scope.idUnico).click(function(){
+                            
+                            rgn($(this));
+                            
+                        })
+                        
+                    },100)
+                    
                     scope.$apply();
+                    
+                    
 
                 }
                 scope.foco = function () {
@@ -2009,14 +2373,20 @@ rtc.directive('calendario', function ($timeout) {
                         dt.setMonth(scope.mes_i.mes - 1);
                         dt.setYear(scope.ano_i.ano);
 
+                        
+
+                        var dtf = new Date();
+                        dtf.setDate(scope.dia_f.dia);
+                        dtf.setMonth(scope.mes_f.mes - 1);
+                        dtf.setYear(scope.ano_f.ano);
+                        
+                        if(dt.getTime()>dtf.getTime()){
+                            return;
+                        }
+
                         scope.inicio = dt.getTime();
 
-                        dt = new Date();
-                        dt.setDate(scope.dia_f.dia);
-                        dt.setMonth(scope.mes_f.mes - 1);
-                        dt.setYear(scope.ano_f.ano);
-
-                        scope.fim = dt.getTime();
+                        scope.fim = dtf.getTime();
 
                     } else {
 
@@ -2455,3 +2825,32 @@ rtc.directive('grafico', function ($sce, $timeout) {
         }
     };
 })
+
+
+rtc.directive('paginacao', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            assinc: '='
+        },
+        templateUrl: 'paginacao.html',
+        link: function (scope, element, attrs) {
+            
+
+        }
+    };
+})
+
+rtc.directive('myEnter', function () {
+    return function (scope, element, attrs) {
+        element.bind("keydown keypress", function (event) {
+            if(event.which === 13) {
+                scope.$apply(function (){
+                    scope.$eval(attrs.myEnter);
+                });
+
+                event.preventDefault();
+            }
+        });
+    };
+});

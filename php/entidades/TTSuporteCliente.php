@@ -97,8 +97,6 @@ class TTSuporteCliente extends TipoTarefa {
         $tarefa_->descricao = "Recepcione o cliente " . $tarefa->id_entidade_relacionada . " - $nome para o RTC no Modulo 2 CNPJ: $cnpj<hr>Telefones:<br>$str_telefones<hr>Emails:<br>$str_emails<hr>";
         $tarefa_->id_entidade_relacionada = $tarefa->id_entidade_relacionada;
         $tarefa_->tipo_entidade_relacionada = $tarefa->tipo_entidade_relacionada;
-        
-        Sistema::novaTarefaEmpresa($con, $tarefa_, new Virtual($this->id_empresa, $con));
             
     }
 

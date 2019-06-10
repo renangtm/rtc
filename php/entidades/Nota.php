@@ -775,9 +775,11 @@ class Nota {
     public function corrigir($con, $correcao) {
 
 
+
         if (!$this->emitida) {
 
             throw new Exception("Nota nao esta emitida para fazer carta de correcao");
+
         }
 
         $base = $this->empresa->getParametrosEmissao($con)->getComandoBase($con);
@@ -809,6 +811,7 @@ class Nota {
         Sistema::mergeArquivo($arquivo, $comando, false);
         $endereco = Sistema::$ENDERECO . "php/uploads/" . $arquivo;
 
+        
         $ret = Utilidades::fromJson(Sistema::getMicroServicoJava('EmissorRTC', $endereco));
 
         if ($ret->sucesso) {
@@ -816,7 +819,7 @@ class Nota {
             Logger::gerarLog($this, "Carta de corracao emitida na Sefaz: $correcao");
             return true;
         } else {
-            Logger::gerarLog($this, "Falha ao emitir carta de correcao: $correcao");
+            Logger::gerarLog($this, "Falha ao emitir carta de correcao: $correcao. $ret->mensagem");
             return false;
         }
     }

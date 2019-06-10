@@ -43,12 +43,42 @@ class RoboProtocolo {
             Sistema::STATUS_FATURAMENTO(),
         );
         
+       
+        $str_status = "(-1";
+        
+        foreach($status as $key=>$value){
+            $str_status .= ",".$value->id;
+        }
+        
+        $str_status .= ")";
+        
+        
+        $ps = $con->getConexao()->prepare("UPDATE protocolo SET fim=CURRENT_TIMESTAMP WHERE tipo_entidade='Pedido' AND id_entidade IN (SELECT id FROM pedido WHERE id_status NOT IN $str_status)");
+        $ps->execute();
+        $ps->close();
         
         $empresas = Sistema::getEmpresas($con, 'empresa.rtc>=5');
         
         foreach($empresas as $key=>$empresa){
             
-            $pedidos = $empresa->getPedidos($con,0,5,"DATE_ADD(pedido.data,INTERVAL 96 HOURS)<CURRENT_TIMESTAMP AND pedido.id_status IN ($status)");
+            $emergencias = $empresa->getPedidos($con,0,5,"DATE_ADD(pedido.data,INTERVAL 96 HOUR)<CURRENT_TIMESTAMP AND pedido.id_status IN $str_status AND pedido.id NOT IN (SELECT id_entidade FROM protocolo WHERE tipo_entidade='Pedido' GROUP BY id_entidade)");
+            
+            $servicos = $empresa->getPedidos($con,0,5,"DATE_ADD(pedido.data,INTERVAL 48 HOUR)<CURRENT_TIMESTAMP AND pedido.id_status IN $str_status AND pedido.id NOT IN (SELECT id_entidade FROM protocolo WHERE tipo_entidade='Pedido' GROUP BY id_entidade)");
+           
+            foreach($servicos as $key=>$value){
+                foreach($emergencias as $key2=>$value2){
+                    if($value->id === $value2->id){
+                        unset($servicos[$key]);
+                        break;
+                    }
+                }
+            }
+            
+            foreach($emergencias as $key=>$value){
+                
+                echo $value->id.",";
+                
+            }
             
         }
         

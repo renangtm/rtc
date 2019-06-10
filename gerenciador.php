@@ -103,15 +103,15 @@
                                             <div class="product-btn m-b-20">
 
                                                 <h4>Atividades de Usuarios &nbsp<i class="fas fa-male"></i></h4>
-                                                <input type="checkbox" id="chkClientes" ng-model="grupo" ng-true-value="false" ng-false-value="true" ng-change="attGrupo()">
-                                                <label for="chkClientes">
-                                                    Outras Empresas
-                                                </label>
-                                               
-                                                <input type="checkbox" id="chkEmpresa" ng-model="grupo" ng-true-value="true" ng-false-value="false" ng-change="attGrupo()" style="margin-left:20px">
-                                                <label for="chkEmpresa">
-                                                    Grupo Empresarial
-                                                </label>
+                                                <button ng-click="outrasEmpresas()" class="btn btn{{!isOutrasEmpresas()?'-outline':''}}-success" style="mergin-left:10px">
+                                                    <i class="fas fa-random"></i>&nbsp Outras Empresas
+                                                </button>
+                                                <button ng-click="grupoEmpresarial()" class="btn btn{{!isGrupoEmpresarial()?'-outline':''}}-success" style="mergin-left:10px">
+                                                    <i class="fas fa-cube"></i>&nbsp Grupo Empresarial
+                                                </button>
+                                                <button ng-click="total()" class="btn btn{{!isTotal()?'-outline':''}}-success" style="mergin-left:10px">
+                                                    <i class="fas fa-certificate"></i>&nbsp Total
+                                                </button>
                                                 <hr>
                                                 OBS: Pode ter um delay de até <strong>60 segundos</strong> para o sistema computar a saída de um usuário.
                                                 <hr>
@@ -156,15 +156,7 @@
                                             </table>
 
                                             <!-- paginação  -->
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="ativos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in ativos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="ativos.next()"><a class="page-link" href="">Próximo</a></li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
+                                            <paginacao assinc="ativos"></paginacao>
 
                                         </div>
                                     </div>

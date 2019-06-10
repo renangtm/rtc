@@ -141,9 +141,15 @@ $possiveis[0] = $rtc;
         filter: brightness(85%);
         color: <?php echo $fonte; ?> !important;
     }
+   
+    .scrollBottom{
+        
+        
+    }
 
 
 </style>
+
 
 
 <div ng-controller="crtAtividade"></div>
@@ -152,6 +158,97 @@ $possiveis[0] = $rtc;
         <a class="navbar-brand" href="comprar.php"><img id="logo" src="data:image/png;base64, <?php echo $logo->logo; ?>" alt="" title="" style="max-height:50px"></a>
         &nbsp;
         <div ng-controller="crtEmpresa" style="margin-right: 10px">
+            
+            <div class="modal fade" id="aprovacoes" role="dialog" aria-labelledby="edit" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title m-t-10"><i class="fas fa-book"></i>&nbsp;&nbsp;&nbsp;Aprovacao de protocolos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>
+            </div>
+            <div class="modal-body text-center">
+                
+                <div style="width:100%;border:2px solid;border-radius:3px;padding:20px;margin-bottom:10px" ng-repeat="pr in protocolos_aprovacao">
+                    <button class="btn btn-success" style="display: inline;margin-left:10px" ng-click="aprovar(pr)"><i class="fas fa-check"></i>&nbspAprovar</button>
+                    <button class="btn btn-danger" style="display: inline;margin-left:10px" ng-click="reprovar(pr)"><i class="fas fa-times"></i>&nbspReprovar</button>
+                    <hr>
+                    Titulo: {{pr.titulo}}
+                    <hr>
+                    Descricao: {{pr.descricao}}
+                    <hr>
+                    Tipo: 
+                    <select class="form-control" ng-model="pr.tipo">
+                        <option ng-repeat="tp in tipos_protocolo" ng-value="tp">{{tp.nome}}</option>
+                    </select>
+                    <hr>
+                    Usuarios: <br>
+                    
+                    <div ng-repeat="usu in pr.usuarios" style="display: block;margin-bottom:10px">
+                        <strong style="display:inline">{{usu.id}}-{{usu.nome}}</strong>
+                        <button class="btn btn-danger" style="padding:2px;height:23px;width:23px" ng-click="removerUsuario(pr,usu)"><i class="fas fa-times"></i></button>
+                    </div>
+                    
+                </div> 
+
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+            
+            <div class="modal fade" id="chat_suporte" role="dialog" aria-labelledby="edit" aria-hidden="true">
+    <div class="modal-dialog" style="float:right;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title m-t-10"><i class="fas fa-list"></i>&nbsp;&nbsp;&nbsp;Chat de suporte</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>
+            </div>
+            <div class="modal-body text-center">
+                
+                <div style="width:450px;height:340px;display: block;border-bottom:2px solid;border-radius:3px;padding:10px;margin-bottom:10px" ng-repeat="s in suportes">
+                    
+                    <div style="margin:10px;border-bottom:1px solid;width:100%;height:200px;overflow-y: scroll;overflow-wrap: break-word;" class="scrollBottom">
+                        
+                        <div style="text-align: left;margin-bottom:5px">
+                            <span>Usuario: <strong style="color:steelblue">{{s.usuario.nome}}</strong></span>
+                            <br>
+                            <span>Atendente: <strong style="color:green">{{s.atendente.nome}}</strong></span>
+                        </div>
+                         
+                        
+                        <div ng-repeat="m in s.mensagens" style="text-align: left;margin-bottom:5px">
+                            <strong style="color:steelblue">{{m.usuario.nome}}</strong> - {{m.texto}}
+                            <br>
+                            <span style="font-size: 10px">{{m.momento | data}}</span>
+                        </div>
+                         
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col-md-9">
+                            <textarea placeholder="Converse com o nosso atendente por aqui." class="form-control" style="width:100%;margin-top:0px;display: inline" rows="3" ng-model="s.mensagem" my-enter="enviar(s)">
+                    
+                            </textarea>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-success" ng-click="enviar(s)" style="width:100%;height:86px" ng-disabled="enviando">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    
+                </div> 
+                
+            </div>
+        </div>
+    </div>
+</div>
+            
+            
+            
+            
             <select class="form-control" ng-model="$parent.empresa" ng-change="setEmpresa()" ng-if="!carregando_empresa" ng-options="e as e.nome for e in filiais">
             </select>
             <div class="progress mb-1" ng-if="carregando_empresa" style="width:150px">
@@ -159,14 +256,20 @@ $possiveis[0] = $rtc;
             </div>
 
             <?php if(!$espelho){ ?>
-            <div style="position:absolute;cursor:pointer;padding:10px;top:80px;background-color: #FFFFFF;z-index: 99999;border-radius:5px;border:1px solid;visibility: {{protocolos_ativos.length===0?'hidden':'initial'}}" id="drag_protocolos" >
+            <div style="position:absolute;cursor:pointer;padding:10px;top:40px;background-color: #FFFFFF;z-index: 99999;border-radius:5px;border:1px solid;visibility: {{protocolos_ativos.length===0?'hidden':'initial'}}" id="drag_protocolos" >
                 <button class="btn btn-warning" id="btnEsconde"><i class="fas fa-list"></i>&nbsp PROTOCOLOS</button>
                 <div id="chat_protocolos">
                     <hr>
-                    <div style="width:500px;height:500px;border:1px dashed;border-radius: 5px;background-color: #FFFFFF;display: inline-block;margin-left:10px;margin-bottom:10px" ng-repeat="p in protocolos_ativos">
+                    <div style="width:500px;height:550px;border:1px dashed;border-radius: 5px;background-color: #FFFFFF;display: inline-block;margin-left:10px;margin-bottom:10px" ng-repeat="p in protocolos_ativos">
                         <div style="height:10%;width:100%;background-color: darkred;color:#FFFFFF !important;text-align: center;padding-top:5px">
                             <h4 style="color:#FFFFFF"><i class="fas fa-fire"></i> - {{p.tipo.nome}}</h4>
+                            
                         </div>
+                        <div style="margin:10px" ng-if="p.iniciado_por.indexOf('<?php echo $usuario->id." - ".$usuario->nome; ?>')!==0 || p.iniciado_por.length===0">
+                                <button ng-click="stopProtocolo(p)" class="btn btn-outline-danger" style="padding:3px">
+                                    <i class="fas fa-stop"></i>&nbsp Parar protocolo
+                                </button>
+                            </div>
                         <hr>
                         <div style="margin:15px;overflow-y: scroll;width:calc(100% - 25px);height:300px">
                             <span>
@@ -205,6 +308,9 @@ $possiveis[0] = $rtc;
                 </div>
             </div>
             <?php } ?>
+            
+            
+            
 
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -223,6 +329,11 @@ $possiveis[0] = $rtc;
                     </div>
                 </li>
                 <li class="nav-item dropdown notification">
+                    <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink2" onclick="mostraSuporte()"><i class="fas fa-male"></i><span id="indicadorAdd2" class="indicator"></span></a>
+                    
+                </li>
+                <li class="nav-item dropdown notification">
+                   
                     <a class="nav-link nav-icons" href="#" ng-click="$event.preventDefault(); attCarrinho()" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-fw fa-shopping-cart fa-bell"></i><span id="indicadorAdd" style="visibility:hidden" class="indicator"></span></a>
                     <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
                         <li>
@@ -392,11 +503,21 @@ $possiveis[0] = $rtc;
                     <li class="nav-item ">
                         <a class="nav-link" href="encomenda_parceiros.php"><button class="btn btn-warning" onmousedown="tutorial('Encomenda Parceiros', 'Aqui voce pode encomendar produtos da Agro Fauna, e de qualquer empresa do grupo Novos Rumos, adicione os produtos desejados ao seu carrinho de compras, e finalize seu pedido')" style="padding:0px;padding-left:4px;display:inline;margin: 0px">&nbsp<i class="fas fa-info"></i></button><i class="fa fa-fw fa-shopping-basket"></i>&nbspEncomenda Parceiros</a>
                     </li>
+                    
                     <li class="nav-item ">
                         <a class="nav-link" href="carrinho_encomenda.php"><button class="btn btn-warning" onmousedown="tutorial('Carrinho de Encomenda', 'Aqui � onde voc� finalizar sua encomenda, depois de ja ter adcionado os itens ao carrinho na aba de Encomenda Parceiros, aqui voce tamb�m vai ver todos os impostos que estao incidindo sobre a sua compra.')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px"><i class="fas fa-info"></i>&nbsp</button><i class="fa fa-fw fa-shopping-cart"></i>Carrinho de Encomenda</a>
                     </li>
                     <li class="nav-item ">
                         <a class="nav-link" href="acompanhar-pedidos.php"><button class="btn btn-warning" onmousedown="tutorial('Acompanhamento de pedido', 'Aqui voce pode acompanhar seus pedidos realizados')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px"><i class="fas fa-info"></i>&nbsp</button><i class="fa fa-fw fa-eye"></i>Acompanhar Pedidos</a>
+                    </li>
+                    <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
+                        Operações com Terceiros
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="comprar_terceiros.php"><button class="btn btn-warning" onmousedown="tutorial('Compra Terceiros', 'Aqui voce pode comprar produtos de terceiros')" style="padding:0px;padding-left:4px;display:inline;margin: 0px">&nbsp<i class="fas fa-info"></i></button><i class="fa fa-fw fa-shopping-basket"></i>&nbspCompra Terceiros</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="encomenda_terceiros.php"><button class="btn btn-warning" onmousedown="tutorial('Encomenda Terceiros', 'Aqui voce pode encomendar produtos da Agro Fauna, e de qualquer empresa do grupo Novos Rumos, adicione os produtos desejados ao seu carrinho de compras, e finalize seu pedido')" style="padding:0px;padding-left:4px;display:inline;margin: 0px">&nbsp<i class="fas fa-info"></i></button><i class="fa fa-fw fa-shopping-basket"></i>&nbspEncomenda Terceiros</a>
                     </li>
                     <?php } ?>
                     <li class="nav-divider" style="color:<?php echo $fonte; ?>;text-decoration: underline">
@@ -435,6 +556,11 @@ $possiveis[0] = $rtc;
                     <?php if ($usuario->temPermissao(Sistema::P_TAREFA_SIMPLIFICADA()->m("C"))) { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="tarefa_simplificada.php" ><button class="btn btn-warning" onmousedown="tutorial('Tarefa Simplificada', 'Aqui voce pode realizar o cadastro das tarefas simplificadas, como principal objetivo a afericao de custos')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-tasks"></i>Atividades Simplificadas</a>
+                        </li>
+                    <?php } ?>
+                    <?php if ($usuario->temPermissao(Sistema::P_RELATORIO_CLIENTES()->m("C"))) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="relatorio_clientes.php" ><button class="btn btn-warning" onmousedown="tutorial('Relatorio de clientes', 'Aqui voce encontra um relatorio de clientes')" style="padding:0px;padding-left:4px;width:20px;height:20px;display:inline;margin:0px">&nbsp<i class="fas fa-info"></i></button>&nbsp<i class="fas fa-male"></i>Relatorio Clientes</a>
                         </li>
                     <?php } ?>
                     <?php if ($usuario->temPermissao(Sistema::P_ENCOMENDA()->m("C"))) { ?>
@@ -613,7 +739,7 @@ $possiveis[0] = $rtc;
                         </li>
                     <?php }else{ ?>
                         <li class="nav-item ">
-                            <a class="nav-link" href="https://www.rtcagro.com.br/consignar_produtos_passo_a_passo_v3.pdf" target="_blank"><i class="fa fa-fw fa-file-alt"></i>Passo a Passo - produto consignado</a>
+                            <a class="nav-link" href="https://www.rtcagro.com.br/consignar_produtos_passo_a_passo_v5.pdf" target="_blank"><i class="fa fa-fw fa-file-alt"></i>Passo a Passo - produto consignado</a>
                         </li>
 
                     <?php } ?>
@@ -631,6 +757,9 @@ $possiveis[0] = $rtc;
         </nav>
     </div>
 </div>
+
+
+
 
 <div class="modal fade modal-md" id="tutorial" tabindex="-1" style="" role="dialog" aria-labelledby="edit" aria-hidden="true">
     <div class="modal-dialog">
@@ -668,6 +797,23 @@ $possiveis[0] = $rtc;
     }
     })
 
+
+    var us = 0;
+
+    $(document).scroll(function(){
+
+        var diff = $(this).scrollTop()-us;
+
+        us+=diff;
+
+
+
+        $("#drag_protocolos").css('top',(($("#drag_protocolos").offset().top-$(document).scrollTop())-diff)+"px");
+
+
+    })
+
+
             $(document).mouseup(function(){
 
     drg = false;
@@ -680,6 +826,7 @@ $possiveis[0] = $rtc;
         if(!hd){
             
             $("#chat_protocolos").hide();
+            $("#drag_protocolos").css('left',($(window).width()-220)+"px").css("top","40px");
             hd = true;
         }else{
             
@@ -703,7 +850,7 @@ $possiveis[0] = $rtc;
     
     var data = new Date();
 
-    $("#drag_protocolos").css('left',($(window).width()-580)+"px");
+    $("#drag_protocolos").css('left',($(window).width()-220)+"px");
 
 
             function tutorial(titulo, conteudo){
@@ -712,5 +859,36 @@ $possiveis[0] = $rtc;
             $("#conteudoTutorial").html(conteudo);
             $("#tutorial").modal("show");
             }
+            
+            function mostraSuporte(){
+                
+                
+                $("#chat_suporte").modal("show");
+                $('.modal-backdrop').removeClass("modal-backdrop");  
+                setTimeout(function(){
+                    
+                    $("#chat_suporte").find("textarea")[0].focus();
+                    
+                },2000);
+                
+            }
+            
+            setInterval(function(){
+                
+                $(".modal-open").each(function(){
+                    
+                    $(this).removeClass("modal-open");
+                    
+                })
+                
+                $(".scrollBottom").each(function(){
+                
+                    $(this).scrollTop($(this).prop("scrollHeight"));
+                
+                })
+                
+            },500)
+            
+            
 
 </script>

@@ -187,15 +187,8 @@
                                                 </table>
 
                                                 <!-- paginação  -->
-                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                    <nav aria-label="Page navigation example">
-                                                        <ul class="pagination justify-content-end">
-                                                            <li class="page-item" ng-click="produtos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                            <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                            <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Próximo</a></li>
-                                                        </ul>
-                                                    </nav>
-                                                </div><hr>
+                                                <paginacao assinc="produtos"></paginacao>
+                                                <hr>
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <button class="btn btn-{{cultura==null?'default':'danger'}}" ng-click="setCultura(null)"><i class="fas fa-times"></i>&nbsp Deselecionar cultura</button>
@@ -219,15 +212,7 @@
                                                             <th>Nome</th>
                                                             </tfoot>
                                                         </table>
-                                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                            <nav aria-label="Page navigation example">
-                                                                <ul class="pagination justify-content-end">
-                                                                    <li class="page-item" ng-click="culturas.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                                    <li class="page-item" ng-repeat="pg in culturas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                                    <li class="page-item" ng-click="culturas.next()"><a class="page-link" href="">Próximo</a></li>
-                                                                </ul>
-                                                            </nav>
-                                                        </div>
+                                                        <paginacao assinc="culturas"></paginacao>
                                                     </div>
                                                     <div class="col-md-6">
 
@@ -252,15 +237,7 @@
                                                             <th>Nome</th>
                                                             </tfoot>
                                                         </table>
-                                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                            <nav aria-label="Page navigation example">
-                                                                <ul class="pagination justify-content-end">
-                                                                    <li class="page-item" ng-click="pragas.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                                    <li class="page-item" ng-repeat="pg in pragas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                                    <li class="page-item" ng-click="pragas.next()"><a class="page-link" href="">Próximo</a></li>
-                                                                </ul>
-                                                            </nav>
-                                                        </div>
+                                                        <paginacao assinc="pragas"></paginacao>
                                                     </div>
                                                 </div>
                                             </div>

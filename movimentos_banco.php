@@ -141,15 +141,7 @@
                                             </table>
 
                                             <!-- paginação  -->
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="movimentos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in movimentos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="movimentos.next()"><a class="page-link" href="">Próximo</a></li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
+                                            <paginacao assinc="movimentos"></paginacao>
 
                                         </div>
                                     </div>
@@ -345,15 +337,7 @@
                                         </td>
                                     </tr>
                                 </table>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-click="notas.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in notas.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                            <li class="page-item" ng-click="notas.next()"><a class="page-link" href="">Próximo</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <paginacao assinc="notas"></paginacao>
 
                             </div>
                             <div class="modal-footer">
@@ -386,15 +370,7 @@
                                         <th><button class="btn btn-success" ng-click="setBanco(banc[0])"><i class="fa fa-info"></i></button></th>
                                     </tr> 
                                 </table>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-click="bancos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in bancos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                            <li class="page-item" ng-click="bancos.next()"><a class="page-link" href="">Próximo</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <paginacao assinc="bancos"></paginacao>
 
                             </div>
                             <div class="modal-footer">

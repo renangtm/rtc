@@ -123,15 +123,7 @@
                                                     </tr>
                                                 </tfoot>
                                             </table>
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="pedidos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in pedidos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="pedidos.next()"><a class="page-link" href="">Proximo</a></li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
+                                            <paginacao assinc="pedidos"></paginacao>
                                             <!-- paginação  -->
 
 
@@ -420,15 +412,7 @@
                                         <th><button class="btn btn-success" ng-click="setFornecedor(f[0])"><i class="fa fa-info"></i></button></th>
                                     </tr> 
                                 </table>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-click="fornecedores.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in fornecedores.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                            <li class="page-item" ng-click="fornecedores.next()"><a class="page-link" href="">Próximo</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <paginacao assinc="fornecedores"></paginacao>
 
                             </div>
                             <div class="modal-footer">
@@ -460,15 +444,7 @@
                                         <th><button class="btn btn-success" ng-click="setTransportadora(trans[0])"><i class="fa fa-info"></i></button></th>
                                     </tr> 
                                 </table>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-click="transportadoras.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in transportadoras.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                            <li class="page-item" ng-click="transportadoras.next()"><a class="page-link" href="">Próximo</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <paginacao assinc="transportadoras"></paginacao>
 
                             </div>
                             <div class="modal-footer">
@@ -508,15 +484,7 @@
                                         <th><button class="btn btn-success" ng-click="addProduto(produt[0])"><i class="fa fa-info"></i></button></th>
                                     </tr>
                                 </table>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-click="produtos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                            <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Próximo</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <paginacao assinc="produtos"></paginacao>
 
                             </div>
                             <div class="modal-footer">

@@ -37,7 +37,7 @@ class RoboInventario {
     }
 
     public function executar($con) {
-        
+
         $empresas = Sistema::getEmpresas($con, 'empresa.rtc>=5');
         
         foreach($empresas as $key=>$empresa){

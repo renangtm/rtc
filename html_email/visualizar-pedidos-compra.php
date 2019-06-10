@@ -139,11 +139,12 @@
                                                                     <th colspan="6" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); background-color:#f0f0f0;padding:10px; border: 1px solid black;">Produtos</th>
                                                                 </tr>
                                                                 <tr>
+                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">Codigo</th>
                                                                     <th colspan="2" align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;width: 180px;">Produto</th>
                                                                     <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">Validade</th>
                                                                     <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">Qtd.</th>
                                                                     
-                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;width: 100px;">Pre�o (R$)</th>
+                                                                    <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;width: 100px;">Preco (R$)</th>
                                                                     <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;width: 100px;">Subtotal (R$)</td>
                                                                 </tr>
                                                                 <?php
@@ -153,6 +154,8 @@
                                                                 foreach ($p->produtos as $key => $value) {
                                                                     ?>
                                                                     <tr id="produto">
+                                                                        
+                                                                        <td align="center" data-tipo="codigo_produto" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $value->produto->codigo; ?></td>
                                                                         <td colspan="2" data-tipo="nome" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo $value->produto->nome; ?></td>
                                                                         <td align="center" data-tipo="validade" class="text-center" style="padding:10px; border: 1px solid black;">-------</td>
                                                                         <td align="center" data-tipo="quantidade" class="text-center" style="padding:10px; border: 1px solid black;"><?php echo ($value->quantidade*$value->produto->quantidade_unidade); ?></td>
@@ -172,7 +175,7 @@
                                                                 ?> 
                                                                 <tfoot style=""> 
                                                                     <tr style=""> 
-                                                                        <th align="left" colspan="5" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">VALOR TOTAL</th>
+                                                                        <th align="left" colspan="6" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;">VALOR TOTAL</th>
                                                                         <th align="center" style="margin: 0px; text-size-adjust: none; font-size: 14px; font-family: arial, &quot;helvetica neue&quot;, helvetica, sans-serif; line-height: 21px; color: rgb(51, 51, 51); padding:10px; border: 1px solid black;"><?php echo $valor_total; ?></th>
                                                                     </tr>
                                                                 </tfoot>   

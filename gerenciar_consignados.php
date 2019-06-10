@@ -87,7 +87,6 @@
                                                         <th data-ordem="empresa.id">Cod Emp.</th>
                                                         <th data-ordem="empresa.nome">Nome Emp.</th>
                                                         <th data-ordem="empresa.cnpj">CNPJ Emp.</th>
-                                                        <th>Pedir Reaprovacao Em</th>
                                                         <th data-ordem="empresa.produto.nome">Nome do Produto</th>
                                                         <th data-ordem="empresa.produto.valor_base">Valor do Cliente</th>
                                                         <th data-ordem="empresa.produto.disponivel">Qtd Disponivel</th>
@@ -100,7 +99,6 @@
                                                         <td>{{ap[0].empresa.id}}</td>
                                                         <td>{{ap[0].empresa.nome}}</td>
                                                         <td>{{ap[0].empresa.cnpj.valor}}</td>
-                                                        <td><calendario meses="1" model="ap[0].ate" botao="true"></calendario></td>
                                                         <td>{{ap[0].produto.nome}}</td>
                                                         <td>{{ap[0].produto.valor_base}}</td>
                                                         <td>{{ap[0].produto.disponivel}}</td>
@@ -115,7 +113,6 @@
                                                         <th>Cod Emp.</th>
                                                         <th>Nome Emp.</th>
                                                         <th>CNPJ Emp.</th>
-                                                        <th>Pedir Reaprovacao Em</th>
                                                         <th>Nome do Produto</th>
                                                         <th>Valor do Cliente</th>
                                                         <th>Qtd Disponivel</th>
@@ -126,15 +123,7 @@
                                             </table>
 
                                             <!-- paginação  -->
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="aprovacoes.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in aprovacoes.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="aprovacoes.next()"><a class="page-link" href="">Próximo</a></li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
+                                            <paginacao assinc="aprovacoes"></paginacao>
 
                                         </div>
                                     </div>

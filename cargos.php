@@ -82,7 +82,7 @@
                                                 <table style="width: 50%">
                                                     <tr>
                                                         <td><input type="text" class="form-control" placeholder="Nome do cargo que sera cadastrado" ng-model="cargo.nome" style="padding:10px"></td>
-                                                        <td><button class="btn btn-success" style="width:30%" ng-click="mergeCargo(cargo)"><i class="fas fa-plus-circle"></i>&nbspCadastrar</button></td>
+                                                        <td><button class="btn btn-success" style="width:30%" ng-click="mergeCargo(cargo)"><i class="fas fa-plus-circle"></i></button></td>
                                                     </tr>
                                                 </table>
 
@@ -122,13 +122,7 @@
                                                     </tfoot>
                                                 </table>
                                             </div>
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-repeat="pg in lstCargos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
+                                            <paginacao assinc="lstCargos"></paginacao>
                                         </div>
                                     </div>    
                                 </div>

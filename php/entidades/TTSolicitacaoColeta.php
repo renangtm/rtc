@@ -26,6 +26,50 @@ class TTSolicitacaoColeta extends TipoTarefa {
         $this->carregarDados();
     }
 
+
+
+    public function getObservacaoPadrao($tarefa){
+
+        $pedido = $tarefa->id_entidade_relacionada;
+
+        $con = new ConnectionFactory();
+
+        $transportadora = 0;
+
+        $consulta = $con->getConexao()->prepare("SELECT id_transportadora FROM pedido WHERE id=$pedido");
+        $consulta->execute();
+        
+        $consulta->bind_result($id_transportadora);
+
+        if($consulta->fetch()){
+
+            $transportadora = $id_transportadora;
+
+        }
+
+        $consulta->close();
+
+
+        $nome_transportadora = " ";
+
+        $consulta = $con->getConexao()->prepare("SELECT razao_social FROM transportadora WHERE id=$transportadora");
+        $consulta->execute();
+        $consulta->bind_result($razao_social);
+
+        if($consulta->fetch()){
+
+            $nome_transportadora = $razao_social;
+
+        }
+
+        $consulta->close();
+
+
+        return "Ola, Solicitamos coleta para seu pedido $pedido dia  ".date('d/m/Y',microtime(true))." as ".date('H:i',microtime(true))." com a transportadora $nome_transportadora. Ordem de coleta ______, agendado com Sr (a) ______________.";
+
+
+    }
+
     public function aoFinalizar($tarefa, $usuario) {
 
         $con = new ConnectionFactory();

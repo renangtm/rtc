@@ -1,0 +1,17 @@
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30" style="border-radius:2px;background-color: #f1f1f1;padding:20px;">                          
+                                                <nav aria-label="Page navigation example">
+                                                    <img src="assets/images/logo.png" style="float:left;width:170px;filter: alpha(opacity=50);opacity:0.5"></img>
+                                                    <ul class="pagination justify-content-end">
+                                                       
+                                                        <li class="page-item" ng-click="assinc.prev()"><a class="page-link" href="">&lt;&lt;</a></li>
+                                                        <li class="page-item" ng-repeat="pg in assinc.primeiros" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                                        <li><strong ng-if="assinc.pontos_meio" style="margin-left:10px;margin-right:10px;font-size: 25px"> ... </strong></li>
+                                                        <li class="page-item" ng-repeat="pg in assinc.ultimos" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
+                                                        <li class="page-item" ng-click="assinc.next()"><a class="page-link" href="">&gt;&gt;</a></li>
+                                                        <li class="page-item"><input style="width:80px;border:3px solid DarkGray;height:35px;text-align: center;font-weight: bold;display:inline" type="number" ng-model="assinc.pagina_mu" ng-confirm="assinc.attListMU()" class="form-control"> </li>
+                                                        <li class="page-item" style="min-width:20px;text-align: center;font-weight: bold;font-size: 16px;background-color: DarkGray;color:#FFFFFF;border-top-right-radius: 5px;border-bottom-right-radius: 5px;line-height: 35px;height:35px;padding-right:3px">
+                                                            {{assinc.numero_paginas}}
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            </div>

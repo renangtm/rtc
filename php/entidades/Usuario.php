@@ -47,6 +47,56 @@ class Usuario {
 
     }
     
+    public function getSuporte($con,$criar=false){
+        
+        $suportes = array();
+        
+        $ps = $con->getConexao()->prepare(
+                "SELECT s.id,a.id,a.nome,u.id,u.nome,UNIX_TIMESTAMP(s.inicio)*1000 "
+                . "FROM suporte s "
+                . "INNER JOIN usuario a ON s.id_atendente=a.id "
+                . "INNER JOIN usuario u ON s.id_usuario=u.id "
+                . "WHERE s.fim IS NULL AND (s.id_atendente = $this->id OR s.id_usuario = $this->id)");
+        $ps->execute();
+        $ps->bind_result($id,$id_atendente,$nome_atendente,$id_usuario,$nome_usuario,$inicio);
+        
+        while($ps->fetch()){
+            
+            $s = new Suporte();
+            $s->id = $id;
+            $s->inicio = $inicio;
+            
+            $a = new Usuario();
+            $a->id = $id_atendente;
+            $a->nome = $nome_atendente;
+            
+            $u = new Usuario();
+            $u->id = $id_usuario;
+            $u->nome = $nome_usuario;
+            
+            $s->usuario = $u;
+            $s->atendente = $a;
+            
+            $suportes[] = $s;
+            
+        }
+        
+        $ps->close();
+        
+        if(count($suportes) === 0 && $criar){
+            
+            $s = new Suporte();
+            $s->usuario = $this;
+            $s->atribuir($con);
+            
+            return array($s);
+            
+        }
+        
+        return $suportes;
+        
+    }
+    
     public function setPermissoesAbaixo($con, $permissoes) {
 
         $resultado = array();

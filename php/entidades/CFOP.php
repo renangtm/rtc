@@ -26,17 +26,21 @@ class CFOP {
     public static $ANULACAO_DENTRO_ESTADO = "5206";
     public static $ANULACAO_FORA_ESTADO = "6206";
     public static $DEVOLUCAO = "6202";
+    public static $COMPRA = "1202";
+    public static $COMPRA_F = "2202";
+    public static $OUTRA_ENTRADA = "1949";
+    public static $OUTRA_ENTRADA_F = "2949";
     
     public static function descricao($cfop) {
 
         $cfop = str_replace(array("."), array(""), $cfop . "");
 
         if ($cfop === self::$VENDA_DENTRO_ESTADO) {
-            return "Venda de mercadoria dentro do estado.";
+            return "Venda Merc. A. Rec. Terc. que não deva transitar";
         } else if ($cfop === self::$VENDA_FORA_ESTADO) {
-            return "Venda de mercadoria fora do estado";
+            return "Venda Merc. A. Rec. Terc. que não deva transitar";
         } else if ($cfop === self::$REMESSA_DEPOSITO) {
-            return "Remessa de mercadoria para deposito";
+            return "Retorno de mercadoria deposito fechado  ";
         }else if ($cfop === self::$REMESSA_DEPOSITO_2) {
             return "Remessa de mercadoria para deposito";
         } else if ($cfop === self::$RETORNO_DEPOSITO) {
@@ -57,6 +61,15 @@ class CFOP {
             return "Anulacao de valor referente a prestacao de servico";
         }else if ($cfop === self::$DEVOLUCAO) {
             return "Devolucao de mercadoria";
+        }else if ($cfop === self::$COMPRA) {
+            return "Compra de produtos de fornecedor, sem subst trib";
+        }else if ($cfop === self::$COMPRA_F) {
+            return "Compra de produtos de fornecedor, sem subst trib";
+        }else if ($cfop === self::$OUTRA_ENTRADA) {
+            return "Outras Entradas";
+        }else if ($cfop === self::$OUTRA_ENTRADA_F) {
+            return "Outras Entradas fora do estado";
+    
         }
 
         return "Indefinido";

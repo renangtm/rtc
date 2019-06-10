@@ -27,6 +27,8 @@ class Protocolo {
     public $precedente;
     public $alertar;
 
+    public $usuarios;
+
     public function __construct() {
 
         $this->id = 0;
@@ -42,6 +44,7 @@ class Protocolo {
         $this->tipo_entidade = 0;
         $this->iniciado_por = "";
         $this->alertar = true;
+        $this->usuarios = array();
         
     }
     
@@ -149,6 +152,21 @@ class Protocolo {
             $ps->execute();
             $ps->close();
         }
+
+
+        $ps = $con->getConexao()->prepare("DELETE FROM protocolo_usuario WHERE id_protocolo=$this->id");
+        $ps->execute();
+        $ps->close();
+
+
+        foreach($this->usuarios as $k2=>$value2){
+
+            $ps = $con->getConexao()->prepare("INSERT INTO protocolo_usuario(id_usuario,id_protocolo) VALUES($value2->id,$this->id)");
+            $ps->execute();
+            $ps->close();
+            
+        }
+
     }
 
 }

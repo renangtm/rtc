@@ -107,7 +107,7 @@
                             <!-- basic table  -->
                             <!-- ============================================================== -->
                             <?php if ($usuario->temPermissao(Sistema::P_CONTROLADOR_TAREFAS()->m('A'))) { ?>
-                                <div class="col-md-5">
+                                <div class="col-md-4">
                                     <div class="card">
                                         <div class="card-body row">
                                             <div class="col-md-12">
@@ -119,7 +119,6 @@
                                                         <td><button class="btn btn-success" style="width:100%" ng-click="mergeCargo(cargo)"><i class="fas fa-plus-circle"></i></button></td>
                                                     </tr>
                                                 </table>
-
                                                 <hr>
                                                 <table id="cargos" class="table table-striped table-bordered first">
                                                     <thead>
@@ -161,15 +160,7 @@
                                                     </tfoot>
                                                 </table>
                                             </div>
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="lstCargos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in lstCargos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="lstCargos.next()"><a class="page-link" href="">Próximo</a></li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
+                                            <paginacao assinc="lstCargos"></paginacao>
                                         </div>
                                     </div>    
                                 </div>
@@ -192,7 +183,7 @@
 
                                 </style>
 
-                                <div class="col-md-7">
+                                <div class="col-md-8">
                                     <div class="card">
                                         <div class="card-body row">
                                             <div class="col-md-5">
@@ -252,15 +243,7 @@
                                                         </tr>
                                                     </tfoot>
                                                 </table>
-                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                    <nav aria-label="Page navigation example">
-                                                        <ul class="pagination justify-content-end">
-                                                            <li class="page-item" ng-click="cargos_tipo_tarefa.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                            <li class="page-item" ng-repeat="pg in cargos_tipo_tarefa.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                            <li class="page-item" ng-click="cargos_tipo_tarefa.next()"><a class="page-link" href="">Próximo</a></li>
-                                                        </ul>
-                                                    </nav>
-                                                </div>
+                                                <paginacao assinc="cargos_tipo_tarefa"></paginacao>
                                             </div>
                                             <div class="col-md-7">
                                                 <h4 style="display: inline">Tipos de Atividade</h4>&nbsp
@@ -295,15 +278,7 @@
                                                         </tr>
                                                     </tfoot>
                                                 </table>
-                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                    <nav aria-label="Page navigation example">
-                                                        <ul class="pagination justify-content-end">
-                                                            <li class="page-item" ng-click="tipos_tarefa.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                            <li class="page-item" ng-repeat="pg in tipos_tarefa.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                            <li class="page-item" ng-click="tipos_tarefa.next()"><a class="page-link" href="">Próximo</a></li>
-                                                        </ul>
-                                                    </nav>
-                                                </div>
+                                                <paginacao assinc="tipos_tarefa"></paginacao>
 
                                             </div>
                                             <div style="border-top:1px solid;maring-top:10px;padding: 10px;width:100%">
@@ -346,15 +321,7 @@
                                                     </tfoot>
                                                 </table>
 
-                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                    <nav aria-label="Page navigation example">
-                                                        <ul class="pagination justify-content-end">
-                                                            <li class="page-item" ng-click="tipos_protocolo.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                            <li class="page-item" ng-repeat="pg in tipos_protocolo.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                            <li class="page-item" ng-click="tipos_protocolo.next()"><a class="page-link" href="">Próximo</a></li>
-                                                        </ul>
-                                                    </nav>
-                                                </div>
+                                                <paginacao assinc="tipos_protocolo"></paginacao>
                                             </div>
 
                                         </div>
@@ -465,15 +432,7 @@
                                             </table>
 
                                             <!-- paginacao  -->
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="usuarios.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in usuarios.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="usuarios.next()"><a class="page-link" href="">Proximo</a></li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
+                                            <paginacao assinc="usuarios"></paginacao>
 
                                         </div>
                                         <div class="col-md-5" id="dvPermissoes" style="margin-top:{{marginTop}}px;border:2px solid #5F5F5F;padding:10px;margin-left:0px;border-top-right-radius: 10px;border-bottom-right-radius: 10px;border-top-left-radius: 2px; border-bottom-left-radius: 10px">

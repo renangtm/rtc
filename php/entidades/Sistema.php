@@ -13,45 +13,52 @@
  */
 class Sistema {
 
-    public static $ENDERECO = "https://www.rtcagro.com.br/";
+    public static $ENDERECO = "http://192.168.18.121:888/novo_rtc_web/";
 
     /*
      * porcentagem
      * titulo
      * valores
      */
+    
+    public static function isGrupoNovosRumos($empresa){
+        
+       $id = $empresa->id; 
+       
+       return in_array($id, array(1734,1733,1735,2071,2072));
+        
+    }
 
-    public static function deconsignarProduto($con,$produto){
+    public static function deconsignarProduto($con, $produto) {
 
         $ps = $con->getConexao()->prepare("UPDATE produto SET empresa_vendas=0 WHERE id=$produto->id");
         $ps->execute();
         $ps->close();
-
     }
-    
-    public static function getPermissoesPermitidas($con,$usuario){
-        
+
+    public static function getPermissoesPermitidas($con, $usuario) {
+
         $org = new Organograma($usuario->empresa);
-        
+
         $superiores = $org->getSuperiores($con, $usuario);
-        
+
         $ids_usuarios = "(-1";
-        
-        foreach($superiores as $key=>$value){
-            if($value->id_usuario !== $usuario->id){
+
+        foreach ($superiores as $key => $value) {
+            if ($value->id_usuario !== $usuario->id) {
                 $ids_usuarios .= ",$value->id_usuario";
             }
         }
-        
+
         $ids_usuarios .= ")";
-        
-        $usuarios = $usuario->empresa->getUsuarios($con,0,10000,"usuario.id IN $ids_usuarios");
-        
+
+        $usuarios = $usuario->empresa->getUsuarios($con, 0, 10000, "usuario.id IN $ids_usuarios");
+
         $permissoes = Sistema::getPermissoes($usuario->empresa);
         $rp = array();
-        
-        
-        foreach($permissoes as $key=>$value){
+
+
+        foreach ($permissoes as $key => $value) {
             $permissoes[$key] = Utilidades::copy($value);
             $permissoes[$key]->in = true;
             $permissoes[$key]->alt = true;
@@ -59,58 +66,52 @@ class Sistema {
             $permissoes[$key]->del = true;
             $rp[$permissoes[$key]->id] = $permissoes[$key];
         }
-        
-        foreach($usuarios as $key=>$value){
-      
+
+        foreach ($usuarios as $key => $value) {
+
             $prm = $value->getPermissoesAbaixo($con);
-            
-            foreach($prm as $key2=>$value2){
-                
-                if(isset($rp[$value2->id])){
-                    
+
+            foreach ($prm as $key2 => $value2) {
+
+                if (isset($rp[$value2->id])) {
+
                     $p = $rp[$value2->id];
                     $p->in = $p->in && $value2->in;
                     $p->alt = $p->alt && $value2->alt;
                     $p->cons = $p->cons && $value2->cons;
                     $p->del = $p->del && $value2->del;
-                    
                 }
-                
             }
-            
         }
-        
-        
+
+
         $real_ret = array();
-       
-        foreach($rp as $key=>$value){
+
+        foreach ($rp as $key => $value) {
             $real_ret[] = $value;
         }
-        
+
         return $real_ret;
-        
-        
     }
-    
-    public static function getUsuariosPossiveisParaTarefa($con,$tipo,$empresa){
-        
+
+    public static function getUsuariosPossiveisParaTarefa($con, $tipo, $empresa) {
+
         $cargos = "(0";
-        
-        foreach($tipo->cargos as $key=>$value){
+
+        foreach ($tipo->cargos as $key => $value) {
             $cargos .= ",$value->id";
         }
-        
+
         $cargos .= ")";
-        
-        $usuarios = $empresa->getUsuarios($con,0,10000,"usuario.id_cargo IN $cargos");
-        
+
+        $usuarios = $empresa->getUsuarios($con, 0, 10000, "usuario.id_cargo IN $cargos");
+
         return $usuarios;
-        
     }
 
-    public static function consignarProduto($con,$produto,$empresa,$cidades=array()){
+    public static function consignarProduto($con, $produto, $empresa, $cidades = array()) {
 
-    	if ($produto->id === 0) {
+        if ($produto->id === 0) {
 
             $cat = Sistema::getCategoriaProduto(null);
             $produto->categoria = $cat[0];
@@ -123,22 +124,24 @@ class Sistema {
         $ps->execute();
         $ps->close();
 
-        
-        if(count($cidades)>0){
+        $ps = $con->getConexao()->prepare("UPDATE usuario SET contrato_fornecedor=1 WHERE id_empresa=" . $produto->empresa->id);
+        $ps->execute();
+        $ps->close();
 
-            
-             $ps = $con->getConexao()->prepare("DELETE FROM produto_consignado_cidade WHERE id_produto=$produto->id");
-             $ps->execute();
-             $ps->close();
-             
-             foreach($cidades as $key=>$value){
-                 $ps = $con->getConexao()->prepare("INSERT INTO produto_consignado_cidade(id_produto,id_cidade) VALUES($produto->id,$value->id)");
-                 $ps->execute();
-                 $ps->close();
-             }
-             
+
+        if (count($cidades) > 0) {
+
+
+            $ps = $con->getConexao()->prepare("DELETE FROM produto_consignado_cidade WHERE id_produto=$produto->id");
+            $ps->execute();
+            $ps->close();
+
+            foreach ($cidades as $key => $value) {
+                $ps = $con->getConexao()->prepare("INSERT INTO produto_consignado_cidade(id_produto,id_cidade) VALUES($produto->id,$value)");
+                $ps->execute();
+                $ps->close();
+            }
         }
-        
     }
 
     public static function addCarrinhoEncomendaCadastrando($con, $produto, $quantidade) {
@@ -703,7 +706,7 @@ class Sistema {
         $inventario = new RoboInventario();
         $inventario->cronoExpression = "at(23h)";
         //$trabalhos[] = $inventario;
-        
+
         $prospeccao = new RoboVirtual();
         $prospeccao->cronoExpression = "re(50m)";
         //$trabalhos[] = $prospeccao;
@@ -912,6 +915,10 @@ class Sistema {
         return new Permissao(31, "RelatorioMovimento");
     }
 
+    public static function P_RELATORIO_ESTOQUE() {
+        return new Permissao(91, "RelatorioEstoque");
+    }
+
     public static function P_ENTRADA_NFE() {
         return new Permissao(32, "entrada nfe");
     }
@@ -938,6 +945,10 @@ class Sistema {
 
     public static function P_RELATORIO_PRODUTO_LOGISTICA() {
         return new Permissao(38, "RelatorioProdutoLogistica");
+    }
+    
+     public static function P_RELATORIO_CONFERENCIA_ESTOQUE() {
+        return new Permissao(87, "RelatorioConferenciaEstoque");
     }
 
     public static function P_RELATORIO_PRODUTO() {
@@ -967,7 +978,7 @@ class Sistema {
     public static function P_RELATORIO_MAX_PALET() {
         return new Permissao(44, "RelatorioMaxPalet");
     }
-    
+
     public static function P_RELATORIO_INVENTARIO() {
         return new Permissao(97, "RelatorioInventario");
     }
@@ -1031,24 +1042,28 @@ class Sistema {
     public static function P_IA_CHAT() {
         return new Permissao(80, "Arvore de chat");
     }
-    
+
     public static function P_CONSIGNACAO_PRODUTO() {
-        return new Permissao(87, "Consignacao de Produto",false,false,false,false,false);
+        return new Permissao(87, "Consignacao de Produto", false, false, false, false, false);
     }
-    
+
     public static function P_GERENCIAR_CONSIGNADOS() {
         return new Permissao(88, "Gerenciar consignacao");
     }
-    
-     public static function P_TAREFA_SIMPLIFICADA() {
+
+    public static function P_TAREFA_SIMPLIFICADA() {
         return new Permissao(89, "Tarefa Simplificada");
+    }
+    
+    public static function P_RELATORIO_CLIENTES() {
+        return new Permissao(93, "Relatorio Clientes");
     }
 
     public static function TT_COMPRA($id_empresa) {
 
         return new TTCompra($id_empresa);
     }
-    
+
     public static function TT_SUPORTE_ACOMPANHAMENTO($id_empresa) {
 
         return new TTSuporteAcompanhamento($id_empresa);
@@ -1239,8 +1254,8 @@ class Sistema {
         $destino2 = new Email("renan.miranda@agrofauna.com.br");
 
         try {
-            $email->enviarEmail($destino2, 'Aviso', $aviso);
             $email->enviarEmail($destino, 'Aviso', $aviso);
+            $email->enviarEmail($destino2, 'Aviso', $aviso);
         } catch (Exception $ex) {
             
         }
@@ -1255,12 +1270,15 @@ class Sistema {
         $destino = new Email("renan_goncalves@outlook.com.br");
         $destino2 = new Email("maylon.pires@logc.com.br");
         $destino3 = new Email("elias.gomes@logc.com.br");
+        $destino4 = new Email("benjamin.santos@agftec.com.br");
 
         try {
 
             $email->enviarEmail($destino, 'Aviso', $aviso);
             $email->enviarEmail($destino2, 'Aviso', $aviso);
             $email->enviarEmail($destino3, 'Aviso', $aviso);
+            $email->enviarEmail($destino4, 'Aviso', $aviso);
+
         } catch (Exception $ex) {
             
         }
@@ -1474,16 +1492,17 @@ class Sistema {
             }
 
             $t[] = $tarefa;
-
+            
+            
             if ($menor < 0) {
 
                 $menor = $usuario;
-                $tempo = count($tarefas);
+                $tempo = count($t);
                 $tasks = $t;
             } else {
-                if ($tempo > count($tarefas)) {
+                if ($tempo > count($t)) {
                     $menor = $usuario;
-                    $tempo = count($tarefas);
+                    $tempo = count($t);
                     $tasks = $t;
                 }
             }
@@ -1636,6 +1655,34 @@ class Sistema {
         return $empresa;
     }
 
+    public static function getEmpresasById($con, $id) {
+
+        $ses = new SessionManager();
+
+        $empresas = $ses->get('empresass');
+        if ($empresas === null) {
+            $empresas = array();
+        }
+
+        if (isset($empresas[$id])) {
+
+            return $empresas[$id];
+        }
+
+        $empresa = Sistema::getEmpresas($con, "empresa.id=$id");
+
+        if (count($empresa) === 0) {
+
+            return null;
+        }
+
+        $empresas[] = $empresa[0];
+
+        $ses->set('empresass', $empresas);
+
+        return $empresa[0];
+    }
+
     public static function getEmpresas($con, $filtro = "") {
 
         $sql = "SELECT "
@@ -1772,7 +1819,10 @@ class Sistema {
         $relatorios[] = new RelatorioMaxPalet($empresa);
         $relatorios[] = new RelatorioProduto($empresa);
         $relatorios[] = new RelatorioInventario($empresa);
-        
+        $relatorios[] = new RelatorioEstoque($empresa);
+        $relatorios[] = new RelatorioConferenciaEstoque($empresa);
+
+
         $permitidos = array();
 
         foreach ($relatorios as $key => $value) {
@@ -1788,6 +1838,7 @@ class Sistema {
 
     public static function getProdutosDoDia($con, $dia, $num, $empresa) {
 
+        $normal = $empresa->tipo_empresa !== 3;
 
         $categorias = "(-1";
 
@@ -1810,9 +1861,9 @@ class Sistema {
         $dia = $dia % $num;
 
         $produtos = array();
-        $ps = $con->getConexao()->prepare("SELECT codigo,classificacao_saida,nome FROM produto WHERE id_empresa=$empresa->id AND produto.disponivel > 0 AND produto.id_categoria IN $categorias GROUP BY produto.codigo");
+        $ps = $con->getConexao()->prepare("SELECT codigo,classificacao_saida,nome,id_empresa FROM produto WHERE " . ($normal ? "id_empresa" : "empresa_vendas") . "=$empresa->id AND produto.disponivel > 0 " . ($normal ? "AND produto.id_categoria IN $categorias " : "") . "GROUP BY produto.codigo,produto.id_empresa");
         $ps->execute();
-        $ps->bind_result($id, $classe, $nome);
+        $ps->bind_result($id, $classe, $nome, $id_empresa);
         while ($ps->fetch()) {
             $h = explode(' ', $nome);
             $h = $h[0];
@@ -1822,7 +1873,7 @@ class Sistema {
             if (!isset($produtos[$a])) {
                 $produtos[$a] = array();
             }
-            $produtos[$a][] = array($id, $h);
+            $produtos[$a][] = array($id, $h, $id_empresa);
         }
         $ps->close();
 
@@ -1848,15 +1899,15 @@ class Sistema {
             }
         }
 
-        $produtos = "(-1";
+        $produtos = "('-1'";
 
         foreach ($dias[$dia] as $key => $value) {
-            $produtos .= "," . $value[0];
+            $produtos .= ",'" . $value[0] . "_" . $value[2] . "'";
         }
 
         $produtos .= ")";
 
-        return $empresa->getProdutosAlocais($con, 0, 10000, "produto.codigo IN $produtos", "produto.nome");
+        return $empresa->getProdutosAlocais($con, 0, 10000, "CONCAT(CONCAT(produto.codigo,'_'),produto.id_empresa) IN $produtos", "produto.nome");
     }
 
     public static function getBanners($con) {
@@ -2070,6 +2121,12 @@ class Sistema {
     }
 
     public static function finalizarCompraParceiros($con, $pedido, $empresa) {
+
+        if ($pedido->empresa->tipo_empresa === 3) {
+
+            $pedido->merge($con);
+            return;
+        }
 
         $logistica = $pedido->empresa;
 
@@ -2481,6 +2538,206 @@ class Sistema {
 
         return $retorno;
     }
+    
+    public static function getEncomendaTerceiros($con) {
+
+        $cm = new CacheManager();
+
+        $g = $cm->getCache('encomenda_terceiros');
+
+        if ($g !== null) {
+
+             return $g;
+        }
+
+        $empresas = array();
+
+        $ps = $con->getConexao()->prepare("SELECT "
+                . "empresa.id,"
+                . "empresa.tipo_empresa,"
+                . "empresa.nome,"
+                . "empresa.inscricao_estadual,"
+                . "empresa.consigna,"
+                . "empresa.aceitou_contrato,"
+                . "empresa.juros_mensal,"
+                . "empresa.cnpj,"
+                . "endereco.numero,"
+                . "endereco.id,"
+                . "endereco.rua,"
+                . "endereco.bairro,"
+                . "endereco.cep,"
+                . "cidade.id,"
+                . "cidade.nome,"
+                . "estado.id,"
+                . "estado.sigla,"
+                . "email.id,"
+                . "email.endereco,"
+                . "email.senha,"
+                . "telefone.id,"
+                . "telefone.numero "
+                . "FROM empresa "
+                . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
+                . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
+                . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
+                . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
+                . "INNER JOIN estado ON cidade.id_estado = estado.id "
+                . "WHERE empresa.tipo_empresa = 3");
+        $ps->execute();
+        $ps->bind_result($id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+
+        while ($ps->fetch()) {
+
+            $empresa = Sistema::getEmpresa($tipo_empresa);
+
+            $empresa->id = $id_empresa;
+            $empresa->cnpj = new CNPJ($cnpj);
+            $empresa->inscricao_estadual = $inscricao_empresa;
+            $empresa->nome = $nome_empresa;
+            $empresa->aceitou_contrato = $aceitou_contrato;
+            $empresa->juros_mensal = $juros_mensal;
+            $empresa->consigna = $consigna;
+
+            $endereco = new Endereco();
+            $endereco->id = $id_endereco;
+            $endereco->rua = $rua;
+            $endereco->bairro = $bairro;
+            $endereco->cep = new CEP($cep);
+            $endereco->numero = $numero_endereco;
+
+            $cidade = new Cidade();
+            $cidade->id = $id_cidade;
+            $cidade->nome = $nome_cidade;
+
+            $estado = new Estado();
+            $estado->id = $id_estado;
+            $estado->sigla = $nome_estado;
+
+            $cidade->estado = $estado;
+
+            $endereco->cidade = $cidade;
+
+            $empresa->endereco = $endereco;
+
+            $email = new Email($endereco_email);
+            $email->id = $id_email;
+            $email->senha = $senha_email;
+
+            $empresa->email = $email;
+
+            $telefone = new Telefone($numero_telefone);
+            $telefone->id = $id_telefone;
+
+            $empresa->telefone = $telefone;
+
+            $empresas[] = $empresa;
+        }
+
+        $ps->close();
+
+
+        $produtos = array();
+        $produtos_universal = array();
+
+        foreach ($empresas as $key => $value) {
+            
+            $ps = $con->getConexao()->prepare("SELECT empresa.id FROM empresa INNER JOIN produto ON produto.id_empresa=empresa.id AND produto.empresa_vendas=$value->id GROUP BY empresa.id");
+            $ps->execute();
+            $ps->bind_result($id_empresa);
+            $empres = array();
+
+            while ($ps->fetch()) {
+
+                $empres[] = $id_empresa;
+            }
+
+            $ps->close();
+
+            foreach ($empres as $key2 => $value2) {
+
+                $empres[$key] = new Empresa($value2, $con);
+            }
+            
+            foreach($empres as $keyE=>$empresa){
+               
+                $prods = $empresa->getProdutos($con, 0, 500000, 'produto.estoque>0', '');
+
+                foreach ($prods as $key2 => $value2) {
+                    
+                    $oferta = null;
+                    
+                    foreach($value2->ofertas as $ko=>$of){
+                        if($of->compra0_encomenda1===1){
+                            $oferta = $of;
+                            break;
+                        }
+                    }
+                    
+                    if($oferta === null){
+                        continue;
+                    }
+                    
+                    
+                    
+                    $hash = $value2->empresa->id . "_" . $value2->codigo;
+                    
+
+                    $grupo = new ProdutoEncomendaParceiro();
+                    $grupo->id = $value2->id;
+                    $grupo->id_universal = $value2->id_universal;
+                    $grupo->categoria = $value2->categoria;
+                    $grupo->ativo = $value2->ativo;
+                    $grupo->unidade = $value2->unidade;
+                    $grupo->empresa = $value;
+                    $grupo->fabricante = $value2->fabricante;
+                    $grupo->nome = $value2->nome;
+                    $grupo->valor_base = $value2->valor_base;
+                    $grupo->valor_base_inicial = $oferta->valor * 0.95;
+                    $grupo->valor_base_final = $oferta->valor * 1.05;
+                    $grupo->imagem = $value2->imagem;
+                    $grupo->grade = $value2->grade;
+                    $grupo->disponivel = $value2->disponivel;
+                    $grupo->estoque = $value2->estoque;
+                    $grupo->transito = $value2->transito;
+                    $grupo->setImagemPadrao();
+
+                    $produtos[$hash] = $grupo;
+                    $produtos_universal[$value2->id_universal] = $grupo;
+                }
+        
+            }
+            
+        }
+
+        $ps = $con->getConexao()->prepare("SELECT valor_base,codigo_produto,id_empresa FROM campanha_encomenda WHERE termino>CURRENT_TIMESTAMP");
+        $ps->execute();
+        $ps->bind_result($valor, $codigo, $id_empresa);
+        while ($ps->fetch()) {
+
+            $hash = $id_empresa . "_" . $codigo;
+            if (isset($produtos[$hash])) {
+
+                if ($produto[$hash] === -1) {
+                    continue;
+                }
+                $produtos[$hash]->ofertas = 2;
+                $produtos[$hash]->custo_atualizado = true;
+                $produtos[$hash]->valor_base_inicial = round(($valor / 0.82), 2);
+                $produtos[$hash]->valor_base_final = round((($valor / 0.82) * 1.05), 2);
+            }
+        }
+        $ps->close();
+        
+        $resultado2 = array();
+
+        foreach ($produtos as $key => $value) {
+            $resultado2[] = $value;
+        }
+
+        $cm->setCache('encomenda_terceiros', $resultado2);
+
+        return $resultado2;
+    }
+
 
     public static function getEncomendaParceiros($con) {
 
@@ -2621,7 +2878,6 @@ class Sistema {
 
                 $produtos[$hash] = $grupo;
                 $produtos_universal[$value2->id_universal] = $grupo;
-
             }
         }
 
@@ -2697,66 +2953,60 @@ class Sistema {
         }
 
 
-        $virtuais = Sistema::getEmpresas($con,"empresa.tipo_empresa=3");
-        foreach($virtuais as $key=>$virtual){
+        $virtuais = Sistema::getEmpresas($con, "empresa.tipo_empresa=3");
+        foreach ($virtuais as $key => $virtual) {
 
-        	$ps = $con->getConexao()->prepare("SELECT p.id_universal,p.id,p.imagem,p.nome,p.id_categoria,p.ativo,p.unidade,p.fabricante,a.valor,p.grade,p.disponivel,p.id_empresa FROM produto p INNER JOIN aprovacao_consignado a ON a.id_produto=p.id AND a.ate>CURRENT_TIMESTAMP AND a.aprovado_sob=p.valor_base AND p.disponivel>0 WHERE p.empresa_vendas=$virtual->id");
-        	$ps->execute();
-        	$ps->bind_result($id_universal,$id,$imagem,$nome,$id_categoria,$ativo,$unidade,$fabricante,$valor,$grade,$disponivel,$empresa);
-        	while($ps->fetch()){
+            $ps = $con->getConexao()->prepare("SELECT p.id_universal,p.id,p.imagem,p.nome,p.id_categoria,p.ativo,p.unidade,p.fabricante,a.valor,p.grade,p.disponivel,p.id_empresa FROM produto p INNER JOIN aprovacao_consignado a ON a.id_produto=p.id AND a.ate>CURRENT_TIMESTAMP AND a.aprovado_sob=p.valor_base AND p.disponivel>0 WHERE p.empresa_vendas=$virtual->id");
+            $ps->execute();
+            $ps->bind_result($id_universal, $id, $imagem, $nome, $id_categoria, $ativo, $unidade, $fabricante, $valor, $grade, $disponivel, $empresa);
+            while ($ps->fetch()) {
 
-        		if(!isset($produtos_universal[$id_universal])){
+                if (!isset($produtos_universal[$id_universal])) {
 
-        			$g = new ProdutoEncomendaParceiro();
-        			$g->id = $id;
-        			$g->id_universal = $id_universal;
-        			$g->categoria = Sistema::getCategoriaProduto(null, $id_categoria);
-        			$g->ativo = $ativo;
-        			$g->unidade = $unidade;
-        			$g->empresa = $virtual;
-        			$g->fabricante = $fabricante;
-        			$g->nome = $nome;
-        			$g->valor_base = $valor;
-        			$g->valor_base_inicial = $valor;
-        			$g->valor_base_final = $valor;
-        			$g->imagem = $imagem;
-        			$g->grade = new Grade($grade);
-        			$g->disponivel = $disponivel;
-        			$g->estoque = $disponivel;
-        			$g->transito = $disponivel;
+                    $g = new ProdutoEncomendaParceiro();
+                    $g->id = $id;
+                    $g->id_universal = $id_universal;
+                    $g->categoria = Sistema::getCategoriaProduto(null, $id_categoria);
+                    $g->ativo = $ativo;
+                    $g->unidade = $unidade;
+                    $g->empresa = $virtual;
+                    $g->fabricante = $fabricante;
+                    $g->nome = $nome;
+                    $g->valor_base = $valor;
+                    $g->valor_base_inicial = $valor;
+                    $g->valor_base_final = $valor;
+                    $g->imagem = $imagem;
+                    $g->grade = new Grade($grade);
+                    $g->disponivel = $disponivel;
+                    $g->estoque = $disponivel;
+                    $g->transito = $disponivel;
 
-        			$g->valor_fixo = $valor;
-        			$g->id_empresa = $empresa;
-        			$g->limite = $disponivel;
+                    $g->valor_fixo = $valor;
+                    $g->id_empresa = $empresa;
+                    $g->limite = $disponivel;
 
-        			$g->setImagemPadrao();
+                    $g->setImagemPadrao();
 
-        			$produtos[] = $g;
-        			$produtos_universal[$id_universal] = $g;
+                    $produtos[] = $g;
+                    $produtos_universal[$id_universal] = $g;
+                } else {
 
-        		}else{
+                    $g = $produtos_universal[$id_universal];
 
-        			$g = $produtos_universal[$id_universal];
+                    if ($valor > $g->valor_fixo && $g->valor_fixo !== 0) {
+                        continue;
+                    }
 
-        			if($valor>$g->valor_fixo && $g->valor_fixo !== 0){
-        				continue;
-        			}
-        			
-        			$g->id = $id;
-        			$g->valor_fixo = $valor;
-        			$g->id_empresa = $empresa;
-        			$g->limite = $disponivel;
-        			$g->imagem = $imagem;
-        			$g->grade = new Grade($grade);
-        			$g->fabricante = $fabricante;
-
-        		}
-
-        	}
-        	$ps->close();
-
-
-
+                    $g->id = $id;
+                    $g->valor_fixo = $valor;
+                    $g->id_empresa = $empresa;
+                    $g->limite = $disponivel;
+                    $g->imagem = $imagem;
+                    $g->grade = new Grade($grade);
+                    $g->fabricante = $fabricante;
+                }
+            }
+            $ps->close();
         }
 
 
@@ -2765,22 +3015,209 @@ class Sistema {
 
         foreach ($produtos as $key => $value) {
             if ($value !== -1) {
-            	if($value->valor_fixo===0){
-                	$resultado[] = $value;
-            	}else{
-            		$resultado2[] = $value;
-            	}
+                if ($value->valor_fixo === 0) {
+                    $resultado[] = $value;
+                } else {
+                    $resultado2[] = $value;
+                }
             }
         }
 
 
-        foreach($resultado as $key=>$value){
-        	$resultado2[] = $value;
+        foreach ($resultado as $key => $value) {
+            $resultado2[] = $value;
         }
 
         $cm->setCache('encomenda_parceiros', $resultado2);
 
         return $resultado2;
+    }
+
+    public static function getCompraTerceiros($con) {
+
+        $cm = new CacheManager();
+
+        $g = $cm->getCache('compra_terceiros');
+
+        if ($g !== null) {
+
+            return $g;
+        }
+
+        $empresas = array();
+
+        $ps = $con->getConexao()->prepare("SELECT "
+                . "empresa.id,"
+                . "empresa.tipo_empresa,"
+                . "empresa.nome,"
+                . "empresa.inscricao_estadual,"
+                . "empresa.consigna,"
+                . "empresa.aceitou_contrato,"
+                . "empresa.juros_mensal,"
+                . "empresa.cnpj,"
+                . "endereco.numero,"
+                . "endereco.id,"
+                . "endereco.rua,"
+                . "endereco.bairro,"
+                . "endereco.cep,"
+                . "cidade.id,"
+                . "cidade.nome,"
+                . "estado.id,"
+                . "estado.sigla,"
+                . "email.id,"
+                . "email.endereco,"
+                . "email.senha,"
+                . "telefone.id,"
+                . "telefone.numero "
+                . "FROM empresa "
+                . "INNER JOIN endereco ON endereco.id_entidade=empresa.id AND endereco.tipo_entidade='EMP' "
+                . "INNER JOIN email ON email.id_entidade=empresa.id AND email.tipo_entidade='EMP' "
+                . "INNER JOIN telefone ON telefone.id_entidade=empresa.id AND telefone.tipo_entidade='EMP' "
+                . "INNER JOIN cidade ON endereco.id_cidade=cidade.id "
+                . "INNER JOIN estado ON cidade.id_estado = estado.id "
+                . "WHERE empresa.tipo_empresa = 3");
+        $ps->execute();
+        $ps->bind_result($id_empresa, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+
+        while ($ps->fetch()) {
+
+            $empresa = Sistema::getEmpresa($tipo_empresa);
+
+            $empresa->id = $id_empresa;
+            $empresa->cnpj = new CNPJ($cnpj);
+            $empresa->inscricao_estadual = $inscricao_empresa;
+            $empresa->nome = $nome_empresa;
+            $empresa->aceitou_contrato = $aceitou_contrato;
+            $empresa->juros_mensal = $juros_mensal;
+            $empresa->consigna = $consigna;
+
+            $endereco = new Endereco();
+            $endereco->id = $id_endereco;
+            $endereco->rua = $rua;
+            $endereco->bairro = $bairro;
+            $endereco->cep = new CEP($cep);
+            $endereco->numero = $numero_endereco;
+
+            $cidade = new Cidade();
+            $cidade->id = $id_cidade;
+            $cidade->nome = $nome_cidade;
+
+            $estado = new Estado();
+            $estado->id = $id_estado;
+            $estado->sigla = $nome_estado;
+
+            $cidade->estado = $estado;
+
+            $endereco->cidade = $cidade;
+
+            $empresa->endereco = $endereco;
+
+            $email = new Email($endereco_email);
+            $email->id = $id_email;
+            $email->senha = $senha_email;
+
+            $empresa->email = $email;
+
+            $telefone = new Telefone($numero_telefone);
+            $telefone->id = $id_telefone;
+
+            $empresa->telefone = $telefone;
+
+            $empresas[] = $empresa;
+        }
+
+        $ps->close();
+
+        $produtos = array();
+
+        foreach ($empresas as $key => $value) {
+
+
+            $ps = $con->getConexao()->prepare("SELECT empresa.id FROM empresa INNER JOIN produto ON produto.id_empresa=empresa.id AND produto.empresa_vendas=$value->id GROUP BY empresa.id");
+            $ps->execute();
+            $ps->bind_result($id_empresa);
+            $empresas = array();
+
+            while ($ps->fetch()) {
+
+                $empresas[] = $id_empresa;
+            }
+
+            $ps->close();
+
+            foreach ($empresas as $key2 => $value2) {
+
+                $empresas[$key] = new Empresa($value2, $con);
+            }
+
+            foreach ($empresas as $keyE => $empresa) {
+
+                $prods = $empresa->getProdutos($con, 0, 500000, 'produto.disponivel>0 AND produto.empresa_vendas=' . $value->id, '');
+
+
+                foreach ($prods as $key2 => $value2) {
+
+                    $oferta_compra = null;
+                    foreach ($value2->ofertas as $key3 => $oferta) {
+                        if ($oferta->isCompra($con)) {
+                            $oferta_compra = $oferta;
+                            break;
+                        }
+                    }
+
+                    if ($oferta_compra === null) {
+                        continue;
+                    }
+
+                    $value2->valor_base = $oferta_compra->valor;
+
+                    $value2->aliciado = $value2->empresa;
+                    $value2->empresa = $value;
+
+                    $hash = $value2->empresa->id . "_" . str_replace(' ', '', $value2->nome);
+
+                    if (!isset($produtos[$hash])) {
+
+                        $grupo = new ProdutoAgrupado();
+                        $grupo->id = $value2->codigo;
+                        $grupo->categoria = $value2->categoria;
+                        $grupo->ativo = $value2->ativo;
+                        $grupo->unidade = $value2->unidade;
+                        $grupo->empresa = $value2->empresa;
+                        $grupo->fabricante = $value2->fabricante;
+                        $grupo->nome = $value2->nome;
+                        $grupo->valor_base = $value2->valor_base;
+                        $grupo->imagem = $value2->imagem;
+                        $grupo->grade = $value2->grade;
+
+                        $produtos[$hash] = $grupo;
+                    }
+
+                    $produtos[$hash]->produtos[] = $value2;
+                    $produtos[$hash]->estoque += $value2->estoque;
+                    $produtos[$hash]->disponivel += $value2->disponivel;
+                    $produtos[$hash]->transito += $value2->transito;
+                    $produtos[$hash]->estoque += $value2->estoque;
+                    $produtos[$hash]->ofertas += count($value2->ofertas);
+                }
+            }
+        }
+
+        $resultado = array();
+
+        foreach ($produtos as $key => $value) {
+            $resultado[] = $value;
+            $i = count($resultado) - 1;
+            while ($i > 0 && $resultado[$i]->ofertas > $resultado[$i - 1]->ofertas) {
+                $k = $resultado[$i];
+                $resultado[$i] = $resultado[$i - 1];
+                $resultado[$i - 1] = $k;
+            }
+        }
+
+        $cm->setCache('compra_terceiros', $resultado);
+
+        return $produtos;
     }
 
     public static function getCompraParceiros($con) {
@@ -3892,7 +4329,7 @@ class Sistema {
 
     public static function getMicroServicoJava($nome, $parametros = null) {
 
-        $servico = realpath('../micro_servicos_java'); 
+        $servico = realpath('../micro_servicos_java');
         $servico .= "/$nome.jar";
         $comando = "java -jar \"$servico\"";
 
@@ -3995,7 +4432,7 @@ class Sistema {
         $ps->close();
     }
 
-    public static function inserirClienteRTC($con, $cliente,$consignado=false) {
+    public static function inserirClienteRTC($con, $cliente, $consignado = false) {
 
         $ps = $con->getConexao()->prepare("SELECT id FROM empresa WHERE cnpj='" . $cliente->cnpj->valor . "'");
         $ps->execute();
@@ -4020,6 +4457,7 @@ class Sistema {
         $empresa = Sistema::getEmpresa(7);
         $empresa->nome = $cliente->razao_social;
         $empresa->cnpj = $cliente->cnpj;
+        $empresa->fornecedor_virtual = $consignado;
         $empresa->endereco = Utilidades::copyId0($cliente->endereco);
         $empresa->inscricao_estadual = $cliente->inscricao_estadual;
         $empresa->tem_suframa = $cliente->suframado;
@@ -4034,12 +4472,14 @@ class Sistema {
         $empresa->setLogo($con, 'http://www.tratordecompras.com.br/renew/Status_3/php/uploads/arquivo_15501989058192.png');
 
         $rtc = Sistema::getRTCS();
-        $rtc = $rtc[1];
-        
-        if($consigna){
-            $rtc=$rtc[6];
+
+
+        if ($consignado) {
+            $rtc = $rtc[0];
+        } else {
+            $rtc = $rtc[1];
         }
-        
+
         $empresa->setRTC($con, $rtc);
 
         $u = new Usuario();
@@ -4054,16 +4494,16 @@ class Sistema {
         $u->permissoes = $rtc->permissoes;
 
         foreach ($u->permissoes as $key => $value) {
-            
-            if($consignado){
-                if($value->id!==Sistema::P_PRODUTO()->id &&
+
+            if ($consignado) {
+                if ($value->id !== Sistema::P_PRODUTO()->id &&
                         $value->id !== Sistema::P_CONSIGNACAO_PRODUTO()->id &&
                         $value->id !== Sistema::P_CONFIGURACAO_EMPRESA()->id &&
-                        $value->id !== Sistema::P_PEDIDO_SAIDA()->id){
+                        $value->id !== Sistema::P_PEDIDO_SAIDA()->id) {
                     continue;
                 }
             }
-            
+
             $value->in = true;
             $value->alt = true;
             $value->del = true;
@@ -4495,7 +4935,7 @@ class Sistema {
 
         return $cats;
     }
- 
+
     public static function getEmailSistema() {
 
         $email = new Email("renan.miranda@agrofauna.com.br");
@@ -4511,7 +4951,7 @@ class Sistema {
                 Sistema::P_PRODUTO(),
                 Sistema::P_LOGO(),
                 Sistema::P_CONFIGURACAO_EMPRESA()
-                )),new RTC(1, array(
+                    )), new RTC(1, array(
                 Sistema::P_CLIENTE(),
                 Sistema::P_FORNECEDOR(),
                 Sistema::P_TRANSPORTADORA(),
@@ -4524,7 +4964,9 @@ class Sistema {
                 Sistema::P_CATEGORIA_CLIENTE(),
                 Sistema::P_CATEGORIA_PRODUTO(),
                 Sistema::P_CATEGORIA_DOCUMENTO(),
-                Sistema::P_COTACAO())
+                Sistema::P_RELATORIO_ESTOQUE(),
+                Sistema::P_COTACAO(),
+                Sistema::P_RELATORIO_CLIENTES())
             ), new RTC(3, array(
                 Sistema::P_GRUPO_CIDADE(),
                 Sistema::P_CFG(),
@@ -4536,7 +4978,8 @@ class Sistema {
                 Sistema::P_ENTRADA_NFE(),
                 Sistema::P_IA_CHAT(),
                 Sistema::P_RELATORIO_INVENTARIO(),
-                Sistema::P_TAREFA_SIMPLIFICADA()
+                Sistema::P_TAREFA_SIMPLIFICADA(),
+                Sistema::P_RELATORIO_CONFERENCIA_ESTOQUE()
                     )), new RTC(5, array(
                 Sistema::P_BANCO(),
                 Sistema::P_RELATORIO_FINANCEIRO(),
@@ -4581,19 +5024,18 @@ class Sistema {
                     }
                 }
             }
-            
+
             $rtcs = Sistema::getRTCS();
-            
-            foreach($rtcs as $key=>$value){
-                if($value->numero < $rtc->numero){
-                    foreach($value->permissoes as $key2=>$value2){
-                        if(!$value2->frente){
+
+            foreach ($rtcs as $key => $value) {
+                if ($value->numero < $rtc->numero) {
+                    foreach ($value->permissoes as $key2 => $value2) {
+                        if (!$value2->frente) {
                             $perms[] = $value2;
                         }
                     }
                 }
             }
-            
         }
 
         return $perms;
@@ -4919,7 +5361,6 @@ class Sistema {
             $ret[] = Sistema::CATP_ADUBOS_FOLIARES();
             $ret[] = Sistema::CATP_AGRICOLA_SUSP();
             $ret[] = Sistema::CATP_LEILAO();
-            
         } else {
 
             $ret[] = Sistema::CATP_AGRICOLA();
@@ -5047,7 +5488,7 @@ class Sistema {
 
         $ps = $con->getConexao()->prepare($sql);
         $ps->execute();
-        $ps->bind_result($id_usu, $contrato_fornecedor, $id_cargo, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa,$fornecedor_virtual, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
+        $ps->bind_result($id_usu, $contrato_fornecedor, $id_cargo, $nome_usu, $login_usu, $senha_usu, $cpf_usu, $end_usu_id, $end_usu_rua, $end_usu_numero, $end_usu_bairro, $end_usu_cep, $cid_usu_id, $cid_usu_nome, $est_usu_id, $est_usu_nome, $email_usu_id, $email_usu_end, $email_usu_senha, $id_empresa, $fornecedor_virtual, $tipo_empresa, $nome_empresa, $inscricao_empresa, $consigna, $aceitou_contrato, $juros_mensal, $cnpj, $numero_endereco, $id_endereco, $rua, $bairro, $cep, $id_cidade, $nome_cidade, $id_estado, $nome_estado, $id_email, $endereco_email, $senha_email, $id_telefone, $numero_telefone);
 
         $usuarios = array();
 
@@ -5056,7 +5497,7 @@ class Sistema {
             $usuario = new Usuario();
 
             $usuario->id_cargo = $id_cargo;
-            $usuario->contrato_fornecedor = $contrato_fornecedor==1;
+            $usuario->contrato_fornecedor = $contrato_fornecedor == 1;
             $usuario->cpf = new CPF($cpf_usu);
             $usuario->email = new Email($email_usu_end);
             $usuario->email->id = $email_usu_id;
@@ -5344,7 +5785,6 @@ class Sistema {
 
         return Sistema::getUsuario("usuario.login='$login' AND usuario.senha='$senha'");
     }
-    
 
     public static function getCidades($con) {
 

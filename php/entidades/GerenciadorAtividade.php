@@ -19,6 +19,7 @@ class GerenciadorAtividade {
     public $periodo_final;
     public $grupo;
     public $cnpjs;
+    public $total;
     
     public function __construct($empresa=null, $periodo_inicial = -1, $periodo_final = -1) {
 
@@ -29,6 +30,7 @@ class GerenciadorAtividade {
         $hora = 1000 * 60 * 60;
         $dia = $hora * 24;
         
+        $this->total = false;
 
         if ($this->periodo_inicial < 0) {
 
@@ -57,6 +59,7 @@ class GerenciadorAtividade {
         }
         
         $this->grupo = false;
+        $this->total = true;
         
     }
     
@@ -64,14 +67,18 @@ class GerenciadorAtividade {
         
         $r = "";
         
-        if($this->grupo){
-            
-            $r = "e.cnpj IN $this->cnpjs";
-            
+        if(!$this->total){
+            if($this->grupo){
+
+                $r = "e.cnpj IN $this->cnpjs";
+
+            }else{
+
+                $r = "e.cnpj NOT IN $this->cnpjs";
+
+            }
         }else{
-            
-            $r = "e.cnpj NOT IN $this->cnpjs";
-            
+            $r = "e.cnpj<>''";
         }
         
         $ps = $con->getConexao()->prepare("SELECT COUNT(*) FROM empresa e WHERE $r");
@@ -91,14 +98,18 @@ class GerenciadorAtividade {
         
         $r = "";
         
-        if($this->grupo){
-            
-            $r = "e.cnpj IN $this->cnpjs";
-            
+        if(!$this->total){
+            if($this->grupo){
+
+                $r = "e.cnpj IN $this->cnpjs";
+
+            }else{
+
+                $r = "e.cnpj NOT IN $this->cnpjs";
+
+            }
         }else{
-            
-            $r = "e.cnpj NOT IN $this->cnpjs";
-            
+            $r = "e.cnpj<>''";
         }
 
         $sql = "SELECT COUNT(*) FROM (SELECT a.id FROM atividade_usuario a INNER JOIN usuario u ON u.id=a.id_usuario INNER JOIN empresa e ON e.id=u.id_empresa WHERE a.momento>FROM_UNIXTIME($this->periodo_inicial/1000) AND a.momento<FROM_UNIXTIME($this->periodo_final/1000) AND $r";
@@ -125,14 +136,18 @@ class GerenciadorAtividade {
         
         $r = "";
         
-        if($this->grupo){
-            
-            $r = "e.cnpj IN $this->cnpjs";
-            
+        if(!$this->total){
+            if($this->grupo){
+
+                $r = "e.cnpj IN $this->cnpjs";
+
+            }else{
+
+                $r = "e.cnpj NOT IN $this->cnpjs";
+
+            }
         }else{
-            
-            $r = "e.cnpj NOT IN $this->cnpjs";
-            
+            $r = "e.cnpj<>''";
         }
 
         $sql = "SELECT "
@@ -192,14 +207,18 @@ class GerenciadorAtividade {
         
         $r = "";
         
-        if($this->grupo){
-            
-            $r = "e.cnpj IN $this->cnpjs";
-            
+        if(!$this->total){
+            if($this->grupo){
+
+                $r = "e.cnpj IN $this->cnpjs";
+
+            }else{
+
+                $r = "e.cnpj NOT IN $this->cnpjs";
+
+            }
         }else{
-            
-            $r = "e.cnpj NOT IN $this->cnpjs";
-            
+            $r = "e.cnpj<>''";
         }
 
 
@@ -218,14 +237,18 @@ class GerenciadorAtividade {
         
         $r = "";
         
-        if($this->grupo){
-            
-            $r = "e.cnpj IN $this->cnpjs";
-            
+        if(!$this->total){
+            if($this->grupo){
+
+                $r = "e.cnpj IN $this->cnpjs";
+
+            }else{
+
+                $r = "e.cnpj NOT IN $this->cnpjs";
+
+            }
         }else{
-            
-            $r = "e.cnpj NOT IN $this->cnpjs";
-            
+            $r = "e.cnpj<>''";
         }
 
         $atividades = array();

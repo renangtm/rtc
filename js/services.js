@@ -1,6 +1,49 @@
 var debuger = function (l) {
     document.write(paraJson(l));
 }
+rtc.service('clienteRelatorioService', function ($http, $q) {
+    var este = this;
+    this.filtro_base = "";
+    this.merge = function (cliente,fn) {
+        baseService($http, $q, {
+            o:{cliente:cliente},
+            query: "$o->cliente->merge($c,$usuario)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCliente = function (cliente,fn) {
+        baseService($http, $q, {
+            o:{cliente:cliente},
+            query: "$r->cliente=$o->cliente->getCliente($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getClasses = function ( fn) {
+        baseService($http, $q, {
+            query: "$r->classes=ClienteRelatorio::getClasses()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getCount = function (filtro, fn) {
+        baseService($http, $q, {
+            o: {filtro: (este.filtro_base===""?filtro:(filtro===""?este.filtro_base:"("+este.filtro_base+") AND ("+filtro+")"))},
+            query: "$r->qtd=$empresa->getCountClientes($c,$o->filtro)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getElementos = function (x0, x1, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x0: x0, x1: x1, filtro: (este.filtro_base===""?filtro:(filtro===""?este.filtro_base:"("+este.filtro_base+") AND ("+filtro+")")), ordem: ordem},
+            query: "$r->elementos=$empresa->getClientes($c,$o->x0,$o->x1,$o->filtro,$o->ordem);foreach($r->elementos as $key=>$value){$r->elementos[$key]=new ClienteRelatorio($r->elementos[$key]);}",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('tarefaSimplificadaService', function ($http, $q) {
     this.getUsuariosPossiveis = function(tipo_tarefa,fn){
         baseService($http, $q, {
@@ -131,7 +174,7 @@ rtc.service('protocoloService', function ($http, $q) {
     }
     this.getProtocolosAtivos = function (fn) {
         baseService($http, $q, {
-            query: "$r->protocolos=$empresa->getProtocolos($c,0,2,'p.fim IS NULL','tp.prioridade DESC',$usuario);foreach($r->protocolos as $key=>$value){$value->init($c);}",
+            query: "$r->protocolos=$empresa->getProtocolos($c,0,100,'p.fim IS NULL','tp.prioridade DESC',$usuario);foreach($r->protocolos as $key=>$value){$value->init($c);}",
             sucesso: fn,
             falha: fn
         });
@@ -597,6 +640,14 @@ rtc.service('relatorioService', function ($http, $q) {
             falha: fn
         });
     }
+    this.getDadosAdcionais = function(linha,fn){
+        baseService($http, $q, {
+            o: {r:this.relatorio,l:linha},
+            query: "$r->dados=$o->r->getDadosAdcionais($o->l)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getPdf = function (fn) {
         baseService($http, $q, {
             o: this.relatorio,
@@ -802,6 +853,16 @@ rtc.service('logService', function ($http, $q) {
         });
     }
 })
+rtc.service('encomendaTerceiroService', function ($http, $q) {
+    this.getElementos = function (x1, x2, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x1: x1, x2: x2, ordem: ordem, filtro: filtro},
+            query: "$r->elementos=Sistema::getEncomendaTerceiros($c);$op=new OpProdutos($r->elementos);$r->elementos=$op->filtrar($o->x1,$o->x2,$o->filtro,$o->ordem,-10);$r->qtd=$op->getLastQtd();$r->filtros=$op->getFiltrosPossiveis();$r->ordens=$op->getOrdensPossiveis()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
 rtc.service('encomendaParceiroService', function ($http, $q) {
     this.getElementos = function (x1, x2, filtro, ordem, fn) {
         baseService($http, $q, {
@@ -817,6 +878,17 @@ rtc.service('compraParceiroService', function ($http, $q) {
         baseService($http, $q, {
             o: {x1: x1, x2: x2, ordem: ordem, filtro: filtro},
             query: "$r->elementos=Sistema::getCompraParceiros($c);$op=new OpProdutos($r->elementos);$r->elementos=$op->filtrar($o->x1,$o->x2,$o->filtro,$o->ordem);$r->qtd=$op->getLastQtd();$r->filtros=$op->getFiltrosPossiveis();$r->ordens=$op->getOrdensPossiveis()",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+})
+
+rtc.service('compraTerceiroService', function ($http, $q) {
+    this.getElementos = function (x1, x2, filtro, ordem, fn) {
+        baseService($http, $q, {
+            o: {x1: x1, x2: x2, ordem: ordem, filtro: filtro},
+            query: "$r->elementos=Sistema::getCompraTerceiros($c);$op=new OpProdutos($r->elementos);$r->elementos=$op->filtrar($o->x1,$o->x2,$o->filtro,$o->ordem);$r->qtd=$op->getLastQtd();$r->filtros=$op->getFiltrosPossiveis();$r->ordens=$op->getOrdensPossiveis()",
             sucesso: fn,
             falha: fn
         });
@@ -892,6 +964,36 @@ rtc.service('usuarioService', function ($http, $q) {
     this.empresa = null;
     this.filtro_base = "";
     
+    this.getMensagens = function(suportes,fn){
+        baseService($http, $q, {
+            o:{suportes:suportes},
+            query: "foreach($o->suportes as $key=>$value){$value->mensagens_retorno=$value->getMensagens($c,$value->ultima_mensagem);}",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getMensagemSuporte = function(fn){
+        baseService($http, $q, {
+            query: "$r->mensagem=new MensagemSuporte();$r->mensagem->usuario=$usuario",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.addMensagem = function(suporte,mensagem,fn){
+        baseService($http, $q, {
+            o:{suporte:suporte,mensagem:mensagem},
+            query: "$o->suporte->addMensagem($c,$o->mensagem)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
+    this.getSuportes = function(fn){
+        baseService($http, $q, {
+            query: "$r->suportes=$usuario->getSuporte($c)",
+            sucesso: fn,
+            falha: fn
+        });
+    }
     this.getPermissoesPermitidas = function(fn){
         baseService($http, $q, {
             query: "$r->permissoes=Sistema::getPermissoesPermitidas($c,$usuario)",

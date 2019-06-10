@@ -18,6 +18,8 @@ class Relatorio {
     public $campos;
     public $sql;
     public $order;
+    public $tem_dados_adcionais;
+    public $codigo_barras;
 
     public function __construct($sql, $id) {
 
@@ -25,12 +27,22 @@ class Relatorio {
         $this->sql = $sql;
         $this->campos = array();
         $this->order = "";
+        $this->tem_dados_adcionais = false;
+        $this->codigo_barras = false;
+
     }
     
     public function getObservacoes($empresa){
         
         return "";
         
+    }
+
+
+    public function getDadosAdcionais($linha){
+
+        return "<strong>teste</strong>";
+
     }
 
     public function getPdf($con, $empresa) {
@@ -70,7 +82,7 @@ class Relatorio {
 
         foreach ($this->campos as $key => $value) {
             
-            if (!$value->agrupado || $value->somente_filtro)
+            if (!$value->agrupado || $value->somente_filtro || $value->porcentagem_coluna_pdf === 0)
                 continue;
             
             $campo = new stdClass();
@@ -92,7 +104,7 @@ class Relatorio {
             $linha = new stdClass();
             $i = 0;
             foreach ($this->campos as $key2 => $campo) {
-                if (!$campo->agrupado || $campo->somente_filtro)
+                if (!$campo->agrupado || $campo->somente_filtro || $value->porcentagem_coluna_pdf===0)
                     continue;
                 $n = $campo->nome;
                 $linha->$n = $value->valores_campos[$i];
@@ -118,7 +130,11 @@ class Relatorio {
 
         $comando = Sistema::$ENDERECO . "php/uploads/$arquivo";
         try{
-            Sistema::getMicroServicoJava('GeradorRelatorio', $comando);
+            if(!$this->codigo_barras){
+                Sistema::getMicroServicoJava('GeradorRelatorio', $comando);
+            }else{
+                Sistema::getMicroServicoJava('GeradorRelatorioStart', $comando);
+            }
         }catch(Exception $ex){
             
         }
@@ -244,6 +260,8 @@ class Relatorio {
 
         $query = "SELECT ";
 
+
+
         $where = "";
         $groupby = "";
 
@@ -251,6 +269,14 @@ class Relatorio {
         $campo_valor = array();
 
         $a = false;
+
+        if($this->tem_dados_adcionais){
+
+            $query .= "k.id";
+            $a = true;
+
+        }
+
         foreach ($this->campos as $key => $campo) {
 
             if ($campo->filtro !== "") {
@@ -310,11 +336,25 @@ class Relatorio {
 
             $item = new ItemRelatorio($this);
 
+
+            $num = 0;
+            $xx = 0;
             foreach ($n as $key => $value) {
 
-                if (isset($campo_valor[$key])) {
+                if(!is_numeric($key)){
+                    continue;
+                }
 
-                    $campo = $campo_valor[$key];
+                if($this->tem_dados_adcionais && $num === 0){
+                    $item->id = $value;
+                    $xx=1;
+                    $num++;
+                    continue;
+                }
+
+                if (isset($campo_valor[intval($key)-$xx])) {
+
+                    $campo = $campo_valor[intval($key)-$xx];
 
                     if ($campo->agrupado) {
 

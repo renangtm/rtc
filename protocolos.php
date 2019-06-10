@@ -162,16 +162,7 @@
                                             </table>
 
                                             <!-- paginação  -->
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="protocolos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in protocolos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="protocolos.next()"><a class="page-link" href="">Próximo</a></li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
-
+                                            <paginacao assinc="protocolos"></paginacao>
                                         </div>
                                     </div>
                                 </div>
@@ -276,6 +267,20 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-12">
+                                        <h4>Responsaveis</h4>
+                                        <hr>
+                                        
+                                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addUsuario"><i class="fas fa-plus-circle"></i>&nbspAdcionar Usuario</button>
+                                            <hr>
+                                            <div ng-repeat="usuario in protocolo.usuarios">
+                                                {{usuario.nome}}
+                                                <button class="btn btn-danger" ng-click="removeUsuario(usuario)" style="padding:2px;width:20px;height:20px" type="button"><i class="fas fa-times"></i></button>
+                                                <hr>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
                                         <button class="btn btn-primary">
@@ -289,6 +294,43 @@
                     </div>
                 </div>
                 <!-- /.modal-content -->
+
+
+                <div class="modal fade" id="addUsuario" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title m-t-10" id="exampleModalLongTitle"><i class="fas fa-box fa-3x"></i>&nbsp;&nbsp;&nbsp;Selecao de Usuario</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="text" class="form-control" id="filtroUsuario" placeholder="Filtro">
+                                <hr>
+                                <select class="form-control" ng-model="usuarioService.empresa" ng-change="usuarios.attList()">
+                                    <option ng-repeat="ee in empresas" ng-value="ee">{{ee.nome}}</option>
+                                </select>
+                                <hr>
+                                <table class="table table-striped table-bordered first">
+                                    <thead>
+                                    <th data-ordem="usuario.id">Cod.</th>
+                                    <th data-ordem="pedido.cliente.razao_social">Usuario</th>
+                                    <th>Selecionar</th>
+                                    </thead>
+                                    <tr ng-repeat="u in usuarios.elementos">
+                                        <th>{{u[0].id}}</th>
+                                        <th>{{u[0].nome}}</th>
+                                        <th><button class="btn btn-success" ng-click="addUsuario(u[0])"><i class="fa fa-plus-circle"></i></button></th>
+                                    </tr> 
+                                </table>
+                                <paginacao assinc="usuarios"></paginacao>
+
+                            </div>
+                            <div class="modal-footer">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- PEDIDOS -->
 
@@ -314,15 +356,7 @@
                                         <th><button class="btn btn-success" ng-click="setEntidade(p[0])" data-dismiss="modal" aria-label="Close"><i class="fa fa-info"></i></button></th>
                                     </tr> 
                                 </table>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-click="pedidos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in pedidos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                            <li class="page-item" ng-click="pedidos.next()"><a class="page-link" href="">Próximo</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <paginacao assinc="pedidos"></paginacao>
 
                             </div>
                             <div class="modal-footer">
@@ -356,15 +390,7 @@
                                         <th><button class="btn btn-success" ng-click="setEntidade(c[0])" data-dismiss="modal" aria-label="Close"><i class="fa fa-info"></i></button></th>
                                     </tr> 
                                 </table>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-click="clientes.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in clientes.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                            <li class="page-item" ng-click="clientes.next()"><a class="page-link" href="">Próximo</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <paginacao assinc="clientes"></paginacao>
 
                             </div>
                             <div class="modal-footer">
@@ -398,15 +424,7 @@
                                         <th><button class="btn btn-success" ng-click="setEntidade(t[0])" data-dismiss="modal" aria-label="Close"><i class="fa fa-info"></i></button></th>
                                     </tr> 
                                 </table>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-click="transportadoras.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in transportadoras.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                            <li class="page-item" ng-click="transportadoras.next()"><a class="page-link" href="">Próximo</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <paginacao assinc="transportadoras"></paginacao>
 
                             </div>
                             <div class="modal-footer">
@@ -440,15 +458,7 @@
                                         <th><button class="btn btn-success" ng-click="setEntidade(c[0])" data-dismiss="modal" aria-label="Close"><i class="fa fa-info"></i></button></th>
                                     </tr> 
                                 </table>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-click="cotacao.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in cotacao.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                            <li class="page-item" ng-click="cotacao.next()"><a class="page-link" href="">Próximo</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <paginacao assinc="cotacao"></paginacao>
 
                             </div>
                             <div class="modal-footer">
@@ -482,15 +492,7 @@
                                         <th><button class="btn btn-success" ng-click="setEntidade(p[0])" data-dismiss="modal" aria-label="Close"><i class="fa fa-info"></i></button></th>
                                     </tr> 
                                 </table>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item" ng-click="pedidosEntrada.prev()"><a class="page-link" href="">Anterior</a></li>
-                                            <li class="page-item" ng-repeat="pg in pedidosEntrada.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                            <li class="page-item" ng-click="pedidosEntrada.next()"><a class="page-link" href="">Próximo</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <paginacao assinc="pedidosEntrada"></paginacao>
 
                             </div>
                             <div class="modal-footer">

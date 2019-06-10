@@ -24,6 +24,8 @@ class ProdutoEncomenda {
     public $valor_base_final;
     public $base_calculo_final;
     public $juros_final;
+    public $frete_inicial;
+    public $frete_final;
     public $icms_final;
     public $ipi_final;
     public $encomenda;

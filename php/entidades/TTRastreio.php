@@ -26,6 +26,48 @@ class TTRastreio extends TipoTarefa {
         $this->carregarDados();
     }
     
+
+    public function getObservacaoPadrao($tarefa){
+
+        $pedido = $tarefa->id_entidade_relacionada;
+
+        $con = new ConnectionFactory();
+
+        $transportadora = 0;
+
+        $consulta = $con->getConexao()->prepare("SELECT id_transportadora FROM pedido WHERE id=$pedido");
+        $consulta->execute();
+        
+        $consulta->bind_result($id_transportadora);
+
+        if($consulta->fetch()){
+
+            $transportadora = $id_transportadora;
+
+        }
+
+        $consulta->close();
+
+
+        $nome_transportadora = " ";
+
+        $consulta = $con->getConexao()->prepare("SELECT razao_social FROM transportadora WHERE id=$transportadora");
+        $consulta->execute();
+        $consulta->bind_result($razao_social);
+
+        if($consulta->fetch()){
+
+            $nome_transportadora = $razao_social;
+
+        }
+
+        $consulta->close();
+
+
+        return "Ola, rastreamos seu pedido $pedido com o (a) Sr. (a) ________ da Transportadora $nome_transportadora e recebemos a informacao de que seu pedido ________________________.";
+
+
+    }
     
     public function init($tarefa) {
         

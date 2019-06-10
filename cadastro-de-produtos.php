@@ -101,6 +101,7 @@
                                                         <th data-ordem="produto.estoque">Qtd</th>
                                                         <th data-ordem="produto.disponivel">Disp</th>
                                                         <th data-ordem="produto.transito">Trans</th>
+                                                        <th data-ordem="produto.troca">Troca</th>
                                                         <th data-ordem="produto.valor_base">Valor (R$)</th>
                                                         <?php if ($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))) { ?>
                                                             <th data-ordem="produto.ativo">Princ&iacute;pio ativo</th>
@@ -119,6 +120,7 @@
                                                         <td class="text-center">{{produto[0].estoque}}</td>
                                                         <td class="text-center">{{produto[0].disponivel}}</td>
                                                         <td class="text-center">{{produto[0].transito}}</td>
+                                                        <td class="text-center">{{produto[0].troca}}</td>
                                                         <td class="text-center">{{produto[0].valor_base}}</td>
                                                         <?php if ($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))) { ?>
                                                             <td>{{produto[0].ativo}}</td>
@@ -235,6 +237,7 @@
                                                         <th>Qtd</th>
                                                         <th>Disp</th>
                                                         <th>Trans</th>
+                                                        <th>Troca</th>
                                                         <th>Valor (R$)</th>
                                                         <?php if ($usuario->temPermissao(Sistema::P_PARAMETRROS_TECNICOS_PRODUTO()->m("C"))) { ?>
                                                             <th>Princ&iacute;pio ativo</th>
@@ -246,15 +249,7 @@
                                             </table>
 
                                             <!-- paginacao  -->
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="produtos.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in produtos.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="produtos.next()"><a class="page-link" href="">Proximo</a></li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
+                                            <paginacao assinc="produtos"></paginacao>
 
                                         </div>
                                     </div>
@@ -394,6 +389,15 @@
                                                 <label for="txtqtd" class="col-3 col-lg-2 col-form-label text-left">Qtd.</label>
                                                 <div class="col-9 col-lg-10">
                                                     <inteiro model="produto.estoque"></inteiro>
+                                                    <div class="invalid-feedback">
+                                                        Please provide a valid text.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row" ng-if="produto.categoria.desconta_estoque">
+                                                <label for="txtqtd" class="col-3 col-lg-2 col-form-label text-left">Troca.</label>
+                                                <div class="col-9 col-lg-10">
+                                                    <inteiro model="produto.troca"></inteiro>
                                                     <div class="invalid-feedback">
                                                         Please provide a valid text.
                                                     </div>

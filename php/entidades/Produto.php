@@ -47,6 +47,7 @@ class Produto {
     public $id_empresa_vendas;
     public $perfeicao;
     public $aceitacao;
+    public $troca;
 
     public $grau_perfeicao;
     public $grau_aceitacao;
@@ -82,8 +83,7 @@ class Produto {
         $this->codigo = 0;
         $this->id_empresa_vendas = 0;
         $this->mais_fotos = array();
-
-
+        $this->troca = 0;
         $this->perfeicao = 0;
         $this->aceitacao = 0;
 
@@ -244,7 +244,7 @@ class Produto {
 
         if ($this->id == 0) {
 
-            $ps = $con->getConexao()->prepare("INSERT INTO produto(id_universal,nome,id_categoria,liquido,quantidade_unidade,excluido,habilitado,id_empresa,valor_base,custo,peso_bruto,peso_liquido,estoque,disponivel,transito,grade,unidade,ncm,lucro_consignado,ativo,concentracao,classe_risco,fabricante,imagem,id_logistica,sistema_lotes,nota_usuario,codigo,perfeicao,aceitacao) VALUES($this->id_universal,'" . addslashes($this->nome) . "'," . $this->categoria->id . "," . ($this->liquido ? "true" : "false") . ",$this->quantidade_unidade,false," . ($this->habilitado ? "true" : "false") . "," . $this->empresa->id . ",$this->valor_base,$this->custo,$this->peso_bruto,$this->peso_liquido,$this->estoque,$this->disponivel,$this->transito,'" . $this->grade->str . "','" . addslashes($this->unidade) . "','" . addslashes($this->ncm) . "',$this->lucro_consignado,'$this->ativo','$this->concentracao','$this->classe_risco','$this->fabricante','$this->imagem'," . ($this->logistica !== null ? $this->logistica->id : 0) . "," . ($this->sistema_lotes ? "true" : "false") . ",$this->nota_usuario,$this->codigo,$this->perfeicao,$this->aceitacao)");
+            $ps = $con->getConexao()->prepare("INSERT INTO produto(id_universal,nome,id_categoria,liquido,quantidade_unidade,excluido,habilitado,id_empresa,valor_base,custo,peso_bruto,peso_liquido,estoque,disponivel,transito,grade,unidade,ncm,lucro_consignado,ativo,concentracao,classe_risco,fabricante,imagem,id_logistica,sistema_lotes,nota_usuario,codigo,perfeicao,aceitacao,troca) VALUES($this->id_universal,'" . addslashes($this->nome) . "'," . $this->categoria->id . "," . ($this->liquido ? "true" : "false") . ",$this->quantidade_unidade,false," . ($this->habilitado ? "true" : "false") . "," . $this->empresa->id . ",$this->valor_base,$this->custo,$this->peso_bruto,$this->peso_liquido,$this->estoque,$this->disponivel,$this->transito,'" . $this->grade->str . "','" . addslashes($this->unidade) . "','" . addslashes($this->ncm) . "',$this->lucro_consignado,'$this->ativo','$this->concentracao','$this->classe_risco','$this->fabricante','$this->imagem'," . ($this->logistica !== null ? $this->logistica->id : 0) . "," . ($this->sistema_lotes ? "true" : "false") . ",$this->nota_usuario,$this->codigo,$this->perfeicao,$this->aceitacao,$this->troca)");
             $ps->execute();
             $this->id = $ps->insert_id;
             $ps->close();
@@ -285,7 +285,7 @@ class Produto {
             $ps->execute();
             $ps->close();
 
-            $ps = $con->getConexao()->prepare("UPDATE produto SET id_empresa=" . $this->empresa->id . ",estoque=" . $this->estoque . ",disponivel=" . $this->disponivel . ",transito=" . $this->transito . ",habilitado=" . ($this->habilitado ? "true" : "false") . ",id_logistica=" . ($this->logistica === null ? "0" : $this->logistica->id) . " WHERE id=$this->id");
+            $ps = $con->getConexao()->prepare("UPDATE produto SET id_empresa=" . $this->empresa->id . ",estoque=" . $this->estoque . ",disponivel=" . $this->disponivel . ",transito=" . $this->transito . ",habilitado=" . ($this->habilitado ? "true" : "false") . ",id_logistica=" . ($this->logistica === null ? "0" : $this->logistica->id) . ",troca=$this->troca WHERE id=$this->id");
             $ps->execute();
             $ps->close();
         }
@@ -293,15 +293,17 @@ class Produto {
 
     public function atualizarEstoque($con) {
 
-        $ps = $con->getConexao()->prepare("SELECT estoque,disponivel,transito FROM produto WHERE id = $this->id");
+        $ps = $con->getConexao()->prepare("SELECT estoque,disponivel,transito,troca FROM produto WHERE id = $this->id");
         $ps->execute();
-        $ps->bind_result($estoque, $disponivel, $transito);
+        $ps->bind_result($estoque, $disponivel, $transito,$troca);
 
         if ($ps->fetch()) {
 
             $this->estoque = $estoque;
             $this->disponivel = $disponivel;
             $this->transito = $transito;
+            $this->troca = $troca;
+
         }
 
         $ps->close();

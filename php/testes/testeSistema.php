@@ -32,8 +32,55 @@ class testeSistema extends PHPUnit_Framework_TestCase {
         
         $con = new ConnectionFactory();
         
-        $er = new RoboVirtual();
-        $er->executar($con);
+        $s = new RoboVirtual();
+        $s->executar($con);
+        
+        return;
+        
+        $clientes = array();
+        
+        $i = 0;
+        
+        $con = new ConnectionFactory();
+        
+        $ps = $con->getConexao()->prepare("SELECT id,codigo,razao_social,cnpj,k.qtd FROM cliente LEFT JOIN (SELECT p.id_cliente as 'idc',COUNT(*) as 'qtd' FROM pedido p GROUP BY p.id_cliente) k ON k.idc=cliente.id WHERE cnpj IN (SELECT cnpj FROM empresa) AND razao_social NOT LIKE '%Logistic%' AND razao_social NOT LIKE '%Don Floriano%' AND razao_social NOT LIKE '%Brasil Agro Comercio de Insumos Ltda%' AND razao_social NOT LIKE '%Agro Fauna Comercio De Insumos Ltda%' AND razao_social NOT LIKE '%Agro Rio - Fantasma%' AND razao_social NOT LIKE '%teste%' AND cliente.id_empresa=1734 ORDER BY k.qtd DESC");
+        $ps->execute();
+        $ps->bind_result($id,$codigo,$razao_social,$cnpj,$qtd);
+        
+        while($ps->fetch() && $i<12){
+            
+            $clientes[] = array($id,$codigo,$razao_social,$cnpj,$qtd);
+            
+            $i++;
+            
+        }
+        
+        $ps->close();
+        
+        $v = new Virtual(2072,$con);
+        
+        foreach($clientes as $key=>$value){
+             
+             $t = new Tarefa();
+             $t->tipo_tarefa = Sistema::TT_RECEPCAO_CLIENTE_M2($v->id);
+             $t->id_entidade_relacionada = $value[0];
+             $t->prioridade = $value[4];
+             $t->titulo = "Recepcao do Modulo 2 cliente ".$value[2];
+             $t->descricao = "Recepcione o cliente " .$value[1]. "-".$value[2].", ".$value[3].", para o Modulo 2";
+            
+             Sistema::novaTarefaEmpresa($con, $t, $v);
+             
+        }
+        
+        return;
+        
+        $teste = $ri->getProdutosAlocais($con, 0, 2);
+        
+        $dia = Sistema::getProdutosDoDia($con, 1, 7, $ri);
+        
+        $produto = $dia[0];
+        
+        echo Utilidades::toJson($produto->locais);
         
         return;
         

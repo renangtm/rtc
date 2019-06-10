@@ -138,6 +138,9 @@ echo $relatorio;
                                                                 <div ng-if="campo.possiveis.length === 0 && campo.tipo === 'D'" style="position: relative">
                                                                     <calendario botao="true" inicio="campo.inicio" fim="campo.fim" meses="1" tempo="true"></calendario>
                                                                 </div>
+                                                                <div ng-if="campo.possiveis.length === 0 && campo.tipo === 'DF'" style="position: relative">
+                                                                    <calendario botao="true" model="campo.inicio" meses="1" tempo="true"></calendario>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <button class="btn btn-outline-success" ng-click="addOrdem(campo)" style="margin-left:10px;width:30px;height:30px;padding:4px"><i class="fas fa-arrow-up"></i>{{campo.ordem}}</button>
@@ -161,6 +164,36 @@ echo $relatorio;
                                 </div>
                             </div>
 
+                            <style>
+                                .mover{
+
+                                    cursor:pointer;
+                                    
+                                }
+
+                                .mover:hover{
+
+                                    cursor:pointer;
+                                    color:#FFFFFF !important;
+                                    background-color: SteelBlue !important;
+
+                                }
+
+                            </style>
+
+                            <div class="modal fade" style="overflow-y:scroll" id="mdlDadosAdcionais" tabindex="2" role="dialog" aria-labelledby="mdlRelatorio" aria-hidden="true">
+                                <div class="modal-dialog modal-md">
+                                    <div class="modal-content" >
+                                        <div class="modal-header">
+                                            <h3>Dados Adcionais</h3> 
+                                        </div>
+                                        <div id="dados_add" class="modal-body">
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="modal fade" style="overflow-y:scroll" id="mdlRelatorio" tabindex="-1" role="dialog" aria-labelledby="mdlRelatorio" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
@@ -174,7 +207,7 @@ echo $relatorio;
                                                 <thead>
                                                 <th ng-repeat="c in gerado.elementos[0][0].campos">{{c.titulo}}</th>
                                                 </thead>
-                                                <tr ng-repeat-start="item in gerado.elementos">
+                                                <tr ng-repeat-start="item in gerado.elementos" ng-click="getDadosAdcionais(item[0])" class="{{relatorio.tem_dados_adcionais?'mover':''}}">
                                                     <th ng-repeat="c in item[0].valores_campos track by $index">{{c}}</th>
                                                 </tr>
                                                 <tr ng-repeat-end ng-if="item[0].campos_agrupados.length > 0">
@@ -201,9 +234,7 @@ echo $relatorio;
                                                     </td>
                                                 </tr>
                                             </table>
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <div style="display: inline-block" class="page-item" ng-repeat="pg in gerado.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></div>
-                                            </div>
+                                            <paginacao assinc="gerado"></paginacao>
 
                                         </div>
 

@@ -92,7 +92,7 @@
                                 }
 
                                 .c2 td{
-                                    color:Blue !important;
+                                    color:Orange !important;
                                 }
 
                                 .c3 td{
@@ -104,7 +104,7 @@
                                 }
 
                                 .c5 td{
-                                    color:Gray !important;
+                                    color:DarkGray !important;
                                 }
 
                                 .c6 td{
@@ -124,11 +124,15 @@
                                 }
 
                                 .c10 td{
-                                    color:LightGreen !important;
+                                    color:DarkOrange !important;
                                 }
 
                                 .c11 td{
-                                    color:DarkOrange !important;
+                                    color:Orange !important;
+                                }
+
+                                .c12 td{
+                                    color:Blue !important;
                                 }
 
                             </style>
@@ -261,15 +265,7 @@
                                             </table>
 
                                             <!-- paginação  -->
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-t-30">
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination justify-content-end">
-                                                        <li class="page-item" ng-click="clientes.prev()"><a class="page-link" href="">Anterior</a></li>
-                                                        <li class="page-item" ng-repeat="pg in clientes.paginas" ng-click="pg.ir()"><a class="page-link" style="{{pg.isAtual?'border:2px solid #71748d !important':''}}">{{pg.numero + 1}}</a></li>
-                                                        <li class="page-item" ng-click="clientes.next()"><a class="page-link" href="">Próximo</a></li>
-                                                    </ul>
-                                                </nav>
-                                            </div>
+                                            <paginacao assinc="clientes"></paginacao>
 
                                         </div>
                                     </div>
